@@ -37,6 +37,7 @@ import {
 } from "./roadmapTimelineMarkers";
 import type { RoadmapStartOptions } from "./StageListCard";
 import { RoadmapStartSessionModal } from "./RoadmapStartSessionModal";
+import { CompareInviteModal } from "@/components/mockCompare/CompareInviteModal";
 
 type StageCompletionEntry = {
   completed: number;
@@ -347,6 +348,11 @@ export function RoadmapTable({
 }: Props) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [startStage, setStartStage] = useState<RoadmapStage | null>(null);
+  const [compareInvite, setCompareInvite] = useState<{
+    stage: RoadmapStage;
+    selectedParts: RoadmapPart[];
+    options: RoadmapStartOptions;
+  } | null>(null);
   const [averageMaps, setAverageMaps] = useState<RoadmapAverageMaps>({
     averages: {},
   });
@@ -703,7 +709,21 @@ export function RoadmapTable({
         onNewQuestionsOnlyChange={onNewQuestionsOnlyChange}
         onClose={() => setStartStage(null)}
         onStart={onStartSession}
+        onCompareWithFriend={(stage, selectedParts, options) => {
+          setCompareInvite({ stage, selectedParts, options });
+        }}
       />
+
+      {compareInvite ? (
+        <CompareInviteModal
+          open
+          stage={compareInvite.stage}
+          selectedParts={compareInvite.selectedParts}
+          options={compareInvite.options}
+          onClose={() => setCompareInvite(null)}
+          onStartSitting={onStartSession}
+        />
+      ) : null}
     </div>
   );
 }

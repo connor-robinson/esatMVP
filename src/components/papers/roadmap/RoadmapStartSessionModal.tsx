@@ -5,7 +5,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { X, Play } from "lucide-react";
+import { X, Play, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
 import { isEsatCampMockRoadmapStage } from "@/lib/papers/roadmapConfig";
@@ -28,6 +28,11 @@ type Props = {
   onNewQuestionsOnlyChange: (enabled: boolean) => void;
   onClose: () => void;
   onStart: (
+    stage: RoadmapStage,
+    selectedParts: RoadmapPart[],
+    options: RoadmapStartOptions,
+  ) => void;
+  onCompareWithFriend?: (
     stage: RoadmapStage,
     selectedParts: RoadmapPart[],
     options: RoadmapStartOptions,
@@ -111,6 +116,7 @@ export function RoadmapStartSessionModal({
   onNewQuestionsOnlyChange,
   onClose,
   onStart,
+  onCompareWithFriend,
 }: Props) {
   const [selectedGroups, setSelectedGroups] = useState<Set<string>>(new Set());
 
@@ -149,10 +155,26 @@ export function RoadmapStartSessionModal({
     ? newQuestionsOnly
     : false;
 
-  const handleStart = () => {
-    if (selectedGroups.size === 0) return;
+  const resolveSelection = () => {
+    if (selectedGroups.size === 0) return null;
     const parts = expandDisplayGroupsToParts(stage.parts, selectedGroups);
-    onStart(stage, parts, { newQuestionsOnly: effectiveNewQuestionsOnly });
+    return {
+      parts,
+      options: { newQuestionsOnly: effectiveNewQuestionsOnly } as RoadmapStartOptions,
+    };
+  };
+
+  const handleStart = () => {
+    const selection = resolveSelection();
+    if (!selection) return;
+    onStart(stage, selection.parts, selection.options);
+    onClose();
+  };
+
+  const handleCompare = () => {
+    const selection = resolveSelection();
+    if (!selection || !onCompareWithFriend) return;
+    onCompareWithFriend(stage, selection.parts, selection.options);
     onClose();
   };
 
@@ -274,28 +296,46 @@ export function RoadmapStartSessionModal({
           ) : null}
         </div>
 
-        <div className="flex items-center justify-end gap-3 border-t border-border-subtle px-5 py-4">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-sm px-3 py-2 text-sm font-medium text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            disabled={selectedGroups.size === 0}
-            onClick={handleStart}
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded-sm px-4 py-2 text-sm font-semibold transition-colors",
-              selectedGroups.size > 0
-                ? "bg-primary text-white hover:bg-primary-hover"
-                : "cursor-not-allowed bg-surface-neutral text-text-disabled",
-            )}
-          >
-            Start session
-            <Play className="h-3.5 w-3.5 fill-current opacity-90" aria-hidden />
-          </button>
+        <div className="space-y-2 border-t border-border-subtle px-5 py-4">
+          <div className="flex items-center justify-end gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-sm px-3 py-2 text-sm font-medium text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              disabled={selectedGroups.size === 0}
+              onClick={handleStart}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-sm px-4 py-2 text-sm font-semibold transition-colors",
+                selectedGroups.size > 0
+                  ? "bg-primary text-white hover:bg-primary-hover"
+                  : "cursor-not-allowed bg-surface-neutral text-text-disabled",
+              )}
+            >
+              Start session
+              <Play className="h-3.5 w-3.5 fill-current opacity-90" aria-hidden />
+            </button>
+          </div>
+          {onCompareWithFriend ? (
+            <button
+              type="button"
+              disabled={selectedGroups.size === 0}
+              onClick={handleCompare}
+              className={cn(
+                "inline-flex w-full items-center justify-center gap-1.5 rounded-sm px-4 py-2 text-sm font-medium transition-colors",
+                selectedGroups.size > 0
+                  ? "bg-surface-mid text-text hover:bg-surface-neutral"
+                  : "cursor-not-allowed bg-surface-neutral text-text-disabled",
+              )}
+            >
+              <Users className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+              Compare with a friend
+            </button>
+          ) : null}
         </div>
       </div>
     </div>

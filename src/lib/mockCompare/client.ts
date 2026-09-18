@@ -2,18 +2,32 @@
  * Client-side identity + active compare-room context (no signup).
  */
 
-import type { MockCompareResults } from "./types";
+import type {
+  MockCompareResults,
+  MockCompareRoadmapStart,
+  MockCompareCatalogStart,
+} from "./types";
 
 const PARTICIPANT_KEY = "esat_mock_compare_participant_id";
 const NAME_KEY = "esat_mock_compare_display_name";
 const ACTIVE_ROOM_KEY = "esat_mock_compare_active";
+const PENDING_START_KEY = "esat_mock_compare_pending_start";
 
 export type ActiveMockCompareContext = {
   roomId: string;
   participantId: string;
   displayName: string;
-  paperId: number;
   paperLabel: string;
+  paperId?: number;
+};
+
+export type PendingCompareStart = {
+  roomId: string;
+  participantId: string;
+  displayName: string;
+  paperLabel: string;
+  roadmapStart?: MockCompareRoadmapStart;
+  catalogStart?: MockCompareCatalogStart;
 };
 
 function safeUuid(): string {
@@ -84,6 +98,27 @@ export function clearActiveMockCompare(): void {
   }
 }
 
+export function setPendingCompareStart(payload: PendingCompareStart): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.setItem(PENDING_START_KEY, JSON.stringify(payload));
+  } catch {
+    /* ignore */
+  }
+}
+
+export function takePendingCompareStart(): PendingCompareStart | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.sessionStorage.getItem(PENDING_START_KEY);
+    if (!raw) return null;
+    window.sessionStorage.removeItem(PENDING_START_KEY);
+    return JSON.parse(raw) as PendingCompareStart;
+  } catch {
+    return null;
+  }
+}
+
 export async function fetchCompareRoom(roomId: string) {
   const res = await fetch(`/api/mock-compare/rooms/${roomId}`, {
     cache: "no-store",
@@ -96,21 +131,20 @@ export async function fetchCompareRoom(roomId: string) {
 }
 
 export async function createCompareRoom(input: {
-  moduleId: string;
-  mockNumber: number;
   displayName: string;
+  paperLabel?: string;
+  paperId?: number;
+  roadmapStart?: MockCompareRoadmapStart;
+  catalogStart?: MockCompareCatalogStart;
+  moduleId?: string;
+  mockNumber?: number;
 }) {
   const participantId = getOrCreateParticipantId();
   saveDisplayName(input.displayName);
   const res = await fetch("/api/mock-compare/rooms", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      moduleId: input.moduleId,
-      mockNumber: input.mockNumber,
-      displayName: input.displayName,
-      participantId,
-    }),
+    body: JSON.stringify({ ...input, participantId }),
   });
   if (!res.ok) {
     const body = (await res.json().catch(() => null)) as { error?: string } | null;
@@ -177,32 +211,6 @@ export async function submitCompareResults(input: {
   if (!res.ok) {
     const body = (await res.json().catch(() => null)) as { error?: string } | null;
     throw new Error(body?.error || "Could not submit results");
-  }
-  return res.json() as Promise<{ room: import("./types").MockCompareRoom }>;
-}
-
-export async function seedDemoFriend(roomId: string, participantId: string) {
-  const res = await fetch(`/api/mock-compare/rooms/${roomId}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "seed_demo_friend", participantId }),
-  });
-  if (!res.ok) {
-    const body = (await res.json().catch(() => null)) as { error?: string } | null;
-    throw new Error(body?.error || "Could not seed demo friend");
-  }
-  return res.json() as Promise<{ room: import("./types").MockCompareRoom }>;
-}
-
-export async function seedDemoBoth(roomId: string, participantId: string) {
-  const res = await fetch(`/api/mock-compare/rooms/${roomId}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "seed_demo_both", participantId }),
-  });
-  if (!res.ok) {
-    const body = (await res.json().catch(() => null)) as { error?: string } | null;
-    throw new Error(body?.error || "Could not seed demo");
   }
   return res.json() as Promise<{ room: import("./types").MockCompareRoom }>;
 }

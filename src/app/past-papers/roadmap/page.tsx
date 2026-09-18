@@ -5,7 +5,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Container } from '@/components/layout/Container';
 import { useSupabaseSession } from '@/components/auth/SupabaseSessionProvider';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -13,6 +13,7 @@ import { UpgradeCTA } from '@/components/subscription/UpgradeCTA';
 import {
   getRoadmapStages,
   getRoadmapStagesShell,
+  getRoadmapStagesSync,
   type RoadmapStage,
 } from '@/lib/papers/roadmapConfig';
 import {
@@ -61,6 +62,7 @@ import {
   countDisplayGroupCompletion,
   groupRoadmapPartsForDisplay,
 } from '@/lib/papers/roadmapDisplayGroups';
+import { takePendingCompareStart } from '@/lib/mockCompare/client';
 
 type StageCompletionEntry = {
   completed: number;
@@ -125,6 +127,7 @@ const INITIAL_UNLOCK = computeUnlockState(INITIAL_STAGES, INITIAL_COMPLETION);
 
 export default function PapersRoadmapPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const session = useSupabaseSession();
   const { hasFullAccess } = useSubscription();
   const { startSession, setQuestions } = usePaperSessionStore();
@@ -586,6 +589,24 @@ export default function PapersRoadmapPage() {
     },
     [executeStartStage, isStartingSession],
   );
+
+  const compareStartHandledRef = useRef(false);
+  useEffect(() => {
+    if (compareStartHandledRef.current) return;
+    if (searchParams.get('compareStart') !== '1') return;
+    const pending = takePendingCompareStart();
+    if (!pending?.roadmapStart) return;
+    compareStartHandledRef.current = true;
+    const stage = getRoadmapStagesSync().find(
+      (s) => s.id === pending.roadmapStart!.stageId,
+    );
+    if (!stage) return;
+    void handleStartStage(
+      stage,
+      pending.roadmapStart.selectedParts,
+      pending.roadmapStart.options,
+    );
+  }, [searchParams, handleStartStage]);
 
   // Refresh completion data
   const refreshCompletionData = useCallback(async () => {

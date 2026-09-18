@@ -90,7 +90,6 @@ import {
 import {
   fetchCompareRoom,
   getActiveMockCompare,
-  seedDemoFriend,
   submitCompareResults,
   type ActiveMockCompareContext,
 } from "@/lib/mockCompare/client";
@@ -153,7 +152,6 @@ export default function PapersMarkPage() {
     timeLimitMinutes,
     setCorrectChoice,
     setAddToDrill,
-    setCorrectFlag,
     setGuessedFlag,
     setMistakeTag,
     setNotes,
@@ -178,7 +176,6 @@ export default function PapersMarkPage() {
   const [reviewReturnSection, setReviewReturnSection] = useState<MarkSection | null>(null);
   const [compareCtx, setCompareCtx] = useState<ActiveMockCompareContext | null>(null);
   const [compareRoom, setCompareRoom] = useState<MockCompareRoom | null>(null);
-  const [compareSeeding, setCompareSeeding] = useState(false);
   const compareSubmittedRef = useRef<string | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -376,14 +373,13 @@ export default function PapersMarkPage() {
   // Auto-derive correctness if not manually set
   const derivedCorrectFlags = useMemo(() => {
     return questionNumbers.map((_, i) => {
-      if (correctFlags[i] !== null && correctFlags[i] !== undefined) return correctFlags[i];
       const user = (answers[i]?.choice || "").toString().toUpperCase();
       const correct = (questions[i]?.answerLetter || "").toString().toUpperCase();
       if (!correct) return null;
       if (!user) return false; // unanswered counts as incorrect
       return user === correct;
     });
-  }, [questionNumbers, correctFlags, answers, questions]);
+  }, [questionNumbers, answers, questions]);
 
   const correctCountDerived = useMemo(() => derivedCorrectFlags.filter(f => f === true).length, [derivedCorrectFlags]);
 
@@ -1333,16 +1329,6 @@ export default function PapersMarkPage() {
                       meId={compareCtx.participantId}
                       isLoggedIn={isLoggedIn}
                       loginHref={`/login?redirectTo=${encodeURIComponent(`/esat-mock-tests/compare/${compareCtx.roomId}`)}`}
-                      seeding={compareSeeding}
-                      onSeedDemoFriend={() => {
-                        setCompareSeeding(true);
-                        void seedDemoFriend(
-                          compareCtx.roomId,
-                          compareCtx.participantId,
-                        )
-                          .then((data) => setCompareRoom(data.room))
-                          .finally(() => setCompareSeeding(false));
-                      }}
                     />
                   ) : (
                     <div className="rounded-md bg-surface-elevated px-4 py-10 text-center text-sm text-text-muted">
@@ -2414,32 +2400,37 @@ export default function PapersMarkPage() {
                   <div className="text-base font-semibold text-neutral-200">{questionNumbers[selectedIndex]}</div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button
-                    type="button"
+                  <div
                     className={cn(
-                      "flex items-center gap-1 rounded-organic-sm px-2 py-1 text-xs ring-1 transition ring-border",
-                      (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true
+                      "flex items-center gap-1 rounded-organic-sm px-2 py-1 text-xs",
+                      derivedCorrectFlags[selectedIndex] === true
                         ? getMarkReviewToggleActiveClass("correct")
-                        : "bg-surface-mid text-text-muted hover:bg-surface-neutral",
+                        : derivedCorrectFlags[selectedIndex] === false
+                          ? getMarkReviewToggleActiveClass("incorrect")
+                          : "bg-surface-mid text-text-muted",
                     )}
-                    onClick={() => setCorrectFlag(selectedIndex, correctFlags[selectedIndex] === true ? null : true)}
+                    aria-label={
+                      derivedCorrectFlags[selectedIndex] === true
+                        ? "Correct"
+                        : derivedCorrectFlags[selectedIndex] === false
+                          ? "Incorrect"
+                          : "Ungraded"
+                    }
                   >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-                    Correct
-                    </button>
-                    <button
-                      type="button"
-                      className={cn(
-                      "flex items-center gap-1 rounded-organic-sm px-2 py-1 text-xs ring-1 transition ring-border",
-                      (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false
-                        ? getMarkReviewToggleActiveClass("incorrect")
-                        : "bg-surface-mid text-text-muted hover:bg-surface-neutral",
-                      )}
-                    onClick={() => setCorrectFlag(selectedIndex, correctFlags[selectedIndex] === false ? null : false)}
-                    >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-                    Wrong
-                    </button>
+                    {derivedCorrectFlags[selectedIndex] === true ? (
+                      <>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                        Correct
+                      </>
+                    ) : derivedCorrectFlags[selectedIndex] === false ? (
+                      <>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                        Incorrect
+                      </>
+                    ) : (
+                      "—"
+                    )}
+                  </div>
                     <button
                       type="button"
                       className={cn(

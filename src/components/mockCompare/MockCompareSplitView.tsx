@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { formatCompareTime } from "@/lib/mockCompare/demo";
@@ -17,8 +18,6 @@ type MockCompareSplitViewProps = {
   isLoggedIn?: boolean;
   loginHref?: string;
   className?: string;
-  onSeedDemoFriend?: () => void;
-  seeding?: boolean;
   /** Marketing / SEO pages use a fixed dark shell. */
   tone?: "app" | "marketing";
 };
@@ -266,8 +265,6 @@ export function MockCompareSplitView({
   isLoggedIn = false,
   loginHref = "/login?redirectTo=/past-papers/mark",
   className,
-  onSeedDemoFriend,
-  seeding,
   tone = "app",
 }: MockCompareSplitViewProps) {
   const marketing = tone === "marketing";
@@ -275,6 +272,14 @@ export function MockCompareSplitView({
   const meResults = me?.results ?? null;
   const friendResults = friend?.results ?? null;
   const bothDone = Boolean(meResults && friendResults);
+  const waitingOnFriend = Boolean(meResults && !friendResults);
+  const [peekMyResults, setPeekMyResults] = useState(false);
+
+  useEffect(() => {
+    if (friendResults) setPeekMyResults(false);
+  }, [friendResults]);
+
+  const showSplit = bothDone || (waitingOnFriend && peekMyResults) || !waitingOnFriend;
 
   return (
     <div className={cn("space-y-6", className)}>
@@ -297,23 +302,32 @@ export function MockCompareSplitView({
             Compare · 2 players max · no account needed for these stats
           </div>
         </div>
-        {onSeedDemoFriend && !friendResults ? (
-          <button
-            type="button"
-            onClick={onSeedDemoFriend}
-            disabled={seeding}
-            className={cn(
-              "rounded-md px-3 py-2 text-xs font-medium disabled:opacity-50",
-              marketing
-                ? "bg-white/[0.08] text-white hover:bg-white/[0.12]"
-                : "bg-surface-elevated text-text hover:bg-surface-mid",
-            )}
-          >
-            {seeding ? "Seeding…" : "Preview: simulate friend"}
-          </button>
-        ) : null}
       </div>
 
+      {waitingOnFriend && !peekMyResults ? (
+        <div
+          className={cn(
+            "flex flex-col items-center gap-4 rounded-md px-4 py-12 text-center",
+            marketing ? "bg-[#161D2F]" : "bg-surface",
+          )}
+        >
+          <p className={cn("text-sm font-medium", marketing ? "text-white" : "text-text")}>
+            Waiting for your friend to finish
+          </p>
+          <button
+            type="button"
+            onClick={() => setPeekMyResults(true)}
+            className={cn(
+              "rounded-md px-4 py-2.5 text-sm font-semibold",
+              marketing ? "bg-[#3B82F6] text-white hover:bg-[#2563EB]" : "bg-primary text-white hover:bg-primary-hover",
+            )}
+          >
+            View my results first
+          </button>
+        </div>
+      ) : null}
+
+      {showSplit ? (
       <div className="flex flex-col gap-3 lg:flex-row">
         <ParticipantColumn
           title={me?.displayName ? `${me.displayName} (you)` : "You"}
@@ -343,6 +357,7 @@ export function MockCompareSplitView({
           marketing={marketing}
         />
       </div>
+      ) : null}
 
       {bothDone && meResults && friendResults ? (
         <div
