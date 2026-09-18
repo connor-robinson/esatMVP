@@ -63,7 +63,7 @@ export function EsatMockTestsIntroBanner({
             Our past students said NSAA and ENGAA felt too easy relative to the
             real ESAT. Combined with their feedback and our tutors&apos; own
             experience of the exam, we built 5 ESAT mocks. We&apos;ve written
-            some questions with more information to process than a typical item,
+            some questions with more information to process than a typical question,
             to build your stamina for the ESAT.
           </blockquote>
         </aside>
