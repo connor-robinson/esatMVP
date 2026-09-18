@@ -195,10 +195,10 @@ export function QuestionBankSessionResults({
     [result.topicStats],
   );
 
-  const reviewQuestions = useMemo(() => {
+  const reviewQuestions = useMemo((): QuestionBankQuestion[] => {
     if (questions && questions.length > 0) return questions;
     // Fallback: rebuild minimal question rows from attempt payloads.
-    return sortedAttempts.map((attempt) => ({
+    return sortedAttempts.map((attempt): QuestionBankQuestion => ({
       id: attempt.questionId,
       generation_id: '',
       schema_id: '',
@@ -216,7 +216,7 @@ export function QuestionBankSessionResults({
       graph_spec: null,
       graph_specs: null,
       has_visual: false,
-      status: 'approved' as const,
+      status: 'approved',
       created_at: '',
     }));
   }, [questions, sortedAttempts]);
