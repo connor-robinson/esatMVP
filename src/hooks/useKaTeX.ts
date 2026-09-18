@@ -251,6 +251,27 @@ export function parseMathContent(text: string): MathSegment[] {
 }
 
 /**
+ * Prefer NSAA/exam-style fractions in inline math: keep digit size equal to
+ * surrounding text and let the fraction grow vertically (TeX `\displaystyle`),
+ * instead of KaTeX's default text-style shrink-to-fit `\frac`.
+ *
+ * Skips when the author already set an explicit math style.
+ * Leaves true display-mode renders alone (already displaystyle).
+ * Fractions inside superscripts/subscripts stay script-sized via TeX rules.
+ */
+function withInlineDisplayStyle(math: string): string {
+  const trimmed = math.trimStart();
+  if (
+    /^\\(?:displaystyle|textstyle|scriptstyle|scriptscriptstyle)(?![A-Za-z])/.test(
+      trimmed,
+    )
+  ) {
+    return math;
+  }
+  return `\\displaystyle ${math}`;
+}
+
+/**
  * Render a math expression with KaTeX
  * Returns HTML string or null if rendering fails
  */
@@ -269,9 +290,12 @@ export function renderMath(
   const useDisplay =
     displayMode ||
     /\\begin\{(?:aligned|gathered|multlined)\}/.test(mathStr);
-  
+  const mathForRender = useDisplay
+    ? mathStr
+    : withInlineDisplayStyle(mathStr);
+
   try {
-    return katex.renderToString(mathStr, {
+    return katex.renderToString(mathForRender, {
       throwOnError: false,
       displayMode: useDisplay,
       strict: false,

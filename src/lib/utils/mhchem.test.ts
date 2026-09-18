@@ -25,3 +25,19 @@ describe("KaTeX mhchem", () => {
     expect(html).not.toContain("$\\ce{CO2}$");
   });
 });
+
+describe("KaTeX display-style fractions", () => {
+  it("renders inline frac without katex errors", () => {
+    const html = renderMath("\\frac{50}{3}", false);
+    expect(html).toBeTruthy();
+    expect(html).toContain("katex");
+    expect(html).not.toContain("katex-error");
+    expect(html).toContain("mfrac");
+  });
+
+  it("keeps option lists with mixed integers and fracs valid", () => {
+    const html = renderMathContent("$18$ and $\\frac{70}{3}$ and $-\\frac{1}{2}$");
+    expect(html).toContain("mfrac");
+    expect(html).not.toContain("katex-error");
+  });
+});
