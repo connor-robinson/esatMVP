@@ -3,22 +3,22 @@ import Link from "next/link";
 import { ABOUT_PATH, FOUNDERS } from "@/config/founders";
 import { cn } from "@/lib/utils";
 
+const SIMULATOR_STILL = {
+  src: "/images/home/esat-camp-mock-player-hero-v2.webp",
+  alt: "ESAT simulator preview showing a timed mock question",
+  width: 1400,
+  height: 986,
+} as const;
+
 const PAGE_TITLE = "ESAT CAMP Free Mock Tests";
 const EWAN = FOUNDERS.ewan;
-
-const STATS = [
-  { label: "Questions", value: "27" },
-  { label: "Minutes", value: "40" },
-  { label: "Difficulty", value: "Slightly harder than NSAA" },
-  { label: "Focus", value: "Stamina" },
-] as const;
 
 type EsatMockTestsIntroBannerProps = {
   className?: string;
 };
 
 /**
- * Above-the-fold hero: title + Ewan note, with paper stats in the side column.
+ * Above-the-fold hero: title, Ewan note, compact stats, and simulator preview.
  */
 export function EsatMockTestsIntroBanner({
   className,
@@ -26,12 +26,12 @@ export function EsatMockTestsIntroBanner({
   return (
     <div
       className={cn(
-        "grid items-stretch gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(14rem,20rem)] lg:gap-6 xl:gap-8",
+        "grid items-stretch gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(16rem,22rem)] lg:gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(18rem,26rem)] xl:gap-8",
         className,
       )}
     >
       <div className="flex min-w-0 flex-col gap-3.5">
-        <h1 className="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl lg:text-[2rem] lg:leading-tight">
+        <h1 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
           {PAGE_TITLE}
         </h1>
 
@@ -67,27 +67,52 @@ export function EsatMockTestsIntroBanner({
             to build your stamina for the ESAT.
           </blockquote>
         </aside>
+
+        <dl className="grid grid-cols-2 gap-2">
+          <div className="bg-white/[0.06] px-3 py-3">
+            <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-[#64748B]">
+              Questions
+            </dt>
+            <dd className="mt-1.5 text-base font-semibold tabular-nums text-white sm:text-lg">
+              27
+            </dd>
+          </div>
+          <div className="row-span-2 flex flex-col justify-center bg-white/[0.06] px-3 py-3">
+            <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-[#64748B]">
+              Difficulty
+            </dt>
+            <dd className="mt-1.5 text-base font-semibold leading-snug text-white sm:text-lg">
+              Slightly harder than NSAA
+            </dd>
+          </div>
+          <div className="bg-white/[0.06] px-3 py-3">
+            <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-[#64748B]">
+              Minutes
+            </dt>
+            <dd className="mt-1.5 text-base font-semibold tabular-nums text-white sm:text-lg">
+              40
+            </dd>
+          </div>
+        </dl>
       </div>
 
       <aside
-        aria-label="Some stats about this paper"
-        className="flex flex-col justify-center bg-white/[0.04] px-4 py-4 sm:px-5"
+        aria-label="ESAT simulator preview"
+        className="relative mx-auto w-full max-w-[22rem] lg:mx-0 lg:max-w-none lg:min-h-full"
       >
-        <p className="text-base font-semibold text-white sm:text-lg">
-          Some stats about this paper
-        </p>
-        <dl className="mt-3 grid grid-cols-2 gap-2.5">
-          {STATS.map((stat) => (
-            <div key={stat.label} className="bg-white/[0.06] px-3 py-3">
-              <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-[#64748B]">
-                {stat.label}
-              </dt>
-              <dd className="mt-1.5 text-base font-semibold leading-snug text-white sm:text-lg">
-                {stat.value}
-              </dd>
-            </div>
-          ))}
-        </dl>
+        <div className="relative aspect-square w-full overflow-hidden bg-[#0A1628] lg:absolute lg:inset-0 lg:aspect-auto">
+          <Image
+            src={SIMULATOR_STILL.src}
+            alt={SIMULATOR_STILL.alt}
+            fill
+            priority
+            sizes="(max-width: 1024px) 22rem, 26rem"
+            className="object-cover object-[center_18%]"
+          />
+          <p className="absolute bottom-0 left-0 right-0 bg-[#0A0F1D]/75 px-2.5 py-1.5 text-xs text-[#94A3B8]">
+            Preview of the ESAT simulator
+          </p>
+        </div>
       </aside>
     </div>
   );
