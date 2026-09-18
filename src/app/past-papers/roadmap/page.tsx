@@ -62,7 +62,10 @@ import {
   countDisplayGroupCompletion,
   groupRoadmapPartsForDisplay,
 } from '@/lib/papers/roadmapDisplayGroups';
-import { takePendingCompareStart } from '@/lib/mockCompare/client';
+import {
+  setActiveMockCompare,
+  takePendingCompareStart,
+} from '@/lib/mockCompare/client';
 
 type StageCompletionEntry = {
   completed: number;
@@ -597,6 +600,12 @@ export default function PapersRoadmapPage() {
     const pending = takePendingCompareStart();
     if (!pending?.roadmapStart) return;
     compareStartHandledRef.current = true;
+    setActiveMockCompare({
+      roomId: pending.roomId,
+      participantId: pending.participantId,
+      displayName: pending.displayName,
+      paperLabel: pending.paperLabel,
+    });
     const stage = getRoadmapStagesSync().find(
       (s) => s.id === pending.roadmapStart!.stageId,
     );
