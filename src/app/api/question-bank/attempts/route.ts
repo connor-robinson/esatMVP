@@ -46,8 +46,12 @@ export async function POST(request: NextRequest) {
       session_id,
     } = body;
 
-    // Validate input
-    if (!question_id || !user_answer || typeof is_correct !== 'boolean') {
+    // Validate input. Empty user_answer is allowed (exam unanswered = incorrect).
+    if (
+      !question_id ||
+      typeof user_answer !== 'string' ||
+      typeof is_correct !== 'boolean'
+    ) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }

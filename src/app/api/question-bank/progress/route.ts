@@ -178,7 +178,9 @@ export async function GET(request: NextRequest) {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'private, max-age=120, stale-while-revalidate=300',
+          // Progress must reflect new attempts immediately (no browser/CDN freshness window).
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
+          Pragma: 'no-cache',
         },
       });
     }

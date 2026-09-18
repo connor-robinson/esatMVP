@@ -41,6 +41,9 @@ export function hookQuestionIdsForSubjects(
  * (shuffled, up to 10), then fills the rest from the bank with difficulty mix,
  * diagram/recency weighting, and no in-session duplicates of hook ids.
  *
+ * Used for free-tier / preview sessions. Paid New-pool sessions sample the full
+ * bank directly (no hook lead) so users do not keep seeing the same opening set.
+ *
  * Pass `eligibleHookIds` (e.g. ids still in the New-filtered pool) so attempted
  * hook questions are not re-injected ahead of unseen bank items.
  */

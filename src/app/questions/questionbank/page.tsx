@@ -40,6 +40,7 @@ import {
   createSessionId,
   deleteQuestionBankSession,
   inferUiDifficultiesFromQuestions,
+  persistQuestionBankAttempts,
   registerQuestionBankSession,
   subjectsLabelFromList,
 } from '@/lib/questionBank/sessionTracking';
@@ -542,18 +543,33 @@ export default function QuestionBankPage() {
       const summary = buildSessionSummary(attempts, labelForQuestionBankTag);
       setSessionAttemptLog(attempts);
 
-      if (session?.user && qbSessionId) {
-        try {
-          await ensureSessionRegistered();
-          await completeQuestionBankSession({
-            id: qbSessionId,
-            summary: summary as unknown as Record<string, unknown>,
-            questionCount: summary.totalQuestions,
-            correctCount: summary.correctCount,
-            totalTimeMs: summary.totalTimeMs,
-          });
-        } catch (err) {
-          console.error('[question-bank] Failed to persist session', err);
+      if (session?.user) {
+        // Exam mode never POSTs per answer; persist the full log so New-pool
+        // filtering and home progress stay in sync.
+        if (sessionPlayMode === 'exam' && attempts.length > 0) {
+          try {
+            await persistQuestionBankAttempts({
+              attempts,
+              sessionId: qbSessionId,
+            });
+          } catch (err) {
+            console.error('[question-bank] Failed to persist exam attempts', err);
+          }
+        }
+
+        if (qbSessionId) {
+          try {
+            await ensureSessionRegistered();
+            await completeQuestionBankSession({
+              id: qbSessionId,
+              summary: summary as unknown as Record<string, unknown>,
+              questionCount: summary.totalQuestions,
+              correctCount: summary.correctCount,
+              totalTimeMs: summary.totalTimeMs,
+            });
+          } catch (err) {
+            console.error('[question-bank] Failed to persist session', err);
+          }
         }
       }
 
@@ -1209,6 +1225,13 @@ export default function QuestionBankPage() {
               Math.min(config.count, uniquePool.length),
               mix,
             );
+          } else if (treatAsFullAccess) {
+            // Paid New-pool: skip fixed hook lead so sessions diversify immediately.
+            sessionQs = sampleSessionBankQuestions(
+              uniquePool,
+              config.count,
+              mix,
+            );
           } else {
             const hookQuestions = await resolveHookQuestionsForSubjects(
               subjectsResolved,
@@ -1293,7 +1316,15 @@ export default function QuestionBankPage() {
         setSessionStarting(false);
       }
     },
-    [filters.subject, filters.testType, router, updateCurrentQuestion, initializeTrackedSession, session?.user],
+    [
+      filters.subject,
+      filters.testType,
+      router,
+      updateCurrentQuestion,
+      initializeTrackedSession,
+      session?.user,
+      treatAsFullAccess,
+    ],
   );
 
   useEffect(() => {
@@ -1325,6 +1356,9 @@ export default function QuestionBankPage() {
 
     const bootHomeLaunch = () => {
       if (accessPending) return;
+      // Wait for auth hydration so New-pool filtering uses the real login state.
+      // Do not consume the launch key until session is defined (null or user).
+      if (session === undefined) return;
 
       const raw = sessionStorage.getItem(QUESTION_BANK_HOME_LAUNCH_KEY);
       if (!raw) return;
@@ -1395,7 +1429,7 @@ export default function QuestionBankPage() {
     return () => {
       window.removeEventListener(QUESTION_BANK_HOME_LAUNCH_EVENT, bootHomeLaunch);
     };
-  }, [handleStartSession, setFilters, accessPending, session?.user]);
+  }, [handleStartSession, setFilters, accessPending, session]);
 
   const handleNextQuestionInSession = async () => {
     if (sessionPlayMode === 'exam') {

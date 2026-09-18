@@ -263,7 +263,7 @@ export function QuestionBankHomeScreen() {
       // Paint from progress ASAP; prefs refine aggregate after without blocking the bar.
       const progressPromise = fetch(
         progressUrlSubjects(ALL_SUBJECT_KEYS, { perSubject: true }),
-        { credentials: "include" },
+        { credentials: "include", cache: "no-store" },
       );
       const prefsPromise = session?.user
         ? fetch("/api/profile/preferences", { credentials: "include" })

@@ -5,6 +5,68 @@ import type {
   UiDifficultyLabel,
 } from '@/types/questionBank';
 import { resolveUiDifficulty } from '@/lib/questionBank/sessionStats';
+import { clearHomeProgressCache } from '@/lib/questionBank/homeProgressCache';
+
+export type PersistableQuestionBankAttempt = {
+  questionId: string;
+  userAnswer: string;
+  isCorrect: boolean;
+  timeSpentMs: number;
+  wasRevealed?: boolean;
+  usedHint?: boolean;
+  wrongAnswersBefore?: string[];
+};
+
+/**
+ * Persist attempt rows (e.g. exam mode, which does not save per-answer).
+ * Empty userAnswer is allowed for unanswered exam items.
+ */
+export async function persistQuestionBankAttempts(params: {
+  attempts: readonly PersistableQuestionBankAttempt[];
+  sessionId?: string | null;
+}): Promise<{ saved: number; failed: number }> {
+  if (params.attempts.length === 0) {
+    return { saved: 0, failed: 0 };
+  }
+
+  const results = await Promise.allSettled(
+    params.attempts.map(async (attempt) => {
+      const res = await fetch('/api/question-bank/attempts', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question_id: attempt.questionId,
+          user_answer: attempt.userAnswer,
+          is_correct: attempt.isCorrect,
+          time_spent_ms: attempt.timeSpentMs,
+          viewed_solution: false,
+          was_revealed: attempt.wasRevealed ?? false,
+          used_hint: attempt.usedHint ?? false,
+          wrong_answers_before: attempt.wrongAnswersBefore ?? [],
+          time_until_correct_ms: null,
+          session_id: params.sessionId ?? null,
+        }),
+      });
+      if (!res.ok) {
+        throw new Error(`attempt save failed: ${res.status}`);
+      }
+    }),
+  );
+
+  let saved = 0;
+  let failed = 0;
+  for (const result of results) {
+    if (result.status === 'fulfilled') saved += 1;
+    else failed += 1;
+  }
+
+  if (saved > 0) {
+    clearHomeProgressCache();
+  }
+
+  return { saved, failed };
+}
 
 export function createSessionId(): string {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
