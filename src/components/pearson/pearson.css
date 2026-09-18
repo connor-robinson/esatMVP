@@ -48,6 +48,7 @@ html.pearson-exam-active body {
   --pearson-font-size-footer: 18px;
 
   position: fixed;
+  color-scheme: light;
   inset: 0;
   z-index: 50;
   display: flex;
@@ -234,12 +235,30 @@ html.pearson-exam-active body {
   border-bottom-color: transparent;
 }
 
+.pearson-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
 .pearson-header-title {
   font-weight: 400;
   font-size: var(--pearson-font-size-header);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 0 0 auto;
+}
+
+.pearson-header-after-title {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  flex: 0 1 auto;
+  color-scheme: light;
 }
 
 /* Official ESAT specimen bitmap icons (user screenshot crops in public/pearson/icons). */

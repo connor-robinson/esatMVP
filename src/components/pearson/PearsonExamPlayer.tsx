@@ -70,9 +70,14 @@ export interface PearsonExamPlayerProps {
   onRestBreakChange?: (active: boolean) => void;
   /** Blue specimen chrome, or purple for question-bank exam mode. */
   chromeVariant?: PearsonChromeVariant;
-  /** Optional content under the current question (e.g. Mistakes history). */
+  /** Optional content under the current question. */
   renderBelowQuestion?: (ctx: {
     question: Question;
+    index: number;
+  }) => ReactNode;
+  /** Optional content to the right of the exam title in the header bar. */
+  renderHeaderAfterTitle?: (ctx: {
+    question: Question | null;
     index: number;
   }) => ReactNode;
 }
@@ -102,6 +107,7 @@ export function PearsonExamPlayer({
   onRestBreakChange,
   chromeVariant = "blue",
   renderBelowQuestion,
+  renderHeaderAfterTitle,
 }: PearsonExamPlayerProps) {
   const c = usePearsonExamController({
     mode,
@@ -179,6 +185,14 @@ export function PearsonExamPlayer({
             <>
               <PearsonHeader
                 examTitle={examTitle}
+                afterTitle={
+                  renderHeaderAfterTitle
+                    ? renderHeaderAfterTitle({
+                        question: c.currentQuestion,
+                        index: c.currentQuestionIndex,
+                      })
+                    : null
+                }
                 showTimer={c.showTimer}
                 remainingLabel={c.remainingLabel}
                 timerHidden={c.timerHidden}

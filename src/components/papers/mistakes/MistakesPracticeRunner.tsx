@@ -98,9 +98,9 @@ export function MistakesPracticeRunner({
 
   if (finished) {
     return (
-      <div className="mx-auto w-full max-w-[720px] rounded-[4px] bg-surface p-8 text-center sm:p-10">
-        <h2 className="text-xl font-semibold text-text">Session complete</h2>
-        <p className="mt-2 text-sm text-text-muted">
+      <div className="mx-auto w-full max-w-[720px] rounded-[4px] bg-white p-8 text-center text-black sm:p-10">
+        <h2 className="text-xl font-semibold">Session complete</h2>
+        <p className="mt-2 text-sm text-neutral-600">
           {score
             ? `${score.correct}/${score.total} correct. Unreviewed questions stay out until that pool is empty.`
             : "Session saved."}
@@ -108,7 +108,7 @@ export function MistakesPracticeRunner({
         <button
           type="button"
           onClick={onExit}
-          className="mt-8 inline-flex items-center gap-2 rounded-organic-lg bg-secondary px-5 py-3 text-sm font-semibold text-background hover:opacity-90"
+          className="mt-8 inline-flex items-center gap-2 rounded-[4px] bg-[#5c3d63] px-5 py-3 text-sm font-semibold text-white hover:opacity-90"
         >
           Back to settings
           <ArrowRight className="h-4 w-4" />
@@ -132,17 +132,15 @@ export function MistakesPracticeRunner({
       onModuleComplete={(result) => {
         void handleModuleComplete(result);
       }}
-      renderBelowQuestion={({ index }) => {
+      renderHeaderAfterTitle={({ index }) => {
         const payload = questions[index];
         if (!payload) return null;
         return (
-          <div className="mt-4 px-1">
-            <MistakeQuestionHistoryStrip events={payload.history} />
-            <p className="mt-2 text-xs text-text-muted">
-              {payload.examName} {payload.paperVariant || payload.paperName} · Q
-              {payload.questionNumber} · Wrong {payload.timesWrong}x
-            </p>
-          </div>
+          <MistakeQuestionHistoryStrip
+            events={payload.history}
+            variant="header"
+            title={`${payload.examName} ${payload.paperVariant || payload.paperName} · Q${payload.questionNumber} · Wrong ${payload.timesWrong}x`}
+          />
         );
       }}
     />

@@ -1,9 +1,12 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { QuestionCounterIcon, TimerClockIcon } from "./PearsonIcons";
 
 interface PearsonHeaderProps {
   examTitle: string;
+  /** Optional content immediately to the right of the exam title. */
+  afterTitle?: ReactNode;
   showTimer?: boolean;
   remainingLabel?: string;
   timerHidden?: boolean;
@@ -21,6 +24,7 @@ interface PearsonHeaderProps {
 
 export function PearsonHeader({
   examTitle,
+  afterTitle,
   showTimer = false,
   remainingLabel = "",
   timerHidden = false,
@@ -43,7 +47,12 @@ export function PearsonHeader({
 
   return (
     <header className={headerClass}>
-      <div className="pearson-header-title">{examTitle}</div>
+      <div className="pearson-header-left">
+        <div className="pearson-header-title">{examTitle}</div>
+        {afterTitle ? (
+          <div className="pearson-header-after-title">{afterTitle}</div>
+        ) : null}
+      </div>
       {showRight ? (
         <div className="pearson-header-right">
           {showRestBreakControl ? (
