@@ -13,12 +13,20 @@ const SIMULATOR_STILL = {
 const PAGE_TITLE = "ESAT CAMP Free Mock Tests";
 const EWAN = FOUNDERS.ewan;
 
+const STATS = [
+  { label: "Questions", value: "27" },
+  { label: "Minutes", value: "40" },
+  { label: "Difficulty", value: "Slightly harder than NSAA" },
+  { label: "Focus", value: "Stamina" },
+] as const;
+
 type EsatMockTestsIntroBannerProps = {
   className?: string;
 };
 
 /**
- * Above-the-fold hero: title + intro beside the simulator still.
+ * Above-the-fold hero: title, Ewan note, and stats beside a square simulator preview.
+ * The preview stretches to match the full intro column height (above the module pills).
  */
 export function EsatMockTestsIntroBanner({
   className,
@@ -26,30 +34,23 @@ export function EsatMockTestsIntroBanner({
   return (
     <div
       className={cn(
-        "grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(13rem,17rem)] lg:gap-6 xl:gap-8",
+        "grid items-stretch gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(17rem,24rem)] lg:gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(20rem,28rem)] xl:gap-8",
         className,
       )}
     >
-      <div className="min-w-0 space-y-4">
+      <div className="flex min-w-0 flex-col gap-3.5">
         <h1 className="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl lg:text-[2rem] lg:leading-tight">
           {PAGE_TITLE}
         </h1>
 
-        <p className="text-[0.95rem] leading-relaxed text-[#CBD5E1] sm:text-base">
-          Our past students have reported that the ESAT felt much harder and
-          more time-pressured than past papers, so we have worked with them,
-          and alongside our tutors&apos; own personal experiences, to curate
-          these mocks to prep for the ESAT.
-        </p>
-
-        <aside className="bg-white/[0.04] px-4 py-4 sm:px-5">
-          <div className="flex items-center gap-3">
-            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-[#161D2F]">
+        <aside className="bg-white/[0.04] px-3.5 py-3.5 sm:px-4">
+          <div className="flex items-center gap-2.5">
+            <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full bg-[#161D2F]">
               <Image
                 src={EWAN.imageSrc}
                 alt={EWAN.imageAlt}
                 fill
-                sizes="40px"
+                sizes="32px"
                 className="object-cover"
                 style={{
                   objectPosition: EWAN.imagePosition,
@@ -57,89 +58,72 @@ export function EsatMockTestsIntroBanner({
                 }}
               />
             </div>
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-white">
-                <Link
-                  href={`${ABOUT_PATH}#${EWAN.id}`}
-                  className="transition-colors hover:text-[#93C5FD]"
-                >
-                  {EWAN.name}
-                </Link>
-              </p>
-              <p className="text-xs text-[#64748B]">{EWAN.credential}</p>
-            </div>
+            <p className="text-sm font-semibold text-white">
+              <Link
+                href={`${ABOUT_PATH}#${EWAN.id}`}
+                className="transition-colors hover:text-[#93C5FD]"
+              >
+                {EWAN.name}
+              </Link>
+            </p>
           </div>
-          <blockquote className="mt-3 text-sm leading-relaxed text-[#CBD5E1] sm:text-[0.95rem]">
-            We&apos;ve written some questions with more information to process
-            than a typical item,{" "}
-            <span className="font-medium text-white underline decoration-[#3B82F6] decoration-2 underline-offset-[5px]">
-              to build your stamina for the ESAT
-            </span>
-            .
+          <blockquote className="mt-2.5 space-y-2 text-sm leading-snug text-[#CBD5E1] sm:leading-relaxed">
+            <p>
+              Our past students have reported that the ESAT felt much harder and
+              more time-pressured than past papers, so we have worked with them,
+              and alongside our tutors&apos; own personal experiences, to curate
+              these mocks to prep for the ESAT.
+            </p>
+            <p>
+              We&apos;ve written some questions with more information to process
+              than a typical item,{" "}
+              <span className="font-medium text-white underline decoration-[#3B82F6] decoration-2 underline-offset-[5px]">
+                to build your stamina for the ESAT
+              </span>
+              .
+            </p>
           </blockquote>
         </aside>
 
         <div>
           <p className="text-sm font-semibold text-white">
-            Some stats about this paper:
+            Some stats about this paper
           </p>
-          <dl className="mt-2.5 flex flex-wrap gap-2 sm:gap-3">
-            <div className="rounded-lg bg-white/[0.06] px-3 py-2">
-              <dt className="text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-[#64748B]">
-                Questions
-              </dt>
-              <dd className="mt-0.5 text-sm font-semibold tabular-nums text-white">
-                27
-              </dd>
-            </div>
-            <div className="rounded-lg bg-white/[0.06] px-3 py-2">
-              <dt className="text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-[#64748B]">
-                Minutes
-              </dt>
-              <dd className="mt-0.5 text-sm font-semibold tabular-nums text-white">
-                40
-              </dd>
-            </div>
-            <div className="rounded-lg bg-white/[0.06] px-3 py-2">
-              <dt className="text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-[#64748B]">
-                Difficulty
-              </dt>
-              <dd className="mt-0.5 text-sm font-semibold text-white">
-                Slightly harder than NSAA
-              </dd>
-            </div>
-            <div className="rounded-lg bg-white/[0.06] px-3 py-2">
-              <dt className="text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-[#64748B]">
-                Focus
-              </dt>
-              <dd className="mt-0.5 text-sm font-semibold text-white">
-                Stamina
-              </dd>
-            </div>
+          <dl className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {STATS.map((stat) => (
+              <div
+                key={stat.label}
+                className="bg-white/[0.06] px-3 py-2.5"
+              >
+                <dt className="text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-[#64748B]">
+                  {stat.label}
+                </dt>
+                <dd className="mt-1 text-sm font-semibold leading-snug text-white">
+                  {stat.value}
+                </dd>
+              </div>
+            ))}
           </dl>
         </div>
       </div>
 
       <aside
         aria-label="ESAT simulator preview"
-        className="mx-auto w-full max-w-[17rem] shrink-0 lg:mx-0 lg:max-w-none"
+        className="relative mx-auto w-full max-w-[20rem] lg:mx-0 lg:max-w-none lg:min-h-full"
       >
-        <div className="overflow-hidden rounded-md bg-[#0F1628] shadow-[0_16px_36px_-14px_rgba(0,0,0,0.7)]">
-          <div className="relative aspect-[16/10] overflow-hidden bg-[#0A1628]">
-            <Image
-              src={SIMULATOR_STILL.src}
-              alt={SIMULATOR_STILL.alt}
-              width={SIMULATOR_STILL.width}
-              height={SIMULATOR_STILL.height}
-              priority
-              sizes="(max-width: 1024px) 17rem, 17rem"
-              className="h-full w-full object-cover object-[center_18%]"
-            />
-          </div>
+        <div className="relative aspect-square w-full overflow-hidden bg-[#0A1628] lg:absolute lg:inset-0 lg:aspect-auto">
+          <Image
+            src={SIMULATOR_STILL.src}
+            alt={SIMULATOR_STILL.alt}
+            fill
+            priority
+            sizes="(max-width: 1024px) 20rem, 28rem"
+            className="object-cover object-[center_18%]"
+          />
+          <p className="absolute bottom-0 left-0 right-0 bg-[#0A0F1D]/75 px-2.5 py-1.5 text-xs text-[#94A3B8]">
+            Preview of the ESAT simulator
+          </p>
         </div>
-        <p className="mt-2 text-center text-xs text-[#64748B] lg:text-left">
-          Preview of the ESAT simulator
-        </p>
       </aside>
     </div>
   );

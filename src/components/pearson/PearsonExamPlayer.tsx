@@ -11,6 +11,7 @@
 "use client";
 
 import { useMemo } from "react";
+import type { ReactNode } from "react";
 import type { Question } from "@/types/papers";
 import type { ExamMode,
   ModuleTransitionConfig,
@@ -69,6 +70,11 @@ export interface PearsonExamPlayerProps {
   onRestBreakChange?: (active: boolean) => void;
   /** Blue specimen chrome, or purple for question-bank exam mode. */
   chromeVariant?: PearsonChromeVariant;
+  /** Optional content under the current question (e.g. Mistakes history). */
+  renderBelowQuestion?: (ctx: {
+    question: Question;
+    index: number;
+  }) => ReactNode;
 }
 
 export function PearsonExamPlayer({
@@ -95,6 +101,7 @@ export function PearsonExamPlayer({
   restBreaksEnabled = false,
   onRestBreakChange,
   chromeVariant = "blue",
+  renderBelowQuestion,
 }: PearsonExamPlayerProps) {
   const c = usePearsonExamController({
     mode,
@@ -225,6 +232,12 @@ export function PearsonExamPlayer({
                   onSelect={c.selectAnswer}
                   disabled={c.moduleLocked}
                 />
+                {renderBelowQuestion
+                  ? renderBelowQuestion({
+                      question: c.currentQuestion,
+                      index: c.currentQuestionIndex,
+                    })
+                  : null}
               </PearsonQuestionViewport>
             ) : null}
 
