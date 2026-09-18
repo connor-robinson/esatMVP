@@ -412,6 +412,7 @@ html, body {
 .display-math .katex-display { margin: 0; }
 .stem figure, .stem .diagram, .option-text figure, .option-text .diagram {
   display: block; margin: 2.5mm auto; max-width: 84mm; text-align: center;
+  background: transparent;
 }
 /* Diagram images only - never restyle KaTeX sqrt / stretchy SVGs. */
 .stem figure img, .stem figure > svg, .stem .diagram img, .stem .diagram > svg,
@@ -419,8 +420,7 @@ html, body {
 .option-text .diagram img, .option-text .diagram > svg,
 .diagram img, .diagram > svg {
   display: block; margin: 0 auto; max-width: 84mm; max-height: 64mm; width: auto; height: auto;
-  /* Force print-black diagrams (source assets are often gray). */
-  filter: grayscale(1) contrast(1.55) brightness(0.72);
+  background: transparent;
 }
 /* KaTeX default size is 1.21em; 0.95em optically matches Arial body text. */
 .katex {
@@ -453,44 +453,37 @@ html, body {
 .katex .minner {
   font-family: Arial, Helvetica, sans-serif !important;
 }
-/* Fill-only: stroking KaTeX stretchy paths splits radical from vinculum. */
+/* Arial substitution breaks KaTeX sqrt metrics; we rebuild surds in JS. */
 .katex svg {
   fill: currentColor;
   stroke: none !important;
-  max-width: none !important;
-  max-height: none !important;
-  margin: 0;
-  display: block;
 }
-.katex .hide-tail {
-  overflow: hidden;
-  max-width: none;
-}
-/* PDF-safe square roots: one stretched SVG (hook + bar) over the radicand. */
-.css-sqrt {
-  position: relative;
+.pdf-sqrt {
   display: inline-block;
-  white-space: nowrap;
-  vertical-align: baseline;
-  padding: 0.08em 0.12em 0.02em 0.5em;
-  line-height: 1.12;
+  position: relative;
+  vertical-align: middle;
+  line-height: 1;
+  margin: 0 0.08em 0 0.12em;
 }
-.css-sqrt-sym {
+.pdf-sqrt > img {
   position: absolute;
   left: 0;
   top: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: fill;
-  pointer-events: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: block;
   max-width: none !important;
   max-height: none !important;
-  margin: 0;
+  background: transparent !important;
+  filter: none !important;
+  pointer-events: none;
 }
-.css-sqrt-inner {
+.pdf-sqrt-inner {
   position: relative;
-  z-index: 1;
+  display: inline-block;
   line-height: 1.15;
+  white-space: nowrap;
 }
 .md-table-wrap { margin: 3mm 0 4mm; overflow: visible; }
 .md-table {
@@ -728,16 +721,46 @@ function buildAnswerKeyHtml(paper: PdfPaper): string {
 </body></html>`;
 }
 
+/** Fetch remote diagram images and embed as data URIs so canvas can rewrite pixels. */
+async function inlineRemoteImages(html: string): Promise<string> {
+  const re = /(<img\b[^>]*?\bsrc=")(https?:\/\/[^"]+)(")/gi;
+  const urls = new Set<string>();
+  for (const match of html.matchAll(re)) {
+    urls.add(match[2]!);
+  }
+  if (urls.size === 0) return html;
+
+  const map = new Map<string, string>();
+  await Promise.all(
+    [...urls].map(async (url) => {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) return;
+        const buf = Buffer.from(await res.arrayBuffer());
+        const mime = (res.headers.get("content-type") || "image/png").split(";")[0];
+        map.set(url, `data:${mime};base64,${buf.toString("base64")}`);
+      } catch {
+        // Keep original URL; CSS white background still applies.
+      }
+    }),
+  );
+
+  return html.replace(re, (_full, pre: string, url: string, post: string) => {
+    return `${pre}${map.get(url) ?? url}${post}`;
+  });
+}
+
 async function blackenDiagramImagesInPage(
   page: Awaited<ReturnType<Awaited<ReturnType<typeof chromium.launch>>["newPage"]>>,
 ): Promise<void> {
   // String form avoids tsx/esbuild injecting __name into the browser realm.
+  // Gray diagram plates → transparent; ink → opaque black.
   await page.evaluate(`(async () => {
     const imgs = Array.from(
       document.querySelectorAll(
-        ".stem figure img, .stem .diagram img, .option-text figure img, .option-text .diagram img, .diagram img",
+        ".stem img, .option-text img, .diagram img, figure img",
       ),
-    );
+    ).filter((img) => !img.closest(".pdf-sqrt") && !img.classList.contains("pdf-sqrt-glyph"));
     await Promise.all(
       imgs.map(
         (img) =>
@@ -753,30 +776,53 @@ async function blackenDiagramImagesInPage(
                 const canvas = document.createElement("canvas");
                 canvas.width = w;
                 canvas.height = h;
-                const ctx = canvas.getContext("2d");
+                const ctx = canvas.getContext("2d", { willReadFrequently: true });
                 if (!ctx) {
                   resolve();
                   return;
                 }
+                ctx.clearRect(0, 0, w, h);
                 ctx.drawImage(img, 0, 0, w, h);
                 const data = ctx.getImageData(0, 0, w, h);
                 const px = data.data;
+                const sample = (x, y) => {
+                  const i = (y * w + x) * 4;
+                  return 0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2];
+                };
+                const corners = [
+                  sample(0, 0),
+                  sample(w - 1, 0),
+                  sample(0, h - 1),
+                  sample(w - 1, h - 1),
+                ].sort((a, b) => a - b);
+                const bg = corners[1];
+                // Anything near the plate luminance (or lighter) → transparent.
+                const inkCut = Math.min(bg - 24, 160);
                 for (let i = 0; i < px.length; i += 4) {
                   const a = px[i + 3];
-                  if (a < 8) continue;
+                  if (a < 8) {
+                    px[i] = 0; px[i + 1] = 0; px[i + 2] = 0; px[i + 3] = 0;
+                    continue;
+                  }
                   const y =
                     0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2];
-                  const v = y > 210 ? 255 : y < 170 ? 0 : Math.round(y * 0.35);
-                  px[i] = v;
-                  px[i + 1] = v;
-                  px[i + 2] = v;
+                  if (y <= inkCut) {
+                    px[i] = 0;
+                    px[i + 1] = 0;
+                    px[i + 2] = 0;
+                    px[i + 3] = 255;
+                  } else {
+                    px[i] = 0; px[i + 1] = 0; px[i + 2] = 0; px[i + 3] = 0;
+                  }
                 }
                 ctx.putImageData(data, 0, 0);
                 img.src = canvas.toDataURL("image/png");
+                img.style.background = "transparent";
+                img.style.filter = "none";
               } catch (_) {}
               resolve();
             };
-            if (img.complete) run();
+            if (img.complete && img.naturalWidth) run();
             else img.addEventListener("load", run, { once: true });
           }),
       ),
@@ -785,47 +831,99 @@ async function blackenDiagramImagesInPage(
 }
 
 /**
- * Replace KaTeX sqrt SVG with one stretched <img> covering hook + vinculum.
- * object-fit:fill keeps the bar joined to the hook across any radicand width.
+ * Rebuild KaTeX sqrts after Arial substitution. Chromium PDF splits SVG
+ * radical paths, so draw hook+vinculum on a canvas and embed as PNG.
  */
 async function fixKatexSqrtsInPage(
   page: Awaited<ReturnType<Awaited<ReturnType<typeof chromium.launch>>["newPage"]>>,
 ): Promise<void> {
-  await page.evaluate(() => {
-    // Hook ends at (28, 6); bar runs from there to the right edge.
-    const radicalSvg =
-      "data:image/svg+xml;charset=utf-8," +
-      encodeURIComponent(
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" preserveAspectRatio="none">' +
-          '<path d="M3 23 L11 35 L27 9 H117" fill="none" stroke="#000" ' +
-          'stroke-width="2.4" stroke-linecap="square" stroke-linejoin="miter"/>' +
-          "</svg>",
-      );
-
-    document.querySelectorAll(".katex .mord.sqrt").forEach((sqrtEl) => {
+  await page.evaluate(`(() => {
+    const nodes = Array.from(document.querySelectorAll(".katex .mord.sqrt"));
+    nodes.sort(
+      (a, b) =>
+        b.querySelectorAll(".mord.sqrt").length -
+        a.querySelectorAll(".mord.sqrt").length,
+    );
+    nodes.forEach((sqrtEl) => {
+      if (!sqrtEl.isConnected) return;
       const radicand = sqrtEl.querySelector(".svg-align > .mord");
       if (!radicand) return;
       const content =
         radicand.querySelector(":scope > .mord") || radicand;
+
       const wrap = document.createElement("span");
-      wrap.className = "css-sqrt";
-      const img = document.createElement("img");
-      img.className = "css-sqrt-sym";
-      img.src = radicalSvg;
-      img.alt = "";
-      img.setAttribute("aria-hidden", "true");
+      wrap.className = "pdf-sqrt";
       const inner = document.createElement("span");
-      inner.className = "css-sqrt-inner";
+      inner.className = "pdf-sqrt-inner";
       inner.innerHTML = content.innerHTML;
-      inner.querySelectorAll<HTMLElement>("[style]").forEach((el) => {
+      inner.querySelectorAll("[style]").forEach((el) => {
         el.style.paddingLeft = "0";
         el.style.marginLeft = "0";
       });
-      wrap.appendChild(img);
+      wrap.style.visibility = "hidden";
       wrap.appendChild(inner);
       sqrtEl.replaceWith(wrap);
+
+      const fs =
+        parseFloat(window.getComputedStyle(inner).fontSize) || 14;
+      const hookW = Math.max(11, fs * 0.82);
+      const padR = Math.max(2, fs * 0.12);
+      const barT = Math.max(1.9, fs * 0.11);
+      const gap = Math.max(1, fs * 0.05);
+      const cw = Math.max(inner.offsetWidth, fs * 0.4);
+      const ch = Math.max(inner.offsetHeight, fs * 0.95);
+      const totalW = Math.ceil(hookW + cw + padR);
+      const totalH = Math.ceil(barT + gap + ch);
+
+      inner.style.paddingLeft = hookW + "px";
+      inner.style.paddingTop = barT + gap + "px";
+      inner.style.paddingRight = padR + "px";
+      wrap.style.width = totalW + "px";
+      wrap.style.height = totalH + "px";
+      wrap.style.visibility = "visible";
+
+      const scale = 4;
+      const canvas = document.createElement("canvas");
+      canvas.width = totalW * scale;
+      canvas.height = totalH * scale;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      ctx.scale(scale, scale);
+      ctx.imageSmoothingEnabled = false;
+      ctx.strokeStyle = "#000000";
+      ctx.fillStyle = "#000000";
+      const strokeW = Math.max(1.7, barT * 0.95);
+      ctx.lineWidth = strokeW;
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      const yBarMid = barT / 2;
+      const yTick = Math.min(totalH * 0.55, totalH - strokeW);
+      const yBot = totalH - strokeW * 0.55;
+      const xBar0 = hookW * 0.72;
+      // Solid vinculum overlaps the check tip so the join cannot open.
+      ctx.fillRect(xBar0, 0, totalW - xBar0 - 0.5, barT);
+      ctx.beginPath();
+      ctx.moveTo(strokeW * 0.4, yTick);
+      ctx.lineTo(hookW * 0.28, yTick);
+      ctx.lineTo(hookW * 0.5, yBot);
+      ctx.lineTo(xBar0 + barT * 0.9, yBarMid);
+      ctx.stroke();
+
+      const img = document.createElement("img");
+      img.className = "pdf-sqrt-glyph";
+      img.src = canvas.toDataURL("image/png");
+      img.alt = "";
+      img.width = totalW;
+      img.height = totalH;
+      img.style.cssText =
+        "position:absolute;left:0;top:0;width:" +
+        totalW +
+        "px;height:" +
+        totalH +
+        "px;margin:0;padding:0;border:0;display:block;pointer-events:none;background:transparent;";
+      wrap.insertBefore(img, inner);
     });
-  });
+  })()`);
 }
 
 async function htmlToPdf(
@@ -835,7 +933,8 @@ async function htmlToPdf(
 ): Promise<void> {
   const page = await browser.newPage();
   try {
-    await page.setContent(html, { waitUntil: "networkidle" });
+    const withImages = await inlineRemoteImages(html);
+    await page.setContent(withImages, { waitUntil: "networkidle" });
     await page.emulateMedia({ media: "print" });
     await blackenDiagramImagesInPage(page);
     await fixKatexSqrtsInPage(page);
