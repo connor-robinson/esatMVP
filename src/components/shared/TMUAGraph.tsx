@@ -6,7 +6,7 @@
 
 "use client";
 
-import { useMemo } from "react";
+import { useId, useMemo } from "react";
 import { cn } from "@/lib/utils";
 
 // ============================================================================
@@ -662,9 +662,23 @@ function computeIntersection(
 interface TMUAGraphProps {
   spec: TMUAGraphSpecV2;
   className?: string;
+  /**
+   * Stroke/label colour. Default black for white paper / ESAT light chrome.
+   * Pass "white" only on explicitly dark backgrounds.
+   */
+  ink?: "black" | "white";
 }
 
-export function TMUAGraph({ spec, className }: TMUAGraphProps) {
+export function TMUAGraph({
+  spec,
+  className,
+  ink = "black",
+}: TMUAGraphProps) {
+  const inkColor = ink === "white" ? "#ffffff" : "#111111";
+  const uid = useId().replace(/:/g, "");
+  const arrowXId = `tmua-arrow-x-${uid}`;
+  const arrowYId = `tmua-arrow-y-${uid}`;
+  const clipId = `tmua-plot-clip-${uid}`;
   // Create object map for quick lookup
   const objectsMap = useMemo(() => {
     const map = new Map<string, GraphObject>();
@@ -907,7 +921,7 @@ export function TMUAGraph({ spec, className }: TMUAGraphProps) {
         {/* Arrowhead definitions */}
         <defs>
           <marker
-            id="arrowhead-x"
+            id={arrowXId}
             markerWidth={ARROWHEAD_SIZE}
             markerHeight={ARROWHEAD_SIZE}
             refX={ARROWHEAD_SIZE}
@@ -917,13 +931,13 @@ export function TMUAGraph({ spec, className }: TMUAGraphProps) {
           >
             <path
               d={`M 0,0 L ${ARROWHEAD_SIZE},${ARROWHEAD_SIZE / 2} L 0,${ARROWHEAD_SIZE} Z`}
-              fill="white"
+              fill={inkColor}
               fillOpacity="1"
               stroke="none"
             />
           </marker>
           <marker
-            id="arrowhead-y"
+            id={arrowYId}
             markerWidth={ARROWHEAD_SIZE}
             markerHeight={ARROWHEAD_SIZE}
             refX={ARROWHEAD_SIZE / 2}
@@ -933,12 +947,12 @@ export function TMUAGraph({ spec, className }: TMUAGraphProps) {
           >
             <path
               d={`M ${ARROWHEAD_SIZE / 2},0 L 0,${ARROWHEAD_SIZE} L ${ARROWHEAD_SIZE},${ARROWHEAD_SIZE} Z`}
-              fill="white"
+              fill={inkColor}
               fillOpacity="1"
               stroke="none"
             />
           </marker>
-          <clipPath id="plotClip">
+          <clipPath id={clipId}>
             <rect x={PAD_LEFT} y={PAD_TOP} width={PLOT_WIDTH} height={PLOT_HEIGHT} />
           </clipPath>
         </defs>
@@ -948,9 +962,9 @@ export function TMUAGraph({ spec, className }: TMUAGraphProps) {
           <path
             key={fill.id}
             d={fill.pathData}
-            fill="white"
+            fill={inkColor}
             fillOpacity={fill.opacity}
-            clipPath="url(#plotClip)"
+            clipPath={`url(#${clipId})`}
           />
         ))}
 
@@ -960,23 +974,23 @@ export function TMUAGraph({ spec, className }: TMUAGraphProps) {
             {xAxisPath && (
               <path
                 d={xAxisPath}
-                stroke="white"
+                stroke={inkColor}
                 strokeOpacity={AXIS_STROKE_OPACITY}
                 strokeWidth={AXIS_STROKE_WIDTH}
                 strokeLinecap="butt"
                 fill="none"
-                markerEnd={spec.axes.arrowheads ? "url(#arrowhead-x)" : undefined}
+                markerEnd={spec.axes.arrowheads ? `url(#${arrowXId})` : undefined}
               />
             )}
             {yAxisPath && (
               <path
                 d={yAxisPath}
-                stroke="white"
+                stroke={inkColor}
                 strokeOpacity={AXIS_STROKE_OPACITY}
                 strokeWidth={AXIS_STROKE_WIDTH}
                 strokeLinecap="butt"
                 fill="none"
-                markerEnd={spec.axes.arrowheads ? "url(#arrowhead-y)" : undefined}
+                markerEnd={spec.axes.arrowheads ? `url(#${arrowYId})` : undefined}
               />
             )}
           </>
@@ -987,13 +1001,13 @@ export function TMUAGraph({ spec, className }: TMUAGraphProps) {
           <path
             key={id}
             d={pathData}
-            stroke="white"
+            stroke={inkColor}
             strokeOpacity={CURVE_STROKE_OPACITY}
             strokeWidth={CURVE_STROKE_WIDTH}
             strokeLinecap="round"
             strokeLinejoin="round"
             fill="none"
-            clipPath="url(#plotClip)"
+            clipPath={`url(#${clipId})`}
           />
         ))}
 
@@ -1029,13 +1043,13 @@ export function TMUAGraph({ spec, className }: TMUAGraphProps) {
               <path
                 key={line.id}
                 d={pathData}
-                stroke="white"
+                stroke={inkColor}
                 strokeOpacity={line.style?.strokeOpacity ?? AXIS_STROKE_OPACITY}
                 strokeWidth={line.style?.strokeWidth ?? AXIS_STROKE_WIDTH}
                 strokeDasharray={line.style?.dashed ? "5,5" : undefined}
                 strokeLinecap="butt"
                 fill="none"
-                clipPath="url(#plotClip)"
+                clipPath={`url(#${clipId})`}
               />
             );
           })}
@@ -1052,13 +1066,13 @@ export function TMUAGraph({ spec, className }: TMUAGraphProps) {
               <path
                 key={segment.id}
                 d={pathData}
-                stroke="white"
+                stroke={inkColor}
                 strokeOpacity={segment.style?.strokeOpacity ?? CURVE_STROKE_OPACITY}
                 strokeWidth={segment.style?.strokeWidth ?? CURVE_STROKE_WIDTH}
                 strokeDasharray={segment.style?.dashed ? "5,5" : undefined}
                 strokeLinecap="round"
                 fill="none"
-                clipPath="url(#plotClip)"
+                clipPath={`url(#${clipId})`}
               />
             );
           })}
@@ -1082,12 +1096,12 @@ export function TMUAGraph({ spec, className }: TMUAGraphProps) {
                 cx={cx}
                 cy={cy}
                 r={r}
-                stroke="white"
+                stroke={inkColor}
                 strokeOpacity={circle.style?.strokeOpacity ?? CURVE_STROKE_OPACITY}
                 strokeWidth={circle.style?.strokeWidth ?? CURVE_STROKE_WIDTH}
-                fill={circle.style?.fill ? "white" : "none"}
+                fill={circle.style?.fill ? inkColor : "none"}
                 fillOpacity={circle.style?.fillOpacity ?? 0.1}
-                clipPath="url(#plotClip)"
+                clipPath={`url(#${clipId})`}
               />
             );
           })}
@@ -1097,7 +1111,7 @@ export function TMUAGraph({ spec, className }: TMUAGraphProps) {
           <text
             x={VIEWBOX_WIDTH - PAD_RIGHT + LABEL_ARROW_SPACING + (spec.axes.xLabel.dx || 0)}
             y={transform.toSVGY(0) + (spec.axes.xLabel.dy || 0)}
-            fill="white"
+            fill={inkColor}
             fillOpacity={CURVE_STROKE_OPACITY}
             fontSize={FONT_SIZE_LABELS}
             fontStyle={spec.axes.xLabel.italic ? "italic" : "normal"}
@@ -1112,7 +1126,7 @@ export function TMUAGraph({ spec, className }: TMUAGraphProps) {
           <text
             x={transform.toSVGX(0) + (spec.axes.yLabel.dx || 0)}
             y={PAD_TOP - ARROWHEAD_SIZE - LABEL_ARROW_SPACING + (spec.axes.yLabel.dy || 0)}
-            fill="white"
+            fill={inkColor}
             fillOpacity={CURVE_STROKE_OPACITY}
             fontSize={FONT_SIZE_LABELS}
             fontStyle={spec.axes.yLabel.italic ? "italic" : "normal"}
@@ -1136,7 +1150,7 @@ export function TMUAGraph({ spec, className }: TMUAGraphProps) {
                   y1={y - 4}
                   x2={x}
                   y2={y + 4}
-                  stroke="white"
+                  stroke={inkColor}
                   strokeOpacity={AXIS_STROKE_OPACITY}
                   strokeWidth={AXIS_STROKE_WIDTH}
                 />
@@ -1144,7 +1158,7 @@ export function TMUAGraph({ spec, className }: TMUAGraphProps) {
               <text
                 x={x + (mark.label.dx || 0)}
                 y={y + 18 + (mark.label.dy || 0)}
-                fill="white"
+                fill={inkColor}
                 fillOpacity={CURVE_STROKE_OPACITY}
                 fontSize={FONT_SIZE_MARKS}
                 fontStyle={mark.label.italic ? "italic" : "normal"}
@@ -1170,7 +1184,7 @@ export function TMUAGraph({ spec, className }: TMUAGraphProps) {
                   y1={y}
                   x2={x + 4}
                   y2={y}
-                  stroke="white"
+                  stroke={inkColor}
                   strokeOpacity={AXIS_STROKE_OPACITY}
                   strokeWidth={AXIS_STROKE_WIDTH}
                 />
@@ -1178,7 +1192,7 @@ export function TMUAGraph({ spec, className }: TMUAGraphProps) {
               <text
                 x={x - 18 + (mark.label.dx || 0)}
                 y={y + (mark.label.dy || 0)}
-                fill="white"
+                fill={inkColor}
                 fillOpacity={CURVE_STROKE_OPACITY}
                 fontSize={FONT_SIZE_MARKS}
                 fontStyle={mark.label.italic ? "italic" : "normal"}
@@ -1201,8 +1215,8 @@ export function TMUAGraph({ spec, className }: TMUAGraphProps) {
                 cx={x}
                 cy={y}
                 r={point.filled ? 4 : 3}
-                fill={point.filled ? "white" : "none"}
-                stroke="white"
+                fill={point.filled ? inkColor : "none"}
+                stroke={inkColor}
                 strokeWidth={2}
                 strokeOpacity={CURVE_STROKE_OPACITY}
               />
@@ -1210,7 +1224,7 @@ export function TMUAGraph({ spec, className }: TMUAGraphProps) {
                 <text
                   x={x + 8}
                   y={y - 8}
-                  fill="white"
+                  fill={inkColor}
                   fillOpacity={CURVE_STROKE_OPACITY}
                   fontSize={FONT_SIZE_MARKS}
                   fontStyle={point.label.italic ? "italic" : "normal"}
@@ -1234,7 +1248,7 @@ export function TMUAGraph({ spec, className }: TMUAGraphProps) {
               key={region.id}
               x={x}
               y={y}
-              fill="white"
+              fill={inkColor}
               fillOpacity={CURVE_STROKE_OPACITY}
               fontSize={FONT_SIZE_ANNOTATIONS}
               fontStyle={region.label.italic ? "italic" : "normal"}
@@ -1254,7 +1268,7 @@ export function TMUAGraph({ spec, className }: TMUAGraphProps) {
                 key={`annotation-${idx}`}
                 x={transform.toSVGX(annotation.x)}
                 y={transform.toSVGY(annotation.y)}
-                fill="white"
+                fill={inkColor}
                 fillOpacity={CURVE_STROKE_OPACITY}
                 fontSize={FONT_SIZE_ANNOTATIONS}
                 fontStyle={annotation.italic ? "italic" : "normal"}

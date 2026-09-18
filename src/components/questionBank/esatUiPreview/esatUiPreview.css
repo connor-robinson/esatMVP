@@ -68,8 +68,9 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   --eup-pad-y: 16px;
   --eup-qnum-size: var(--eup-font-size-content);
 
-  /* Must stay fixed. An inline position:relative override (rest-breaks, Sep 14)
-     pushed the footer Next/Submit off-screen with body overflow hidden. */
+  /* Must stay fixed for live sessions. An inline position:relative override
+     (rest-breaks, Sep 14) pushed the footer Next/Submit off-screen with body
+     overflow hidden. Mark/results review uses --embedded below. */
   position: fixed !important;
   inset: 0;
   width: 100%;
@@ -84,6 +85,55 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   font-size: var(--eup-font-size-ui);
   line-height: 1.4;
   -webkit-font-smoothing: antialiased;
+}
+
+/* In-page mark / finished review: question block only, not a full-screen shell.
+   Tall by default; question body scrolls when content (e.g. diagrams) overflows. */
+.esat-ui-preview-root.esat-ui-preview-root--embedded {
+  position: relative !important;
+  inset: auto;
+  z-index: auto;
+  width: 100%;
+  height: min(78vh, 44rem);
+  min-height: min(70vh, 36rem);
+  max-height: min(85vh, 52rem);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.esat-ui-preview-root--embedded .eup-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.esat-ui-preview-root--embedded .eup-viewport {
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* TMUA graphs use black ink on white paper — no dark plate. */
+.esat-ui-preview-root--embedded .tmua-graph-container {
+  margin: 0.75rem 0 1rem;
+  max-width: min(100%, 34rem);
+}
+
+.esat-ui-preview-root--embedded .tmua-graph-container .tmua-graph,
+.esat-ui-preview-root--embedded .tmua-graph-container svg {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.esat-ui-preview-root--embedded .qg-diagram-wrap,
+.esat-ui-preview-root--embedded .qg-diagram {
+  max-width: min(100%, 28rem);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Temporarily: dark mode tokens match light (toggle removed from live shell). */

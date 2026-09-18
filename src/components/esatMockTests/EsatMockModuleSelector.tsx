@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Clock3, FileText } from "lucide-react";
+import { Clock3, FileText, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   ESAT_MOCK_MODULES,
@@ -13,6 +13,7 @@ import {
   type EsatMockAttemptSummary,
   type EsatMockModuleId,
 } from "@/lib/esatMockTests/catalog";
+import { isCompareableMock } from "@/lib/mockCompare/catalogBridge";
 
 type EsatMockModuleSelectorProps = {
   /** Optional completion rows keyed by module id (logged-in only). */
@@ -194,10 +195,41 @@ export function EsatMockModuleSelector({
                       </span>
                     </div>
 
+                    {(slot.paperHref || slot.answerKeyHref) && (
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+                        {slot.paperHref ? (
+                          <a
+                            href={slot.paperHref}
+                            download
+                            className="font-medium text-[#93C5FD] transition-colors hover:text-white"
+                          >
+                            Paper PDF
+                          </a>
+                        ) : null}
+                        {slot.answerKeyHref ? (
+                          <a
+                            href={slot.answerKeyHref}
+                            download
+                            className="font-medium text-[#93C5FD] transition-colors hover:text-white"
+                          >
+                            Answers
+                          </a>
+                        ) : null}
+                      </div>
+                    )}
+
                     {slot.startHref ? (
                       <Link href={slot.startHref} className={actionClass}>
                         {actionLabel}
                         {!completed ? <span aria-hidden>→</span> : null}
+                      </Link>
+                    ) : isCompareableMock(selected.id, slot.mockNumber) ? (
+                      <Link
+                        href={`/esat-mock-tests/compare?module=${selected.id}&mock=${slot.mockNumber}`}
+                        className={actionClass}
+                      >
+                        <Users className="h-4 w-4" strokeWidth={2} aria-hidden />
+                        Compare with a friend
                       </Link>
                     ) : (
                       <span

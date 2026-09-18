@@ -31,6 +31,9 @@ pipeline.log
 .env.local.backup
 .env
 
+# local preview data (mock-compare rooms, etc.)
+.data/
+
 # vercel
 .vercel
 

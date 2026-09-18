@@ -1,4 +1,5 @@
 import { hydrateQuestionBankSessionForMark } from '@/lib/questionBank/hydrateSessionForMark';
+import type { QuestionBankSessionAttemptApiRow } from '@/lib/questionBank/hydrateSessionForMark';
 import { buildSessionSummary } from '@/lib/questionBank/sessionStats';
 import { labelForQuestionBankTag } from '@/lib/questionBank/esatCurriculumTopicLabels';
 import type {
@@ -85,7 +86,106 @@ function buildDemoHydrated(
   return { ...hydrated, session };
 }
 
-const mixedAttempts = [
+const DEMO_PARABOLA_SPEC = {
+  version: 2,
+  xRange: [-3, 3] as [number, number],
+  yRange: [-1, 5] as [number, number],
+  axes: {
+    show: true,
+    arrowheads: true,
+    xLabel: { text: 'x', italic: true },
+    yLabel: { text: 'y', italic: true },
+  },
+  objects: [
+    {
+      id: 'f',
+      kind: 'function' as const,
+      fn: { kind: 'poly2' as const, a: 0.5, b: 0, c: 0 },
+      style: { strokeWidth: 4.5 },
+    },
+    {
+      id: 'tangent',
+      kind: 'line' as const,
+      form: { kind: 'slope_intercept' as const, m: 1, b: -0.5 },
+      style: { dashed: true, strokeWidth: 3 },
+    },
+  ],
+  marks: {
+    points: [
+      {
+        id: 'p',
+        at: { x: 1, y: 0.5 },
+        label: { text: 'P', italic: true },
+        filled: true,
+      },
+    ],
+  },
+};
+
+const DEMO_CIRCLE_SPEC = {
+  version: 2,
+  xRange: [-3, 4] as [number, number],
+  yRange: [-3, 4] as [number, number],
+  axes: {
+    show: true,
+    arrowheads: true,
+    xLabel: { text: 'x', italic: true },
+    yLabel: { text: 'y', italic: true },
+  },
+  objects: [
+    {
+      id: 'c',
+      kind: 'circle' as const,
+      center: { x: 0, y: 0 },
+      r: 2,
+      style: { strokeWidth: 4, fill: false },
+    },
+    {
+      id: 'chord',
+      kind: 'segment' as const,
+      p1: { x: -2, y: 0 },
+      p2: { x: 0, y: 2 },
+      style: { strokeWidth: 4 },
+    },
+  ],
+  marks: {
+    points: [
+      {
+        id: 'a',
+        at: { x: -2, y: 0 },
+        label: { text: 'A', italic: true },
+        filled: true,
+      },
+      {
+        id: 'b',
+        at: { x: 0, y: 2 },
+        label: { text: 'B', italic: true },
+        filled: true,
+      },
+      {
+        id: 'o',
+        at: { x: 0, y: 0 },
+        label: { text: 'O', italic: true },
+        filled: true,
+      },
+    ],
+  },
+};
+
+/** Simple labelled triangle as an inline SVG figure (StemContent path). */
+const DEMO_TRIANGLE_SVG = `<figure class="qg-diagram" style="margin:1rem auto;max-width:280px;">
+<svg viewBox="0 0 280 200" width="280" height="200" xmlns="http://www.w3.org/2000/svg" aria-label="Triangle ABC">
+  <polygon points="40,170 240,170 140,30" fill="none" stroke="#111" stroke-width="2.5"/>
+  <text x="28" y="188" font-family="Times New Roman, serif" font-size="18">A</text>
+  <text x="242" y="188" font-family="Times New Roman, serif" font-size="18">B</text>
+  <text x="132" y="22" font-family="Times New Roman, serif" font-size="18">C</text>
+  <text x="120" y="188" font-family="Times New Roman, serif" font-size="15">8</text>
+  <text x="60" y="100" font-family="Times New Roman, serif" font-size="15">5</text>
+  <text x="195" y="100" font-family="Times New Roman, serif" font-size="15">5</text>
+</svg>
+</figure>`;
+
+const mixedAttempts: QuestionBankSessionAttemptApiRow[] = [
   {
     question_id: 'demo-q-1',
     user_answer: 'B',
@@ -98,22 +198,24 @@ const mixedAttempts = [
     ai_generated_questions: {
       id: 'demo-q-1',
       question_stem:
-        'A particle moves in a straight line with velocity $v = 3t^2 - 2t$. What is its acceleration at $t = 2$?',
+        'The diagram shows the curve $y = \\tfrac{1}{2}x^{2}$ and the dashed line that is tangent to the curve at $P$.\n\n<GRAPH id="g1" />\n\nWhat is the $x$-coordinate of $P$?',
       correct_option: 'B',
       options: {
-        A: '$4$',
-        B: '$10$',
-        C: '$8$',
-        D: '$12$',
-        E: '$6$',
+        A: '$0$',
+        B: '$1$',
+        C: '$2$',
+        D: '$-1$',
+        E: '$\\tfrac{1}{2}$',
       },
-      difficulty: 'Easy',
+      difficulty: 'Medium',
       subjects: 'Math 1',
       primary_tag: 'differentiation',
-      secondary_tags: ['kinematics'],
+      secondary_tags: ['graphs'],
+      has_visual: true,
+      graph_specs: { g1: DEMO_PARABOLA_SPEC },
       solution_reasoning:
-        'Acceleration is $\\frac{dv}{dt} = 6t - 2$. At $t = 2$, $a = 12 - 2 = 10$.',
-      solution_key_insight: 'Differentiate velocity to get acceleration.',
+        'Differentiate: $\\frac{dy}{dx} = x$. The dashed line has gradient $1$, so at $P$ we need $x = 1$.',
+      solution_key_insight: 'Match the derivative to the tangent gradient.',
     },
   },
   {
@@ -128,22 +230,24 @@ const mixedAttempts = [
     ai_generated_questions: {
       id: 'demo-q-2',
       question_stem:
-        'How many real roots does the equation $x^3 - 3x + 2 = 0$ have?',
+        'The circle centre $O$ has radius $2$. Chord $AB$ joins $(-2,0)$ to $(0,2)$.\n\n<GRAPH id="g2" />\n\nWhat is the length of $AB$?',
       correct_option: 'B',
       options: {
-        A: '1',
-        B: '2',
-        C: '3',
-        D: '0',
-        E: '4',
+        A: '$2$',
+        B: '$2\\sqrt{2}$',
+        C: '$4$',
+        D: '$\\sqrt{2}$',
+        E: '$3$',
       },
       difficulty: 'Medium',
       subjects: 'Math 1',
-      primary_tag: 'polynomials',
-      secondary_tags: ['factorisation'],
+      primary_tag: 'coordinate_geometry',
+      secondary_tags: ['circles'],
+      has_visual: true,
+      graph_specs: { g2: DEMO_CIRCLE_SPEC },
       solution_reasoning:
-        'Factor as $(x-1)^2(x+2)=0$, so roots $x=1$ (repeated) and $x=-2$. That is two distinct real roots.',
-      solution_key_insight: 'Try rational roots, then factor.',
+        'Distance $AB = \\sqrt{(-2-0)^{2}+(0-2)^{2}} = \\sqrt{8} = 2\\sqrt{2}$.',
+      solution_key_insight: 'Use the distance formula between the endpoints.',
     },
   },
   {
@@ -158,22 +262,23 @@ const mixedAttempts = [
     ai_generated_questions: {
       id: 'demo-q-3',
       question_stem:
-        'A ball is thrown vertically upwards with speed $20\\,\\mathrm{m\\,s^{-1}}$. Ignoring air resistance, how long until it returns to the throw point? Take $g = 10\\,\\mathrm{m\\,s^{-2}}$.',
+        `Triangle $ABC$ is isosceles with $AC = BC = 5$ and base $AB = 8$.\n\n${DEMO_TRIANGLE_SVG}\n\nWhat is the height from $C$ to $AB$?`,
       correct_option: 'D',
       options: {
-        A: '$1\\,\\mathrm{s}$',
-        B: '$2\\,\\mathrm{s}$',
-        C: '$3\\,\\mathrm{s}$',
-        D: '$4\\,\\mathrm{s}$',
-        E: '$5\\,\\mathrm{s}$',
+        A: '$2$',
+        B: '$4$',
+        C: '$\\sqrt{21}$',
+        D: '$3$',
+        E: '$5$',
       },
-      difficulty: 'Medium',
-      subjects: 'Physics',
-      primary_tag: 'kinematics',
-      secondary_tags: ['projectile_motion'],
+      difficulty: 'Easy',
+      subjects: 'Math 1',
+      primary_tag: 'geometry',
+      secondary_tags: ['triangles'],
+      has_visual: true,
       solution_reasoning:
-        'Time to top is $u/g = 2\\,\\mathrm{s}$. Total flight time is $4\\,\\mathrm{s}$.',
-      solution_key_insight: 'Up and down times are equal when landing at the same height.',
+        'Split the base into two equal parts of length $4$. Then height $h$ satisfies $h^{2}+4^{2}=5^{2}$, so $h^{2}=9$ and $h=3$.',
+      solution_key_insight: 'Drop a perpendicular to the base of an isosceles triangle.',
     },
   },
   {

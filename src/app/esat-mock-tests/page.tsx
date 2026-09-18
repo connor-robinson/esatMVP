@@ -18,6 +18,8 @@ import {
 } from "@/lib/esatMockTests/catalog";
 import { SeoPageLayout } from "@/components/seo/SeoPageLayout";
 import { EsatMockModuleSelector } from "@/components/esatMockTests/EsatMockModuleSelector";
+import { EsatMockPredictedScoreTables } from "@/components/esatMockTests/EsatMockPredictedScoreTables";
+import { EsatMockTestsIntroBanner } from "@/components/esatMockTests/EsatMockTestsIntroBanner";
 import {
   HighlightBox,
   SeoList,
@@ -32,7 +34,9 @@ const SELECTOR_ID = "choose-mock";
 
 const TITLE = "Free ESAT Mock Tests 2026 | 25 Full Mocks | ESAT CAMP";
 const DESCRIPTION =
-  "Take 25 free full-length ESAT mock tests for Maths 1, Maths 2, Physics, Chemistry and Biology. 27 questions, 40 minutes, with detailed review and timing data.";
+  "Take 25 free full-length ESAT mock tests for Maths 1, Maths 2, Physics, Chemistry and Biology. 27 questions, 40 minutes, with a predicted ESAT score in the simulator.";
+const SEO_SUBTEXT =
+  "Finished the official ESAT material? Take 25 free full-length mocks written and curated by us. Sit them in the ESAT simulator for a predicted ESAT score. Designed from 2025 student feedback that the real test felt harder than past papers.";
 
 export const metadata: Metadata = buildSeoMetadata({
   title: TITLE,
@@ -109,10 +113,7 @@ export default function EsatMockTestsPage() {
       path={PATH}
       compactTitle
       title="25 Free ESAT Mock Tests"
-      intro={[
-        "Finished the official material? Finished the NSAA and ENGAA papers? Now find out whether you can sustain ESAT pace.",
-        "Five full-length mocks for every ESAT module. 27 questions · 40 minutes · no calculator.",
-      ]}
+      visuallyHiddenIntro={SEO_SUBTEXT}
       faq={FAQ}
       faqHeading="ESAT mock tests FAQ"
       related={seoLinks(
@@ -153,20 +154,22 @@ export default function EsatMockTestsPage() {
       <section
         id={SELECTOR_ID}
         aria-label="Choose an ESAT module"
-        className="-mt-2 scroll-mt-24 sm:-mt-4"
+        className="-mt-2 scroll-mt-24 space-y-5 sm:-mt-3 sm:space-y-6"
       >
-        <ul className="mb-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-[#94A3B8]">
-          <li>Timed like the real exam</li>
-          <li>ESAT-style questions</li>
-          <li>Review after every attempt</li>
-        </ul>
+        <EsatMockTestsIntroBanner />
         <EsatMockModuleSelector />
-        <p className="mt-5 text-sm leading-relaxed text-[#64748B]">
+        <p className="text-sm leading-relaxed text-[#64748B]">
           {TOTAL_ESAT_MOCK_COUNT} original mocks across Maths 1, Maths 2,
-          Physics, Chemistry and Biology. Free to take. Create an account after
-          an attempt if you want saved scores and five-mock progression.
+          Physics, Chemistry and Biology. Free to take.{" "}
+          <SeoTextLink href="/esat-mock-tests/compare">
+            Compare with a friend
+          </SeoTextLink>{" "}
+          on the same paper — no signup needed. Create an account after an
+          attempt if you want saved scores and five-mock progression.
         </p>
       </section>
+
+      <EsatMockPredictedScoreTables />
 
       <SeoSection heading="Finished all your ESAT material?">
         <SeoProse

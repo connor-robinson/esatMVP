@@ -87,6 +87,15 @@ import {
   isHubMarkPreview,
   setHubMarkChromeActive,
 } from "@/lib/papers/hubMarkPreview";
+import {
+  fetchCompareRoom,
+  getActiveMockCompare,
+  seedDemoFriend,
+  submitCompareResults,
+  type ActiveMockCompareContext,
+} from "@/lib/mockCompare/client";
+import type { MockCompareRoom } from "@/lib/mockCompare/types";
+import { MockCompareSplitView } from "@/components/mockCompare/MockCompareSplitView";
 
 function LoginToViewLink({
   href,
@@ -167,6 +176,10 @@ export default function PapersMarkPage() {
   const [isFinishingMark, setIsFinishingMark] = useState(false);
   const [markSection, setMarkSection] = useState<MarkSection>("overview");
   const [reviewReturnSection, setReviewReturnSection] = useState<MarkSection | null>(null);
+  const [compareCtx, setCompareCtx] = useState<ActiveMockCompareContext | null>(null);
+  const [compareRoom, setCompareRoom] = useState<MockCompareRoom | null>(null);
+  const [compareSeeding, setCompareSeeding] = useState(false);
+  const compareSubmittedRef = useRef<string | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -870,6 +883,78 @@ export default function PapersMarkPage() {
     paperName,
   ]);
 
+  // Friend-compare: restore room context from the sitting and default to Compare tab.
+  useEffect(() => {
+    const ctx = getActiveMockCompare();
+    if (!ctx) return;
+    setCompareCtx(ctx);
+    setMarkSection((prev) => (prev === "overview" ? "compare" : prev));
+  }, []);
+
+  useEffect(() => {
+    if (!compareCtx?.roomId) return;
+    let cancelled = false;
+    const pull = async () => {
+      try {
+        const data = await fetchCompareRoom(compareCtx.roomId);
+        if (!cancelled) setCompareRoom(data.room);
+      } catch {
+        /* room may expire / local store cleared */
+      }
+    };
+    void pull();
+    const t = window.setInterval(() => void pull(), 2500);
+    return () => {
+      cancelled = true;
+      window.clearInterval(t);
+    };
+  }, [compareCtx?.roomId]);
+
+  useEffect(() => {
+    if (!compareCtx || !sessionId || totalQuestions <= 0) return;
+    const submitKey = `${compareCtx.roomId}:${sessionId}`;
+    if (compareSubmittedRef.current === submitKey) return;
+
+    const perQuestionCorrect = derivedCorrectFlags.map((f) => f === true);
+    const results = {
+      correctCount: correctCountDerived,
+      totalQuestions,
+      accuracyPct: Math.round(
+        (correctCountDerived / Math.max(totalQuestions, 1)) * 100,
+      ),
+      predictedScore:
+        predictedScore != null && Number.isFinite(predictedScore)
+          ? Number(predictedScore)
+          : null,
+      avgSecPerQuestion: Math.round(avgTimePerQuestion),
+      flaggedCount: accuracyPatterns.guessed,
+      perQuestionCorrect,
+      perQuestionSec: [...perQuestionSec],
+      completedAt: Date.now(),
+    };
+
+    compareSubmittedRef.current = submitKey;
+    void submitCompareResults({
+      roomId: compareCtx.roomId,
+      participantId: compareCtx.participantId,
+      results,
+    })
+      .then((data) => setCompareRoom(data.room))
+      .catch(() => {
+        compareSubmittedRef.current = null;
+      });
+  }, [
+    compareCtx,
+    sessionId,
+    totalQuestions,
+    correctCountDerived,
+    predictedScore,
+    avgTimePerQuestion,
+    accuracyPatterns.guessed,
+    derivedCorrectFlags,
+    perQuestionSec,
+  ]);
+
   useEffect(() => {
     // Calculate percentiles for all exams that have percentile tables
     (async () => {
@@ -1229,6 +1314,7 @@ export default function PapersMarkPage() {
               light={lightMarkShell}
               railClassName={markRailClass}
               railStyle={markShellStyle}
+              compareMode={Boolean(compareCtx)}
             />
 
             <div
@@ -1238,6 +1324,33 @@ export default function PapersMarkPage() {
               )}
               style={markShellStyle}
             >
+
+              {markSection === "compare" && compareCtx && (
+                <div className="h-full min-h-0 overflow-y-auto p-4 sm:p-6" style={{ scrollbarGutter: "stable" }}>
+                  {compareRoom ? (
+                    <MockCompareSplitView
+                      room={compareRoom}
+                      meId={compareCtx.participantId}
+                      isLoggedIn={isLoggedIn}
+                      loginHref={`/login?redirectTo=${encodeURIComponent(`/esat-mock-tests/compare/${compareCtx.roomId}`)}`}
+                      seeding={compareSeeding}
+                      onSeedDemoFriend={() => {
+                        setCompareSeeding(true);
+                        void seedDemoFriend(
+                          compareCtx.roomId,
+                          compareCtx.participantId,
+                        )
+                          .then((data) => setCompareRoom(data.room))
+                          .finally(() => setCompareSeeding(false));
+                      }}
+                    />
+                  ) : (
+                    <div className="rounded-md bg-surface-elevated px-4 py-10 text-center text-sm text-text-muted">
+                      Loading compare room…
+                    </div>
+                  )}
+                </div>
+              )}
 
               {markSection === "overview" && (
                 <div className="h-full min-h-0 overflow-y-auto p-4 sm:p-6" style={{ scrollbarGutter: "stable" }}>

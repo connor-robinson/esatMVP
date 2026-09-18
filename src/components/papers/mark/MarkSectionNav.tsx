@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   ListChecks,
   StickyNote,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 import type { CSSProperties } from "react";
@@ -13,12 +14,13 @@ import { cn } from "@/lib/utils";
 
 export type MarkSection =
   | "overview"
+  | "compare"
   | "stats"
   | "review"
   | "mistakes"
   | "notes";
 
-const SECTIONS: {
+const BASE_SECTIONS: {
   id: MarkSection;
   label: string;
   shortLabel: string;
@@ -31,6 +33,13 @@ const SECTIONS: {
   { id: "notes", label: "Session Notes", shortLabel: "Notes", icon: StickyNote },
 ];
 
+const COMPARE_SECTION = {
+  id: "compare" as const,
+  label: "Compare",
+  shortLabel: "Compare",
+  icon: Users,
+};
+
 const DEFAULT_LIGHT_RAIL = "#f0f0f2";
 
 interface MarkSectionNavProps {
@@ -42,6 +51,10 @@ interface MarkSectionNavProps {
   railClassName?: string;
   /** Inline surface color so it cannot lose to transparent utilities. */
   railStyle?: CSSProperties;
+  /**
+   * Friend-compare sitting: replace Overview with Compare as the lead tab.
+   */
+  compareMode?: boolean;
 }
 
 export function MarkSectionNav({
@@ -50,11 +63,19 @@ export function MarkSectionNav({
   light,
   railClassName,
   railStyle,
+  compareMode,
 }: MarkSectionNavProps) {
   const lightRailStyle =
     light && !railStyle
       ? ({ backgroundColor: DEFAULT_LIGHT_RAIL } as const)
       : railStyle;
+
+  const sections = compareMode
+    ? [
+        COMPARE_SECTION,
+        ...BASE_SECTIONS.filter((s) => s.id !== "overview"),
+      ]
+    : BASE_SECTIONS;
 
   return (
     <>
@@ -66,7 +87,7 @@ export function MarkSectionNav({
         style={light ? lightRailStyle : railStyle}
         aria-label="Mark session sections"
       >
-        {SECTIONS.map(({ id, label }) => {
+        {sections.map(({ id, label }) => {
           const isActive = active === id;
           return (
             <button
@@ -101,7 +122,7 @@ export function MarkSectionNav({
             className="flex w-full flex-col items-center gap-1.5"
             aria-label="Mark session sections"
           >
-            {SECTIONS.map(({ id, label, shortLabel, icon: Icon }) => {
+            {sections.map(({ id, label, shortLabel, icon: Icon }) => {
               const isActive = active === id;
               return (
                 <button

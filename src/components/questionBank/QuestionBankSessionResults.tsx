@@ -10,14 +10,14 @@ import { signInWithGoogle } from '@/lib/auth/googleOAuth';
 import { useSupabaseClient } from '@/components/auth/SupabaseSessionProvider';
 import { SessionMiniChart } from '@/components/analytics/SessionMiniChart';
 import { BreakdownDonutChart } from '@/components/questionBank/BreakdownDonutChart';
-import { StemContent } from '@/components/shared/StemContent';
+import { QuestionBankMarkReviewPanel } from '@/components/questionBank/QuestionBankMarkReviewPanel';
 import { labelForQuestionBankTag } from '@/lib/questionBank/esatCurriculumTopicLabels';
 import {
   buildSessionSummary,
-  countsAsSessionCorrect,
 } from '@/lib/questionBank/sessionStats';
 import { signalFeedbackReferralEngagement } from '@/lib/feedbackReferral/promptStorage';
 import type {
+  QuestionBankQuestion,
   QuestionBankSessionAttempt,
   QuestionBankSessionSource,
   UiDifficultyLabel,
@@ -26,11 +26,8 @@ import type { QuestionBankPlayMode } from '@/lib/questionBank/homeLaunch';
 import { estimateQuestionBankEsatScore } from '@/lib/questionBank/estimatedEsatScore';
 import {
   ArrowLeft,
-  ArrowRight,
-  Check,
   Clock,
   Target,
-  X,
   Zap,
   BookOpen,
 } from 'lucide-react';
@@ -38,6 +35,9 @@ import { cn } from '@/lib/utils';
 
 interface QuestionBankSessionResultsProps {
   attempts: QuestionBankSessionAttempt[];
+  /** Full questions for inline ESAT review (preferred). */
+  questions?: QuestionBankQuestion[];
+  sessionId?: string | null;
   sessionSource?: QuestionBankSessionSource;
   subjectsLabel?: string;
   startedAt: number;
@@ -47,8 +47,6 @@ interface QuestionBankSessionResultsProps {
   onBack: () => void;
   /** Label for the top-right back control. */
   backLabel?: string;
-  /** Open full question layout review for a session question id. */
-  onReviewQuestion?: (questionId: string) => void;
   showUpgradeBanner?: boolean;
   showSignInBanner?: boolean;
   signInRedirectTo?: string;
@@ -119,6 +117,8 @@ function formatTime(ms: number) {
 
 export function QuestionBankSessionResults({
   attempts,
+  questions,
+  sessionId = null,
   subjectsLabel,
   startedAt,
   timedOut = false,
@@ -126,7 +126,6 @@ export function QuestionBankSessionResults({
   timeLimitMinutes,
   onBack,
   backLabel = 'Back to Question Bank',
-  onReviewQuestion,
   showUpgradeBanner = false,
   showSignInBanner = false,
   signInRedirectTo = '/questions',
@@ -196,11 +195,31 @@ export function QuestionBankSessionResults({
     [result.topicStats],
   );
 
-  const [reviewExpanded, setReviewExpanded] = useState(false);
-  const visibleReviewAttempts = reviewExpanded
-    ? sortedAttempts
-    : sortedAttempts.slice(0, 3);
-  const hiddenReviewCount = Math.max(0, sortedAttempts.length - 3);
+  const reviewQuestions = useMemo(() => {
+    if (questions && questions.length > 0) return questions;
+    // Fallback: rebuild minimal question rows from attempt payloads.
+    return sortedAttempts.map((attempt) => ({
+      id: attempt.questionId,
+      generation_id: '',
+      schema_id: '',
+      difficulty: attempt.difficulty,
+      question_stem: attempt.questionStem,
+      options: attempt.options,
+      correct_option: attempt.correctOption,
+      solution_reasoning: null,
+      solution_key_insight: null,
+      distractor_map: null,
+      subjects: attempt.subjects,
+      test_type: null,
+      primary_tag: attempt.primaryTag,
+      secondary_tags: attempt.secondaryTags,
+      graph_spec: null,
+      graph_specs: null,
+      has_visual: false,
+      status: 'approved' as const,
+      created_at: '',
+    }));
+  }, [questions, sortedAttempts]);
 
   return (
     <div className='min-h-screen bg-background'>
@@ -435,109 +454,23 @@ export function QuestionBankSessionResults({
           </motion.div>
         )}
 
-        {sortedAttempts.length > 0 && (
+        {reviewQuestions.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.48 }}
             className='mb-8 w-full'
           >
-            <div className={cn('p-6', resultsCard)}>
-              <div className='mb-6'>
-                <h2 className='mb-1 font-heading text-xl font-bold text-text sm:text-2xl'>
-                  Review questions
-                </h2>
-                <p className='text-sm text-text-muted'>
-                  Open any question in the full layout (no timer) to revisit
-                  options, distractors, and detailed explanations
-                </p>
-              </div>
-
-              <div className='space-y-2'>
-                {visibleReviewAttempts.map((attempt) => {
-                  const firstTryCorrect = countsAsSessionCorrect(attempt);
-                  const topicLabel = attempt.primaryTag
-                    ? labelForQuestionBankTag(
-                        attempt.primaryTag,
-                        attempt.subjects,
-                      )
-                    : null;
-                  const canReview = Boolean(onReviewQuestion);
-
-                  return (
-                    <button
-                      key={`${attempt.questionId}-${attempt.questionNumber}`}
-                      type='button'
-                      disabled={!canReview}
-                      onClick={() => onReviewQuestion?.(attempt.questionId)}
-                      className={cn(
-                        'flex w-full items-start gap-3 rounded-organic-md bg-surface-mid px-3 py-3 text-left transition-colors sm:px-4',
-                        canReview
-                          ? 'hover:bg-surface-neutral/50'
-                          : 'cursor-default opacity-80',
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          'mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-organic-sm text-xs font-bold tabular-nums',
-                          firstTryCorrect
-                            ? 'bg-success/15 text-success'
-                            : 'bg-error/15 text-error',
-                        )}
-                        aria-hidden
-                      >
-                        {firstTryCorrect ? (
-                          <Check className='h-3.5 w-3.5' strokeWidth={2.5} />
-                        ) : (
-                          <X className='h-3.5 w-3.5' strokeWidth={2.5} />
-                        )}
-                      </span>
-
-                      <div className='min-w-0 flex-1'>
-                        <div className='mb-1 flex flex-wrap items-center gap-2'>
-                          <span className='text-sm font-semibold text-text'>
-                            Question {attempt.questionNumber}
-                          </span>
-                          <span className='text-xs text-text-muted'>
-                            {attempt.uiDifficulty}
-                          </span>
-                          {topicLabel ? (
-                            <span className='truncate text-xs text-text-muted'>
-                              {topicLabel}
-                            </span>
-                          ) : null}
-                        </div>
-                        <div className='line-clamp-2 text-sm leading-relaxed text-text-muted [&_.katex]:text-[1em]'>
-                          <StemContent
-                            content={attempt.questionStem}
-                            className='text-inherit'
-                          />
-                        </div>
-                      </div>
-
-                      {canReview ? (
-                        <span className='mt-1 inline-flex shrink-0 items-center gap-1 text-xs font-medium text-text-muted'>
-                          Review
-                          <ArrowRight className='h-3.5 w-3.5' strokeWidth={2.5} />
-                        </span>
-                      ) : null}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {hiddenReviewCount > 0 ? (
-                <button
-                  type='button'
-                  onClick={() => setReviewExpanded((open) => !open)}
-                  className='mt-4 text-sm font-medium text-text-muted transition-colors hover:text-text'
-                >
-                  {reviewExpanded
-                    ? 'Show fewer questions'
-                    : `Show ${hiddenReviewCount} more question${hiddenReviewCount === 1 ? '' : 's'}`}
-                </button>
-              ) : null}
+            <div className='mb-4'>
+              <h2 className='font-heading text-xl font-bold text-text sm:text-2xl'>
+                Review questions
+              </h2>
             </div>
+            <QuestionBankMarkReviewPanel
+              questions={reviewQuestions}
+              attempts={sortedAttempts}
+              sessionId={sessionId}
+            />
           </motion.div>
         )}
 
