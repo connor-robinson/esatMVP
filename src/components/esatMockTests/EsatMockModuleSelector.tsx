@@ -152,10 +152,6 @@ export function EsatMockModuleSelector({
                 className="text-[#94A3B8] [&_button]:text-[#94A3B8] [&_button:hover]:bg-white/[0.08] [&_button:hover]:text-[#E2E8F0]"
                 panelClassName="bg-[#1E293B] text-[#E2E8F0] shadow-lg [&_p]:text-[#94A3B8] [&_button]:text-[#94A3B8] [&_button:hover]:bg-white/[0.08] [&_button:hover]:text-[#E2E8F0]"
               >
-                <p>
-                  Star ratings are based on predicted mean question difficulty,
-                  scaled from 2 to 4 stars.
-                </p>
                 <p>A typical NSAA paper is about 2 stars on this scale.</p>
               </RoadmapInfoPopover>
             </div>
