@@ -121,14 +121,13 @@ export function assembleRoadmapStages(options: {
   ];
   if (nsaa2023) ordered.push(nsaa2023);
 
+  // ESAT Camp / admin mocks: keep off the public past-papers home roadmap for now.
   if (ESAT_CAMP_MOCKS_ENABLED) {
     ordered.push(
       ESAT_CAMP_FULL_MOCK_1_STAGE,
       ESAT_CAMP_FULL_MOCK_2_STAGE,
       ESAT_CAMP_MATH1_MOCK_1_STAGE,
     );
-  } else {
-    ordered.push(...ADMIN_ESAT_MOCK_ROADMAP_STAGES);
   }
 
   return ordered;
