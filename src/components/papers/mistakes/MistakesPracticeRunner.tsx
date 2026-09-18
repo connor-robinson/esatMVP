@@ -1,18 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, Check, X } from "lucide-react";
-import { QuestionCard } from "@/components/questionBank/QuestionCard";
-import { QuestionDisplay } from "@/components/papers/QuestionDisplay";
-import { ChoicePill } from "@/components/papers/ChoicePill";
+import { ArrowRight } from "lucide-react";
+import { QuestionBankEsatSessionShell } from "@/components/questionBank/QuestionBankEsatSessionShell";
 import { MistakeQuestionHistoryStrip } from "@/components/papers/mistakes/MistakeQuestionHistoryStrip";
-import {
-  getPastPaperOptionLetters,
-  shouldRenderPastPaperAsText,
-} from "@/lib/papers/pastPaperTextMode";
 import { papersQuestionToQuestionBankQuestion } from "@/lib/papers/papersQuestionToQuestionBank";
 import type { MistakeQuestionPayload } from "@/lib/papers/mistakes";
 import type { Letter } from "@/types/papers";
+import type {
+  QuestionBankQuestion,
+  QuestionBankSessionAttempt,
+} from "@/types/questionBank";
 import { formatTime } from "@/lib/papers/analytics";
 
 type AnswerState = {
@@ -20,6 +18,8 @@ type AnswerState = {
   timeSec: number;
   isCorrect: boolean;
   checked: boolean;
+  revealed: boolean;
+  wrongBefore: string[];
 };
 
 interface MistakesPracticeRunnerProps {
@@ -31,6 +31,10 @@ interface MistakesPracticeRunnerProps {
     timeSec: number;
     isCorrect: boolean;
   }>) => Promise<void>;
+}
+
+function formatTimerLabel(remainingSec: number): string {
+  return formatTime(Math.max(0, remainingSec));
 }
 
 export function MistakesPracticeRunner({
@@ -46,10 +50,19 @@ export function MistakesPracticeRunner({
       timeSec: 0,
       isCorrect: false,
       checked: false,
+      revealed: false,
+      wrongBefore: [],
     })),
   );
-  const [selected, setSelected] = useState<Letter | null>(null);
-  const [checked, setChecked] = useState(false);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [incorrectAnswers, setIncorrectAnswers] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const [answerRevealed, setAnswerRevealed] = useState(false);
+  const [showExplanation, setShowExplanation] = useState(false);
+  const [showHint, setShowHint] = useState(false);
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
+  const [flaggedIds, setFlaggedIds] = useState<Set<string>>(() => new Set());
   const [saving, setSaving] = useState(false);
   const [finished, setFinished] = useState(false);
   const [remainingSec, setRemainingSec] = useState(
@@ -59,19 +72,27 @@ export function MistakesPracticeRunner({
   const tickRef = useRef<number | null>(null);
   const timedOutRef = useRef(false);
 
-  const current = questions[index];
+  const qbQuestions = useMemo(
+    () => questions.map((q) => papersQuestionToQuestionBankQuestion(q.question)),
+    [questions],
+  );
+
+  const currentPayload = questions[index];
+  const currentQuestion = qbQuestions[index] as QuestionBankQuestion | undefined;
   const total = questions.length;
 
-  const qbQuestion = useMemo(
-    () =>
-      current ? papersQuestionToQuestionBankQuestion(current.question) : null,
-    [current],
-  );
+  const isAnswered = answers[index]?.checked ?? false;
+  const isCorrect = isAnswered ? answers[index]?.isCorrect ?? null : null;
 
   useEffect(() => {
     questionStartedAt.current = Date.now();
-    setSelected(null);
-    setChecked(false);
+    const prior = answers[index];
+    setSelected(prior?.choice ?? null);
+    setIncorrectAnswers(new Set(prior?.wrongBefore ?? []));
+    setAnswerRevealed(Boolean(prior?.revealed));
+    setShowExplanation(false);
+    setShowHint(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- reset chrome when index changes
   }, [index]);
 
   useEffect(() => {
@@ -97,38 +118,60 @@ export function MistakesPracticeRunner({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [remainingSec, finished, saving]);
 
-  const letters = useMemo(() => {
-    if (!current) return ["A", "B", "C", "D", "E"] as Letter[];
-    return getPastPaperOptionLetters(current.question) as Letter[];
-  }, [current]);
-
-  const correctLetter = (
-    current?.question.answerLetter || ""
-  ).toUpperCase() as Letter;
-
   const elapsedForCurrent = () =>
     Math.max(1, Math.round((Date.now() - questionStartedAt.current) / 1000));
 
-  const commitCurrent = (choice: Letter | null, isCorrect: boolean) => {
-    const timeSec = elapsedForCurrent();
-    const next = [...answers];
-    next[index] = { choice, timeSec, isCorrect, checked: true };
-    setAnswers(next);
-    return next;
+  const correctLetter = (
+    currentQuestion?.correct_option ||
+    currentPayload?.question.answerLetter ||
+    "A"
+  ).toUpperCase();
+
+  const patchAnswer = (patch: Partial<AnswerState>) => {
+    setAnswers((prev) => {
+      const next = [...prev];
+      next[index] = { ...next[index], ...patch };
+      return next;
+    });
   };
 
-  const handleCheck = () => {
-    if (!selected || !current) return;
-    const isCorrect = selected === correctLetter;
-    commitCurrent(selected, isCorrect);
-    setChecked(true);
+  const commitChecked = (
+    choice: string | null,
+    correct: boolean,
+    opts?: { revealed?: boolean; wrongBefore?: string[] },
+  ) => {
+    patchAnswer({
+      choice: (choice?.toUpperCase() as Letter) ?? null,
+      timeSec: elapsedForCurrent(),
+      isCorrect: correct,
+      checked: true,
+      revealed: opts?.revealed ?? false,
+      wrongBefore: opts?.wrongBefore ?? [...incorrectAnswers],
+    });
   };
 
-  const handleCardAnswer = (selectedAnswer: string, isCorrect: boolean) => {
-    const letter = selectedAnswer.toUpperCase() as Letter;
-    setSelected(letter);
-    commitCurrent(letter, isCorrect);
-    setChecked(true);
+  const handleSubmitAnswer = () => {
+    if (!selected || !currentQuestion) return;
+    if (incorrectAnswers.has(selected)) return;
+    const correct = selected.toUpperCase() === correctLetter;
+    if (!correct) {
+      setIncorrectAnswers((prev) => new Set(prev).add(selected));
+    }
+    commitChecked(selected, correct, {
+      wrongBefore: correct
+        ? [...incorrectAnswers]
+        : [...incorrectAnswers, selected],
+    });
+  };
+
+  const handleRevealAnswer = () => {
+    setAnswerRevealed(true);
+    const correct =
+      selected != null && selected.toUpperCase() === correctLetter;
+    commitChecked(selected, correct, {
+      revealed: true,
+      wrongBefore: [...incorrectAnswers],
+    });
   };
 
   const finishSession = async (finalAnswers: AnswerState[]) => {
@@ -145,9 +188,9 @@ export function MistakesPracticeRunner({
         }
         if (i === index && selected) {
           return {
-            choice: selected,
+            choice: selected.toUpperCase() as Letter,
             timeSec: elapsedForCurrent(),
-            isCorrect: selected === correctLetter,
+            isCorrect: selected.toUpperCase() === correctLetter,
           };
         }
         return {
@@ -163,8 +206,10 @@ export function MistakesPracticeRunner({
     }
   };
 
-  const handleNext = async () => {
-    if (!checked) return;
+  const goNext = async () => {
+    const locked =
+      answerRevealed || (isAnswered && isCorrect === true);
+    if (!locked && !answers[index]?.checked) return;
     if (index >= total - 1) {
       await finishSession(answers);
       return;
@@ -172,7 +217,42 @@ export function MistakesPracticeRunner({
     setIndex((i) => i + 1);
   };
 
-  if (!current) return null;
+  const goPrevious = () => {
+    if (index <= 0) return;
+    setIndex((i) => i - 1);
+  };
+
+  const attemptLog: QuestionBankSessionAttempt[] = useMemo(() => {
+    return answers
+      .map((a, i) => {
+        if (!a.checked) return null;
+        const q = qbQuestions[i];
+        const payload = questions[i];
+        if (!q || !payload) return null;
+        return {
+          questionId: q.id,
+          questionNumber: i + 1,
+          userAnswer: a.choice ?? "",
+          isCorrect: a.isCorrect,
+          timeSpentMs: (a.timeSec || 0) * 1000,
+          wasRevealed: a.revealed,
+          usedHint: false,
+          wrongAnswersBefore: a.wrongBefore,
+          difficulty: q.difficulty,
+          uiDifficulty: q.difficulty,
+          primaryTag: q.primary_tag,
+          secondaryTags: q.secondary_tags,
+          subjects: q.subjects,
+          questionStem: q.question_stem,
+          correctOption: q.correct_option,
+          options: q.options,
+          timestamp: Date.now(),
+        } satisfies QuestionBankSessionAttempt;
+      })
+      .filter((row): row is QuestionBankSessionAttempt => row != null);
+  }, [answers, qbQuestions, questions]);
+
+  if (!currentPayload || !currentQuestion) return null;
 
   if (finished) {
     const correct = answers.filter((a) => a.isCorrect).length;
@@ -195,144 +275,72 @@ export function MistakesPracticeRunner({
     );
   }
 
-  const textMode = shouldRenderPastPaperAsText(current.question);
-  const useQuestionCard = Boolean(qbQuestion);
-
   return (
-    <div className="mx-auto w-full max-w-[920px] space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="text-sm text-text-muted">
-          <span className="font-semibold text-text">
-            {index + 1}/{total}
-          </span>
-          {" · "}
-          {current.examName} {current.paperVariant || current.paperName} · Q
-          {current.questionNumber}
-          <span className="ml-2 tabular-nums">
-            Wrong {current.timesWrong}
-            {checked && selected !== correctLetter ? " +1" : ""}x
-          </span>
+    <QuestionBankEsatSessionShell
+      question={currentQuestion}
+      questions={qbQuestions}
+      currentIndex={index}
+      attemptLog={attemptLog}
+      remainingTimeMs={remainingSec * 1000}
+      timerLabel={formatTimerLabel(remainingSec)}
+      reviewMode={false}
+      examMode={false}
+      instantReveal={false}
+      currentSelection={selected}
+      incorrectAnswers={incorrectAnswers}
+      isAnswered={isAnswered}
+      isCorrect={isCorrect}
+      answerRevealed={answerRevealed}
+      showLeaveConfirm={showLeaveConfirm}
+      flaggedIds={flaggedIds}
+      onToggleFlag={(id) => {
+        setFlaggedIds((prev) => {
+          const next = new Set(prev);
+          if (next.has(id)) next.delete(id);
+          else next.add(id);
+          return next;
+        });
+      }}
+      onSelectionChange={setSelected}
+      onSubmitAnswer={handleSubmitAnswer}
+      onRevealAnswer={handleRevealAnswer}
+      onShowExplanation={() => setShowExplanation(true)}
+      onShowHint={() => setShowHint(true)}
+      hasHint={Boolean(currentQuestion.solution_key_insight)}
+      showHint={showHint}
+      hintContent={currentQuestion.solution_key_insight}
+      onCloseHint={() => setShowHint(false)}
+      onNext={() => {
+        void goNext();
+      }}
+      onPrevious={goPrevious}
+      onJumpTo={(nextIndex) => {
+        if (nextIndex < 0 || nextIndex >= total) return;
+        setIndex(nextIndex);
+      }}
+      onOpenLeaveConfirm={() => setShowLeaveConfirm(true)}
+      onCloseLeaveConfirm={() => setShowLeaveConfirm(false)}
+      onSaveAndLeave={() => {
+        void finishSession(answers).then(() => onExit());
+      }}
+      onDiscardSession={onExit}
+      onUseClassicUi={() => undefined}
+      showExplanation={showExplanation}
+      explanationContent={currentQuestion.solution_reasoning}
+      onCloseExplanation={() => setShowExplanation(false)}
+      hideSupportControl
+      hideClassicUiToggle
+      sessionTitle="Mistakes"
+      belowQuestion={
+        <div className="mt-4">
+          <MistakeQuestionHistoryStrip events={currentPayload.history} />
+          <p className="mt-2 text-xs text-text-muted">
+            {currentPayload.examName}{" "}
+            {currentPayload.paperVariant || currentPayload.paperName} · Q
+            {currentPayload.questionNumber} · Wrong {currentPayload.timesWrong}x
+          </p>
         </div>
-        <div className="flex items-center gap-3 text-sm tabular-nums text-text-muted">
-          <span>Time left {formatTime(remainingSec)}</span>
-          <button
-            type="button"
-            onClick={onExit}
-            className="rounded-organic-md px-3 py-1.5 text-text-muted hover:bg-surface-elevated hover:text-text"
-          >
-            Exit
-          </button>
-        </div>
-      </div>
-
-      <MistakeQuestionHistoryStrip events={current.history} />
-
-      {useQuestionCard && qbQuestion ? (
-        <QuestionCard
-          question={qbQuestion}
-          questionNumber={index + 1}
-          onAnswerSubmit={handleCardAnswer}
-          isAnswered={checked}
-          selectedAnswer={selected}
-          correctAnswer={correctLetter}
-          isCorrect={checked ? selected === correctLetter : null}
-          allowRetry={false}
-          headerTrailing={
-            <span className="text-sm tabular-nums text-text-muted">
-              {formatTime(remainingSec)}
-            </span>
-          }
-        />
-      ) : (
-        <>
-          <QuestionDisplay
-            question={current.question}
-            questionNumber={current.questionNumber}
-            remainingTime={remainingSec}
-            totalTimeMinutes={timeLimitMinutes}
-            paperName={current.examName}
-            currentQuestion={current.question}
-            selectedChoice={textMode ? selected : null}
-            onChoiceSelect={
-              textMode && !checked
-                ? (letter) => setSelected(letter)
-                : undefined
-            }
-            showOptionsInStem={textMode}
-          />
-
-          {!textMode ? (
-            <div className="rounded-organic-xl bg-surface-elevated p-5">
-              <div className="mb-3 text-xs font-medium uppercase tracking-wide text-text-muted">
-                Your answer
-              </div>
-              <div className="grid grid-flow-col auto-cols-fr gap-2">
-                {letters.map((letter) => {
-                  let variant: "default" | "correct" | "wrong" = "default";
-                  if (checked) {
-                    if (letter === correctLetter) variant = "correct";
-                    else if (letter === selected) variant = "wrong";
-                  }
-                  return (
-                    <ChoicePill
-                      key={letter}
-                      letter={letter}
-                      selected={selected === letter}
-                      disabled={checked}
-                      variant={variant}
-                      onClick={() => setSelected(letter)}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          ) : null}
-        </>
-      )}
-
-      {checked ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-organic-xl bg-surface-elevated px-5 py-4">
-          <div className="flex items-center gap-2 text-sm font-medium">
-            {selected === correctLetter ? (
-              <>
-                <Check className="h-4 w-4 text-success" />
-                <span className="text-success">Correct</span>
-              </>
-            ) : (
-              <>
-                <X className="h-4 w-4 text-error" />
-                <span className="text-error">
-                  Incorrect. Answer is {correctLetter}
-                </span>
-              </>
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={() => void handleNext()}
-            disabled={saving}
-            className="inline-flex items-center gap-2 rounded-organic-lg bg-secondary px-4 py-2.5 text-sm font-semibold text-background hover:opacity-90 disabled:opacity-40"
-          >
-            {index >= total - 1
-              ? saving
-                ? "Saving…"
-                : "Finish"
-              : "Next question"}
-            <ArrowRight className="h-4 w-4" />
-          </button>
-        </div>
-      ) : useQuestionCard ? null : (
-        <div className="flex justify-end">
-          <button
-            type="button"
-            onClick={handleCheck}
-            disabled={!selected}
-            className="inline-flex items-center gap-2 rounded-organic-lg bg-secondary px-4 py-2.5 text-sm font-semibold text-background hover:opacity-90 disabled:opacity-40"
-          >
-            Check answer
-          </button>
-        </div>
-      )}
-    </div>
+      }
+    />
   );
 }

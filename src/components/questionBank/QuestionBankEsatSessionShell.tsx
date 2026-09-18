@@ -119,6 +119,12 @@ export interface QuestionBankEsatSessionShellProps {
   footerExtra?: ReactNode;
   /** Hide the in-session report control (e.g. admin reviewing reports). */
   hideSupportControl?: boolean;
+  /** Override the header product label (default: Question bank). */
+  sessionTitle?: string;
+  /**
+   * Hide the Classic UI toggle (e.g. Mistakes always uses the new exam shell).
+   */
+  hideClassicUiToggle?: boolean;
   restBreaksEnabled?: boolean;
   restBreakActive?: boolean;
   restBreaksLeft?: number;
@@ -170,6 +176,8 @@ export function QuestionBankEsatSessionShell({
   belowQuestion,
   footerExtra,
   hideSupportControl = false,
+  sessionTitle,
+  hideClassicUiToggle = false,
   restBreaksEnabled = false,
   restBreakActive = false,
   restBreaksLeft = 0,
@@ -327,18 +335,20 @@ export function QuestionBankEsatSessionShell({
               ? "Review"
               : examMode
                 ? "Exam mode"
-                : "Question bank"}{" "}
+                : sessionTitle ?? "Question bank"}{" "}
             · {subjectLabel}
           </div>
           {!examMode || reviewMode ? (
-            <button
-              type="button"
-              className="eup-theme-toggle"
-              onClick={onUseClassicUi}
-              title="Switch back to the previous question bank layout"
-            >
-              Classic UI
-            </button>
+            hideClassicUiToggle ? null : (
+              <button
+                type="button"
+                className="eup-theme-toggle"
+                onClick={onUseClassicUi}
+                title="Switch back to the previous question bank layout"
+              >
+                Classic UI
+              </button>
+            )
           ) : (
             <span className="eup-theme-toggle" style={{ cursor: "default", opacity: 0.85 }}>
               Exam conditions

@@ -20,7 +20,7 @@ export function MistakeQuestionHistoryStrip({
   className?: string;
 }) {
   const [hovered, setHovered] = useState<number | null>(null);
-  const ordered = [...events].sort((a, b) => a.at - b.at).slice(-16);
+  const ordered = [...events].sort((a, b) => b.at - a.at).slice(0, 16);
 
   if (ordered.length === 0) {
     return (

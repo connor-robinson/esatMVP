@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { SubscriptionGate } from "@/components/subscription/SubscriptionGate";
@@ -215,12 +215,12 @@ function MistakesContent({ demoMode }: { demoMode: boolean }) {
   }
 
   return (
-    <div className="py-8 sm:py-10">
-      {demoMode ? (
+    <div className={active ? undefined : "py-8 sm:py-10"}>
+      {demoMode && !active ? (
         <div className="mx-auto mb-4 flex max-w-[960px] flex-wrap items-center justify-between gap-2 rounded-[4px] bg-surface-elevated px-4 py-3 text-sm text-text-muted">
           <span>
-            Demo preview — sample ESAT CAMP questions, no login required.
-            Reviews stay in this browser tab only.
+            Demo preview. Sample questions, no login required. Reviews stay in
+            this browser tab only.
           </span>
           <button
             type="button"
@@ -242,13 +242,15 @@ function MistakesContent({ demoMode }: { demoMode: boolean }) {
           onComplete={handleComplete}
         />
       ) : (
-        <MistakesSessionSettings
-          summary={summary}
-          loadingSummary={loadingSummary}
-          starting={starting}
-          error={error}
-          onStart={handleStart}
-        />
+        <Container size="xl">
+          <MistakesSessionSettings
+            summary={summary}
+            loadingSummary={loadingSummary}
+            starting={starting}
+            error={error}
+            onStart={handleStart}
+          />
+        </Container>
       )}
     </div>
   );
@@ -260,18 +262,15 @@ function MistakesPageInner() {
   const demoAllowed = isMistakesDemoPreviewAllowed();
   const demoMode = wantsDemo && demoAllowed;
 
-  const body = useMemo(
-    () => (
-      <Container size="xl">
-        <MistakesContent demoMode={demoMode} />
-      </Container>
-    ),
-    [demoMode],
+  if (demoMode) {
+    return <MistakesContent demoMode />;
+  }
+
+  return (
+    <SubscriptionGate feature="drill">
+      <MistakesContent demoMode={false} />
+    </SubscriptionGate>
   );
-
-  if (demoMode) return body;
-
-  return <SubscriptionGate feature="drill">{body}</SubscriptionGate>;
 }
 
 export default function PastPapersMistakesPage() {

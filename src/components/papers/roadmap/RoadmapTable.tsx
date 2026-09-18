@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { ChevronDown, Download, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getExamAccentFillClass } from "@/config/colors";
+import { Card } from "@/components/ui/Card";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
 import { isEsatCampMockRoadmapStage } from "@/lib/papers/roadmapConfig";
 import { getRoadmapPartKey } from "@/lib/papers/roadmapPartKey";
@@ -250,7 +251,6 @@ function SectionsExpandRows({
     () => groupRoadmapPartsForDisplay(stage.parts),
     [stage.parts],
   );
-  const isMock = isEsatCampMockRoadmapStage(stage);
 
   const startGroup = (group: RoadmapDisplayGroup) => {
     onStartSession(
@@ -397,12 +397,14 @@ export function RoadmapTable({
     [grouped],
   );
 
-  const [activeTab, setActiveTab] = useState<ExamTab>("NSAA");
+  const [activeTab, setActiveTab] = useState<ExamTab>("Mocks");
 
   useEffect(() => {
     if (availableTabs.length === 0) return;
     if (!availableTabs.includes(activeTab)) {
-      setActiveTab(availableTabs[0]!);
+      setActiveTab(
+        availableTabs.includes("Mocks") ? "Mocks" : availableTabs[0]!,
+      );
     }
   }, [availableTabs, activeTab]);
 
@@ -692,16 +694,30 @@ export function RoadmapTable({
         ) : null}
 
         {activeTab === "Mocks" ? (
-          <div className="mt-5 rounded-organic-xl bg-surface-subtle/70 px-5 py-5 sm:px-6 sm:py-6">
-            <p className="text-sm font-semibold tracking-tight text-text sm:text-base">
-              New ESAT CAMP Mocks
-            </p>
-            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-text-muted">
-              Our past students said NSAA and ENGAA felt too easy relative to the
-              real ESAT. Combined with their feedback and our tutors&apos; own
-              experience of the exam, we built 5 ESAT mocks. Try them and tell us
-              what you think.
-            </p>
+          <div className="mt-5 rounded-organic-xl bg-surface-subtle/70 p-3 sm:p-4">
+            <Card
+              variant="elevated"
+              className="relative overflow-hidden border-0 p-6 shadow-lg sm:p-8"
+            >
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgb(var(--color-primary-rgb,34,197,94),0.08),transparent_55%)]"
+              />
+              <div className="relative z-10">
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-error">
+                  New
+                </p>
+                <h2 className="mt-2 text-2xl font-bold tracking-tight text-text sm:text-3xl">
+                  ESAT CAMP Mocks
+                </h2>
+                <p className="mt-3 max-w-2xl text-sm text-text-muted sm:text-base">
+                  Our past students said NSAA and ENGAA felt too easy relative to
+                  the real ESAT. Combined with their feedback and our tutors&apos;
+                  own experience of the exam, we built 5 ESAT mocks. Try them and
+                  tell us what you think.
+                </p>
+              </div>
+            </Card>
           </div>
         ) : null}
       </div>
