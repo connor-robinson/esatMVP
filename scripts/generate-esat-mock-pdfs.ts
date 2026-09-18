@@ -362,7 +362,7 @@ ${katexCss}
   font-weight: 700;
   font-style: normal;
 }
-@page { size: A4; margin: 22mm 16mm 18mm 18mm; }
+@page { size: A4; margin: 14mm 16mm 16mm 16mm; }
 * { box-sizing: border-box; }
 html, body {
   margin: 0; padding: 0;
@@ -372,19 +372,19 @@ html, body {
   -webkit-print-color-adjust: exact; print-color-adjust: exact;
 }
 body.has-running-header {
-  padding-top: 4mm;
+  padding-top: 12mm;
 }
 /* Repeats on every printed page (Chromium PDF). Header brand uses Space Grotesk only. */
 .page-running-header {
   position: fixed;
-  top: 11mm;
-  left: 18mm;
+  top: 5mm;
+  left: 16mm;
   right: 16mm;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  height: 5.5mm;
+  height: 7mm;
   z-index: 20;
   pointer-events: none;
 }
@@ -392,11 +392,11 @@ body.has-running-header {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 2.4mm;
+  gap: 3.2mm;
 }
 .page-running-header-brand img {
   display: block;
-  height: ${BRAND_FONT_PT}pt;
+  height: ${BRAND_FONT_PT * 1.05}pt;
   width: auto;
 }
 .page-running-header-brand span {
@@ -404,8 +404,10 @@ body.has-running-header {
   font-weight: 500;
   font-size: ${BRAND_FONT_PT}pt;
   line-height: 1;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
   color: #000;
+  display: flex;
+  align-items: center;
 }
 .page-running-header-subject {
   font-family: Arial, Helvetica, sans-serif;
@@ -418,18 +420,18 @@ body.has-running-header {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 3.5mm;
-  margin: 0 0 10mm;
+  gap: 3.8mm;
+  margin: 2mm 0 10mm;
   white-space: nowrap;
 }
 .cover-brand-logo {
   display: block;
-  height: 22pt;
+  height: 26pt;
   width: auto;
   flex: 0 0 auto;
 }
 .cover-brand-title {
-  font-size: 24pt;
+  font-size: 28pt;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.02em;
@@ -515,15 +517,25 @@ body.has-running-header {
 .option-letter { font-weight: 700; flex: 0 0 5mm; padding-top: 0.2mm; }
 .option-text { flex: 1; min-width: 0; }
 .option-text .md-table { font-size: 9pt; }
-.key-wrap { max-width: 42mm; margin: 12mm 0 0 8mm; }
+.key-wrap { max-width: 52mm; margin: 14mm 0 0 8mm; }
 .key-table { width: 100%; border-collapse: collapse; font-size: 10pt; }
 .key-table th, .key-table td {
   border: 0.4pt solid #333; padding: 1.1mm 2.5mm; text-align: left; line-height: 1.15;
 }
 .key-table thead th { font-weight: 700; }
 .key-title {
-  border: 0.4pt solid #333; border-bottom: 0; padding: 1.6mm 2.5mm;
-  font-weight: 700; font-size: 10pt;
+  border: 0.4pt solid #333; border-bottom: 0; padding: 2mm 2.5mm;
+  line-height: 1.25;
+}
+.key-title-main {
+  font-weight: 700;
+  font-size: 10pt;
+  text-transform: uppercase;
+}
+.key-title-sub {
+  font-weight: 700;
+  font-size: 10pt;
+  margin-top: 0.6mm;
 }
 `;
 }
@@ -552,6 +564,23 @@ function questionHtml(q: PdfQuestion): string {
 </article>`;
 }
 
+function runningHeaderHtml(paper: PdfPaper): string {
+  const logo = LOGO_MARK_BLACK_DATA_URI
+    ? `<img src="${LOGO_MARK_BLACK_DATA_URI}" alt=""/>`
+    : "";
+  return `<header class="page-running-header" aria-hidden="true">
+  <div class="page-running-header-brand">
+    ${logo}
+    <span>ESAT CAMP</span>
+  </div>
+  <span class="page-running-header-subject">${escapeHtml(paper.header)}</span>
+</header>`;
+}
+
+function paperFileStem(paper: PdfPaper): string {
+  return `ESAT CAMP ${paper.subject} Mock ${paper.mockLetter}`;
+}
+
 function buildFrontMatterHtml(paper: PdfPaper): string {
   const coverLabel = `ESAT CAMP MOCK TEST ${paper.mockLetter}`;
   const logo = LOGO_MARK_BLACK_DATA_URI
@@ -564,7 +593,7 @@ function buildFrontMatterHtml(paper: PdfPaper): string {
 <section class="page-cover">
   <div class="cover-brand">
     ${logo}
-    <p class="cover-brand-title">${escapeHtml(coverLabel)}</p>
+    <h1 class="cover-brand-title">${escapeHtml(coverLabel)}</h1>
   </div>
   <div class="cover-meta">
     <span>${escapeHtml(paper.header)}</span>
@@ -596,11 +625,9 @@ function buildFrontMatterHtml(paper: PdfPaper): string {
 function buildQuestionsHtml(paper: PdfPaper): string {
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"/>
-<title>${escapeHtml(paper.title)} — Questions</title>
-<style>${paperCss()}
-/* Leave top room for stamped header logo */
-body { padding-top: 2mm; }
-</style></head><body>
+<title>${escapeHtml(paperFileStem(paper))} — Questions</title>
+<style>${paperCss()}</style></head><body class="has-running-header">
+${runningHeaderHtml(paper)}
 <section>${paper.questions.map(questionHtml).join("\n")}</section>
 </body></html>`;
 }
@@ -614,10 +641,14 @@ function buildAnswerKeyHtml(paper: PdfPaper): string {
     .join("");
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"/>
-<title>${escapeHtml(paper.title)} — Answer key</title>
-<style>${paperCss()}</style></head><body>
+<title>${escapeHtml(paperFileStem(paper))} Answer Key</title>
+<style>${paperCss()}</style></head><body class="has-running-header">
+${runningHeaderHtml(paper)}
 <div class="key-wrap">
-  <div class="key-title">${escapeHtml(paper.title)} Answer Key</div>
+  <div class="key-title">
+    <div class="key-title-main">ESAT CAMP MOCK ${escapeHtml(paper.mockLetter)}</div>
+    <div class="key-title-sub">${escapeHtml(paper.subject)} Answer Key</div>
+  </div>
   <table class="key-table">
     <thead><tr><th>Question</th><th>Key</th></tr></thead>
     <tbody>${rows}</tbody>
@@ -673,20 +704,13 @@ function annotatePaperPdf(
   pdfPath: string,
   subject: string,
   frontMatterPages: number,
-  logoPath: string,
+  _logoPath: string,
 ): void {
+  // Brand header is rendered in HTML (Space Grotesk). Only stamp page numbers.
   const script = `
 import fitz, sys
-path, subject, front, logo_path, font_pt = (
-    sys.argv[1], sys.argv[2], int(sys.argv[3]), sys.argv[4], float(sys.argv[5])
-)
+path, front = sys.argv[1], int(sys.argv[2])
 doc = fitz.open(path)
-brand = "ESAT CAMP"
-logo_h = font_pt * 1.2
-logo_w = logo_h * (687 / 583)
-left = 36
-top = 16
-gap = 4
 for i, page in enumerate(doc):
     rect = page.rect
     page.insert_text(
@@ -696,40 +720,6 @@ for i, page in enumerate(doc):
         fontname="helv",
         color=(0, 0, 0),
     )
-    if i < front:
-        continue
-    page.insert_image(
-        fitz.Rect(left, top, left + logo_w, top + logo_h),
-        filename=logo_path,
-        keep_proportion=True,
-    )
-    brand_rect = fitz.Rect(
-        left + logo_w + gap, top - 2, left + logo_w + gap + 140, top + logo_h + 6
-    )
-    rc = page.insert_textbox(
-        brand_rect,
-        brand,
-        fontsize=font_pt,
-        fontname="helv",
-        color=(0, 0, 0),
-        align=0,
-    )
-    if rc < 0:
-        raise SystemExit(f"brand text overflow page {i}: {rc}")
-    tw = fitz.get_text_length(subject, fontsize=font_pt, fontname="helv")
-    subj_rect = fitz.Rect(
-        rect.width - 56 - tw, top - 2, rect.width - 48, top + logo_h + 6
-    )
-    rc2 = page.insert_textbox(
-        subj_rect,
-        subject,
-        fontsize=font_pt,
-        fontname="helv",
-        color=(0, 0, 0),
-        align=2,
-    )
-    if rc2 < 0:
-        raise SystemExit(f"subject text overflow page {i}: {rc2}")
 out = path + ".annotated.pdf"
 doc.save(out, garbage=3, deflate=True)
 doc.close()
@@ -738,15 +728,7 @@ os.replace(out, path)
 `;
   const result = spawnSync(
     "python",
-    [
-      "-c",
-      script,
-      pdfPath,
-      subject,
-      String(frontMatterPages),
-      logoPath,
-      String(BRAND_FONT_PT),
-    ],
+    ["-c", script, pdfPath, String(frontMatterPages)],
     { encoding: "utf8" },
   );
   if (result.status !== 0) {
@@ -756,49 +738,10 @@ os.replace(out, path)
   }
 }
 
-function annotateAnswerKeyPdf(pdfPath: string, logoPath: string): void {
-  const script = `
-import fitz, sys, os
-path, logo_path, font_pt = sys.argv[1], sys.argv[2], float(sys.argv[3])
-doc = fitz.open(path)
-brand = "ESAT CAMP"
-logo_h = font_pt * 1.2
-logo_w = logo_h * (687 / 583)
-left, top, gap = 36, 16, 4
-for page in doc:
-    page.insert_image(
-        fitz.Rect(left, top, left + logo_w, top + logo_h),
-        filename=logo_path,
-        keep_proportion=True,
-    )
-    brand_rect = fitz.Rect(
-        left + logo_w + gap, top - 2, left + logo_w + gap + 140, top + logo_h + 6
-    )
-    rc = page.insert_textbox(
-        brand_rect,
-        brand,
-        fontsize=font_pt,
-        fontname="helv",
-        color=(0, 0, 0),
-        align=0,
-    )
-    if rc < 0:
-        raise SystemExit(f"answer-key brand overflow: {rc}")
-out = path + ".annotated.pdf"
-doc.save(out, garbage=3, deflate=True)
-doc.close()
-os.replace(out, path)
-`;
-  const result = spawnSync(
-    "python",
-    ["-c", script, pdfPath, logoPath, String(BRAND_FONT_PT)],
-    { encoding: "utf8" },
-  );
-  if (result.status !== 0) {
-    throw new Error(
-      `Answer key annotate failed: ${result.stderr || result.stdout || "unknown error"}`,
-    );
-  }
+function annotateAnswerKeyPdf(pdfPath: string, _logoPath: string): void {
+  // Header is HTML; no extra stamp needed on answer keys.
+  void pdfPath;
+  void _logoPath;
 }
 
 function toPdfPaper(
@@ -892,6 +835,14 @@ async function main() {
   loadEnvLocal();
   const logoPath = ensureBlackLogoMark();
   LOGO_MARK_BLACK_DATA_URI = fileToDataUri(logoPath);
+  if (!fs.existsSync(SPACE_GROTESK_500) || !fs.existsSync(SPACE_GROTESK_700)) {
+    console.error(
+      "Missing Space Grotesk fonts in public/fonts (space-grotesk-500/700.woff2)",
+    );
+    process.exit(1);
+  }
+  SPACE_GROTESK_500_DATA_URI = fileToDataUri(SPACE_GROTESK_500);
+  SPACE_GROTESK_700_DATA_URI = fileToDataUri(SPACE_GROTESK_700);
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -914,23 +865,29 @@ async function main() {
 
   try {
     for (const paper of papers) {
-      const stem = `mock-${String(paper.mockNumber).padStart(2, "0")}`;
+      const fileStem = paperFileStem(paper);
       const dir = path.join(OUT_ROOT, paper.catalogId);
-      const paperPath = path.join(dir, `${stem}-paper.pdf`);
-      const keyPath = path.join(dir, `${stem}-answer-key.pdf`);
-      const frontPath = path.join(
-        tmpRoot,
-        `${paper.catalogId}-${stem}-front.pdf`,
-      );
-      const questionsPath = path.join(
-        tmpRoot,
-        `${paper.catalogId}-${stem}-questions.pdf`,
-      );
+      const paperPath = path.join(dir, `${fileStem}.pdf`);
+      const keyPath = path.join(dir, `${fileStem} Answer Key.pdf`);
+      const tmpId = `${paper.catalogId}-${paper.mockLetter}`;
+      const frontPath = path.join(tmpRoot, `${tmpId}-front.pdf`);
+      const questionsPath = path.join(tmpRoot, `${tmpId}-questions.pdf`);
 
       console.log(
         `  ${paper.subject} Mock ${paper.mockLetter} → ${path.relative(ROOT, paperPath)}`,
       );
       fs.mkdirSync(dir, { recursive: true });
+
+      // Remove legacy mock-0N-* filenames if present.
+      const legacyStem = `mock-${String(paper.mockNumber).padStart(2, "0")}`;
+      for (const legacy of [
+        `${legacyStem}-paper.pdf`,
+        `${legacyStem}-answer-key.pdf`,
+      ]) {
+        const legacyPath = path.join(dir, legacy);
+        if (fs.existsSync(legacyPath)) fs.unlinkSync(legacyPath);
+      }
+
       await htmlToPdf(buildFrontMatterHtml(paper), frontPath, browser);
       await htmlToPdf(buildQuestionsHtml(paper), questionsPath, browser);
       mergePdfs([frontPath, questionsPath], paperPath);

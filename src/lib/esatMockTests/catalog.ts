@@ -123,11 +123,13 @@ function pdfHrefsForSlot(
   moduleId: EsatMockModuleId,
   mockNumber: number,
 ): Pick<EsatMockSlot, "paperHref" | "answerKeyHref"> {
-  const stem = `mock-${String(mockNumber).padStart(2, "0")}`;
-  const base = `/downloads/mocks/${moduleId}/${stem}`;
+  const module = findMockModule(moduleId);
+  const letter = mockLetterForNumber(mockNumber);
+  const stem = `ESAT CAMP ${module.builderSubject} Mock ${letter}`;
+  const dir = `/downloads/mocks/${moduleId}`;
   return {
-    paperHref: `${base}-paper.pdf`,
-    answerKeyHref: `${base}-answer-key.pdf`,
+    paperHref: `${dir}/${encodeURIComponent(stem)}.pdf`,
+    answerKeyHref: `${dir}/${encodeURIComponent(`${stem} Answer Key`)}.pdf`,
   };
 }
 
