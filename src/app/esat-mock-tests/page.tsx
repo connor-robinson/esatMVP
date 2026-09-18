@@ -172,15 +172,6 @@ export default function EsatMockTestsPage() {
             stretch.
           </p>
         </div>
-        <p className="text-sm leading-relaxed text-[#64748B]">
-          {TOTAL_ESAT_MOCK_COUNT} original mocks across Maths 1, Maths 2,
-          Physics, Chemistry and Biology. Free to take.{" "}
-          <SeoTextLink href="/esat-mock-tests/compare">
-            Invite a friend
-          </SeoTextLink>{" "}
-          to the same paper (no signup). Save scores by creating an account
-          after an attempt.
-        </p>
       </section>
 
       <SeoSection heading="Official past papers">
