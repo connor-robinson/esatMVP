@@ -154,18 +154,22 @@ function escapeHtml(text: string): string {
 
 /**
  * Prefer exam-style fractions in inline math: same digit size as surrounding
- * text, taller vertically (TeX `\displaystyle`), matching the in-app KaTeX hook.
+ * text, taller vertically (TeX `\displaystyle` + `\dfrac`), matching the
+ * in-app KaTeX hook.
  */
 function withInlineDisplayStyle(math: string): string {
-  const trimmed = math.trimStart();
+  let next = math;
+  // \dfrac keeps numerator/denominator at text size (not script size).
+  next = next.replace(/(?<![a-zA-Z])\\frac(?![a-zA-Z])/g, "\\dfrac");
+  const trimmed = next.trimStart();
   if (
     /^\\(?:displaystyle|textstyle|scriptstyle|scriptscriptstyle)(?![A-Za-z])/.test(
       trimmed,
     )
   ) {
-    return math;
+    return next;
   }
-  return `\\displaystyle ${math}`;
+  return `\\displaystyle ${next}`;
 }
 
 /**

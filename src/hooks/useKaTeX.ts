@@ -252,23 +252,24 @@ export function parseMathContent(text: string): MathSegment[] {
 
 /**
  * Prefer NSAA/exam-style fractions in inline math: keep digit size equal to
- * surrounding text and let the fraction grow vertically (TeX `\displaystyle`),
- * instead of KaTeX's default text-style shrink-to-fit `\frac`.
+ * surrounding text and let the fraction grow vertically (TeX `\displaystyle`
+ * + `\dfrac`), instead of KaTeX's default text-style shrink-to-fit `\frac`.
  *
  * Skips when the author already set an explicit math style.
  * Leaves true display-mode renders alone (already displaystyle).
  * Fractions inside superscripts/subscripts stay script-sized via TeX rules.
  */
 function withInlineDisplayStyle(math: string): string {
-  const trimmed = math.trimStart();
+  let next = math.replace(/(?<![a-zA-Z])\\frac(?![a-zA-Z])/g, "\\dfrac");
+  const trimmed = next.trimStart();
   if (
     /^\\(?:displaystyle|textstyle|scriptstyle|scriptscriptstyle)(?![A-Za-z])/.test(
       trimmed,
     )
   ) {
-    return math;
+    return next;
   }
-  return `\\displaystyle ${math}`;
+  return `\\displaystyle ${next}`;
 }
 
 /**
