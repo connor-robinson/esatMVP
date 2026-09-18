@@ -1,6 +1,6 @@
 /**
  * Admin mock-builder → past-papers bridge.
- * Five full sittings (Mock 1–5); each sitting has one module per ESAT subject.
+ * Five full sittings (Mock A–E); each sitting has one module per ESAT subject.
  */
 
 import type { ExamType, Paper, PaperSection, Question } from "@/types/papers";
@@ -11,6 +11,7 @@ import type {
 } from "@/lib/mockBuilder/types";
 import type { RoadmapPart, RoadmapStage } from "@/lib/papers/roadmapConfig";
 import { mockCandidateToPearsonQuestion } from "@/lib/mockBuilder/toPearsonQuestion";
+import { mockLetterForNumber } from "@/lib/esatMockTests/catalog";
 
 export const ADMIN_ESAT_MOCK_COUNT = 5;
 export const ADMIN_ESAT_MOCK_EXAM_NAME = "ESAT" as const;
@@ -41,8 +42,21 @@ export const ADMIN_MOCK_SUBJECT_TO_PART_NAME: Record<
   Biology: "Biology",
 };
 
+/** Display / session paper name: Mock A–E. */
 export function adminMockPaperName(mockNumber: number): string {
-  return `Mock ${mockNumber}`;
+  return `Mock ${mockLetterForNumber(mockNumber)}`;
+}
+
+/** Parse Mock A–E or legacy Mock 1–5. */
+export function parseAdminMockPaperName(paperName: string): number | null {
+  const trimmed = paperName.trim();
+  const letter = /^Mock\s+([A-E])$/i.exec(trimmed);
+  if (letter) return letter[1]!.toUpperCase().charCodeAt(0) - 64;
+  const digit = /^Mock\s+(\d+)$/i.exec(trimmed);
+  if (!digit) return null;
+  const n = Number(digit[1]);
+  if (!Number.isFinite(n) || n < 1 || n > ADMIN_ESAT_MOCK_COUNT) return null;
+  return n;
 }
 
 export function paperIdForAdminEsatMock(
@@ -104,7 +118,7 @@ export function buildAdminEsatMockRoadmapStages(): RoadmapStage[] {
       id: `esat-camp-full-mock-${n}`,
       year: ADMIN_ESAT_MOCK_EXAM_YEAR,
       examName: ADMIN_ESAT_MOCK_EXAM_NAME,
-      label: `Mock ${n}`,
+      label: adminMockPaperName(n),
       parts: ADMIN_ESAT_MOCK_SUBJECTS.map((subject) =>
         adminMockRoadmapPart(n, subject),
       ),
@@ -118,16 +132,8 @@ export const ADMIN_ESAT_MOCK_ROADMAP_STAGES = buildAdminEsatMockRoadmapStages();
 export function getAdminEsatMockModulePapersByPaperName(
   paperName: string,
 ): Paper[] {
-  const match = /^Mock\s+(\d+)$/i.exec(paperName.trim());
-  if (!match) return [];
-  const mockNumber = Number(match[1]);
-  if (
-    !Number.isFinite(mockNumber) ||
-    mockNumber < 1 ||
-    mockNumber > ADMIN_ESAT_MOCK_COUNT
-  ) {
-    return [];
-  }
+  const mockNumber = parseAdminMockPaperName(paperName);
+  if (mockNumber == null) return [];
   return ADMIN_ESAT_MOCK_SUBJECTS.map((subject) => ({
     id: paperIdForAdminEsatMock(mockNumber, subject),
     examName: ADMIN_ESAT_MOCK_EXAM_NAME,

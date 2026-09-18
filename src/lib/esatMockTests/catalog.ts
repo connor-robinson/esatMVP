@@ -113,11 +113,21 @@ export function mockLetterForNumber(mockNumber: number): string {
   return String.fromCharCode(64 + mockNumber);
 }
 
+export function mockNumberForLetter(letter: string): number | null {
+  const ch = letter.trim().toUpperCase();
+  if (!/^[A-E]$/.test(ch)) return null;
+  return ch.charCodeAt(0) - 64;
+}
+
 export function mockDisplayName(
   module: Pick<EsatMockModuleCatalogEntry, "builderSubject">,
   mockNumber: number,
 ): string {
   return `ESAT CAMP ${module.builderSubject} Mock ${mockLetterForNumber(mockNumber)}`;
+}
+
+export function fullMockDisplayName(mockNumber: number): string {
+  return `ESAT CAMP Mock ${mockLetterForNumber(mockNumber)}`;
 }
 
 /**
@@ -148,7 +158,16 @@ export function starsFromPredictedDifficulty(predicted: number): number {
   return 4;
 }
 
-/** All catalog slots have admin mock-builder PDFs (5 × 5). */
+/** Mean predicted difficulty across all five modules for a sitting letter. */
+function fullSittingPredictedDifficulty(mockNumber: number): number {
+  const idx = mockNumber - 1;
+  const vals = ESAT_MOCK_MODULES.map(
+    (m) => PREDICTED_DIFFICULTY_BY_MODULE[m.id]?.[idx] ?? 3.1,
+  );
+  return vals.reduce((a, b) => a + b, 0) / vals.length;
+}
+
+/** Per-subject paper/answers PDFs. */
 function pdfHrefsForSlot(
   moduleId: EsatMockModuleId,
   mockNumber: number,
@@ -160,8 +179,21 @@ function pdfHrefsForSlot(
   return {
     paperHref: `${dir}/${encodeURIComponent(stem)}.pdf`,
     answerKeyHref: `${dir}/${encodeURIComponent(`${stem} Answer Key`)}.pdf`,
-    // Full paper+answers bundle not generated yet.
     fullHref: null,
+  };
+}
+
+/** Combined 5-module sitting PDFs (NSAA-style order). */
+export function fullMockPdfHrefs(mockNumber: number): {
+  paperHref: string;
+  answerKeyHref: string;
+} {
+  const letter = mockLetterForNumber(mockNumber);
+  const stem = `ESAT CAMP Mock ${letter}`;
+  const dir = `/downloads/mocks/full`;
+  return {
+    paperHref: `${dir}/${encodeURIComponent(stem)}.pdf`,
+    answerKeyHref: `${dir}/${encodeURIComponent(`${stem} Answer Key`)}.pdf`,
   };
 }
 
@@ -179,12 +211,35 @@ export function mockSlotsForModule(
       letter,
       label: `Mock ${letter}`,
       displayName: mockDisplayName(module, mockNumber),
-      // No public student attempt routes yet. Keep null to avoid 404s.
+      // Subject modules: downloads only (Start now is Full-tab only).
       startHref: null,
       paperHref: pdfs.paperHref,
       answerKeyHref: pdfs.answerKeyHref,
       fullHref: pdfs.fullHref,
       difficultyStars: starsFromPredictedDifficulty(predicted),
+    };
+  });
+}
+
+/** Full sitting rows for the Full tab (Mock A–E). */
+export function fullMockSlots(): EsatMockSlot[] {
+  return Array.from({ length: ESAT_MOCKS_PER_MODULE }, (_, index) => {
+    const mockNumber = index + 1;
+    const letter = mockLetterForNumber(mockNumber);
+    const pdfs = fullMockPdfHrefs(mockNumber);
+    return {
+      mockNumber,
+      letter,
+      label: `Mock ${letter}`,
+      displayName: fullMockDisplayName(mockNumber),
+      // Opens past-papers Start session for this sitting.
+      startHref: `/past-papers?tab=Mocks&startMock=${letter}`,
+      paperHref: pdfs.paperHref,
+      answerKeyHref: pdfs.answerKeyHref,
+      fullHref: null,
+      difficultyStars: starsFromPredictedDifficulty(
+        fullSittingPredictedDifficulty(mockNumber),
+      ),
     };
   });
 }

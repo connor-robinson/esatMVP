@@ -348,7 +348,7 @@ ${katexCss}
   font-weight: 700;
   font-style: normal;
 }
-@page { size: A4; margin: 14mm ${PAGE_MARGIN_MM}mm 16mm ${PAGE_MARGIN_MM}mm; }
+@page { size: A4; margin: 22mm ${PAGE_MARGIN_MM}mm 16mm ${PAGE_MARGIN_MM}mm; }
 * { box-sizing: border-box; }
 html, body {
   margin: 0; padding: 0;
@@ -413,12 +413,14 @@ html, body {
 .stem figure, .stem .diagram, .option-text figure, .option-text .diagram {
   display: block; margin: 2.5mm auto; max-width: 84mm; text-align: center;
 }
-/* Diagram images only — never restyle KaTeX sqrt / stretchy SVGs. */
+/* Diagram images only - never restyle KaTeX sqrt / stretchy SVGs. */
 .stem figure img, .stem figure > svg, .stem .diagram img, .stem .diagram > svg,
 .option-text figure img, .option-text figure > svg,
 .option-text .diagram img, .option-text .diagram > svg,
 .diagram img, .diagram > svg {
   display: block; margin: 0 auto; max-width: 84mm; max-height: 64mm; width: auto; height: auto;
+  /* Force print-black diagrams (source assets are often gray). */
+  filter: grayscale(1) contrast(1.55) brightness(0.72);
 }
 /* KaTeX default size is 1.21em; 0.95em optically matches Arial body text. */
 .katex {
@@ -563,6 +565,95 @@ function paperFileStem(paper: PdfPaper): string {
   return `ESAT CAMP ${paper.subject} Mock ${paper.mockLetter}`;
 }
 
+function fullMockFileStem(letter: string): string {
+  return `ESAT CAMP Mock ${letter}`;
+}
+
+function buildSittingFrontMatterHtml(
+  letter: string,
+  modules: PdfPaper[],
+): string {
+  const coverLabel = `ESAT CAMP MOCK ${letter}`;
+  const logo = LOGO_MARK_BLACK_DATA_URI
+    ? `<img class="cover-brand-logo" src="${LOGO_MARK_BLACK_DATA_URI}" alt=""/>`
+    : "";
+  const moduleRows = modules
+    .map(
+      (m) =>
+        `<div class="cover-section-row"><span>${escapeHtml(m.header)}</span><span>${m.timeLimitMinutes} minutes</span></div>`,
+    )
+    .join("\n");
+  const totalMins = modules.reduce((s, m) => s + m.timeLimitMinutes, 0);
+  return `<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/>
+<title>${escapeHtml(coverLabel)} - Front matter</title>
+<style>${paperCss()}</style></head><body>
+<section class="page-cover">
+  <div class="cover-brand">
+    ${logo}
+    <h1 class="cover-brand-title">${escapeHtml(coverLabel)}</h1>
+  </div>
+  <div class="cover-meta">
+    <span>Full sitting</span>
+    <span>EC-FULL-${escapeHtml(letter)}</span>
+  </div>
+  ${moduleRows}
+  <div class="instructions">
+    <h2 class="instructions-heading">Instructions to candidates</h2>
+    <p>Please read these instructions carefully, but <strong>do not open this question paper until you are ready to begin</strong>.</p>
+    <p>This paper contains <strong>${modules.length} modules</strong> (Mathematics 1, Mathematics 2, Physics, Chemistry, Biology). Each module has <strong>27 multiple-choice questions</strong> and is designed for <strong>40 minutes</strong> (about <strong>${totalMins} minutes</strong> in total if you sit every module).</p>
+    <p>There are no penalties for incorrect responses, only marks for correct answers, so you should attempt all of the questions. Each question is worth one mark.</p>
+    <p>For each question, choose the one option you consider correct. If you make a mistake, erase thoroughly and try again.</p>
+    <p>You can use the question paper for rough working. Dictionaries and calculators are <strong>NOT permitted</strong>.</p>
+    <p class="cover-wait">Please wait until you are ready before turning this page.</p>
+    <p class="cover-pages">Original ESAT CAMP practice material. Not an official UAT-UK or Pearson paper.</p>
+    <p class="cover-footer">ESAT CAMP · Independent preparation resource</p>
+  </div>
+</section>
+<section class="page-blank"><p class="blank-label">BLANK PAGE</p></section>
+</body></html>`;
+}
+
+function buildCombinedAnswerKeyHtml(letter: string, modules: PdfPaper[]): string {
+  const blocks = modules
+    .map((paper) => {
+      const rows = paper.questions
+        .map(
+          (q) =>
+            `<tr><td>${q.number}</td><td>${escapeHtml(q.answer)}</td></tr>`,
+        )
+        .join("");
+      return `<div class="key-wrap" style="page-break-inside:avoid;margin-top:10mm">
+  <div class="key-title">
+    <div class="key-title-main">ESAT CAMP MOCK ${escapeHtml(letter)}</div>
+    <div class="key-title-sub">${escapeHtml(paper.header)} Answer Key</div>
+  </div>
+  <table class="key-table">
+    <thead><tr><th>Question</th><th>Key</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+</div>`;
+    })
+    .join("\n");
+  return `<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/>
+<title>${escapeHtml(fullMockFileStem(letter))} Answer Key</title>
+<style>${paperCss()}</style></head><body>
+${blocks}
+</body></html>`;
+}
+
+function buildPartDividerHtml(header: string): string {
+  return `<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/>
+<title>${escapeHtml(header)}</title>
+<style>${paperCss()}</style></head><body>
+<section class="page-part" style="page-break-after:auto">
+  <p class="part-title">${escapeHtml(header)}</p>
+</section>
+</body></html>`;
+}
+
 function buildFrontMatterHtml(paper: PdfPaper): string {
   const coverLabel = `ESAT CAMP MOCK TEST ${paper.mockLetter}`;
   const logo = LOGO_MARK_BLACK_DATA_URI
@@ -637,6 +728,62 @@ function buildAnswerKeyHtml(paper: PdfPaper): string {
 </body></html>`;
 }
 
+async function blackenDiagramImagesInPage(
+  page: Awaited<ReturnType<Awaited<ReturnType<typeof chromium.launch>>["newPage"]>>,
+): Promise<void> {
+  // String form avoids tsx/esbuild injecting __name into the browser realm.
+  await page.evaluate(`(async () => {
+    const imgs = Array.from(
+      document.querySelectorAll(
+        ".stem figure img, .stem .diagram img, .option-text figure img, .option-text .diagram img, .diagram img",
+      ),
+    );
+    await Promise.all(
+      imgs.map(
+        (img) =>
+          new Promise((resolve) => {
+            const run = () => {
+              try {
+                const w = img.naturalWidth || img.width;
+                const h = img.naturalHeight || img.height;
+                if (!w || !h) {
+                  resolve();
+                  return;
+                }
+                const canvas = document.createElement("canvas");
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext("2d");
+                if (!ctx) {
+                  resolve();
+                  return;
+                }
+                ctx.drawImage(img, 0, 0, w, h);
+                const data = ctx.getImageData(0, 0, w, h);
+                const px = data.data;
+                for (let i = 0; i < px.length; i += 4) {
+                  const a = px[i + 3];
+                  if (a < 8) continue;
+                  const y =
+                    0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2];
+                  const v = y > 210 ? 255 : y < 170 ? 0 : Math.round(y * 0.35);
+                  px[i] = v;
+                  px[i + 1] = v;
+                  px[i + 2] = v;
+                }
+                ctx.putImageData(data, 0, 0);
+                img.src = canvas.toDataURL("image/png");
+              } catch (_) {}
+              resolve();
+            };
+            if (img.complete) run();
+            else img.addEventListener("load", run, { once: true });
+          }),
+      ),
+    );
+  })()`);
+}
+
 /**
  * Replace KaTeX sqrt SVG with one stretched <img> covering hook + vinculum.
  * object-fit:fill keeps the bar joined to the hook across any radicand width.
@@ -690,6 +837,7 @@ async function htmlToPdf(
   try {
     await page.setContent(html, { waitUntil: "networkidle" });
     await page.emulateMedia({ media: "print" });
+    await blackenDiagramImagesInPage(page);
     await fixKatexSqrtsInPage(page);
     fs.mkdirSync(path.dirname(outPath), { recursive: true });
     await page.pdf({
@@ -967,6 +1115,12 @@ async function main() {
   fs.mkdirSync(tmpRoot, { recursive: true });
   const browser = await chromium.launch({ headless: true });
 
+  /** letter → subject → paths for full sitting merge */
+  const byLetter = new Map<
+    string,
+    Map<string, { questionsPath: string; paper: PdfPaper; keyPath: string }>
+  >();
+
   try {
     for (const paper of papers) {
       const fileStem = paperFileStem(paper);
@@ -998,6 +1152,73 @@ async function main() {
       annotatePaperPdf(paperPath, paper.header, 3, logoPath);
       await htmlToPdf(buildAnswerKeyHtml(paper), keyPath, browser);
       annotateAnswerKeyPdf(keyPath, paper.header, logoPath);
+
+      if (!byLetter.has(paper.mockLetter)) byLetter.set(paper.mockLetter, new Map());
+      byLetter.get(paper.mockLetter)!.set(paper.subject, {
+        questionsPath,
+        paper,
+        keyPath,
+      });
+    }
+
+    // Full sittings: Math 1 → Math 2 → Physics → Chemistry → Biology (NSAA-style order).
+    const subjectOrder: MockBuilderSubject[] = [
+      "Math 1",
+      "Math 2",
+      "Physics",
+      "Chemistry",
+      "Biology",
+    ];
+    const fullDir = path.join(OUT_ROOT, "full");
+    fs.mkdirSync(fullDir, { recursive: true });
+
+    for (const [letter, subjectMap] of [...byLetter.entries()].sort()) {
+      const modules = subjectOrder
+        .map((s) => subjectMap.get(s)?.paper)
+        .filter((p): p is PdfPaper => Boolean(p));
+      if (modules.length < 5) {
+        console.warn(
+          `  skip Full Mock ${letter}: only ${modules.length}/5 modules generated`,
+        );
+        continue;
+      }
+
+      const stem = fullMockFileStem(letter);
+      const fullPaperPath = path.join(fullDir, `${stem}.pdf`);
+      const fullKeyPath = path.join(fullDir, `${stem} Answer Key.pdf`);
+      const sittingFront = path.join(tmpRoot, `full-${letter}-front.pdf`);
+      const mergeInputs: string[] = [sittingFront];
+
+      console.log(
+        `  Full Mock ${letter} (${modules.length} modules) → ${path.relative(ROOT, fullPaperPath)}`,
+      );
+      await htmlToPdf(
+        buildSittingFrontMatterHtml(letter, modules),
+        sittingFront,
+        browser,
+      );
+
+      for (const subject of subjectOrder) {
+        const entry = subjectMap.get(subject);
+        if (!entry) continue;
+        const partPath = path.join(
+          tmpRoot,
+          `full-${letter}-${entry.paper.catalogId}-part.pdf`,
+        );
+        await htmlToPdf(buildPartDividerHtml(entry.paper.header), partPath, browser);
+        mergeInputs.push(partPath, entry.questionsPath);
+      }
+
+      mergePdfs(mergeInputs, fullPaperPath);
+      // Sitting cover is 2 pages (cover + blank); no subject headers on those.
+      annotatePaperPdf(fullPaperPath, `Mock ${letter}`, 2, logoPath);
+
+      await htmlToPdf(
+        buildCombinedAnswerKeyHtml(letter, modules),
+        fullKeyPath,
+        browser,
+      );
+      annotateAnswerKeyPdf(fullKeyPath, `Mock ${letter}`, logoPath);
     }
   } finally {
     await browser.close();

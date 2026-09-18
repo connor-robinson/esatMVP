@@ -6,6 +6,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useSearchParams } from "next/navigation";
 import { ChevronDown, Download, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getExamAccentFillClass } from "@/config/colors";
@@ -33,6 +34,7 @@ import {
   type RoadmapAverageMaps,
   type RoadmapStageScore,
 } from "@/lib/papers/roadmapStageScores";
+import { parseAdminMockPaperName } from "@/lib/papers/adminEsatMocks";
 import { RoadmapInfoPopover } from "./RoadmapInfoPopover";
 import {
   getStageCommentary,
@@ -400,6 +402,7 @@ export function RoadmapTable({
   );
 
   const [activeTab, setActiveTab] = useState<ExamTab>("Mocks");
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (availableTabs.length === 0) return;
@@ -409,6 +412,24 @@ export function RoadmapTable({
       );
     }
   }, [availableTabs, activeTab]);
+
+  // Deep link from /esat-mock-tests Full tab: ?tab=Mocks&startMock=A
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab === "Mocks" && availableTabs.includes("Mocks")) {
+      setActiveTab("Mocks");
+    }
+    const startMock = searchParams.get("startMock");
+    if (!startMock) return;
+    const mockNumber = parseAdminMockPaperName(`Mock ${startMock}`);
+    if (mockNumber == null) return;
+    const stage = stages.find(
+      (s) =>
+        s.id === `esat-camp-full-mock-${mockNumber}` ||
+        parseAdminMockPaperName(s.label) === mockNumber,
+    );
+    if (stage) setStartStage(stage);
+  }, [searchParams, stages, availableTabs]);
 
   useEffect(() => {
     let cancelled = false;

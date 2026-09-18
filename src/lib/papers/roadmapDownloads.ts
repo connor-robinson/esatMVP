@@ -1,5 +1,5 @@
 /**
- * Resolve PDF download URLs for roadmap stages (NSAA / ENGAA archive).
+ * Resolve PDF download URLs for roadmap stages (NSAA / ENGAA archive + ESAT CAMP full mocks).
  */
 
 import {
@@ -10,6 +10,11 @@ import {
   type PastPaperAnswersKind,
 } from "@/data/pastPapersDownload";
 import type { RoadmapPart, RoadmapStage } from "@/lib/papers/roadmapConfig";
+import {
+  ADMIN_ESAT_MOCK_EXAM_NAME,
+  parseAdminMockPaperName,
+} from "@/lib/papers/adminEsatMocks";
+import { fullMockPdfHrefs } from "@/lib/esatMockTests/catalog";
 
 export type RoadmapDownloadLinks = {
   paperUrl?: string;
@@ -41,11 +46,33 @@ function specimenLinks(
   };
 }
 
+function esatCampFullMockLinks(
+  stage: Pick<RoadmapStage, "examName" | "id" | "label">,
+): RoadmapDownloadLinks | null {
+  if (stage.examName !== ADMIN_ESAT_MOCK_EXAM_NAME) return null;
+  if (!stage.id.startsWith("esat-camp-full-mock-")) return null;
+  const mockNumber =
+    parseAdminMockPaperName(stage.label) ??
+    Number(stage.id.replace("esat-camp-full-mock-", ""));
+  if (!Number.isFinite(mockNumber) || mockNumber < 1 || mockNumber > 5) {
+    return null;
+  }
+  const hrefs = fullMockPdfHrefs(mockNumber);
+  return {
+    paperUrl: hrefs.paperHref,
+    answersUrl: hrefs.answerKeyHref,
+    answersLabel: "Answers",
+  };
+}
+
 /** PDF links for a stage + paper section (e.g. NSAA 2019 Section 1). */
 export function getRoadmapSectionDownloads(
-  stage: Pick<RoadmapStage, "examName" | "year" | "id">,
+  stage: Pick<RoadmapStage, "examName" | "year" | "id" | "label">,
   paperName: string,
 ): RoadmapDownloadLinks | null {
+  const esatFull = esatCampFullMockLinks(stage);
+  if (esatFull) return esatFull;
+
   if (stage.examName !== "NSAA" && stage.examName !== "ENGAA") {
     return null;
   }

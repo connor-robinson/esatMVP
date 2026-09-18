@@ -7,7 +7,7 @@ export default function QuestionBankDrillRedirectPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/questions/questionbank/analytics');
+    router.replace('/questions/questionbank/mistakes');
   }, [router]);
 
   return null;

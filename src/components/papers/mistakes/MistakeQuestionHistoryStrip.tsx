@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import type { MistakeHistoryEvent } from "@/lib/papers/mistakes";
+
+export type MistakeHistoryStripEvent = {
+  at: number;
+  isCorrect: boolean;
+  sessionId: string;
+};
 
 function formatHistoryDate(at: number): string {
   return new Date(at).toLocaleDateString(undefined, {
@@ -18,7 +23,7 @@ export function MistakeQuestionHistoryStrip({
   variant = "default",
   title,
 }: {
-  events: MistakeHistoryEvent[];
+  events: MistakeHistoryStripEvent[];
   className?: string;
   /** Header chrome: light pill on purple/blue Pearson bar. */
   variant?: "default" | "header";

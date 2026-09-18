@@ -83,7 +83,7 @@ export async function listAdminEsatMockCatalog(): Promise<
     );
     sittings.push({
       mockNumber: n,
-      label: `Mock ${n}`,
+      label: `Mock ${String.fromCharCode(64 + n)}`,
       modules,
     });
   }

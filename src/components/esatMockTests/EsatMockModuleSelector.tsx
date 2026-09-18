@@ -7,9 +7,11 @@ import { cn } from "@/lib/utils";
 import {
   ESAT_MOCK_MODULES,
   findMockModule,
+  fullMockSlots,
   mockSlotsForModule,
   type EsatMockAttemptSummary,
   type EsatMockModuleId,
+  type EsatMockSlot,
 } from "@/lib/esatMockTests/catalog";
 import { RoadmapInfoPopover } from "@/components/papers/roadmap/RoadmapInfoPopover";
 
@@ -71,6 +73,79 @@ function pillClass(selected: boolean) {
   );
 }
 
+function MockSlotRow({
+  slot,
+  showStartNow,
+}: {
+  slot: EsatMockSlot;
+  showStartNow: boolean;
+}) {
+  return (
+    <li role="listitem" className="rounded bg-[#161D2F] px-5 py-5">
+      <div className={MOCK_ROW_GRID}>
+        <div className="flex items-center gap-1.5">
+          <span className="text-base font-semibold tracking-tight text-white sm:text-lg">
+            ESAT CAMP Mock {slot.letter}
+          </span>
+        </div>
+
+        <div>
+          <DifficultyStars rating={slot.difficultyStars} />
+        </div>
+
+        <div className="flex flex-wrap items-center justify-end gap-2.5">
+          {slot.paperHref ? (
+            <a
+              href={slot.paperHref}
+              download
+              aria-label={`Download ${slot.displayName} paper PDF`}
+              className={QUIET_BTN}
+            >
+              Paper
+              <Download className="h-4 w-4 opacity-80" aria-hidden />
+            </a>
+          ) : null}
+          {slot.answerKeyHref ? (
+            <a
+              href={slot.answerKeyHref}
+              download
+              aria-label={`Download ${slot.displayName} answer key PDF`}
+              className={QUIET_BTN}
+            >
+              Answers
+              <Download className="h-4 w-4 opacity-80" aria-hidden />
+            </a>
+          ) : null}
+          {showStartNow ? (
+            slot.startHref ? (
+              <Link
+                href={slot.startHref}
+                className={cn(
+                  ACTION_BTN,
+                  "bg-[#3B82F6] text-white hover:bg-[#2563EB]",
+                )}
+                aria-label={`Start now: ${slot.displayName}`}
+              >
+                Start now
+                <Play className="h-4 w-4 fill-current opacity-80" aria-hidden />
+              </Link>
+            ) : (
+              <span
+                className={cn(ACTION_BTN, "bg-[#3B82F6] text-white opacity-45")}
+                aria-disabled="true"
+                title="Coming soon in the simulator"
+              >
+                Start now
+                <Play className="h-4 w-4 fill-current opacity-80" aria-hidden />
+              </span>
+            )
+          ) : null}
+        </div>
+      </div>
+    </li>
+  );
+}
+
 export function EsatMockModuleSelector({
   attemptsByModule: _attemptsByModule,
   className,
@@ -81,8 +156,8 @@ export function EsatMockModuleSelector({
     ? findMockModule("maths-1")
     : findMockModule(selectedId);
   const slots = useMemo(
-    () => mockSlotsForModule(selectedModule),
-    [selectedModule],
+    () => (isFullTab ? fullMockSlots() : mockSlotsForModule(selectedModule)),
+    [isFullTab, selectedModule],
   );
 
   return (
@@ -159,151 +234,13 @@ export function EsatMockModuleSelector({
           </div>
 
           <ul className="space-y-3" role="list">
-            {isFullTab
-              ? ESAT_MOCK_MODULES.map((module) => {
-                  const moduleSlots = mockSlotsForModule(module);
-                  const firstSlot = moduleSlots[0];
-                  return (
-                    <li
-                      key={module.id}
-                      role="listitem"
-                      className="rounded bg-[#161D2F] px-5 py-5"
-                    >
-                      <div className={MOCK_ROW_GRID}>
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-base font-semibold tracking-tight text-white sm:text-lg">
-                            ESAT CAMP {module.builderSubject}
-                          </span>
-                        </div>
-                        <div aria-hidden />
-                        <div className="flex flex-wrap items-center justify-end gap-2.5">
-                          <span
-                            className={cn(QUIET_BTN, "opacity-45")}
-                            aria-disabled="true"
-                            title="Full paper download coming soon"
-                          >
-                            Full
-                            <Download
-                              className="h-4 w-4 opacity-80"
-                              aria-hidden
-                            />
-                          </span>
-                          {firstSlot?.startHref ? (
-                            <Link
-                              href={firstSlot.startHref}
-                              className={cn(
-                                ACTION_BTN,
-                                "bg-[#3B82F6] text-white hover:bg-[#2563EB]",
-                              )}
-                            >
-                              Start now
-                              <Play
-                                className="h-4 w-4 fill-current opacity-80"
-                                aria-hidden
-                              />
-                            </Link>
-                          ) : (
-                            <span
-                              className={cn(
-                                ACTION_BTN,
-                                "bg-[#3B82F6] text-white opacity-45",
-                              )}
-                              aria-disabled="true"
-                              title="Coming soon in the simulator"
-                            >
-                              Start now
-                              <Play
-                                className="h-4 w-4 fill-current opacity-80"
-                                aria-hidden
-                              />
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </li>
-                  );
-                })
-              : slots.map((slot) => (
-                  <li
-                    key={slot.mockNumber}
-                    role="listitem"
-                    className="rounded bg-[#161D2F] px-5 py-5"
-                  >
-                    <div className={MOCK_ROW_GRID}>
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-base font-semibold tracking-tight text-white sm:text-lg">
-                          ESAT CAMP Mock {slot.letter}
-                        </span>
-                      </div>
-
-                      <div>
-                        <DifficultyStars rating={slot.difficultyStars} />
-                      </div>
-
-                      <div className="flex flex-wrap items-center justify-end gap-2.5">
-                        {slot.paperHref ? (
-                          <a
-                            href={slot.paperHref}
-                            download
-                            aria-label={`Download ${slot.displayName} paper PDF`}
-                            className={QUIET_BTN}
-                          >
-                            Paper
-                            <Download
-                              className="h-4 w-4 opacity-80"
-                              aria-hidden
-                            />
-                          </a>
-                        ) : null}
-                        {slot.answerKeyHref ? (
-                          <a
-                            href={slot.answerKeyHref}
-                            download
-                            aria-label={`Download ${slot.displayName} answer key PDF`}
-                            className={QUIET_BTN}
-                          >
-                            Answers
-                            <Download
-                              className="h-4 w-4 opacity-80"
-                              aria-hidden
-                            />
-                          </a>
-                        ) : null}
-                        {slot.startHref ? (
-                          <Link
-                            href={slot.startHref}
-                            className={cn(
-                              ACTION_BTN,
-                              "bg-[#3B82F6] text-white hover:bg-[#2563EB]",
-                            )}
-                            aria-label={`Start now: ${slot.displayName}`}
-                          >
-                            Start now
-                            <Play
-                              className="h-4 w-4 fill-current opacity-80"
-                              aria-hidden
-                            />
-                          </Link>
-                        ) : (
-                          <span
-                            className={cn(
-                              ACTION_BTN,
-                              "bg-[#3B82F6] text-white opacity-45",
-                            )}
-                            aria-disabled="true"
-                            title="Coming soon in the simulator"
-                          >
-                            Start now
-                            <Play
-                              className="h-4 w-4 fill-current opacity-80"
-                              aria-hidden
-                            />
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </li>
-                ))}
+            {slots.map((slot) => (
+              <MockSlotRow
+                key={slot.mockNumber}
+                slot={slot}
+                showStartNow={isFullTab}
+              />
+            ))}
           </ul>
         </div>
       </div>

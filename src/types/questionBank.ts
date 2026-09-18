@@ -49,7 +49,7 @@ export interface QuestionBankQuestion {
 
 export type UiDifficultyLabel = 'Easy' | 'Medium' | 'Hard' | 'Extreme';
 
-export type QuestionBankSessionSource = 'home' | 'library' | 'mixed';
+export type QuestionBankSessionSource = 'home' | 'library' | 'mixed' | 'mistakes';
 
 export interface QuestionBankSessionAttempt {
   questionId: string;
