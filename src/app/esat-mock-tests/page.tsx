@@ -18,8 +18,8 @@ import {
 } from "@/lib/esatMockTests/catalog";
 import { SeoPageLayout } from "@/components/seo/SeoPageLayout";
 import { EsatMockModuleSelector } from "@/components/esatMockTests/EsatMockModuleSelector";
-import { EsatMockPredictedScoreTables } from "@/components/esatMockTests/EsatMockPredictedScoreTables";
 import { EsatMockTestsIntroBanner } from "@/components/esatMockTests/EsatMockTestsIntroBanner";
+import { PastPaperDownloadSections } from "@/components/pastPapersDownload";
 import {
   HighlightBox,
   SeoList,
@@ -112,6 +112,7 @@ export default function EsatMockTestsPage() {
     <SeoPageLayout
       path={PATH}
       compactTitle
+      contentMaxWidth="wide"
       title="25 Free ESAT Mock Tests"
       visuallyHiddenIntro={SEO_SUBTEXT}
       faq={FAQ}
@@ -169,7 +170,16 @@ export default function EsatMockTestsPage() {
         </p>
       </section>
 
-      <EsatMockPredictedScoreTables />
+      <SeoSection heading="Official past papers">
+        <SeoProse
+          paragraphs={[
+            "Still working through NSAA and ENGAA? Download the papers and answer keys below, or practise them in the ESAT simulator from Past Papers.",
+          ]}
+        />
+        <div className="mt-6">
+          <PastPaperDownloadSections />
+        </div>
+      </SeoSection>
 
       <SeoSection heading="Finished all your ESAT material?">
         <SeoProse

@@ -55,6 +55,7 @@ import {
   Target,
   Trophy,
   Download,
+  ClipboardList,
   X,
   Zap,
 } from 'lucide-react';

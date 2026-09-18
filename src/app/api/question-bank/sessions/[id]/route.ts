@@ -1,10 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRouteUser } from '@/lib/supabase/auth';
 import { labelForQuestionBankTag } from '@/lib/questionBank/esatCurriculumTopicLabels';
+import { synthesizeAttemptsFromReviewSnapshot } from '@/lib/questionBank/synthesizeAttemptsFromReviewSnapshot';
 
 export const dynamic = 'force-dynamic';
 
 type RouteContext = { params: Promise<{ id: string }> };
+
+type SessionAttemptApiRow = {
+  id?: string;
+  question_id: string;
+  user_answer: string;
+  is_correct: boolean;
+  time_spent_ms: number | null;
+  attempted_at: string;
+  was_revealed?: boolean | null;
+  used_hint?: boolean | null;
+  wrong_answers_before?: string[] | null;
+  ai_generated_questions: {
+    question_stem?: string;
+    correct_option?: string;
+    difficulty?: string;
+    subjects?: string;
+    primary_tag?: string | null;
+  } | null;
+};
 
 /**
  * GET /api/question-bank/sessions/[id] - session detail + attempts
@@ -74,29 +94,20 @@ export async function GET(_request: NextRequest, context: RouteContext) {
       );
     }
 
-    const wrongQuestions = ((attempts ?? []) as Array<{
-      question_id: string;
-      user_answer: string;
-      is_correct: boolean;
-      attempted_at: string;
-      ai_generated_questions: {
-        question_stem?: string;
-        correct_option?: string;
-        difficulty?: string;
-        subjects?: string;
-        primary_tag?: string | null;
-      } | null;
-    }>)
+    let resolvedAttempts: SessionAttemptApiRow[] =
+      (attempts as SessionAttemptApiRow[] | null) ?? [];
+
+    if (resolvedAttempts.length === 0) {
+      resolvedAttempts = (await synthesizeAttemptsFromReviewSnapshot(
+        supabase,
+        (qbSession as { summary?: unknown }).summary,
+      )) as SessionAttemptApiRow[];
+    }
+
+    const wrongQuestions = resolvedAttempts
       .filter((a) => !a.is_correct)
       .map((a) => {
-        const q = a.ai_generated_questions as {
-          question_stem?: string;
-          correct_option?: string;
-          options?: Record<string, string>;
-          difficulty?: string;
-          subjects?: string;
-          primary_tag?: string | null;
-        } | null;
+        const q = a.ai_generated_questions;
         return {
           questionId: a.question_id,
           questionStem: q?.question_stem ?? '',
@@ -114,7 +125,7 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 
     return NextResponse.json({
       session: qbSession,
-      attempts: attempts ?? [],
+      attempts: resolvedAttempts,
       wrongQuestions,
     });
   } catch (err) {

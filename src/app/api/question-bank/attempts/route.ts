@@ -1,135 +1,64 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase/server';
-import { createClient } from '@supabase/supabase-js';
-import { userHasFullAccess } from '@/lib/subscription/serverAccess';
+import { requireRouteUser } from '@/lib/supabase/auth';
 import {
-  FREE_TIER_QUESTION_ID_SET,
-  FREE_TIER_LIMIT_PER_SUBJECT,
-  freeTierQuestionIdsForSubject,
-  freeTierSubjectForQuestionId,
-} from '@/lib/questionBank/freeTierQuestions';
+  assertCanWriteAttempts,
+  insertQuestionBankAttempts,
+  parseAttemptWriteInputs,
+} from '@/lib/questionBank/attemptWrite';
 
 export const dynamic = 'force-dynamic';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
 /**
  * POST /api/question-bank/attempts
- * Saves a question attempt and updates daily metrics
+ * Saves a single question attempt (practice / instant mode).
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createServerClient();
-    
-    // Get current user
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    
-    if (sessionError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+    const { user, supabase, error: authError } = await requireRouteUser(request);
+    if (authError || !user || !supabase) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
-    const {
-      question_id,
-      user_answer,
-      is_correct,
-      time_spent_ms,
-      viewed_solution,
-      was_revealed,
-      used_hint,
-      wrong_answers_before,
-      time_until_correct_ms,
-      session_id,
-    } = body;
-
-    // Validate input. Empty user_answer is allowed (exam unanswered = incorrect).
-    if (
-      !question_id ||
-      typeof user_answer !== 'string' ||
-      typeof is_correct !== 'boolean'
-    ) {
+    const parsed = parseAttemptWriteInputs(body);
+    if ('code' in parsed) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
+        { error: parsed.message },
+        { status: 400 },
+      );
+    }
+    if (parsed.attempts.length !== 1) {
+      return NextResponse.json(
+        { error: 'Send exactly one attempt, or use /attempts/batch' },
+        { status: 400 },
       );
     }
 
-    const hasFullAccess = await userHasFullAccess(session.user.id);
-    if (!hasFullAccess) {
-      if (!FREE_TIER_QUESTION_ID_SET.has(question_id)) {
-        return NextResponse.json(
-          { error: 'Upgrade required to attempt this question' },
-          { status: 403 },
-        );
-      }
-
-      const subject = freeTierSubjectForQuestionId(question_id);
-      if (!subject) {
-        return NextResponse.json(
-          { error: 'Upgrade required to attempt this question' },
-          { status: 403 },
-        );
-      }
-
-      const admin = createClient(supabaseUrl, supabaseServiceKey);
-      const subjectIds = [...freeTierQuestionIdsForSubject(subject)];
-      const { data: priorAttempts } = await admin
-        .from('question_bank_attempts')
-        .select('question_id')
-        .eq('user_id', session.user.id)
-        .in('question_id', subjectIds);
-
-      const attemptedIds = new Set(
-        (priorAttempts ?? []).map((row) => row.question_id as string),
-      );
-
-      if (
-        !attemptedIds.has(question_id) &&
-        attemptedIds.size >= FREE_TIER_LIMIT_PER_SUBJECT
-      ) {
-        return NextResponse.json(
-          { error: 'Free question limit reached for this subject. Upgrade for unlimited access.' },
-          { status: 403 },
-        );
-      }
+    const gate = await assertCanWriteAttempts(
+      user.id,
+      parsed.attempts.map((a) => a.question_id),
+    );
+    if (gate) {
+      const status = gate.code === 'free_limit' ? 403 : 403;
+      return NextResponse.json({ error: gate.message }, { status });
     }
 
-    // Insert the attempt
-    
-    const { data: attempt, error: insertError } = await supabase
-      .from('question_bank_attempts')
-      .insert({
-        user_id: session.user.id,
-        question_id,
-        user_answer: user_answer,
-        is_correct,
-        time_spent_ms: time_spent_ms || null,
-        viewed_solution: viewed_solution || false,
-        was_revealed: was_revealed ?? false,
-        used_hint: used_hint ?? false,
-        wrong_answers_before: wrong_answers_before ?? [],
-        time_until_correct_ms: time_until_correct_ms ?? null,
-        session_id: session_id ?? null,
-        attempted_at: new Date().toISOString(),
-      } as any)
-      .select()
-      .single();
+    const { data, error: insertError } = await insertQuestionBankAttempts(
+      supabase,
+      user.id,
+      parsed.attempts,
+    );
 
-    if (insertError) {
+    if (insertError || !data?.[0]) {
       return NextResponse.json(
-        { 
+        {
           error: 'Failed to save attempt',
-          details: insertError.message || 'Unknown error'
+          details: insertError?.message || 'Unknown error',
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
-    // Partner activation (best-effort; first-party once per entitlement)
     try {
       const { maybeMarkPartnerActivation } = await import(
         '@/lib/partners/analytics'
@@ -139,37 +68,33 @@ export async function POST(request: NextRequest) {
       );
       await maybeMarkPartnerActivation(
         createPartnerServiceClient(),
-        session.user.id,
+        user.id,
       );
     } catch {
       /* non-fatal */
     }
 
-    // Fetch updated stats for today
     const today = new Date().toISOString().split('T')[0];
-    const { data: metrics, error: metricsError } = await supabase
+    const { data: metrics } = await supabase
       .from('user_daily_metrics')
       .select('total_questions, correct_answers, total_time_ms')
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .eq('metric_date', today)
-      .single();
-
-    if (metricsError && metricsError.code !== 'PGRST116') {
-    }
+      .maybeSingle();
 
     return NextResponse.json({
       success: true,
-      attempt,
+      attempt: data[0],
       stats: metrics || {
         total_questions: 0,
         correct_answers: 0,
         total_time_ms: 0,
       },
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -180,16 +105,9 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createServerClient();
-    
-    // Get current user
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    
-    if (sessionError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+    const { user, supabase, error: authError } = await requireRouteUser(request);
+    if (authError || !user || !supabase) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -199,7 +117,7 @@ export async function GET(request: NextRequest) {
     let query = supabase
       .from('question_bank_attempts')
       .select('*')
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .order('attempted_at', { ascending: false })
       .limit(limit);
 
@@ -212,19 +130,17 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch attempts' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     return NextResponse.json({
       attempts: data || [],
-      count: data?.length || 0,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

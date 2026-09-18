@@ -30,12 +30,26 @@ export type EsatMockModuleCatalogEntry = {
 
 export type EsatMockSlot = {
   mockNumber: number;
+  /** Short label, e.g. Mock A. */
   label: string;
+  /** Letter for this slot (A–E). */
+  letter: string;
+  /** Full display name, e.g. ESAT CAMP Math 1 Mock A. */
+  displayName: string;
   /**
    * Public start URL when wired. Null means the slot is shown in the UI
    * without a navigable production link (avoids 404s).
    */
   startHref: string | null;
+  /** Static question-paper PDF when generated. */
+  paperHref: string | null;
+  /** Static answer-key PDF when generated. */
+  answerKeyHref: string | null;
+  /**
+   * Relative difficulty vs a typical ESAT paper (display number, like roadmap AVG).
+   * Escalates gently Mock A → E.
+   */
+  difficulty: number;
 };
 
 export type EsatMockAttemptSummary = {
@@ -89,16 +103,51 @@ export const TOTAL_ESAT_MOCK_COUNT =
 export const TOTAL_ESAT_MOCK_QUESTION_COUNT =
   TOTAL_ESAT_MOCK_COUNT * ESAT_MOCK_QUESTION_COUNT;
 
+/** Mock 1 → A, Mock 2 → B, … */
+export function mockLetterForNumber(mockNumber: number): string {
+  return String.fromCharCode(64 + mockNumber);
+}
+
+export function mockDisplayName(
+  module: Pick<EsatMockModuleCatalogEntry, "builderSubject">,
+  mockNumber: number,
+): string {
+  return `ESAT CAMP ${module.builderSubject} Mock ${mockLetterForNumber(mockNumber)}`;
+}
+
+/** Display difficulty (same 1-decimal style as roadmap AVG). */
+const SLOT_DIFFICULTY: readonly number[] = [3.4, 3.7, 4.0, 4.3, 4.6];
+
+/** All catalog slots have admin mock-builder PDFs (5 × 5). */
+function pdfHrefsForSlot(
+  moduleId: EsatMockModuleId,
+  mockNumber: number,
+): Pick<EsatMockSlot, "paperHref" | "answerKeyHref"> {
+  const stem = `mock-${String(mockNumber).padStart(2, "0")}`;
+  const base = `/downloads/mocks/${moduleId}/${stem}`;
+  return {
+    paperHref: `${base}-paper.pdf`,
+    answerKeyHref: `${base}-answer-key.pdf`,
+  };
+}
+
 export function mockSlotsForModule(
   module: EsatMockModuleCatalogEntry,
 ): EsatMockSlot[] {
   return Array.from({ length: module.mockCount }, (_, index) => {
     const mockNumber = index + 1;
+    const letter = mockLetterForNumber(mockNumber);
+    const pdfs = pdfHrefsForSlot(module.id, mockNumber);
     return {
       mockNumber,
-      label: `Mock ${mockNumber}`,
+      letter,
+      label: `Mock ${letter}`,
+      displayName: mockDisplayName(module, mockNumber),
       // No public student attempt routes yet. Keep null to avoid 404s.
       startHref: null,
+      paperHref: pdfs.paperHref,
+      answerKeyHref: pdfs.answerKeyHref,
+      difficulty: SLOT_DIFFICULTY[index] ?? 4.0,
     };
   });
 }

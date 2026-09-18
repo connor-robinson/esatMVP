@@ -40,6 +40,7 @@ import {
   createSessionId,
   deleteQuestionBankSession,
   inferUiDifficultiesFromQuestions,
+  buildReviewAttemptSnapshots,
   persistQuestionBankAttempts,
   registerQuestionBankSession,
   subjectsLabelFromList,
@@ -540,7 +541,11 @@ export default function QuestionBankPage() {
       }
 
       const attempts = sessionAttemptLogRef.current;
-      const summary = buildSessionSummary(attempts, labelForQuestionBankTag);
+      const summary = {
+        ...buildSessionSummary(attempts, labelForQuestionBankTag),
+        // Always keep a compact review log so Mark works even if DB rows fail.
+        reviewAttempts: buildReviewAttemptSnapshots(attempts),
+      };
       setSessionAttemptLog(attempts);
 
       if (session?.user) {
@@ -1719,6 +1724,8 @@ export default function QuestionBankPage() {
     return (
       <QuestionBankSessionResults
         attempts={sessionAttemptLog}
+        questions={sessionQuestions}
+        sessionId={qbSessionId}
         sessionSource={sessionSource}
         subjectsLabel={sessionSubjectsLabel}
         startedAt={sessionStartedAt}
@@ -1726,9 +1733,6 @@ export default function QuestionBankPage() {
         playMode={sessionPlayMode}
         timeLimitMinutes={timeLimitMinutes}
         onBack={() => router.push('/questions')}
-        onReviewQuestion={
-          sessionQuestions.length > 0 ? enterReviewByQuestionId : undefined
-        }
         showSignInBanner={!session?.user && wasFreeTierSession}
         signInRedirectTo="/questions"
         showUpgradeBanner={!!session?.user && !hasFullAccess && wasFreeTierSession}

@@ -15,7 +15,7 @@ const FEATURE_LABELS: Record<FeatureKey, string> = {
   roadmap: "the full roadmap",
   question_bank: "unlimited questions",
   mental_maths: "all mental maths modules",
-  drill: "drill mode",
+  drill: "Mistakes review",
   solutions: "solutions and stats",
   analytics: "analytics",
 };

@@ -82,6 +82,8 @@ export interface QuestionBankSessionSummary {
   topicStats: import('@/lib/questionBank/sessionStats').TopicStatRow[];
   weakestTopic: import('@/lib/questionBank/sessionStats').TopicStatRow | null;
   progressData: import('@/types/analytics').SessionProgressPoint[];
+  /** Compact per-question log for Mark when attempt rows failed to persist. */
+  reviewAttempts?: import('@/lib/questionBank/sessionTracking').QuestionBankReviewAttemptSnapshot[];
 }
 
 export interface QuestionBankSessionRecord {
