@@ -107,6 +107,7 @@ function commentaryForStage(
   stage: RoadmapStage,
   stages: RoadmapStage[],
 ): StageCommentary | null {
+  if (isEsatCampMockRoadmapStage(stage)) return null;
   if (stage.examName === "TMUA") {
     const firstTmua = stages.find((s) => s.examName === "TMUA");
     if (firstTmua?.id === stage.id) {
@@ -688,6 +689,20 @@ export function RoadmapTable({
           <p className="px-3 py-8 text-center text-sm text-text-muted">
             No papers in this group for your subjects.
           </p>
+        ) : null}
+
+        {activeTab === "Mocks" ? (
+          <div className="mt-5 rounded-organic-xl bg-surface-subtle/70 px-5 py-5 sm:px-6 sm:py-6">
+            <p className="text-sm font-semibold tracking-tight text-text sm:text-base">
+              New ESAT CAMP Mocks
+            </p>
+            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-text-muted">
+              Our past students said NSAA and ENGAA felt too easy relative to the
+              real ESAT. Combined with their feedback and our tutors&apos; own
+              experience of the exam, we built 5 ESAT mocks. Try them and tell us
+              what you think.
+            </p>
+          </div>
         ) : null}
       </div>
 
