@@ -206,13 +206,13 @@ export function mockSlotsForModule(
     const letter = mockLetterForNumber(mockNumber);
     const pdfs = pdfHrefsForSlot(module.id, mockNumber);
     const predicted = predictedBySlot?.[index] ?? 3.1;
+    const subjectParam = encodeURIComponent(module.builderSubject);
     return {
       mockNumber,
       letter,
       label: `Mock ${letter}`,
       displayName: mockDisplayName(module, mockNumber),
-      // Subject modules: downloads only (Start now is Full-tab only).
-      startHref: null,
+      startHref: `/past-papers?tab=Mocks&startMock=${letter}&startSubject=${subjectParam}`,
       paperHref: pdfs.paperHref,
       answerKeyHref: pdfs.answerKeyHref,
       fullHref: pdfs.fullHref,

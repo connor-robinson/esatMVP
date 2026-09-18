@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
 import { ChevronDown, Download, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -382,6 +382,7 @@ export function RoadmapTable({
     averages: {},
   });
   const [averagesLoading, setAveragesLoading] = useState(true);
+  const handledStartDeepLink = useRef<string | null>(null);
 
   const grouped = useMemo(() => {
     const map: Record<ExamTab, RoadmapStage[]> = {
@@ -413,7 +414,7 @@ export function RoadmapTable({
     }
   }, [availableTabs, activeTab]);
 
-  // Deep link from /esat-mock-tests Full tab: ?tab=Mocks&startMock=A
+  // Deep link from /esat-mock-tests: ?tab=Mocks&startMock=A[&startSubject=Math%201]
   useEffect(() => {
     const tab = searchParams.get("tab");
     if (tab === "Mocks" && availableTabs.includes("Mocks")) {
@@ -421,6 +422,10 @@ export function RoadmapTable({
     }
     const startMock = searchParams.get("startMock");
     if (!startMock) return;
+    const startSubject = searchParams.get("startSubject")?.trim() || "";
+    const deepLinkKey = `${startMock}|${startSubject}`;
+    if (handledStartDeepLink.current === deepLinkKey) return;
+
     const mockNumber = parseAdminMockPaperName(`Mock ${startMock}`);
     if (mockNumber == null) return;
     const stage = stages.find(
@@ -428,8 +433,25 @@ export function RoadmapTable({
         s.id === `esat-camp-full-mock-${mockNumber}` ||
         parseAdminMockPaperName(s.label) === mockNumber,
     );
-    if (stage) setStartStage(stage);
-  }, [searchParams, stages, availableTabs]);
+    if (!stage) return;
+
+    handledStartDeepLink.current = deepLinkKey;
+
+    if (startSubject) {
+      const subjectLower = startSubject.toLowerCase();
+      const part = stage.parts.find((p) => {
+        const display = p.displayName?.trim().toLowerCase();
+        const name = p.partName.trim().toLowerCase();
+        return display === subjectLower || name === subjectLower;
+      });
+      if (part) {
+        onStartSession(stage, [part], { newQuestionsOnly: false });
+        return;
+      }
+    }
+
+    setStartStage(stage);
+  }, [searchParams, stages, availableTabs, onStartSession]);
 
   useEffect(() => {
     let cancelled = false;

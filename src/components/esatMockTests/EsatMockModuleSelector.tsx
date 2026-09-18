@@ -239,7 +239,7 @@ export function EsatMockModuleSelector({
                     : `ESAT CAMP Mock ${slot.letter} ${selectedModule.builderSubject}`
                 }
                 slot={slot}
-                showStartNow={isFullTab}
+                showStartNow
               />
             ))}
           </ul>
