@@ -37,6 +37,7 @@ import { LoadingPage } from '@/components/shared/LoadingPage';
 import { allowLoadingPaint } from '@/lib/papers/allowLoadingPaint';
 import { preloadQuestionsAssets } from '@/lib/pearson/preloadQuestionAssets';
 import { applyEsatSubjectsToRoadmapStages } from '@/lib/papers/roadmapEsatFilter';
+import { PastPaperGuestStartModal } from '@/components/papers/PastPaperGuestStartModal';
 import {
   addManualRoadmapUnlock,
   readManualRoadmapUnlocks,
@@ -141,6 +142,11 @@ export default function PapersRoadmapPage() {
   >(() => new Map(INITIAL_COMPLETION));
   const [completionLoading, setCompletionLoading] = useState(true);
   const [isStartingSession, setIsStartingSession] = useState(false);
+  const [pendingGuestStart, setPendingGuestStart] = useState<{
+    stage: RoadmapStage;
+    selectedParts: RoadmapPart[];
+    options: RoadmapStartOptions;
+  } | null>(null);
   const [newQuestionsOnly, setNewQuestionsOnly] = useState(
     readNewQuestionsOnlyPreference,
   );
@@ -607,10 +613,21 @@ export default function PapersRoadmapPage() {
       options: RoadmapStartOptions,
     ) => {
       if (isStartingSession) return;
+      if (!session?.user) {
+        setPendingGuestStart({ stage, selectedParts, options });
+        return;
+      }
       await executeStartStage(stage, selectedParts, options);
     },
-    [executeStartStage, isStartingSession],
+    [executeStartStage, isStartingSession, session?.user],
   );
+
+  const handleContinueWithoutAccount = useCallback(async () => {
+    if (!pendingGuestStart || isStartingSession) return;
+    const { stage, selectedParts, options } = pendingGuestStart;
+    setPendingGuestStart(null);
+    await executeStartStage(stage, selectedParts, options);
+  }, [pendingGuestStart, isStartingSession, executeStartStage]);
 
   const compareStartHandledRef = useRef(false);
   useEffect(() => {
@@ -839,6 +856,14 @@ export default function PapersRoadmapPage() {
       {isStartingSession ? (
         <LoadingPage variant="session" message="Loading your paper" />
       ) : null}
+
+      <PastPaperGuestStartModal
+        open={pendingGuestStart != null}
+        onClose={() => setPendingGuestStart(null)}
+        onContinueWithoutAccount={() => {
+          void handleContinueWithoutAccount();
+        }}
+      />
     </Container>
   );
 }

@@ -54,6 +54,7 @@ import {
   buildRoadmapStageScores,
   type RoadmapStageScore,
 } from '@/lib/papers/roadmapStageScores';
+import { PastPaperGuestStartModal } from '@/components/papers/PastPaperGuestStartModal';
 
 type StageCompletionEntry = {
   completed: number;
@@ -98,6 +99,11 @@ export default function PastPapersHomePage() {
   );
   const [scoresLoading, setScoresLoading] = useState(false);
   const [isStartingSession, setIsStartingSession] = useState(false);
+  const [pendingGuestStart, setPendingGuestStart] = useState<{
+    stage: RoadmapStage;
+    selectedParts: RoadmapPart[];
+    options: RoadmapStartOptions;
+  } | null>(null);
   const [newQuestionsOnly, setNewQuestionsOnly] = useState(
     readNewQuestionsOnlyPreference,
   );
@@ -612,10 +618,21 @@ export default function PastPapersHomePage() {
       options: RoadmapStartOptions,
     ) => {
       if (isStartingSession) return;
+      if (!session?.user) {
+        setPendingGuestStart({ stage, selectedParts, options });
+        return;
+      }
       await executeStartStage(stage, selectedParts, options);
     },
-    [executeStartStage, isStartingSession],
+    [executeStartStage, isStartingSession, session?.user],
   );
+
+  const handleContinueWithoutAccount = useCallback(async () => {
+    if (!pendingGuestStart || isStartingSession) return;
+    const { stage, selectedParts, options } = pendingGuestStart;
+    setPendingGuestStart(null);
+    await executeStartStage(stage, selectedParts, options);
+  }, [pendingGuestStart, isStartingSession, executeStartStage]);
 
   const refreshCompletionData = useCallback(async () => {
     if (displayedStages.length === 0) return;
@@ -685,6 +702,14 @@ export default function PastPapersHomePage() {
       {isStartingSession ? (
         <PearsonPleaseWaitScreen label="Loading, please wait..." />
       ) : null}
+
+      <PastPaperGuestStartModal
+        open={pendingGuestStart != null}
+        onClose={() => setPendingGuestStart(null)}
+        onContinueWithoutAccount={() => {
+          void handleContinueWithoutAccount();
+        }}
+      />
 
       <PastPapersPreferenceSurvey
         forceOpen={forceSurveyOpen}
