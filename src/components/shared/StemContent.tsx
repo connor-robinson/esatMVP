@@ -133,13 +133,16 @@ export function StemContent({ content, className }: StemContentProps) {
     }
 
     try {
-      const parts = splitStemWithSvg(unwrapLatexBoxed(s));
+      const cleaned = stripConceptImageLabels(unwrapLatexBoxed(s));
+      const parts = splitStemWithSvg(cleaned);
       let out = "";
       for (const p of parts) {
         if (p.type === "text") {
           out += renderTextSegment(p.value);
         } else if (p.type === "svg") {
-          const safe = sanitizeStemSvg(ensureSvgResponsiveMarkup(p.value));
+          const safe = sanitizeStemSvg(
+            ensureSvgResponsiveMarkup(stripConceptImageLabels(p.value)),
+          );
           if (safe) {
             out += `<div class="stem-diagram my-4 flex justify-center max-w-full overflow-x-auto"><div class="stem-diagram-inner w-[80%] max-w-[min(80%,512px)]">${safe}</div></div>`;
           }
@@ -154,7 +157,7 @@ export function StemContent({ content, className }: StemContentProps) {
       }
       setRenderedHtml(out);
     } catch {
-      setRenderedHtml(renderMathContent(s));
+      setRenderedHtml(renderMathContent(stripConceptImageLabels(s)));
     }
   }, [content]);
 
