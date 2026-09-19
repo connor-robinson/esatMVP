@@ -23,6 +23,7 @@ export const PAST_PAPERS_SURVEY_DELAY_MS = 15_000;
 export const PAST_PAPERS_HOME_PATH = "/past-papers";
 export const PAST_PAPERS_LIBRARY_PATH = "/past-papers/library";
 export const PAST_PAPERS_ROADMAP_PATH = "/past-papers/roadmap";
+export const PAST_PAPERS_ESAT_MOCKS_PATH = "/past-papers/esat-mocks";
 
 /** @deprecated Use PAST_PAPERS_HOME_PATH */
 export const PAST_PAPERS_HUB_PATH = PAST_PAPERS_HOME_PATH;

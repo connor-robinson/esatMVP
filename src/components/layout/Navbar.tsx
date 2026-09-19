@@ -46,11 +46,11 @@ import {
   HelpCircle,
   GraduationCap,
   Home,
-  Library,
   LogOut,
   Menu,
   Moon,
   Settings,
+  Sparkles,
   Sun,
   Target,
   Trophy,
@@ -63,8 +63,7 @@ import { DEFAULT_POST_AUTH_PATH } from '@/lib/onboarding/redirect';
 import { useHomepageAutoHideNav } from '@/hooks/useHomepageAutoHideNav';
 import {
   PAST_PAPERS_HOME_PATH,
-  pathForPastPapersPreference,
-  readPastPapersUiPreference,
+  PAST_PAPERS_ESAT_MOCKS_PATH,
 } from '@/lib/papers/pastPapersUiPreference';
 
 /** Unified lucide sizing so logout / login glyphs match sun + gear optically */
@@ -117,7 +116,6 @@ const navSections: NavSectionConfig[] = [
   },
   {
     label: 'Past Papers',
-    // Parent label uses the saved default layout (see resolvedNavSections).
     href: PAST_PAPERS_HOME_PATH,
     section: 'papers',
     items: [
@@ -128,10 +126,11 @@ const navSections: NavSectionConfig[] = [
         icon: Home,
       },
       {
-        href: '/past-papers/library',
-        label: 'Library',
-        description: 'Legacy paper browser',
-        icon: Library,
+        href: PAST_PAPERS_ESAT_MOCKS_PATH,
+        label: 'ESAT Mocks',
+        description: 'ESAT Camp mock papers',
+        icon: Sparkles,
+        badge: 'NEW',
       },
       {
         href: '/past-papers/analytics',
@@ -152,14 +151,12 @@ const navSections: NavSectionConfig[] = [
     label: 'Question Bank',
     href: '/questions',
     section: 'questions',
-    badge: 'NEW',
     items: [
       {
         href: '/questions',
         label: 'Question Bank',
         description: 'Overview and mixed practice',
         icon: Home,
-        badge: 'NEW',
       },
       {
         href: '/questions/questionbank/analytics',
@@ -267,25 +264,8 @@ export function Navbar() {
     return `/login?mode=signup&redirectTo=${encodeURIComponent(redirectTo)}`;
   }, [pathname]);
 
-  /** Past Papers parent label → saved default; child items keep fixed paths. */
-  const [pastPapersDefaultHref, setPastPapersDefaultHref] = useState(
-    PAST_PAPERS_HOME_PATH,
-  );
-  useEffect(() => {
-    setPastPapersDefaultHref(
-      pathForPastPapersPreference(readPastPapersUiPreference()),
-    );
-  }, [pathname]);
-
-  const resolvedNavSections = useMemo(
-    () =>
-      navSections.map((section) =>
-        section.section === 'papers'
-          ? { ...section, href: pastPapersDefaultHref }
-          : section,
-      ),
-    [pastPapersDefaultHref],
-  );
+  /** Past Papers parent always opens Home. */
+  const resolvedNavSections = navSections;
 
   /** Shared pill style for Sign up / Sign in and Upgrade for free */
   const navCtaClass = cn(

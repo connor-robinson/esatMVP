@@ -212,7 +212,7 @@ export function mockSlotsForModule(
       letter,
       label: `Mock ${letter}`,
       displayName: mockDisplayName(module, mockNumber),
-      startHref: `/past-papers?tab=Mocks&startMock=${letter}&startSubject=${subjectParam}`,
+      startHref: `/past-papers/esat-mocks?startMock=${letter}&startSubject=${subjectParam}`,
       paperHref: pdfs.paperHref,
       answerKeyHref: pdfs.answerKeyHref,
       fullHref: pdfs.fullHref,
@@ -233,7 +233,7 @@ export function fullMockSlots(): EsatMockSlot[] {
       label: `Mock ${letter}`,
       displayName: fullMockDisplayName(mockNumber),
       // Opens past-papers Start session for this sitting.
-      startHref: `/past-papers?tab=Mocks&startMock=${letter}`,
+      startHref: `/past-papers/esat-mocks?startMock=${letter}`,
       paperHref: pdfs.paperHref,
       answerKeyHref: pdfs.answerKeyHref,
       fullHref: null,

@@ -1,6 +1,6 @@
 /**
- * Past-papers practice list with NSAA / ENGAA / TMUA / ESAT CAMP Mocks pills.
- * Separated row cards (not a table).
+ * Past-papers practice list with NSAA / ENGAA / TMUA pills (Home),
+ * or ESAT Camp Mocks subject / Full-mock pills on /past-papers/esat-mocks.
  */
 
 "use client";
@@ -10,7 +10,6 @@ import { useSearchParams } from "next/navigation";
 import { ChevronDown, Download, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getExamAccentFillClass } from "@/config/colors";
-import { Card } from "@/components/ui/Card";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
 import { isEsatCampMockRoadmapStage } from "@/lib/papers/roadmapConfig";
 import { getRoadmapPartKey } from "@/lib/papers/roadmapPartKey";
@@ -34,7 +33,11 @@ import {
   type RoadmapAverageMaps,
   type RoadmapStageScore,
 } from "@/lib/papers/roadmapStageScores";
-import { parseAdminMockPaperName } from "@/lib/papers/adminEsatMocks";
+import {
+  ADMIN_ESAT_MOCK_SUBJECTS,
+  parseAdminMockPaperName,
+  type AdminEsatMockSubject,
+} from "@/lib/papers/adminEsatMocks";
 import { RoadmapInfoPopover } from "./RoadmapInfoPopover";
 import {
   getStageCommentary,
@@ -51,6 +54,7 @@ type StageCompletionEntry = {
 };
 
 type ExamTab = "NSAA" | "ENGAA" | "TMUA" | "Mocks";
+type MockSubjectTab = "Full" | AdminEsatMockSubject;
 
 type Props = {
   stages: RoadmapStage[];
@@ -74,6 +78,8 @@ type Props = {
   preferredEsatSubjects?: string[] | null;
   layoutControls?: ReactNode;
   showFreePill?: boolean;
+  /** Dedicated ESAT Camp Mocks page: subject pills + Full mock. */
+  variant?: "default" | "esat-mocks";
 };
 
 const TAB_ORDER: ExamTab[] = ["NSAA", "ENGAA", "TMUA", "Mocks"];
@@ -83,6 +89,20 @@ const TAB_LABELS: Record<ExamTab, string> = {
   ENGAA: "ENGAA",
   TMUA: "TMUA",
   Mocks: "ESAT CAMP Mocks",
+};
+
+const MOCK_SUBJECT_TABS: MockSubjectTab[] = [
+  "Full",
+  ...ADMIN_ESAT_MOCK_SUBJECTS,
+];
+
+const MOCK_SUBJECT_LABELS: Record<MockSubjectTab, string> = {
+  Full: "Full mock",
+  "Math 1": "Math 1",
+  "Math 2": "Math 2",
+  Physics: "Physics",
+  Chemistry: "Chemistry",
+  Biology: "Biology",
 };
 
 const STAGE_GRID =
@@ -267,10 +287,6 @@ function SectionsExpandRows({
 
   return (
     <div className="relative space-y-1 pt-3">
-      <div
-        aria-hidden
-        className="absolute bottom-2 left-[0.85rem] top-3 w-px bg-border-subtle"
-      />
       {displayGroups.map((group, idx) => {
         const done = isDisplayGroupCompleted(
           group,
@@ -370,7 +386,9 @@ export function RoadmapTable({
   preferredEsatSubjects = null,
   layoutControls = null,
   showFreePill = false,
+  variant = "default",
 }: Props) {
+  const isEsatMocksPage = variant === "esat-mocks";
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [startStage, setStartStage] = useState<RoadmapStage | null>(null);
   const [compareInvite, setCompareInvite] = useState<{
@@ -383,6 +401,8 @@ export function RoadmapTable({
   });
   const [averagesLoading, setAveragesLoading] = useState(true);
   const handledStartDeepLink = useRef<string | null>(null);
+  const [mockSubjectTab, setMockSubjectTab] =
+    useState<MockSubjectTab>("Full");
 
   const grouped = useMemo(() => {
     const map: Record<ExamTab, RoadmapStage[]> = {
@@ -398,31 +418,40 @@ export function RoadmapTable({
   }, [stages]);
 
   const availableTabs = useMemo(
-    () => TAB_ORDER.filter((tab) => grouped[tab].length > 0),
-    [grouped],
+    () =>
+      TAB_ORDER.filter((tab) => {
+        if (isEsatMocksPage) return false;
+        if (tab === "Mocks") return false;
+        return grouped[tab].length > 0;
+      }),
+    [grouped, isEsatMocksPage],
   );
 
   const [activeTab, setActiveTab] = useState<ExamTab>("NSAA");
   const searchParams = useSearchParams();
 
   useEffect(() => {
+    if (isEsatMocksPage) return;
     if (availableTabs.length === 0) return;
     if (!availableTabs.includes(activeTab)) {
       setActiveTab(
         availableTabs.includes("NSAA") ? "NSAA" : availableTabs[0]!,
       );
     }
-  }, [availableTabs, activeTab]);
+  }, [availableTabs, activeTab, isEsatMocksPage]);
 
-  // Deep link from /esat-mock-tests: ?tab=Mocks&startMock=A[&startSubject=Math%201]
+  // Deep link: ?startMock=A[&startSubject=Math%201]
   useEffect(() => {
-    const tab = searchParams.get("tab");
-    if (tab === "Mocks" && availableTabs.includes("Mocks")) {
-      setActiveTab("Mocks");
+    const startSubject = searchParams.get("startSubject")?.trim() || "";
+    if (isEsatMocksPage && startSubject) {
+      const match = ADMIN_ESAT_MOCK_SUBJECTS.find(
+        (subject) => subject.toLowerCase() === startSubject.toLowerCase(),
+      );
+      if (match) setMockSubjectTab(match);
     }
+
     const startMock = searchParams.get("startMock");
     if (!startMock) return;
-    const startSubject = searchParams.get("startSubject")?.trim() || "";
     const deepLinkKey = `${startMock}|${startSubject}`;
     if (handledStartDeepLink.current === deepLinkKey) return;
 
@@ -451,7 +480,7 @@ export function RoadmapTable({
     }
 
     setStartStage(stage);
-  }, [searchParams, stages, availableTabs, onStartSession]);
+  }, [searchParams, stages, onStartSession, isEsatMocksPage]);
 
   useEffect(() => {
     let cancelled = false;
@@ -481,7 +510,19 @@ export function RoadmapTable({
     };
   }, []);
 
-  const visibleStages = grouped[activeTab] ?? [];
+  const visibleStages = useMemo(() => {
+    const base = isEsatMocksPage
+      ? stages.filter(isEsatCampMockRoadmapStage)
+      : (grouped[activeTab] ?? []);
+    if (!isEsatMocksPage || mockSubjectTab === "Full") return base;
+    return base.map((stage) => ({
+      ...stage,
+      parts: stage.parts.filter((part) => {
+        const display = part.displayName?.trim();
+        return display === mockSubjectTab;
+      }),
+    }));
+  }, [isEsatMocksPage, stages, grouped, activeTab, mockSubjectTab]);
 
   const statusValue = (completed: number, total: number): StageStatus =>
     statusFromCounts(completed, total);
@@ -494,7 +535,7 @@ export function RoadmapTable({
             <div className="flex items-center gap-1.5">
               <div className="relative inline-block pr-8">
                 <h1 className="text-3xl font-semibold tracking-tight text-text sm:text-4xl">
-                  Past papers
+                  {isEsatMocksPage ? "ESAT Camp Mocks" : "Past papers"}
                 </h1>
                 {showFreePill ? (
                   <span className="absolute -right-0 -top-1 rounded-full bg-white px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.06em] text-text-muted dark:bg-white/90 dark:text-neutral-700">
@@ -502,7 +543,7 @@ export function RoadmapTable({
                   </span>
                 ) : null}
               </div>
-              {subjectSuggestion ? (
+              {!isEsatMocksPage && subjectSuggestion ? (
                 <RoadmapInfoPopover
                   title="Paper suggestions"
                   label="Subject suggestions"
@@ -542,7 +583,25 @@ export function RoadmapTable({
         </div>
       </div>
 
-      {availableTabs.length > 0 ? (
+      {isEsatMocksPage ? (
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          {MOCK_SUBJECT_TABS.map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setMockSubjectTab(tab)}
+              className={cn(
+                "relative rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
+                mockSubjectTab === tab
+                  ? "bg-surface-neutral text-text"
+                  : "bg-transparent text-text-muted hover:bg-surface-mid hover:text-text",
+              )}
+            >
+              {MOCK_SUBJECT_LABELS[tab]}
+            </button>
+          ))}
+        </div>
+      ) : availableTabs.length > 0 ? (
         <div className="mb-4 flex flex-wrap items-center gap-2">
           {availableTabs.map((tab) => (
             <button
@@ -560,11 +619,6 @@ export function RoadmapTable({
               )}
             >
               {TAB_LABELS[tab]}
-              {tab === "Mocks" ? (
-                <span className="absolute -right-1 -top-1.5 rounded-full bg-error px-1.5 py-0.5 text-[9px] font-bold uppercase leading-none tracking-wide text-white">
-                  New
-                </span>
-              ) : null}
             </button>
           ))}
           {activeTab === "ENGAA" ? (
@@ -586,11 +640,15 @@ export function RoadmapTable({
               "mb-2 px-5 text-xs font-medium uppercase tracking-wide text-text-muted",
             )}
           >
-            <div>Year</div>
+            <div>{isEsatMocksPage ? "Mock" : "Year"}</div>
             <div>Parts</div>
             <div>Avg</div>
             <div>
-              {activeTab === "TMUA" ? "Your TMUA" : "Your ESAT"}
+              {isEsatMocksPage
+                ? "Your ESAT"
+                : activeTab === "TMUA"
+                  ? "Your TMUA"
+                  : "Your ESAT"}
             </div>
             <div>Status</div>
             <div className="sr-only">Actions</div>
@@ -742,34 +800,6 @@ export function RoadmapTable({
           <p className="px-3 py-8 text-center text-sm text-text-muted">
             No papers in this group for your subjects.
           </p>
-        ) : null}
-
-        {activeTab === "Mocks" ? (
-          <div className="mt-5 rounded-organic-xl bg-surface-subtle/70 p-3 sm:p-4">
-            <Card
-              variant="elevated"
-              className="relative overflow-hidden border-0 p-6 shadow-lg sm:p-8"
-            >
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgb(var(--color-primary-rgb,34,197,94),0.08),transparent_55%)]"
-              />
-              <div className="relative z-10">
-                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-error">
-                  New
-                </p>
-                <h2 className="mt-2 text-2xl font-bold tracking-tight text-text sm:text-3xl">
-                  ESAT CAMP Mocks
-                </h2>
-                <p className="mt-3 max-w-2xl text-sm text-text-muted sm:text-base">
-                  Our past students said NSAA and ENGAA felt too easy relative to
-                  the real ESAT. Combined with their feedback and our tutors&apos;
-                  own experience of the exam, we built 5 ESAT mocks. Try them and
-                  tell us what you think.
-                </p>
-              </div>
-            </Card>
-          </div>
         ) : null}
       </div>
 

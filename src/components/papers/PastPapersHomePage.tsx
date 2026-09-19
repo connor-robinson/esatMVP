@@ -7,17 +7,16 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Container } from '@/components/layout/Container';
 import { useSupabaseSession } from '@/components/auth/SupabaseSessionProvider';
 import {
   getRoadmapStages,
   getRoadmapStagesShell,
+  isEsatCampMockRoadmapStage,
   type RoadmapStage,
 } from '@/lib/papers/roadmapConfig';
 import { RoadmapTable } from '@/components/papers/roadmap/RoadmapTable';
-import { PastPapersLegacyLinks } from '@/components/papers/PastPapersLegacyLinks';
-import { PastPapersPreferenceSurvey } from '@/components/papers/PastPapersPreferenceSurvey';
 import { useSubscription } from '@/hooks/useSubscription';
 import { getSectionForRoadmapPart } from '@/lib/papers/roadmapConfig';
 import { deriveTmuaSectionFromQuestion } from '@/lib/papers/sectionMapping';
@@ -45,7 +44,6 @@ import {
   readNewQuestionsOnlyPreference,
   writeNewQuestionsOnlyPreference,
 } from '@/lib/papers/roadmapNewQuestionsPreference';
-import { PAST_PAPERS_HOME_PATH } from '@/lib/papers/pastPapersUiPreference';
 import {
   countDisplayGroupCompletion,
   groupRoadmapPartsForDisplay,
@@ -78,18 +76,19 @@ function buildDefaultCompletion(stages: RoadmapStage[]): Map<string, StageComple
 const INITIAL_STAGES = getRoadmapStagesShell();
 const INITIAL_COMPLETION = buildDefaultCompletion(INITIAL_STAGES);
 
-export default function PastPapersHomePage() {
+export type PastPapersHomeMode = "home" | "esat-mocks";
+
+export default function PastPapersHomePage({
+  mode = "home",
+}: {
+  mode?: PastPapersHomeMode;
+}) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const forceSurvey = searchParams.get("choose") === "1";
-  const [forceSurveyOpen, setForceSurveyOpen] = useState(forceSurvey);
   const session = useSupabaseSession();
   const { hasFullAccess, isLoading: subscriptionLoading } = useSubscription();
   const showMarkingUpgrade = !subscriptionLoading && !hasFullAccess;
   const { startSession, setQuestions } = usePaperSessionStore();
 
-  // Explicit /past-papers (and nav Home) always stays on Home.
-  // Saved default only affects the Past Papers nav parent link + layout dropdown.
   const [stages, setStages] = useState<RoadmapStage[]>(INITIAL_STAGES);
   const [completionData, setCompletionData] = useState<
     Map<string, StageCompletionEntry>
@@ -128,32 +127,37 @@ export default function PastPapersHomePage() {
 
   const effectiveEsatSubjects = userEsatSubjects;
 
-  const subjectFilteredStages = useMemo(
-    () =>
-      applyEsatSubjectsToRoadmapStages(
-        stages,
-        effectiveEsatSubjects,
-        effectiveExamPreference,
-      ),
-    [stages, effectiveEsatSubjects, effectiveExamPreference],
-  );
+  const modeScopedStages = useMemo(() => {
+    if (mode === "esat-mocks") {
+      return stages.filter(isEsatCampMockRoadmapStage);
+    }
+    return stages.filter((stage) => !isEsatCampMockRoadmapStage(stage));
+  }, [stages, mode]);
 
   const subjectFilterRelevant = useMemo(() => {
+    if (mode === "esat-mocks") return false;
     if (effectiveExamPreference === "TMUA") return true;
     return (
       effectiveExamPreference === "ESAT" &&
       (effectiveEsatSubjects?.length ?? 0) > 0
     );
-  }, [effectiveExamPreference, effectiveEsatSubjects]);
+  }, [mode, effectiveExamPreference, effectiveEsatSubjects]);
 
   const displayedStages = useMemo(() => {
-    if (!subjectFilterRelevant || showAllPapers) return stages;
-    return subjectFilteredStages;
+    if (mode === "esat-mocks") return modeScopedStages;
+    if (!subjectFilterRelevant || showAllPapers) return modeScopedStages;
+    return applyEsatSubjectsToRoadmapStages(
+      modeScopedStages,
+      effectiveEsatSubjects,
+      effectiveExamPreference,
+    );
   }, [
+    mode,
+    modeScopedStages,
     subjectFilterRelevant,
     showAllPapers,
-    stages,
-    subjectFilteredStages,
+    effectiveEsatSubjects,
+    effectiveExamPreference,
   ]);
 
   const subjectSuggestion = useMemo(() => {
@@ -704,12 +708,7 @@ export default function PastPapersHomePage() {
         subjectSuggestion={subjectSuggestion}
         preferredEsatSubjects={effectiveEsatSubjects}
         showFreePill={showMarkingUpgrade}
-        layoutControls={
-          <PastPapersLegacyLinks
-            current="home"
-            onRequestSurvey={() => setForceSurveyOpen(true)}
-          />
-        }
+        variant={mode === "esat-mocks" ? "esat-mocks" : "default"}
       />
 
       {isStartingSession ? (
@@ -721,16 +720,6 @@ export default function PastPapersHomePage() {
         onClose={() => setPendingGuestStart(null)}
         onContinueWithoutAccount={() => {
           void handleContinueWithoutAccount();
-        }}
-      />
-
-      <PastPapersPreferenceSurvey
-        forceOpen={forceSurveyOpen}
-        onClose={() => {
-          setForceSurveyOpen(false);
-          if (forceSurvey) {
-            router.replace(PAST_PAPERS_HOME_PATH);
-          }
         }}
       />
     </Container>
