@@ -28,7 +28,6 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { mapPartToSection, deriveTmuaSectionFromQuestion, isTmuaSection } from '@/lib/papers/sectionMapping';
 import { questionMatchesPartId } from '@/lib/papers/paperLibrarySections';
 import { isBogusPartLetter } from '@/lib/papers/markQuestionUtils';
-import { cropImageToContent } from '@/lib/utils/imageCrop';
 import type { Answer, Letter, MistakeTag, Paper, PaperSection, Question, ExamName, ExamType } from '@/types/papers';
 import { saveSession, loadSession, deleteSession, clearSessionDetached, markSessionDetached } from '@/lib/storage/sessionStorage';
 import { generatePartIdsFromSections, generatePartIdFromRoadmapPart } from '@/lib/papers/partIdUtils';
@@ -842,55 +841,10 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                 }
               }
 
-              // Apply TMUA 2017 Paper 1 footer trimming to question images
-              const processedQuestions = await (async () => {
-                const shouldTrimTmua2017 = filteredQuestions.some(q =>
-                  q.examName === 'TMUA' &&
-                  q.examYear === 2017 &&
-                  typeof q.paperName === 'string' &&
-                  q.paperName.toLowerCase().includes('paper 1') &&
-                  typeof q.examType === 'string' &&
-                  q.examType.toLowerCase() === 'official'
-                );
-
-                if (!shouldTrimTmua2017) {
-                  return filteredQuestions;
-                }
-
-                const results = await Promise.all(
-                  filteredQuestions.map(async (question) => {
-                    const isTargetQuestion =
-                      question.examName === 'TMUA' &&
-                      question.examYear === 2017 &&
-                      typeof question.paperName === 'string' &&
-                      question.paperName.toLowerCase().includes('paper 1') &&
-                      typeof question.examType === 'string' &&
-                      question.examType.toLowerCase() === 'official';
-
-                    if (!isTargetQuestion || !question.questionImage) {
-                      return question;
-                    }
-
-                    try {
-                      const trimmedImage = await cropImageToContent(question.questionImage, {
-                        removeFooterPercent: 6,
-                        paddingBottom: 24,
-                        paddingBottomPercent: 0.2,
-                        contentThreshold: 240,
-                        minContentRatio: 0.0015,
-                      });
-
-                      return trimmedImage === question.questionImage
-                        ? question
-                        : { ...question, questionImage: trimmedImage };
-                    } catch (error) {
-                      return question;
-                    }
-                  })
-                );
-
-                return results;
-              })();
+              // Keep original image URLs here. Footer trim for TMUA 2017 Paper 1
+              // runs at display time so Mark / Solve are not blocked by canvas work
+              // and huge data URLs are not written into persisted session state.
+              const processedQuestions = [...filteredQuestions];
 
               // Order questions by section selection order using mapping
               let sectionStarts: Record<number, string> = {};

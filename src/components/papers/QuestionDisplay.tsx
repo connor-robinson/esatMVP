@@ -15,6 +15,11 @@ import { shouldRenderPastPaperAsText } from "@/lib/papers/pastPaperTextMode";
 import { PastPaperTextQuestion } from "@/components/papers/PastPaperTextQuestion";
 import { ConversionReportButton } from "@/components/papers/ConversionReportButton";
 import { isEsatCampMockExamType } from "@/lib/papers/esatCampMocks";
+import {
+  isTmua2017OfficialPaper1,
+  TMUA_2017_P1_QUESTION_CROP,
+} from "@/lib/papers/tmuaImageCrop";
+import { cropImageToContent } from "@/lib/utils/imageCrop";
 
 interface QuestionDisplayProps {
   question: Question;
@@ -52,6 +57,7 @@ export function QuestionDisplay({
 }: QuestionDisplayProps) {
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
+  const [displayImage, setDisplayImage] = useState(question.questionImage);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [zoom, setZoom] = useState(1.0);
@@ -85,6 +91,33 @@ export function QuestionDisplay({
       prevMinuteRef.current = mins;
     }
   }, [remainingTime]);
+
+  // Lazy footer trim for TMUA 2017 Paper 1 (per visible question, not on session load).
+  useEffect(() => {
+    let cancelled = false;
+    const src = question.questionImage;
+    setDisplayImage(src);
+    setImageLoading(true);
+    setImageError(false);
+
+    if (!src || !isTmua2017OfficialPaper1(question)) {
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    void cropImageToContent(src, TMUA_2017_P1_QUESTION_CROP)
+      .then((cropped) => {
+        if (!cancelled) setDisplayImage(cropped);
+      })
+      .catch(() => {
+        if (!cancelled) setDisplayImage(src);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [question.id, question.questionImage, question.examName, question.examYear, question.paperName, question.examType]);
 
   const handleImageLoad = () => {
     setImageLoading(false);
@@ -269,7 +302,7 @@ export function QuestionDisplay({
                           }}
                         >
                           <img
-                            src={question.questionImage}
+                            src={displayImage}
                             alt={`Question ${questionNumber}`}
                             className={cn(
                               "block h-auto w-full transition-opacity duration-300 ease-in-out",
@@ -473,7 +506,7 @@ export function QuestionDisplay({
                     }}
                   >
                     <img
-                      src={question.questionImage}
+                      src={displayImage}
                       alt={`Question ${questionNumber}`}
                       className={cn(
                         "block h-auto w-auto transition-opacity duration-200 ease-out",

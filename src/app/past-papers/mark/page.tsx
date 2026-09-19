@@ -63,6 +63,10 @@ import {
 } from "@/lib/supabase/questions";
 import { fetchEsatTable, interpolatePercentile, interpolateScore, mapSectionToTable, averageEsatDistributionTables, type EsatRow } from "@/lib/esat/percentiles";
 import { cropImageToContent } from "@/lib/utils/imageCrop";
+import {
+  isTmua2017OfficialPaper1,
+  TMUA_2017_P1_QUESTION_CROP,
+} from "@/lib/papers/tmuaImageCrop";
 import type { ConversionRow, ExamName, Letter, MistakeTag } from "@/types/papers";
 import { MarkSectionNav,
   type MarkSection,
@@ -1171,9 +1175,12 @@ export default function PapersMarkPage() {
     const isTMUA = question.questionImage && question.solutionImage && !question.solutionText;
 
     if (isTMUA) {
-      // Crop question image (no footer removal, just trim whitespace)
+      // Crop question image; TMUA 2017 Paper 1 also strips the scanned footer.
       if (question.questionImage) {
-        cropImageToContent(question.questionImage, { paddingBottom: 60 })
+        const questionCrop = isTmua2017OfficialPaper1(question)
+          ? TMUA_2017_P1_QUESTION_CROP
+          : { paddingBottom: 60 };
+        cropImageToContent(question.questionImage, questionCrop)
           .then(cropped => setCroppedQuestionImage(cropped))
           .catch(() => setCroppedQuestionImage(question.questionImage || null));
       }

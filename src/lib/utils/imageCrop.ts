@@ -29,7 +29,11 @@ interface CropOptions {
   contentThreshold?: number; // Brightness threshold to treat pixel as content
   minContentRatio?: number; // Minimum ratio of row pixels that must be darker than threshold
   footerGap?: FooterGapOptions; // Legacy gap detection (optional)
+  /** Abort and return the original src if decode/crop takes too long (ms). */
+  timeoutMs?: number;
 }
+
+const DEFAULT_CROP_TIMEOUT_MS = 8000;
 
 export async function cropImageToContent(
   imageSrc: string,
@@ -42,9 +46,20 @@ export async function cropImageToContent(
     contentThreshold = 235,
     minContentRatio = 0.002,
     footerGap,
+    timeoutMs = DEFAULT_CROP_TIMEOUT_MS,
   } = options;
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = (value: string) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeoutId);
+      resolve(value);
+    };
+
+    const timeoutId = setTimeout(() => finish(imageSrc), timeoutMs);
+
     const img = new Image();
     img.crossOrigin = 'anonymous';
     
@@ -53,7 +68,7 @@ export async function cropImageToContent(
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         if (!ctx) {
-          resolve(imageSrc);
+          finish(imageSrc);
           return;
         }
 
@@ -107,7 +122,7 @@ export async function cropImageToContent(
           if (scanLimit < originalHeight) {
             lastContentRow = scanLimit - 1;
           } else {
-          resolve(imageSrc);
+          finish(imageSrc);
           return;
           }
         }
@@ -125,7 +140,7 @@ export async function cropImageToContent(
         const croppedCanvas = document.createElement('canvas');
         const croppedCtx = croppedCanvas.getContext('2d');
         if (!croppedCtx) {
-          resolve(imageSrc);
+          finish(imageSrc);
           return;
         }
 
@@ -135,17 +150,16 @@ export async function cropImageToContent(
 
         // Convert to data URL
         const croppedDataUrl = croppedCanvas.toDataURL('image/png');
-        resolve(croppedDataUrl);
+        finish(croppedDataUrl);
       } catch (error) {
-        resolve(imageSrc); // Return original on error
+        finish(imageSrc); // Return original on error
       }
     };
 
     img.onerror = () => {
-      resolve(imageSrc); // Return original on load error
+      finish(imageSrc); // Return original on load error
     };
 
     img.src = imageSrc;
   });
 }
-

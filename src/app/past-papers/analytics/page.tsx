@@ -84,9 +84,25 @@ export default function PapersAnalyticsPage() {
     if (analyticsLocked) return;
     try {
       await loadSessionFromDatabase(sessionId);
+      const loaded = usePaperSessionStore.getState();
+      if (
+        !loaded.sessionId ||
+        loaded.questionsError ||
+        loaded.questions.length === 0
+      ) {
+        alert(
+          loaded.questionsError ||
+            'Could not load that session for review. Please try again.',
+        );
+        return;
+      }
       router.push('/past-papers/mark');
-    } catch {
-      /* ignore */
+    } catch (err) {
+      alert(
+        err instanceof Error
+          ? err.message
+          : 'Could not open the mark page for this session.',
+      );
     }
   };
 
