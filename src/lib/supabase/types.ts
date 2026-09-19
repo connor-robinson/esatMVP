@@ -34,6 +34,7 @@ export type PaperSessionRow = {
   section_percentiles: Json | null;
   pinned_insights: Json | null;
   deleted_at: string | null;
+  entry_source: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -64,6 +65,7 @@ export type PaperSessionInsert = {
   section_percentiles?: Json | null;
   pinned_insights?: Json | null;
   deleted_at?: string | null;
+  entry_source?: string | null;
 };
 export type PaperSessionUpdate = Partial<PaperSessionRow>;
 

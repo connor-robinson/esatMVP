@@ -21,6 +21,11 @@ import {
   type AdminEsatMockSubject,
 } from "@/lib/papers/adminEsatMocks";
 import { mockLetterForNumber } from "@/lib/esatMockTests/catalog";
+import {
+  inferMockEntrySource,
+  PAPER_SESSION_ENTRY_SOURCE_LABELS,
+  type PaperSessionEntrySource,
+} from "@/lib/papers/entrySource";
 
 export type MockStatsTimeRange = QuestionBankTimeRange;
 
@@ -81,6 +86,14 @@ export type MockWrongStat = {
   option_breakdown: MockOptionBreakdown[];
 };
 
+export type MockSourceStat = {
+  source: PaperSessionEntrySource | "unknown";
+  label: string;
+  sessions: number;
+  completed: number;
+  users: number;
+};
+
 export type MockStatsPayload = {
   since: string | null;
   generated_at: string;
@@ -101,6 +114,7 @@ export type MockStatsPayload = {
     correct_attempts: number;
     wrong_attempts: number;
   };
+  bySource: MockSourceStat[];
   byMock: MockSittingStat[];
   bySubject: MockSubjectStat[];
   predictedBuckets: MockPredictedBucket[];
@@ -114,6 +128,7 @@ type SessionRow = {
   paper_name: string | null;
   paper_variant: string | null;
   session_name: string | null;
+  entry_source: string | null;
   selected_sections: string[] | null;
   answers: unknown;
   correct_flags: unknown;
@@ -293,7 +308,7 @@ async function fetchAllMockSessions(
     const { data, error } = await service
       .from("paper_sessions")
       .select(
-        "id, user_id, paper_id, paper_name, paper_variant, session_name, selected_sections, answers, correct_flags, score, predicted_score, ended_at, created_at, deleted_at",
+        "id, user_id, paper_id, paper_name, paper_variant, session_name, entry_source, selected_sections, answers, correct_flags, score, predicted_score, ended_at, created_at, deleted_at",
       )
       .is("deleted_at", null)
       .or(
@@ -495,6 +510,14 @@ export async function computeEsatMockStats(
       pcts: number[];
     }
   >();
+  const bySourceAcc = new Map<
+    PaperSessionEntrySource | "unknown",
+    {
+      sessions: number;
+      completed: number;
+      users: Set<string>;
+    }
+  >();
 
   let fullSittings = 0;
   let moduleSittings = 0;
@@ -510,6 +533,20 @@ export async function computeEsatMockStats(
     const full = isFullSitting(subjects);
     if (full) fullSittings += 1;
     else moduleSittings += 1;
+
+    const source = inferMockEntrySource({
+      entrySource: session.entry_source,
+      sessionName: session.session_name,
+    });
+    const sourceAcc = bySourceAcc.get(source) ?? {
+      sessions: 0,
+      completed: 0,
+      users: new Set<string>(),
+    };
+    sourceAcc.sessions += 1;
+    if (session.ended_at) sourceAcc.completed += 1;
+    sourceAcc.users.add(session.user_id);
+    bySourceAcc.set(source, sourceAcc);
 
     const pct = session.ended_at ? scorePct(session.score) : null;
     if (pct != null) completedPcts.push(pct);
@@ -734,6 +771,31 @@ export async function computeEsatMockStats(
   }
   byMock.sort((a, b) => b.sessions - a.sessions || a.mock_number - b.mock_number);
 
+  const sourceOrder: Array<PaperSessionEntrySource | "unknown"> = [
+    "past_papers",
+    "esat_mock_tests",
+    "library",
+    "compare",
+    "plan",
+    "other",
+    "unknown",
+  ];
+  const bySource: MockSourceStat[] = sourceOrder
+    .map((source) => {
+      const acc = bySourceAcc.get(source);
+      return {
+        source,
+        label:
+          source === "unknown"
+            ? "Unknown"
+            : PAPER_SESSION_ENTRY_SOURCE_LABELS[source],
+        sessions: acc?.sessions ?? 0,
+        completed: acc?.completed ?? 0,
+        users: acc?.users.size ?? 0,
+      } satisfies MockSourceStat;
+    })
+    .filter((row) => row.sessions > 0 || row.source === "past_papers" || row.source === "esat_mock_tests");
+
   const bySubject: MockSubjectStat[] = ADMIN_ESAT_MOCK_SUBJECTS.map(
     (subject) => {
       const acc = bySubjectAcc.get(subject);
@@ -779,6 +841,7 @@ export async function computeEsatMockStats(
       correct_attempts: correctAttempts,
       wrong_attempts: wrongAttempts,
     },
+    bySource,
     byMock,
     bySubject,
     predictedBuckets,

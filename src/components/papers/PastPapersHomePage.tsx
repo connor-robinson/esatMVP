@@ -586,6 +586,7 @@ export default function PastPapersHomePage() {
           paperName: paperType,
           paperVariant: variantString,
           sessionName: `${stage.examName} ${stage.year} - ${new Date().toLocaleString()}`,
+          entrySource: "past_papers",
           timeLimitMinutes,
           questionRange: {
             start: 1,

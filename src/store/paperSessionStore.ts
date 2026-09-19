@@ -47,6 +47,8 @@ interface PaperSessionState {
   paperName: string;
   paperVariant: string; // Format: "{year}-{paperName}-{examType}"
   sessionName: string;
+  /** Where the sitting was started (past_papers, esat_mock_tests, …). */
+  entrySource: string | null;
   timeLimitMinutes: number;
   /** Percent extra time from access arrangements (0 if none). */
   extraTimePercentage: number;
@@ -116,6 +118,8 @@ interface PaperSessionState {
     paperName: string;
     paperVariant: string;
     sessionName: string;
+    /** Start surface for analytics (past_papers | esat_mock_tests | …). */
+    entrySource?: string | null;
     timeLimitMinutes: number;
     questionRange: { start: number; end: number };
     selectedSections?: PaperSection[];
@@ -203,6 +207,7 @@ const EMPTY_CLIENT_SESSION = {
   paperName: '',
   paperVariant: '',
   sessionName: '',
+  entrySource: null,
   timeLimitMinutes: 60,
   extraTimePercentage: 0,
   hasRestBreaks: false,
@@ -256,6 +261,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       paperName: '',
       paperVariant: '',
       sessionName: '',
+      entrySource: null,
       timeLimitMinutes: 60,
       extraTimePercentage: 0,
       hasRestBreaks: false,
@@ -395,6 +401,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           paperName: config.paperName,
           paperVariant: config.paperVariant,
           sessionName: config.sessionName,
+          entrySource: config.entrySource ?? null,
           timeLimitMinutes,
           extraTimePercentage,
           hasRestBreaks,
@@ -445,6 +452,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           paperName: config.paperName,
           paperVariant: config.paperVariant,
           sessionName: config.sessionName,
+          entrySource: config.entrySource ?? null,
           questionRange: config.questionRange,
           selectedSections: config.selectedSections || [],
           selectedPartIds: selectedPartIds, // Part IDs for granular tracking
@@ -1417,6 +1425,10 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             paperName: sessionData.paper_name || '',
             paperVariant: sessionData.paper_variant || '',
             sessionName: sessionData.session_name || '',
+            entrySource:
+              typeof sessionData.entry_source === 'string'
+                ? sessionData.entry_source
+                : null,
             timeLimitMinutes: sessionData.time_limit_minutes || 60,
             questionRange: questionRange,
             selectedSections: (sessionData.selected_sections as PaperSection[]) || [],
@@ -1612,6 +1624,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           paperName: state.paperName,
           paperVariant: state.paperVariant,
           sessionName: state.sessionName,
+          entrySource: state.entrySource,
           questionRange: state.questionRange,
           selectedSections: state.selectedSections, // Critical: tracks which sections were attempted
           selectedPartIds: state.selectedPartIds, // Critical: tracks which part IDs were attempted
@@ -2259,6 +2272,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             paperName: updatedState.paperName,
             paperVariant: updatedState.paperVariant,
             sessionName: updatedState.sessionName,
+            entrySource: updatedState.entrySource,
             timeLimitMinutes: updatedState.timeLimitMinutes,
             questionRange: updatedState.questionRange,
             selectedSections: updatedState.selectedSections,
@@ -2317,6 +2331,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             paperName: state.paperName,
             paperVariant: state.paperVariant,
             sessionName: state.sessionName,
+            entrySource: state.entrySource ?? null,
             timeLimitMinutes: state.timeLimitMinutes,
             questionRange: state.questionRange,
             selectedSections: state.selectedSections || [],
@@ -2480,6 +2495,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         paperName: state.paperName,
         paperVariant: state.paperVariant,
         sessionName: state.sessionName,
+        entrySource: state.entrySource,
         timeLimitMinutes: state.timeLimitMinutes,
         extraTimePercentage: state.extraTimePercentage,
         hasRestBreaks: state.hasRestBreaks,

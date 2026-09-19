@@ -360,6 +360,92 @@ export default function AdminMockStatsPage() {
 
           <section>
             <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-text-muted">
+              Start source
+            </h2>
+            <p className="mt-2 text-xs text-text-subtle">
+              Past papers hub vs /esat-mock-tests. Older sittings without an
+              explicit source are inferred from the session name when possible.
+            </p>
+            <div className="mt-4 grid gap-4 lg:grid-cols-2">
+              <div className="rounded-organic-xl bg-surface-elevated p-4">
+                <h3 className="mb-3 text-sm font-semibold text-text">
+                  Sessions by source
+                </h3>
+                {chartsReady &&
+                (stats.bySource ?? []).some((r) => r.sessions > 0) ? (
+                  <div className="h-56 w-full min-w-0">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+                      <BarChart
+                        layout="vertical"
+                        data={[...(stats.bySource ?? [])]
+                          .filter((r) => r.sessions > 0)
+                          .reverse()
+                          .map((row) => ({
+                            label: row.label.slice(0, 28),
+                            count: row.sessions,
+                          }))}
+                        margin={{ left: 8, right: 24 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                        <XAxis type="number" allowDecimals={false} />
+                        <YAxis
+                          type="category"
+                          dataKey="label"
+                          width={140}
+                          tick={{ fontSize: 11 }}
+                        />
+                        <Tooltip />
+                        <Bar
+                          dataKey="count"
+                          fill="#7B64B8"
+                          radius={[0, 4, 4, 0]}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                ) : (
+                  <p className="text-sm text-text-muted">
+                    No mock sessions yet.
+                  </p>
+                )}
+              </div>
+
+              <div className="min-w-0 overflow-x-auto rounded-organic-xl bg-surface-elevated">
+                <table className="w-full min-w-[360px] text-left text-sm">
+                  <thead className="text-xs uppercase tracking-wide text-text-muted">
+                    <tr>
+                      <th className="px-4 py-3 font-medium">Source</th>
+                      <th className="px-4 py-3 font-medium">Sessions</th>
+                      <th className="px-4 py-3 font-medium">Done</th>
+                      <th className="px-4 py-3 font-medium">Users</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(stats.bySource ?? []).map((row) => (
+                      <tr
+                        key={row.source}
+                        className="border-t border-border-subtle"
+                      >
+                        <td className="px-4 py-2.5 text-text">{row.label}</td>
+                        <td className="px-4 py-2.5 tabular-nums text-text">
+                          {row.sessions}
+                        </td>
+                        <td className="px-4 py-2.5 tabular-nums text-text-muted">
+                          {row.completed}
+                        </td>
+                        <td className="px-4 py-2.5 tabular-nums text-text-muted">
+                          {row.users}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-text-muted">
               By mock
             </h2>
             <p className="mt-2 text-xs text-text-subtle">

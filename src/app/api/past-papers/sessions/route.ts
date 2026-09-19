@@ -37,6 +37,8 @@ type SessionPayload = {
     }
   > | null;
   pinnedInsights?: any;
+  /** Start surface: past_papers | esat_mock_tests | … */
+  entrySource?: string | null;
 };
 
 function toIso(value?: number | null) {
@@ -153,6 +155,7 @@ export async function POST(request: Request) {
         predicted_score: payload.predictedScore ?? null,
         section_percentiles: payload.sectionPercentiles ?? null,
         pinned_insights: payload.pinnedInsights ?? null,
+        entry_source: payload.entrySource ?? null,
       })
       .select('*')
       .single();
@@ -260,6 +263,8 @@ export async function PATCH(request: Request) {
     updates.section_percentiles = payload.sectionPercentiles ?? null;
   if (payload.pinnedInsights !== undefined)
     updates.pinned_insights = payload.pinnedInsights ?? null;
+  if (payload.entrySource !== undefined)
+    updates.entry_source = payload.entrySource ?? null;
 
   const { data, error } = await (supabase as any)
     .from('paper_sessions')

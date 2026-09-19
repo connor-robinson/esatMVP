@@ -126,6 +126,7 @@ export async function startCatalogMockSitting(
     paperName: "ESAT",
     paperVariant: `${ADMIN_ESAT_MOCK_EXAM_YEAR}-${paperName}-${ADMIN_ESAT_MOCK_EXAM_TYPE}`,
     sessionName: `${label} - ${new Date().toLocaleString()}`,
+    entrySource: "esat_mock_tests",
     timeLimitMinutes,
     questionRange: {
       start: 1,
