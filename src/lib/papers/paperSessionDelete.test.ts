@@ -91,4 +91,36 @@ describe("paper session delete / upsert recreate guard", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock.mock.calls[0][1].method).toBe("PATCH");
   });
+
+  it("POST-creates an ended guest session after login when PATCH finds nothing", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ session: null }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 201,
+        json: async () => ({ session: { id: "ended-guest" } }),
+      });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { upsertPaperSessionOnServer } = await import(
+      "@/lib/papers/upsertPaperSessionOnServer"
+    );
+
+    const result = await upsertPaperSessionOnServer({
+      id: "ended-guest",
+      endedAt: Date.now(),
+      paperName: "ESAT",
+      sessionName: "ESAT CAMP Math 1 Mock A",
+    });
+
+    expect(result).toEqual({ ok: true, status: 201, created: true });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock.mock.calls[0][1].method).toBe("PATCH");
+    expect(fetchMock.mock.calls[1][1].method).toBe("POST");
+  });
 });

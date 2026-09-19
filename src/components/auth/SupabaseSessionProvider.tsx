@@ -120,8 +120,8 @@ export function SupabaseSessionProvider({ children, initialSession }: SupabaseSe
         if (newSession?.user?.id && hasAnalyticsConsent()) {
           setGaUserId(newSession.user.id);
         }
-        // Guest hub sittings live in localStorage until auth; create the
-        // server row now so they appear in account history.
+        // Guest hub / mock sittings live in localStorage until auth; create the
+        // server row now (including completed sittings) so they appear in history.
         void (async () => {
           try {
             const { usePaperSessionStore } = await import(
@@ -137,10 +137,10 @@ export function SupabaseSessionProvider({ children, initialSession }: SupabaseSe
               });
             }
             const store = usePaperSessionStore.getState();
+            await store.processPendingPersists();
             if (store.sessionId) {
               await store.persistSessionToServer({ immediate: true });
             }
-            await store.processPendingPersists();
           } catch {
             /* best-effort */
           }

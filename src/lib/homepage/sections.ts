@@ -68,7 +68,7 @@ export const DASHBOARD_TOPICS: DashboardTopic[] = [
         description: "Legacy",
       },
       {
-        label: "Analytics",
+        label: "Analytics & History",
         href: "/past-papers/analytics",
         analyticsDestination: "past_papers_analytics",
       },

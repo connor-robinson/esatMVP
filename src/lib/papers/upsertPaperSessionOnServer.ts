@@ -1,7 +1,7 @@
 /**
  * Upsert a past-paper sitting to the server.
  * Guest starts never create a row; after login PATCH matches nothing, so we POST.
- * Deleted sittings must never be recreated (tombstone + soft-delete 410).
+ * Tombstoned / soft-deleted sittings must never be recreated.
  */
 
 import { isPaperSessionTombstoned } from "@/lib/papers/paperSessionTombstones";
@@ -9,7 +9,8 @@ import { isPaperSessionTombstoned } from "@/lib/papers/paperSessionTombstones";
 export type UpsertPaperSessionOptions = {
   /**
    * When true, create a row if PATCH finds nothing (guest → login).
-   * Defaults to true only for in-progress sittings (endedAt unset).
+   * Defaults to true so completed guest mocks still land in session history.
+   * Pass false only when intentionally avoiding recreate (e.g. delete flows).
    */
   createIfMissing?: boolean;
 };
@@ -28,10 +29,7 @@ export async function upsertPaperSessionOnServer(
     return { ok: false, status: 410, created: false, deleted: true };
   }
 
-  const endedAt = payload.endedAt;
-  const defaultCreateIfMissing =
-    endedAt == null || endedAt === undefined;
-  const createIfMissing = options?.createIfMissing ?? defaultCreateIfMissing;
+  const createIfMissing = options?.createIfMissing ?? true;
 
   const patchRes = await fetch("/api/past-papers/sessions", {
     method: "PATCH",

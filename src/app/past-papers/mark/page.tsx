@@ -1113,6 +1113,7 @@ export default function PapersMarkPage() {
   ]);
 
   // Persist scaled / section scores so cohort averages can use them later.
+  // Also ensure a completed guest mock is created on the server after login.
   useEffect(() => {
     if (!isLoggedIn || !sessionId) return;
     const hasSectionScores = Object.values(sectionPercentiles).some(
@@ -1121,30 +1122,36 @@ export default function PapersMarkPage() {
     if (predictedScore == null && !hasSectionScores) return;
 
     const timer = window.setTimeout(() => {
-      void fetch("/api/past-papers/sessions", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          id: sessionId,
-          predictedScore: predictedScore ?? null,
-          sectionPercentiles:
-            Object.keys(sectionPercentiles).length > 0
-              ? sectionPercentiles
-              : null,
-        }),
-      })
-        .then(async (res) => {
-          if (res.status !== 410) return;
-          const { markPaperSessionTombstoned } = await import(
-            "@/lib/papers/paperSessionTombstones"
+      void (async () => {
+        try {
+          const store = usePaperSessionStore.getState();
+          // Full upsert first so guest → login completed mocks appear in history.
+          await store.persistSessionToServer({ immediate: true });
+          const { upsertPaperSessionOnServer } = await import(
+            "@/lib/papers/upsertPaperSessionOnServer"
           );
-          markPaperSessionTombstoned(sessionId);
-          usePaperSessionStore.getState().clearClientSession();
-        })
-        .catch(() => {
+          const result = await upsertPaperSessionOnServer(
+            {
+              id: sessionId,
+              predictedScore: predictedScore ?? null,
+              sectionPercentiles:
+                Object.keys(sectionPercentiles).length > 0
+                  ? sectionPercentiles
+                  : null,
+            },
+            { createIfMissing: false },
+          );
+          if (result.deleted) {
+            const { markPaperSessionTombstoned } = await import(
+              "@/lib/papers/paperSessionTombstones"
+            );
+            markPaperSessionTombstoned(sessionId);
+            usePaperSessionStore.getState().clearClientSession();
+          }
+        } catch {
           // fail-soft: averages still fall back to accuracy
-        });
+        }
+      })();
     }, 800);
 
     return () => window.clearTimeout(timer);

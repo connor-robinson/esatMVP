@@ -135,8 +135,8 @@ const navSections: NavSectionConfig[] = [
       },
       {
         href: '/past-papers/analytics',
-        label: 'Analytics',
-        description: 'Review your results',
+        label: 'Analytics & History',
+        description: 'Review results and past sittings',
         icon: BarChart3,
       },
       {
