@@ -56,6 +56,8 @@ export function PearsonOptionTable({
                 !reviewFeedback?.hideCorrect &&
                 Boolean(reviewFeedback?.correctLetter) &&
                 reviewFeedback?.correctLetter !== row.letter;
+              const showYourBadge = Boolean(isYours);
+              const showCorrectBadge = Boolean(isCorrect && !isYours);
               return (
                 <tr
                   key={row.letter}
@@ -64,6 +66,10 @@ export function PearsonOptionTable({
                     selected && "pearson-option-table-row-selected",
                     isCorrect && "pearson-option-table-row--correct",
                     wrongPick && "pearson-option-table-row--wrong",
+                    isYours &&
+                      !wrongPick &&
+                      !isCorrect &&
+                      "pearson-option-table-row--yours",
                   )}
                   onClick={() => {
                     if (!disabled) onChange(row.letter);
@@ -84,21 +90,23 @@ export function PearsonOptionTable({
                         />
                       </span>
                       {row.letter}
-                      {isYours || isCorrect ? (
+                      {showYourBadge || showCorrectBadge ? (
                         <span className="pearson-review-badges">
-                          {isYours ? (
+                          {showYourBadge ? (
                             <span
                               className={cn(
                                 "pearson-review-badge",
                                 wrongPick
                                   ? "pearson-review-badge--yours-wrong"
-                                  : "pearson-review-badge--yours",
+                                  : isCorrect
+                                    ? "pearson-review-badge--correct"
+                                    : "pearson-review-badge--yours",
                               )}
                             >
                               Your answer
                             </span>
                           ) : null}
-                          {isCorrect ? (
+                          {showCorrectBadge ? (
                             <span className="pearson-review-badge pearson-review-badge--correct">
                               Correct answer
                             </span>

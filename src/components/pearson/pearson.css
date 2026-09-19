@@ -1081,25 +1081,29 @@ html.pearson-exam-active body {
   gap: 6px 10px;
 }
 
-.pearson-radio-row--correct {
-  border-radius: 4px;
-  background: rgba(34, 197, 94, 0.12);
-  padding: 4px 6px 4px 2px;
-  margin-left: -2px;
+/* Mark review: colour the option text, not a full-row highlight. */
+.pearson-radio-row--correct .pearson-radio-body {
+  color: #4ade80;
 }
 
-.pearson-radio-row--wrong {
-  border-radius: 4px;
-  background: rgba(239, 68, 68, 0.12);
-  padding: 4px 6px 4px 2px;
-  margin-left: -2px;
+.pearson-radio-row--wrong .pearson-radio-body {
+  color: #f87171;
 }
 
-.pearson-radio-row--yours {
-  border-radius: 4px;
-  background: rgba(59, 130, 246, 0.1);
-  padding: 4px 6px 4px 2px;
-  margin-left: -2px;
+.pearson-radio-row--yours .pearson-radio-body {
+  color: #93c5fd;
+}
+
+.pearson-exam-root.pearson-exam-root--review-light .pearson-radio-row--correct .pearson-radio-body {
+  color: #15803d;
+}
+
+.pearson-exam-root.pearson-exam-root--review-light .pearson-radio-row--wrong .pearson-radio-body {
+  color: #b91c1c;
+}
+
+.pearson-exam-root.pearson-exam-root--review-light .pearson-radio-row--yours .pearson-radio-body {
+  color: #1d4ed8;
 }
 
 .pearson-review-badges {
@@ -1112,50 +1116,64 @@ html.pearson-exam-active body {
 .pearson-review-badge {
   display: inline-flex;
   align-items: center;
-  padding: 1px 7px;
-  border-radius: 999px;
+  padding: 0;
+  border-radius: 0;
   font-size: 11px;
   font-weight: 700;
   line-height: 1.35;
   white-space: nowrap;
+  background: transparent;
 }
 
 .pearson-review-badge--yours {
-  background: rgba(59, 130, 246, 0.2);
   color: #93c5fd;
 }
 
 .pearson-review-badge--yours-wrong {
-  background: rgba(239, 68, 68, 0.2);
-  color: #fca5a5;
+  color: #f87171;
 }
 
 .pearson-review-badge--correct {
-  background: rgba(34, 197, 94, 0.2);
-  color: #86efac;
+  color: #4ade80;
 }
 
 .pearson-exam-root.pearson-exam-root--review-light .pearson-review-badge--yours {
-  background: rgba(37, 99, 235, 0.14);
   color: #1d4ed8;
 }
 
 .pearson-exam-root.pearson-exam-root--review-light .pearson-review-badge--yours-wrong {
-  background: rgba(220, 38, 38, 0.14);
   color: #b91c1c;
 }
 
 .pearson-exam-root.pearson-exam-root--review-light .pearson-review-badge--correct {
-  background: rgba(22, 163, 74, 0.14);
   color: #15803d;
 }
 
 .pearson-option-table-row--correct td {
-  background: rgba(34, 197, 94, 0.12);
+  color: #4ade80;
+  background: transparent;
 }
 
 .pearson-option-table-row--wrong td {
-  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  background: transparent;
+}
+
+.pearson-option-table-row--yours td {
+  color: #93c5fd;
+  background: transparent;
+}
+
+.pearson-exam-root.pearson-exam-root--review-light .pearson-option-table-row--correct td {
+  color: #15803d;
+}
+
+.pearson-exam-root.pearson-exam-root--review-light .pearson-option-table-row--wrong td {
+  color: #b91c1c;
+}
+
+.pearson-exam-root.pearson-exam-root--review-light .pearson-option-table-row--yours td {
+  color: #1d4ed8;
 }
 
 .pearson-option-table-letter .pearson-review-badges {

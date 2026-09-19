@@ -66,6 +66,11 @@ export function PearsonRadioGroup({
         const review = reviewFeedback
           ? reviewBadgesForLetter(opt.letter, reviewFeedback)
           : null;
+        const showYourBadge = Boolean(review?.isYours);
+        // When the pick is also correct, only label it "Your answer".
+        const showCorrectBadge = Boolean(
+          review?.isCorrect && !review.isYours,
+        );
         return (
           <li key={opt.letter}>
             <label
@@ -93,21 +98,23 @@ export function PearsonRadioGroup({
               </span>
               <span className="pearson-radio-body">
                 {opt.content}
-                {review && (review.isYours || review.isCorrect) ? (
+                {review && (showYourBadge || showCorrectBadge) ? (
                   <span className="pearson-review-badges" aria-hidden={false}>
-                    {review.isYours ? (
+                    {showYourBadge ? (
                       <span
                         className={cn(
                           "pearson-review-badge",
                           review.wrongPick
                             ? "pearson-review-badge--yours-wrong"
-                            : "pearson-review-badge--yours",
+                            : review.isCorrect
+                              ? "pearson-review-badge--correct"
+                              : "pearson-review-badge--yours",
                         )}
                       >
                         Your answer
                       </span>
                     ) : null}
-                    {review.isCorrect ? (
+                    {showCorrectBadge ? (
                       <span className="pearson-review-badge pearson-review-badge--correct">
                         Correct answer
                       </span>
