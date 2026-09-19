@@ -769,9 +769,9 @@ html.pearson-exam-active body {
 
 .pearson-nda-camp-wordmark {
   font-family: var(--pearson-font);
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
-  line-height: 1;
+  line-height: 1.1;
   letter-spacing: -0.02em;
   color: #0f172a;
 }

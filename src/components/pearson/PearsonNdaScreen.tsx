@@ -2,11 +2,11 @@
 
 /**
  * Screen 2: NDA / welcome (untimed, no question counter).
- * Official papers keep the UAT specimen wordmark; ESAT CAMP mocks use our brand.
+ * Official papers keep the UAT specimen wordmark; ESAT CAMP mocks use our brand
+ * mark beside the mock sitting title.
  */
 
 import { BrandMarkImage } from "@/components/brand/BrandMarkImage";
-import { BRAND_CONFIG } from "@/config/brand";
 
 export type PearsonNdaScreenProps = {
   /** When set, show ESAT CAMP branding instead of the UAT specimen lockup. */
@@ -21,14 +21,16 @@ export function PearsonNdaScreen({
   return (
     <div className="pearson-static-content">
       {isCamp ? (
-        <div className="pearson-nda-logo pearson-nda-logo--camp" aria-hidden="true">
+        <div
+          className="pearson-nda-logo pearson-nda-logo--camp"
+          role="img"
+          aria-label={campWelcomeTitle ?? "ESAT CAMP"}
+        >
           <BrandMarkImage
             className="pearson-nda-camp-mark brightness-0"
             alt=""
           />
-          <span className="pearson-nda-camp-wordmark">
-            {BRAND_CONFIG.displayName}
-          </span>
+          <span className="pearson-nda-camp-wordmark">{campWelcomeTitle}</span>
         </div>
       ) : (
         <div className="pearson-nda-logo" aria-hidden="true">

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  formatEsatCampMockSectionHeading,
   formatEsatCampMockWelcomeTitle,
   formatPastPaperExamTitle,
 } from "./examTitle";
@@ -48,7 +49,7 @@ describe("formatPastPaperExamTitle", () => {
 });
 
 describe("formatEsatCampMockWelcomeTitle", () => {
-  it("formats admin mock paper ids as ESAT CAMP Mock letter, subject", () => {
+  it("formats admin mock paper ids as ESAT CAMP Mock letter", () => {
     expect(
       formatEsatCampMockWelcomeTitle([
         question({
@@ -60,10 +61,31 @@ describe("formatEsatCampMockWelcomeTitle", () => {
           examType: "ESAT CAMP",
         }),
       ]),
-    ).toBe("ESAT CAMP Mock A, Math 1");
+    ).toBe("ESAT CAMP Mock A");
   });
 
   it("returns null for official papers", () => {
     expect(formatEsatCampMockWelcomeTitle([question()])).toBeNull();
+  });
+});
+
+describe("formatEsatCampMockSectionHeading", () => {
+  it("names the subject against the mock sitting", () => {
+    expect(
+      formatEsatCampMockSectionHeading([
+        question({
+          paperId: 920001,
+          examName: "ESAT",
+          examYear: 2026,
+          paperName: "Mock A",
+          partName: "Mathematics 2",
+          examType: "ESAT CAMP",
+        }),
+      ]),
+    ).toBe("This is Mathematics 2: ESAT 2026 Mock A Paper");
+  });
+
+  it("returns null for official papers", () => {
+    expect(formatEsatCampMockSectionHeading([question()])).toBeNull();
   });
 });

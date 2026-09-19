@@ -10,6 +10,7 @@ import { PearsonResultsLoadingScreen } from "@/components/pearson/PearsonResults
 import { usePaperSessionHydrated } from "@/hooks/usePaperSessionHydrated";
 import { useSessionActivity } from "@/hooks/useSessionActivity";
 import {
+  formatEsatCampMockSectionHeading,
   formatEsatCampMockWelcomeTitle,
   formatPastPaperExamTitle,
 } from "@/lib/pearson/examTitle";
@@ -136,15 +137,24 @@ export function PearsonPastPaperSession() {
   );
 
   const firstInSection = currentSectionQuestions[0];
-  const sectionHeading = firstInSection
-    ? formatPearsonSectionHeading(
-        {
-          partLetter: firstInSection.partLetter || "",
-          partName: firstInSection.partName || selectedSections[currentSectionIndex] || "",
-        },
-        examTitle,
-      )
-    : undefined;
+  const campSectionHeading = useMemo(
+    () => formatEsatCampMockSectionHeading(currentSectionQuestions),
+    [currentSectionQuestions],
+  );
+  const sectionHeading = campSectionHeading
+    ? campSectionHeading
+    : firstInSection
+      ? formatPearsonSectionHeading(
+          {
+            partLetter: firstInSection.partLetter || "",
+            partName:
+              firstInSection.partName ||
+              selectedSections[currentSectionIndex] ||
+              "",
+          },
+          examTitle,
+        )
+      : undefined;
 
   const introMode: PearsonIntroMode =
     currentPipelineState === "section"
