@@ -7,7 +7,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { X } from "lucide-react";
+import { ArrowRight, X } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useSupabaseClient } from "@/components/auth/SupabaseSessionProvider";
 import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
@@ -86,36 +86,39 @@ export function PastPaperGuestStartModal({
           </button>
         </div>
 
-        <div className="space-y-3">
-          <GoogleAuthButton
-            mode="signin"
-            label="Sign in or Sign up with Google"
-            loading={googleLoading}
-            onClick={() => void handleGoogle()}
-            className="h-12 w-full"
-          />
-          <Link
-            href={loginHref}
-            className={cn(
-              "inline-flex h-11 w-full items-center justify-center rounded-sm bg-surface-mid px-4 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral",
-            )}
-          >
-            Sign in with email
-          </Link>
-        </div>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <button
+              type="button"
+              onClick={onContinueWithoutAccount}
+              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-sm bg-primary px-4 text-sm font-bold text-white transition-colors hover:bg-primary/90"
+            >
+              Continue without an account
+              <ArrowRight className="h-4 w-4" strokeWidth={2.5} aria-hidden />
+            </button>
+            <p className="text-center text-xs leading-relaxed text-text-muted">
+              You will still be able to see your score at the end. Sign in later
+              if you want to save the sitting.
+            </p>
+          </div>
 
-        <div className="mt-5 space-y-3 pt-1">
-          <button
-            type="button"
-            onClick={onContinueWithoutAccount}
-            className="inline-flex h-11 w-full items-center justify-center rounded-sm bg-primary px-4 text-sm font-bold text-white transition-colors hover:bg-primary/90"
-          >
-            Continue without an account
-          </button>
-          <p className="text-center text-xs leading-relaxed text-text-muted">
-            You will still be able to see your score at the end. Sign in later
-            if you want to save the sitting.
-          </p>
+          <div className="space-y-3 rounded-sm bg-surface-mid/60 p-3">
+            <GoogleAuthButton
+              mode="signin"
+              label="Sign in or Sign up with Google"
+              loading={googleLoading}
+              onClick={() => void handleGoogle()}
+              className="h-12 w-full"
+            />
+            <Link
+              href={loginHref}
+              className={cn(
+                "inline-flex h-11 w-full items-center justify-center rounded-sm bg-surface-neutral px-4 text-sm font-semibold text-text transition-colors hover:bg-surface-elevated",
+              )}
+            >
+              Sign in with email
+            </Link>
+          </div>
         </div>
       </div>
     </div>
