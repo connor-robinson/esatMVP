@@ -34,6 +34,7 @@ st.set_page_config(
 SEG_LABEL = {
     "arkwright": "Arkwright",
     "elephant": "Elephant",
+    "in2scienceuk": "In2scienceUK",
     "other": "Other",
     "all": "General",
 }
@@ -189,7 +190,7 @@ def _segment_page(
         ("Past papers", pp),
         ("Calibration", cal),
     ]
-    if key in ("arkwright", "elephant"):
+    if key in ("arkwright", "elephant", "in2scienceuk"):
         metrics.insert(1, ("Activated", f"{activated} ({_pct(activated, users)})"))
     _metric_row(metrics)
 
@@ -216,6 +217,7 @@ def _segment_page(
         slug_map = {
             "arkwright": "arkwright-2026",
             "elephant": "elephant26",
+            "in2scienceuk": "in2scienceuk",
         }
         if key in slug_map:
             seat = seats[seats["slug"] == slug_map[key]]
@@ -300,8 +302,13 @@ def _segment_page(
     with d2:
         ex = exam[exam["segment"] == key].copy()
         _bar_v(ex, "exam", "n", "Exam preference", color="#7B64B8")
-        if key in ("arkwright", "elephant"):
-            slug = "arkwright-2026" if key == "arkwright" else "elephant26"
+        if key in ("arkwright", "elephant", "in2scienceuk"):
+            slug_map = {
+                "arkwright": "arkwright-2026",
+                "elephant": "elephant26",
+                "in2scienceuk": "in2scienceuk",
+            }
+            slug = slug_map[key]
             j = joins[joins["slug"] == slug].copy()
             if not j.empty:
                 j["week"] = pd.to_datetime(j["week"]).dt.strftime("%Y-%m-%d")
@@ -495,7 +502,8 @@ def main() -> None:
 
     st.caption(
         "Live Supabase · Arkwright = arkwright-2026 · Elephant = elephant26 · "
-        "Other = everyone else · General = all users · MM = drill_sessions.topic_id"
+        "In2scienceUK = in2scienceuk · Other = everyone else · "
+        "General = all users · MM = drill_sessions.topic_id"
     )
 
     try:
@@ -504,7 +512,7 @@ def main() -> None:
         st.error(f"Could not load data: {exc}")
         st.stop()
 
-    tabs = st.tabs(["Arkwright", "Elephant", "Other", "General"])
+    tabs = st.tabs(["Arkwright", "Elephant", "In2scienceUK", "Other", "General"])
     with tabs[0]:
         _segment_page("arkwright", **{k: bundle[k] for k in (
             "head", "feat", "seats", "prefs", "pract", "mm", "daily", "papers", "exam", "joins"
@@ -514,10 +522,14 @@ def main() -> None:
             "head", "feat", "seats", "prefs", "pract", "mm", "daily", "papers", "exam", "joins"
         )})
     with tabs[2]:
-        _segment_page("other", **{k: bundle[k] for k in (
+        _segment_page("in2scienceuk", **{k: bundle[k] for k in (
             "head", "feat", "seats", "prefs", "pract", "mm", "daily", "papers", "exam", "joins"
         )})
     with tabs[3]:
+        _segment_page("other", **{k: bundle[k] for k in (
+            "head", "feat", "seats", "prefs", "pract", "mm", "daily", "papers", "exam", "joins"
+        )})
+    with tabs[4]:
         _general_page(bundle)
 
 

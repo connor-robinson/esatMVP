@@ -22,7 +22,7 @@ const CARDS: Array<{
   {
     href: "/admin/cohorts",
     title: "Cohorts",
-    body: "Arkwright, Elephant, Other, and all-user usage stats.",
+    body: "Arkwright, Elephant, In2scienceUK, Other, and all-user usage stats.",
     key: null,
   },
   {

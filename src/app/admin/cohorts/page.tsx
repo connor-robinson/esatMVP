@@ -19,7 +19,27 @@ import {
 import { Container } from "@/components/layout/Container";
 import { cn } from "@/lib/utils";
 
-type Segment = "arkwright" | "elephant" | "other" | "general";
+type Segment =
+  | "arkwright"
+  | "elephant"
+  | "in2scienceuk"
+  | "other"
+  | "general";
+
+const SEGMENT_LABELS: Record<Exclude<Segment, "general">, string> = {
+  arkwright: "Arkwright",
+  elephant: "Elephant",
+  in2scienceuk: "In2scienceUK",
+  other: "Other",
+};
+
+const PARTNER_SLUG_BY_SEGMENT: Partial<
+  Record<Exclude<Segment, "general">, string>
+> = {
+  arkwright: "arkwright-2026",
+  elephant: "elephant26",
+  in2scienceuk: "in2scienceuk",
+};
 
 type Snapshot = {
   since?: string;
@@ -61,6 +81,7 @@ const TOPIC_LABELS: Record<string, string> = {
 const TABS: { id: Segment; label: string }[] = [
   { id: "arkwright", label: "Arkwright" },
   { id: "elephant", label: "Elephant" },
+  { id: "in2scienceuk", label: "In2scienceUK" },
   { id: "other", label: "Other" },
   { id: "general", label: "General" },
 ];
@@ -177,7 +198,7 @@ export default function AdminCohortsPage() {
         <div>
           <h1 className="text-2xl font-semibold text-text">Cohorts</h1>
           <p className="mt-1 text-sm text-text-muted">
-            Usage by Arkwright, Elephant, Other, and all users.
+            Usage by Arkwright, Elephant, In2scienceUK, Other, and all users.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -299,12 +320,7 @@ function SegmentView({
       questions: num(r.questions),
     }));
 
-  const slug =
-    segment === "arkwright"
-      ? "arkwright-2026"
-      : segment === "elephant"
-        ? "elephant26"
-        : null;
+  const slug = PARTNER_SLUG_BY_SEGMENT[segment] ?? null;
   const seat = slug
     ? seats.find((s) => str(s.slug) === slug)
     : undefined;
@@ -579,7 +595,12 @@ function GeneralView({
   papers: Array<Record<string, unknown>>;
   seats: Array<Record<string, unknown>>;
 }) {
-  const segments = ["arkwright", "elephant", "other"] as const;
+  const segments = [
+    "arkwright",
+    "elephant",
+    "in2scienceuk",
+    "other",
+  ] as const;
   const totalUsers = segments.reduce((s, k) => s + num(head.get(k)?.users), 0);
   const totalActive = segments.reduce(
     (s, k) => s + num(head.get(k)?.active_in_window),
@@ -596,7 +617,7 @@ function GeneralView({
   );
 
   const volume = segments.map((k) => ({
-    segment: k[0].toUpperCase() + k.slice(1),
+    segment: SEGMENT_LABELS[k],
     QB: num(feat.get(k)?.qb_attempts),
     "Mental maths": num(feat.get(k)?.drill_sessions),
     Papers: num(feat.get(k)?.paper_sessions),
@@ -643,7 +664,7 @@ function GeneralView({
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <ChartCard title="Most used of the three">
+        <ChartCard title="Most used by cohort">
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
