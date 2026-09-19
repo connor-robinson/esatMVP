@@ -8,6 +8,13 @@ import {
   getEsatCampMockModuleByPaperId,
 } from "@/lib/papers/esatCampMocks";
 import {
+  adminMockPaperName,
+  getAdminEsatMockPapers,
+  getAdminEsatMockQuestionPartsForPaperName,
+  isAdminEsatMockPaperId,
+  parseAdminEsatMockPaperId,
+} from "@/lib/papers/adminEsatMocks";
+import {
   buildPaperSectionsOutline,
   type SlimQuestionPart,
 } from "@/lib/papers/paperLibrarySections";
@@ -28,6 +35,29 @@ export async function GET(request: NextRequest) {
         { error: "paperId is required" },
         { status: 400 },
       );
+    }
+
+    if (isAdminEsatMockPaperId(paperId)) {
+      const parsed = parseAdminEsatMockPaperId(paperId);
+      if (!parsed) {
+        return NextResponse.json({ error: "Paper not found" }, { status: 404 });
+      }
+      const paperName = adminMockPaperName(parsed.mockNumber);
+      const resolvedPaper =
+        getAdminEsatMockPapers().find((p) => p.paperName === paperName) ?? null;
+      if (!resolvedPaper) {
+        return NextResponse.json({ error: "Paper not found" }, { status: 404 });
+      }
+      const partRows = getAdminEsatMockQuestionPartsForPaperName(paperName);
+      const slimParts: SlimQuestionPart[] = partRows.map((row) => ({
+        paperId: row.paperId,
+        partLetter: row.partLetter,
+        partName: row.partName,
+        examType: row.examType,
+        paperName: row.paperName,
+      }));
+      const outline = buildPaperSectionsOutline(resolvedPaper, [], slimParts);
+      return NextResponse.json({ ...outline, partRows });
     }
 
     if (isEsatCampMockPaperId(paperId)) {

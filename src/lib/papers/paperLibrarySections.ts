@@ -1,4 +1,8 @@
 import { getEsatCampMockModuleByPaperId } from "@/data/esatCampMocks";
+import {
+  ADMIN_MOCK_SUBJECT_TO_PART_NAME,
+  parseAdminEsatMockPaperId,
+} from "@/lib/papers/adminEsatMocks";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import { normalizeEngaaPaperSections } from "@/lib/papers/engaaQuestionFilter";
 import { mapPartToSection, mapTmuaPaperNameToSection } from "@/lib/papers/sectionMapping";
@@ -113,6 +117,15 @@ export function resolveAnchorPaperForSession(
 
     const byCampModule = catalog.find((paper) => {
       if (!isEsatCampMockExamType(paper.examType)) return false;
+      const admin = parseAdminEsatMockPaperId(paper.id);
+      if (admin) {
+        return (
+          admin.subject === mainSection ||
+          esatCampMockMainSectionLabel(
+            ADMIN_MOCK_SUBJECT_TO_PART_NAME[admin.subject] as PaperSection,
+          ) === mainSection
+        );
+      }
       const mockModule = getEsatCampMockModuleByPaperId(paper.id);
       if (!mockModule) return false;
       return (
@@ -130,6 +143,8 @@ const ESAT_CAMP_SUBJECT_ORDER: PaperSection[] = [
   "Mathematics",
   "Mathematics 2",
   "Physics",
+  "Chemistry",
+  "Biology",
 ];
 
 export function getMainSectionForQuestion(

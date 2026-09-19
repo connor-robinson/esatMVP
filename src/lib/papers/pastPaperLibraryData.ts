@@ -9,6 +9,11 @@ import {
   getAvailablePapers,
   getQuestionPartsForPaperIds,
 } from "@/lib/supabase/questions";
+import {
+  getAdminEsatMockQuestionPartsForPaperName,
+  isAdminEsatMockPaperId,
+} from "@/lib/papers/adminEsatMocks";
+import { isEsatCampMockExamType } from "@/lib/papers/esatCampMocks";
 
 const outlineCache = new Map<string, Paper[]>();
 const outlineInFlight = new Map<string, Promise<Paper[]>>();
@@ -30,6 +35,15 @@ async function fetchPaperSectionsOutlineFromClient(
     throw new Error("Paper not found");
   }
 
+  if (
+    isAdminEsatMockPaperId(paperId) ||
+    isEsatCampMockExamType(paper.examType)
+  ) {
+    const partRows = getAdminEsatMockQuestionPartsForPaperName(paper.paperName);
+    const outline = buildPaperSectionsOutline(paper, [], partRows);
+    return { ...outline, partRows };
+  }
+
   const paperType = examNameToPaperType(paper.examName as ExamName) || "NSAA";
   const mergeSiblings =
     paperType === "NSAA" ||
@@ -41,7 +55,9 @@ async function fetchPaperSectionsOutlineFromClient(
     ? papers
         .filter(
           (p) =>
-            p.examName === paper.examName && p.examYear === paper.examYear,
+            p.examName === paper.examName &&
+            p.examYear === paper.examYear &&
+            !isEsatCampMockExamType(p.examType),
         )
         .map((p) => p.id)
     : [paper.id];
@@ -51,7 +67,8 @@ async function fetchPaperSectionsOutlineFromClient(
     (p) =>
       p.examName === paper.examName &&
       p.examYear === paper.examYear &&
-      p.id !== paper.id,
+      p.id !== paper.id &&
+      !isEsatCampMockExamType(p.examType),
   );
 
   const outline = buildPaperSectionsOutline(paper, siblingPapers, allQuestions);

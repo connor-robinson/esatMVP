@@ -146,6 +146,82 @@ export function getAdminEsatMockModulePapersByPaperName(
   }));
 }
 
+/** One library card per Mock A–E (anchored on Math 1 paper id). */
+export function getAdminEsatMockPapers(): Paper[] {
+  const papers: Paper[] = [];
+  for (let n = 1; n <= ADMIN_ESAT_MOCK_COUNT; n++) {
+    papers.push({
+      id: paperIdForAdminEsatMock(n, "Math 1"),
+      examName: ADMIN_ESAT_MOCK_EXAM_NAME,
+      examYear: ADMIN_ESAT_MOCK_EXAM_YEAR,
+      paperName: adminMockPaperName(n),
+      examType: ADMIN_ESAT_MOCK_EXAM_TYPE,
+      hasConversion: false,
+      createdAt: "",
+      updatedAt: "",
+    });
+  }
+  return papers;
+}
+
+/** Append admin Mock A–E cards to a past-papers catalog. */
+export function mergePapersWithAdminEsatMocks(papers: Paper[]): Paper[] {
+  const mocks = getAdminEsatMockPapers();
+  const existingIds = new Set(papers.map((p) => p.id));
+  const existingNames = new Set(
+    papers
+      .filter((p) => p.examType === ADMIN_ESAT_MOCK_EXAM_TYPE)
+      .map((p) => p.paperName),
+  );
+  const extras = mocks.filter(
+    (p) => !existingIds.has(p.id) && !existingNames.has(p.paperName),
+  );
+  return [...papers, ...extras];
+}
+
+/** Fixed ESAT module length used for library section / basket outlines. */
+export const ADMIN_ESAT_MOCK_QUESTIONS_PER_MODULE = 27;
+
+/**
+ * Slim part rows for every subject in a Mock A–E sitting.
+ * Used by the library sections API so expand/add works without loading stems.
+ */
+export function getAdminEsatMockQuestionPartsForPaperName(paperName: string): Array<{
+  paperId: number;
+  partLetter: string;
+  partName: string;
+  examType: string;
+  paperName: string;
+  questionNumber: number;
+}> {
+  const mockNumber = parseAdminMockPaperName(paperName);
+  if (mockNumber == null) return [];
+  const resolvedName = adminMockPaperName(mockNumber);
+  const rows: Array<{
+    paperId: number;
+    partLetter: string;
+    partName: string;
+    examType: string;
+    paperName: string;
+    questionNumber: number;
+  }> = [];
+  for (const subject of ADMIN_ESAT_MOCK_SUBJECTS) {
+    const paperId = paperIdForAdminEsatMock(mockNumber, subject);
+    const partName = ADMIN_MOCK_SUBJECT_TO_PART_NAME[subject];
+    for (let n = 1; n <= ADMIN_ESAT_MOCK_QUESTIONS_PER_MODULE; n++) {
+      rows.push({
+        paperId,
+        partLetter: "Part A",
+        partName,
+        examType: ADMIN_ESAT_MOCK_EXAM_TYPE,
+        paperName: resolvedName,
+        questionNumber: n,
+      });
+    }
+  }
+  return rows;
+}
+
 export function getAdminEsatMockPaper(
   examName: string,
   examYear: number,

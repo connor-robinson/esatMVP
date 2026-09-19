@@ -20,10 +20,8 @@ import {
   resolveAnchorPaperForSession,
 } from "@/lib/papers/paperLibrarySections";
 import { filterEngaaQuestionsByEsatSubjects } from "@/lib/papers/engaaQuestionFilter";
-import {
-  getEsatCampMockModulePapersByPaperName,
-  isEsatCampMockExamType,
-} from "@/lib/papers/esatCampMocks";
+import { isEsatCampMockExamType } from "@/lib/papers/esatCampMocks";
+import { getAdminEsatMockModulePapersByPaperName } from "@/lib/papers/adminEsatMocks";
 import { generateSectionId } from '@/lib/papers/partIdUtils';
 import type { Paper, PaperSection, Question, ExamName } from '@/types/papers';
 import { PaperLibraryGrid } from '@/components/papers/library/PaperLibraryGrid';
@@ -455,9 +453,9 @@ export default function PapersLibraryPage() {
 
         const paperType =
           examNameToPaperType(paper.examName as ExamName) || 'NSAA';
-        // ESAT CAMP: load every module that shares this paper name.
+        // ESAT CAMP: load every admin mock subject module for this Mock A–E card.
         const catalog = isEsatCampMockExamType(paper.examType)
-          ? getEsatCampMockModulePapersByPaperName(paper.paperName)
+          ? getAdminEsatMockModulePapersByPaperName(paper.paperName)
           : paperType === 'NSAA' ||
               paperType === 'ENGAA' ||
               paperType === 'ESAT' ||

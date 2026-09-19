@@ -194,11 +194,13 @@ describe("ESAT CAMP mock library section matching", () => {
 });
 
 describe("ESAT CAMP mock roadmap placement", () => {
-  it("omits ESAT CAMP mocks from the public roadmap while disabled", () => {
+  it("shows admin Mock A–E stages while legacy static mocks are disabled", () => {
     expect(ESAT_CAMP_MOCKS_ENABLED).toBe(false);
     const stages = getRoadmapStagesShell();
     const ids = stages.map((stage) => stage.id);
-    expect(ids.some((id) => id.startsWith("esat-camp-"))).toBe(false);
+    expect(ids).toContain("esat-camp-full-mock-1");
+    expect(ids).toContain("esat-camp-full-mock-5");
+    expect(ids).not.toContain("esat-camp-math-1-mock-1");
   });
 
   it("spreads Full Mock 1, Full Mock 2, and leftover singular mocks when enabled", () => {

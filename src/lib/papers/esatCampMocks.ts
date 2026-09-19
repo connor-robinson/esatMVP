@@ -16,6 +16,7 @@ import {
   type EsatCampMockQuestion,
 } from "@/data/esatCampMocks";
 import type { ExamType, Paper, Question } from "@/types/papers";
+import { mergePapersWithAdminEsatMocks } from "@/lib/papers/adminEsatMocks";
 
 /**
  * Public surface kill switch. Keep data + adapters; hide from library,
@@ -227,9 +228,13 @@ export function isEsatCampMockExamType(examType: ExamType | string | null | unde
 }
 
 export function mergePapersWithEsatCampMocks(papers: Paper[]): Paper[] {
-  if (!ESAT_CAMP_MOCKS_ENABLED) return papers;
-  const mocks = getEsatCampMockPapers();
-  const existingIds = new Set(papers.map((p) => p.id));
-  const extras = mocks.filter((p) => !existingIds.has(p.id));
-  return [...papers, ...extras];
+  let merged = papers;
+  if (ESAT_CAMP_MOCKS_ENABLED) {
+    const mocks = getEsatCampMockPapers();
+    const existingIds = new Set(merged.map((p) => p.id));
+    const extras = mocks.filter((p) => !existingIds.has(p.id));
+    merged = [...merged, ...extras];
+  }
+  // Live Mock A–E sittings from the admin mock-builder (paper ids 920000+).
+  return mergePapersWithAdminEsatMocks(merged);
 }
