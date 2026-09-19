@@ -201,16 +201,115 @@ function withInlineExamFractions(math: string): string {
   return math.replace(/(?<![a-zA-Z])\\frac(?![a-zA-Z])/g, "\\dfrac");
 }
 
+const CHEM_SUB: Record<string, string> = {
+  "0": "₀",
+  "1": "₁",
+  "2": "₂",
+  "3": "₃",
+  "4": "₄",
+  "5": "₅",
+  "6": "₆",
+  "7": "₇",
+  "8": "₈",
+  "9": "₉",
+  "+": "₊",
+  "-": "₋",
+};
+const CHEM_SUP: Record<string, string> = {
+  "0": "⁰",
+  "1": "¹",
+  "2": "²",
+  "3": "³",
+  "4": "⁴",
+  "5": "⁵",
+  "6": "⁶",
+  "7": "⁷",
+  "8": "⁸",
+  "9": "⁹",
+  "+": "⁺",
+  "-": "⁻",
+};
+
+function mapChemScript(text: string, table: Record<string, string>): string {
+  return [...text].map((ch) => table[ch] ?? ch).join("");
+}
+
+/**
+ * Render simple \\ce / \\pu bodies to upright Unicode HTML.
+ * Avoids mhchem's transparent "X" phantoms, which Chromium PDF paints as ink
+ * and which break inside tight markdown tables.
+ */
+function tryRenderChemUnicode(tex: string): string | null {
+  const trimmed = tex.trim();
+  const m = trimmed.match(/^\\(ce|pu)\{([\s\S]*)\}$/);
+  if (!m) return null;
+  const kind = m[1]!;
+  let body = m[2]!;
+
+  // Charges / explicit scripts first.
+  body = body.replace(/\^\{([^{}]+)\}/g, (_m, inner: string) =>
+    mapChemScript(inner, CHEM_SUP),
+  );
+  body = body.replace(/_\{([^{}]+)\}/g, (_m, inner: string) =>
+    mapChemScript(inner, CHEM_SUB),
+  );
+  body = body.replace(/\^([0-9+\-])/g, (_m, ch: string) => CHEM_SUP[ch] ?? ch);
+  body = body.replace(/_([0-9+\-])/g, (_m, ch: string) => CHEM_SUB[ch] ?? ch);
+
+  // mhchem: digit runs after an element/group become subscripts.
+  // Skip pure unit mode digits that are already handled for \pu via scripts.
+  if (kind === "ce") {
+    body = body.replace(/([A-Za-z\)\]]|⁺|⁻)(\d+)/g, (_m, lead: string, digits: string) => {
+      return lead + mapChemScript(digits, CHEM_SUB);
+    });
+  }
+
+  // Common mhchem arrows / bonds.
+  body = body
+    .replace(/<->/g, "⇌")
+    .replace(/->/g, "→")
+    .replace(/<-/g, "←")
+    .replace(/<=>/g, "⇌")
+    .replace(/#/g, "≡")
+    .replace(/\{/g, "")
+    .replace(/\}/g, "");
+
+  // Refuse if unresolved TeX commands remain.
+  if (/\\[a-zA-Z]/.test(body)) return null;
+
+  return `<span class="chem-formula">${escapeHtml(body)}</span>`;
+}
+
+/** Remove mhchem sizing phantoms / MathML that Chromium PDF paints as visible "X". */
+function sanitizeKatexHtmlForPdf(html: string): string {
+  // MathML is screen-reader only; Chromium PDF can still paint <mphantom>X</mphantom>.
+  let out = html.replace(
+    /<span class="katex-mathml">[\s\S]*?<\/span>(?=<span class="katex-html")/g,
+    "",
+  );
+  // Keep transparent phantom spans for layout width, but clear the visible "X"
+  // glyph. Chromium PDF often paints color:transparent as black.
+  out = out.replace(
+    /(style="[^"]*color:\s*transparent[^"]*"[^>]*>)X(<\/span>)/gi,
+    "$1$2",
+  );
+  return out;
+}
+
 function renderKatex(tex: string, displayMode: boolean): string {
   try {
+    const chem = tryRenderChemUnicode(tex);
+    if (chem) return chem;
+
     const math = displayMode ? tex : withInlineExamFractions(tex);
-    return katex.renderToString(math, {
+    const html = katex.renderToString(math, {
       displayMode,
       throwOnError: false,
       strict: "ignore",
       // Slightly thicker rules so frac/sqrt lines survive print rasterisation.
       minRuleThickness: 0.05,
     });
+    return sanitizeKatexHtmlForPdf(html);
   } catch {
     return `<code>${escapeHtml(tex)}</code>`;
   }
@@ -366,11 +465,29 @@ function renderRichContent(raw: string): string {
     .join("");
 }
 
+/** Embed KaTeX woff2 faces so mhchem subscripts keep correct metrics in PDF. */
+function katexCssWithEmbeddedFonts(): string {
+  const fontsDir = path.join(ROOT, "node_modules", "katex", "dist", "fonts");
+  const css = fs.readFileSync(KATEX_CSS, "utf8");
+  // Prefer a single inlined woff2 source; drop relative woff/ttf fallbacks that
+  // cannot resolve under Playwright setContent.
+  return css.replace(
+    /src:url\(fonts\/([^)]+\.woff2)\) format\("woff2"\)(?:,url\(fonts\/[^)]+\) format\("[^"]+"\))*/g,
+    (_m, fileName: string) => {
+      const fontPath = path.join(fontsDir, fileName);
+      if (!fs.existsSync(fontPath)) {
+        throw new Error(`Missing KaTeX font: ${fontPath}`);
+      }
+      const b64 = fs.readFileSync(fontPath).toString("base64");
+      return `src:url(data:font/woff2;base64,${b64}) format("woff2")`;
+    },
+  );
+}
+
 function paperCss(): string {
-  // Drop KaTeX webfonts so math glyphs use the same Arial stack as body text.
-  const katexCss = fs
-    .readFileSync(KATEX_CSS, "utf8")
-    .replace(/@font-face\{.*?\}/g, "");
+  // Keep KaTeX webfonts (inlined). Forcing Arial on .katex breaks mhchem
+  // phantom/subscript layout and makes sizing "X" glyphs print as QClX.
+  const katexCss = katexCssWithEmbeddedFonts();
   return `
 ${katexCss}
 @font-face {
@@ -469,38 +586,22 @@ html, body {
   outline: 0 !important;
   box-shadow: none !important;
 }
-/* KaTeX default size is 1.21em; 0.95em optically matches Arial body text. */
+/* KaTeX fonts are embedded above. Do not force Arial onto .katex — that
+   breaks mhchem phantom/subscript metrics and prints sizing "X" glyphs. */
 .katex {
-  font-family: Arial, Helvetica, sans-serif !important;
-  font-size: 0.95em !important;
+  font-size: 1.05em !important;
   font-weight: normal !important;
   line-height: 1.2 !important;
 }
-.katex .mathnormal,
-.katex .mathit,
-.katex .textit {
-  font-family: Arial, Helvetica, sans-serif !important;
-  font-style: italic !important;
+/* Belt-and-suspenders: hide MathML + transparent phantoms if any remain. */
+.katex-mathml { display: none !important; }
+.katex [style*="color:transparent"],
+.katex [style*="color: transparent"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
 }
-.katex .mathrm,
-.katex .textrm,
-.katex .textup,
-.katex .mathbf,
-.katex .textbf,
-.katex .mathsf,
-.katex .textsf,
-.katex .mathtt,
-.katex .texttt,
-.katex .mord,
-.katex .mbin,
-.katex .mrel,
-.katex .mopen,
-.katex .mclose,
-.katex .mpunct,
-.katex .minner {
-  font-family: Arial, Helvetica, sans-serif !important;
-}
-/* Arial substitution breaks KaTeX sqrt metrics; we rebuild surds in JS. */
+/* Arial substitution previously broke KaTeX sqrt metrics; keep rebuild path. */
 .katex svg {
   fill: currentColor;
   stroke: none !important;
@@ -541,9 +642,15 @@ html, body {
 }
 .md-table th, .md-table td {
   border: 0.4pt solid #333;
-  padding: 1.4mm 1.8mm;
-  vertical-align: top;
+  padding: 2mm 1.8mm;
+  vertical-align: middle;
   text-align: left;
+  overflow: visible;
+}
+.chem-formula {
+  font-family: Arial, Helvetica, sans-serif;
+  font-style: normal;
+  white-space: nowrap;
 }
 .md-table thead th {
   font-weight: 700;
@@ -1013,6 +1120,21 @@ async function fixKatexSqrtsInPage(
   })()`);
 }
 
+async function stripMhchemPhantomsInPage(
+  page: Awaited<ReturnType<Awaited<ReturnType<typeof chromium.launch>>["newPage"]>>,
+): Promise<void> {
+  // Chromium PDF often paints color:transparent as black, so mhchem's sizing
+  // "X" phantoms show up as QClX / ceX. Remove them before print.
+  await page.evaluate(`(() => {
+    const nodes = Array.from(
+      document.querySelectorAll(
+        '.katex [style*="color:transparent"], .katex [style*="color: transparent"]',
+      ),
+    );
+    for (const el of nodes) el.remove();
+  })()`);
+}
+
 async function htmlToPdf(
   html: string,
   outPath: string,
@@ -1024,6 +1146,7 @@ async function htmlToPdf(
     await page.setContent(withImages, { waitUntil: "networkidle" });
     await page.emulateMedia({ media: "print" });
     await blackenDiagramImagesInPage(page);
+    await stripMhchemPhantomsInPage(page);
     await fixKatexSqrtsInPage(page);
     fs.mkdirSync(path.dirname(outPath), { recursive: true });
     await page.pdf({
