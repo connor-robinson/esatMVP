@@ -127,7 +127,16 @@ export function mapSectionToTable({ examName, sectionLetter, sectionName, paperN
     if (name.includes("biology")) return { key: "esat_biology_cumulative", label: "Biology" };
     if (name.includes("chem")) return { key: "esat_chemistry_cumulative", label: "Chemistry" };
     if (name.includes("phys")) return { key: "esat_physics_cumulative", label: "Physics" };
-    if (name.includes("math") || name.includes("mathematics")) return { key: "esat_math2_cumulative", label: "Mathematics" };
+    if (
+      name.includes("math 2") ||
+      name.includes("mathematics 2") ||
+      name.includes("math2")
+    ) {
+      return { key: "esat_math2_cumulative", label: "Mathematics 2" };
+    }
+    if (name.includes("math") || name.includes("mathematics")) {
+      return { key: "esat_math1_cumulative", label: "Mathematics 1" };
+    }
   }
 
   if (exam === "NSAA") {

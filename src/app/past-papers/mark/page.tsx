@@ -824,10 +824,16 @@ export default function PapersMarkPage() {
     paperName,
   ]);
 
+  // Predicted overall score (weighted by section totals) - exam-specific
+  const isEsatCampSession = isEsatCampMockExamType(questions[0]?.examType);
+
   const percentileInfoText = useMemo(() => {
+    if (isEsatCampSession) {
+      return `ESAT CAMP mocks do not have an official conversion table. We estimate a 1.0–9.0 score from your percentage using NSAA/ENGAA curves, then place that score on the real ESAT section distribution so Top% is comparable to official sittings.`;
+    }
     const yearLabel = paperExamYear ? `${paperExamYear} ` : "";
     return `We use official ${yearLabel}${displayExamLabel} score distributions from that exam year. The curve shows how candidates actually scored. This is real data, not an estimate. Your dot is your result; Top% is the share of candidates you would have beaten that year.`;
-  }, [paperExamYear, displayExamLabel]);
+  }, [isEsatCampSession, paperExamYear, displayExamLabel]);
 
   useEffect(() => {
     if (validSectionEntries.length === 0) return;
@@ -842,8 +848,6 @@ export default function PapersMarkPage() {
     }
   }, [validSectionEntries, selectedPercentileSection, examName, nsaaAveragedPercentile]);
 
-  // Predicted overall score (weighted by section totals) - exam-specific
-  const isEsatCampSession = isEsatCampMockExamType(questions[0]?.examType);
   const predictedScore = useMemo(() => {
     if (isEsatCampSession) {
       const qs = usePaperSessionStore.getState().questions;
@@ -975,15 +979,27 @@ export default function PapersMarkPage() {
           }
           
           const match = findQuestionForSection(qs, section, examName);
-          const { scaled: score } = computeScaledScore(
-            examName,
-            section,
-            data.correct,
-            qs,
-            conversionRows,
-            paperName,
-            conversionRowsByPaperId,
-          );
+          // ESAT CAMP mocks have no official conversion table; use the same
+          // percentage→scaled proxy as the overview predicted score.
+          let score: number | null = null;
+          if (isEsatCampSession) {
+            score = predictEsatCampSectionScore({
+              section: match?.partName || section,
+              correct: data.correct,
+              total: data.total,
+            });
+          } else {
+            const scaled = computeScaledScore(
+              examName,
+              section,
+              data.correct,
+              qs,
+              conversionRows,
+              paperName,
+              conversionRowsByPaperId,
+            );
+            score = scaled.scaled;
+          }
           let { key: tableKey, label } = mapSectionToTable(buildPercentileTableArgs(examName, section, qs));
           
           // For TMUA, determine which table to use based on year
@@ -1093,6 +1109,7 @@ export default function PapersMarkPage() {
     conversionRowsByPaperId,
     examName,
     paperName,
+    isEsatCampSession,
   ]);
 
   // Persist scaled / section scores so cohort averages can use them later.

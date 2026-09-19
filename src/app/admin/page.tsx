@@ -82,6 +82,12 @@ const CARDS: Array<{
     body: "Assemble ESAT mock papers from the bank and mock-staged questions.",
     key: null,
   },
+  {
+    href: "/admin/mock-stats",
+    title: "Mock stats",
+    body: "ESAT mock sitting volume, scores, predicted marks, and hardest questions.",
+    key: null,
+  },
 ];
 
 export default function AdminOverviewPage() {
