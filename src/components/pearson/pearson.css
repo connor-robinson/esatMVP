@@ -1535,6 +1535,15 @@ html.pearson-exam-active body {
   justify-content: center;
   width: 72%;
   max-width: 72%;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.qg-diagram-wrap .qg-diagram figcaption,
+.stem-content .qg-diagram figcaption {
+  display: none !important;
 }
 
 .qg-diagram-wrap .qg-diagram > *,
@@ -1545,11 +1554,17 @@ html.pearson-exam-active body {
 }
 
 .qg-diagram-wrap .qg-diagram img,
-.stem-content .qg-diagram img {
+.stem-content .qg-diagram img,
+.qg-diagram-wrap .qg-diagram > svg,
+.stem-content .qg-diagram > svg {
   max-width: 100%;
   max-height: 23.04rem;
   object-fit: contain;
   height: auto;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+  background: transparent;
 }
 
 .pearson-fidelity-gate {

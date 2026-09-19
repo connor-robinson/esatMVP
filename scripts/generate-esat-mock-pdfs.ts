@@ -306,9 +306,30 @@ function stemHasEmbeddedOptionTable(stem: string): boolean {
   );
 }
 
+/** Strip concept-image captions / labels and authoring chrome from diagram HTML. */
+function cleanDiagramHtml(chunk: string): string {
+  return (
+    chunk
+      // Authoring figcaptions (often literally "concept image").
+      .replace(/<figcaption\b[^>]*>[\s\S]*?<\/figcaption>/gi, "")
+      .replace(/\saria-label=(["'])\s*concept\s*image\s*\1/gi, ' aria-label="Diagram"')
+      .replace(/\salt=(["'])\s*concept\s*image\s*\1/gi, ' alt="Diagram"')
+      .replace(/\stitle=(["'])\s*concept\s*image\s*\1/gi, "")
+      // Loose leftover caption text nodes.
+      .replace(/>\s*concept\s*image\s*</gi, "><")
+      .replace(/\sstyle="[^"]*"/gi, "")
+      .replace(/class="qg-diagram"/gi, 'class="diagram"')
+      // Drop empty wrapper attributes left behind.
+      .replace(/\s{2,}/g, " ")
+  );
+}
+
 /** Keep figure/img/svg/table HTML; KaTeX + markdown tables for the rest. */
 function renderRichContent(raw: string): string {
-  const withMdTables = convertMarkdownTables(raw);
+  const cleaned = raw
+    .replace(/<figcaption\b[^>]*>[\s\S]*?<\/figcaption>/gi, "")
+    .replace(/\bconcept\s*image\b/gi, "");
+  const withMdTables = convertMarkdownTables(cleaned);
   const chunks = withMdTables.split(
     /(<div class="md-table-wrap"[\s\S]*?<\/div>|<figure[\s\S]*?<\/figure>|<svg[\s\S]*?<\/svg>|<table[\s\S]*?<\/table>|<img\b[^>]*>)/gi,
   );
@@ -319,10 +340,7 @@ function renderRichContent(raw: string): string {
         /^<(div class="md-table-wrap"|figure|svg|table|img)\b/i.test(chunk) ||
         chunk.startsWith('<div class="md-table-wrap"')
       ) {
-        // Strip authoring styles that force huge diagrams; keep src/alt.
-        return chunk
-          .replace(/\sstyle="[^"]*"/gi, "")
-          .replace(/class="qg-diagram"/gi, 'class="diagram"');
+        return cleanDiagramHtml(chunk);
       }
       return formatInlineMarkup(chunk);
     })
@@ -413,6 +431,13 @@ html, body {
 .stem figure, .stem .diagram, .option-text figure, .option-text .diagram {
   display: block; margin: 2.5mm auto; max-width: 84mm; text-align: center;
   background: transparent;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+.stem figure figcaption, .option-text figure figcaption,
+.stem .diagram figcaption, .option-text .diagram figcaption {
+  display: none !important;
 }
 /* Diagram images only - never restyle KaTeX sqrt / stretchy SVGs. */
 .stem figure img, .stem figure > svg, .stem .diagram img, .stem .diagram > svg,
@@ -421,6 +446,9 @@ html, body {
 .diagram img, .diagram > svg {
   display: block; margin: 0 auto; max-width: 84mm; max-height: 64mm; width: auto; height: auto;
   background: transparent;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
 }
 /* KaTeX default size is 1.21em; 0.95em optically matches Arial body text. */
 .katex {
@@ -816,9 +844,49 @@ async function blackenDiagramImagesInPage(
                   }
                 }
                 ctx.putImageData(data, 0, 0);
+
+                // Drop thin rectangular frames left after plate removal
+                // (common on physics concept images).
+                const edge = Math.max(2, Math.min(8, Math.round(Math.min(w, h) * 0.012)));
+                const clearPx = (x, y) => {
+                  if (x < 0 || y < 0 || x >= w || y >= h) return;
+                  const i = (y * w + x) * 4;
+                  px[i] = 0; px[i + 1] = 0; px[i + 2] = 0; px[i + 3] = 0;
+                };
+                const isInk = (x, y) => {
+                  if (x < 0 || y < 0 || x >= w || y >= h) return false;
+                  return px[(y * w + x) * 4 + 3] > 128;
+                };
+                const frameRow = (y) => {
+                  let ink = 0;
+                  for (let x = 0; x < w; x++) if (isInk(x, y)) ink++;
+                  return ink / w > 0.55;
+                };
+                const frameCol = (x) => {
+                  let ink = 0;
+                  for (let y = 0; y < h; y++) if (isInk(x, y)) ink++;
+                  return ink / h > 0.55;
+                };
+                for (let d = 0; d < edge; d++) {
+                  if (frameRow(d)) for (let x = 0; x < w; x++) clearPx(x, d);
+                  if (frameRow(h - 1 - d)) for (let x = 0; x < w; x++) clearPx(x, h - 1 - d);
+                  if (frameCol(d)) for (let y = 0; y < h; y++) clearPx(d, y);
+                  if (frameCol(w - 1 - d)) for (let y = 0; y < h; y++) clearPx(w - 1 - d, y);
+                }
+                // Also clear any leftover ink strictly on the outermost 1px ring.
+                for (let x = 0; x < w; x++) { clearPx(x, 0); clearPx(x, h - 1); }
+                for (let y = 0; y < h; y++) { clearPx(0, y); clearPx(w - 1, y); }
+
+                ctx.putImageData(data, 0, 0);
                 img.src = canvas.toDataURL("image/png");
                 img.style.background = "transparent";
+                img.style.border = "0";
+                img.style.outline = "0";
                 img.style.filter = "none";
+                img.removeAttribute("alt");
+                if ((img.getAttribute("aria-label") || "").toLowerCase().includes("concept")) {
+                  img.setAttribute("aria-label", "Diagram");
+                }
               } catch (_) {}
               resolve();
             };

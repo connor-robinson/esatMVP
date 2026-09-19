@@ -5,6 +5,7 @@
 
 import type { Letter, Question } from "@/types/papers";
 import type { EsatMockRow, MockCandidateQuestion, MockSlot } from "./types";
+import { stripConceptImageLabels } from "@/lib/utils/stripConceptImageLabels";
 
 const LETTERS = new Set<string>(["A", "B", "C", "D", "E", "F", "G", "H"]);
 
@@ -44,7 +45,7 @@ export function mockCandidateToPearsonQuestion(
     examType: "ESAT CAMP",
     questionNumber: questionNumber ?? orderIndex + 1,
     questionImage: "",
-    questionStem: q.questionStem ?? "",
+    questionStem: stripConceptImageLabels(q.questionStem ?? ""),
     options,
     contentFormat: "text",
     solutionText: q.solutionReasoning ?? undefined,

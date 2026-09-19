@@ -11,6 +11,7 @@ import {
   sanitizeStemSvg,
   sanitizeStemTable,
 } from "@/lib/utils/sanitizeStemSvg";
+import { stripConceptImageLabels } from "@/lib/utils/stripConceptImageLabels";
 
 function splitMarkdownTableCellLine(line: string): string[] {
   const trimmed = line.trim().replace(/^\|/, "").replace(/\|$/, "");
@@ -143,7 +144,7 @@ export function StemContent({ content, className }: StemContentProps) {
             out += `<div class="stem-diagram my-4 flex justify-center max-w-full overflow-x-auto"><div class="stem-diagram-inner w-[80%] max-w-[min(80%,512px)]">${safe}</div></div>`;
           }
         } else if (p.type === "figure") {
-          out += `<div class="stem-diagram qg-diagram-wrap my-4 flex justify-center max-w-full">${p.value}</div>`;
+          out += `<div class="stem-diagram qg-diagram-wrap my-4 flex justify-center max-w-full">${stripConceptImageLabels(p.value)}</div>`;
         } else {
           const safe = sanitizeStemTable(p.value);
           if (safe) {
