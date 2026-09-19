@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { formatPastPaperExamTitle } from "./examTitle";
+import {
+  formatEsatCampMockWelcomeTitle,
+  formatPastPaperExamTitle,
+} from "./examTitle";
 import type { Question } from "@/types/papers";
 
 function question(overrides: Partial<Question> = {}): Question {
@@ -41,5 +44,26 @@ describe("formatPastPaperExamTitle", () => {
         questions: [],
       }),
     ).toBe("ENGAA 2019 Section 2");
+  });
+});
+
+describe("formatEsatCampMockWelcomeTitle", () => {
+  it("formats admin mock paper ids as ESAT CAMP Mock letter, subject", () => {
+    expect(
+      formatEsatCampMockWelcomeTitle([
+        question({
+          paperId: 920000,
+          examName: "ESAT",
+          examYear: 2026,
+          paperName: "Mock A",
+          partName: "Mathematics",
+          examType: "ESAT CAMP",
+        }),
+      ]),
+    ).toBe("ESAT CAMP Mock A, Math 1");
+  });
+
+  it("returns null for official papers", () => {
+    expect(formatEsatCampMockWelcomeTitle([question()])).toBeNull();
   });
 });

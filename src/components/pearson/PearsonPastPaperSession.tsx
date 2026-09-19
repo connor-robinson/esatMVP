@@ -9,7 +9,10 @@ import { PearsonPleaseWaitScreen } from "@/components/pearson/PearsonPleaseWaitS
 import { PearsonResultsLoadingScreen } from "@/components/pearson/PearsonResultsLoadingScreen";
 import { usePaperSessionHydrated } from "@/hooks/usePaperSessionHydrated";
 import { useSessionActivity } from "@/hooks/useSessionActivity";
-import { formatPastPaperExamTitle } from "@/lib/pearson/examTitle";
+import {
+  formatEsatCampMockWelcomeTitle,
+  formatPastPaperExamTitle,
+} from "@/lib/pearson/examTitle";
 import { formatPearsonSectionHeading } from "@/lib/pearson/splitPaperSections";
 import type { PearsonIntroMode } from "@/lib/pearson/usePearsonExamController";
 import { useShallow } from "zustand/react/shallow";
@@ -105,6 +108,11 @@ export function PearsonPastPaperSession() {
         questions,
       }),
     [paperName, paperVariant, questions],
+  );
+
+  const campWelcomeTitle = useMemo(
+    () => formatEsatCampMockWelcomeTitle(currentSectionQuestions),
+    [currentSectionQuestions],
   );
 
   const firstInSection = currentSectionQuestions[0];
@@ -367,6 +375,7 @@ export function PearsonPastPaperSession() {
       onModuleAdvance={handleModuleAdvance}
       onLastModuleComplete={handleLastModuleComplete}
       onQuestionsStarted={handleQuestionsStarted}
+      campWelcomeTitle={campWelcomeTitle}
     />
   );
 }

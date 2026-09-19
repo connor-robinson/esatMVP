@@ -80,6 +80,8 @@ export interface PearsonExamPlayerProps {
     question: Question | null;
     index: number;
   }) => ReactNode;
+  /** ESAT CAMP mock welcome title; swaps UAT branding on the NDA screen. */
+  campWelcomeTitle?: string | null;
 }
 
 export function PearsonExamPlayer({
@@ -108,6 +110,7 @@ export function PearsonExamPlayer({
   chromeVariant = "blue",
   renderBelowQuestion,
   renderHeaderAfterTitle,
+  campWelcomeTitle = null,
 }: PearsonExamPlayerProps) {
   const c = usePearsonExamController({
     mode,
@@ -221,7 +224,9 @@ export function PearsonExamPlayer({
           ) : null}
 
           <div className="pearson-main">
-            {c.screen === "nda" ? <PearsonNdaScreen /> : null}
+            {c.screen === "nda" ? (
+              <PearsonNdaScreen campWelcomeTitle={campWelcomeTitle} />
+            ) : null}
 
             {c.screen === "instructions" ? (
               <PearsonInstructionsScreen

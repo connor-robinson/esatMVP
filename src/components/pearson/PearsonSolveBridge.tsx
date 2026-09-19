@@ -54,6 +54,8 @@ export interface PearsonSolveBridgeProps {
   onModuleAdvance: () => void;
   onLastModuleComplete?: () => void;
   onQuestionsStarted?: () => void;
+  /** ESAT CAMP mock welcome title for the NDA screen. */
+  campWelcomeTitle?: string | null;
 }
 
 export function PearsonSolveBridge({
@@ -68,6 +70,7 @@ export function PearsonSolveBridge({
   onModuleAdvance,
   onLastModuleComplete,
   onQuestionsStarted,
+  campWelcomeTitle = null,
 }: PearsonSolveBridgeProps) {
   const router = useRouter();
   const {
@@ -242,6 +245,7 @@ export function PearsonSolveBridge({
       sessionId={sessionId}
       restBreaksEnabled={hasRestBreaks}
       onRestBreakChange={handleRestBreakChange}
+      campWelcomeTitle={campWelcomeTitle}
     />
   );
 }
