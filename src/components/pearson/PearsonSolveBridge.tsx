@@ -4,10 +4,11 @@
 
 "use client";
 
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useShallow } from "zustand/react/shallow";
 import { PearsonExamPlayer } from "@/components/pearson/PearsonExamPlayer";
+import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import type { Letter, Question } from "@/types/papers";
 import type { PearsonIntroMode } from "@/lib/pearson/usePearsonExamController";
@@ -16,6 +17,10 @@ import type {
   PearsonFlagMap,
   PearsonModuleResult,
 } from "@/lib/pearson/types";
+import {
+  PAST_PAPER_SOLVE_PATH,
+  preparePaperSessionForAuthLogin,
+} from "@/lib/papers/resumeAfterAuth";
 
 function buildInitialAnswers(
   questions: Question[],
@@ -73,6 +78,9 @@ export function PearsonSolveBridge({
   campWelcomeTitle = null,
 }: PearsonSolveBridgeProps) {
   const router = useRouter();
+  const session = useSupabaseSession();
+  const [loginNavigating, setLoginNavigating] = useState(false);
+  const isLoggedIn = Boolean(session?.user);
   const {
     setAnswer,
     setReviewFlag,
@@ -117,6 +125,18 @@ export function PearsonSolveBridge({
     }
   }, [currentSectionIndex, introMode, setSectionStartTime]);
 
+  const handleLoginToSave = useCallback(async () => {
+    if (loginNavigating) return;
+    setLoginNavigating(true);
+    try {
+      const redirectTo = await preparePaperSessionForAuthLogin();
+      router.push(
+        `/login?redirectTo=${encodeURIComponent(redirectTo || PAST_PAPER_SOLVE_PATH)}`,
+      );
+    } catch {
+      setLoginNavigating(false);
+    }
+  }, [loginNavigating, router]);
   const initialAnswers = useMemo(
     () =>
       buildInitialAnswers(
@@ -246,6 +266,10 @@ export function PearsonSolveBridge({
       restBreaksEnabled={hasRestBreaks}
       onRestBreakChange={handleRestBreakChange}
       campWelcomeTitle={campWelcomeTitle}
+      showLoginToSave={!isLoggedIn && session !== undefined}
+      onLoginToSave={() => {
+        void handleLoginToSave();
+      }}
     />
   );
 }

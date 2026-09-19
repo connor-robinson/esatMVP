@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import { signalFeedbackReferralEngagement } from "@/lib/feedbackReferral/promptStorage";
 import { isPaperImmersiveRoute } from "@/lib/papers/activePaperSessionClient";
+import { isPreservingPaperForAuth } from "@/lib/papers/resumeAfterAuth";
 
 const CLOSE_WARNING =
   "Are you sure you want to close the tab? This exam is not saved.";
@@ -64,6 +65,7 @@ export function SessionPersistenceHandler() {
     if (!guardUnload) return;
 
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (isPreservingPaperForAuth()) return;
       if (!hasUnsavedExamSession()) return;
       event.preventDefault();
       event.returnValue = CLOSE_WARNING;
@@ -71,6 +73,8 @@ export function SessionPersistenceHandler() {
     };
 
     const handlePageHide = () => {
+      // Guest mid-sitting login: keep localStorage / IndexedDB so solve can resume.
+      if (isPreservingPaperForAuth()) return;
       if (!hasUnsavedExamSession()) return;
       discardUnsavedExamSession();
     };

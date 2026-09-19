@@ -45,7 +45,7 @@ export function resolvePostOnboardingPath(
   redirectTo: string | null | undefined,
 ): string {
   const safe = sanitizeRedirectTo(redirectTo);
-  if (isPastPaperMarkRedirect(safe)) {
+  if (isPastPaperMarkRedirect(safe) || isPastPaperSolveRedirect(safe)) {
     return safe;
   }
   if (safe === DEFAULT_POST_AUTH_PATH || safe === "/dashboard") {
@@ -62,6 +62,15 @@ export function isPastPaperMarkRedirect(
   return (
     safe === "/past-papers/mark" || safe.startsWith("/past-papers/mark?")
   );
+}
+
+/** True when auth came from an in-progress past-paper / mock sitting. */
+export function isPastPaperSolveRedirect(
+  redirectTo: string | null | undefined,
+): boolean {
+  const safe = sanitizeRedirectTo(redirectTo);
+  const path = safe.split("?")[0] ?? "";
+  return path === "/past-papers/solve" || path.startsWith("/past-papers/solve/");
 }
 
 export type PostAuthProfile = {

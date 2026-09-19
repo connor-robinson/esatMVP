@@ -379,6 +379,41 @@ html.pearson-exam-active body {
   line-height: 1.1;
 }
 
+.pearson-header-timer-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.pearson-login-save-btn {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.16);
+  color: inherit;
+  border: none;
+  padding: 3px 9px;
+  margin: 0;
+  font: inherit;
+  font-size: var(--pearson-font-size-ui);
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.15;
+  white-space: nowrap;
+  border-radius: 2px;
+}
+
+.pearson-login-save-btn:hover {
+  color: var(--pearson-hover-yellow);
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.pearson-login-save-btn:focus-visible {
+  outline: 1px dotted #ffffff;
+  outline-offset: 1px;
+}
+
 .pearson-timer-btn {
   display: inline-flex;
   align-items: center;

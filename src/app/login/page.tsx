@@ -30,6 +30,8 @@ import {
 import {
   DEFAULT_POST_AUTH_PATH,
   isPartnerAccessPath,
+  isPastPaperSolveRedirect,
+  sanitizeRedirectTo,
 } from "@/lib/onboarding/redirect";
 
 type AuthMode = GoogleAuthMode;
@@ -76,8 +78,10 @@ export default function LoginPage() {
     return fromUrl === "signup" ? "signup" : "signin";
   }, [searchParams]);
 
-  const redirectTo =
-    searchParams.get("redirectTo") || DEFAULT_POST_AUTH_PATH;
+  const redirectTo = sanitizeRedirectTo(
+    searchParams.get("redirectTo") || DEFAULT_POST_AUTH_PATH,
+  );
+  const fromPastPaperSolve = isPastPaperSolveRedirect(redirectTo);
   const selectedPlan = searchParams.get("plan");
   const copy = COPY[mode];
 
@@ -373,6 +377,18 @@ export default function LoginPage() {
         </>
       }
     >
+      {fromPastPaperSolve ? (
+        <div className="rounded-xl bg-[#4C8BF5]/15 px-3.5 py-2.5 text-sm text-text">
+          <p className="font-semibold">
+            You will resume your paper after signing in.
+          </p>
+          <p className="mt-0.5 text-xs text-text-muted">
+            If account setup is needed first, we will finish that and then take
+            you straight back into the sitting with your answers and time saved.
+          </p>
+        </div>
+      ) : null}
+
       {error && !emailOpen ? (
         <div
           role="alert"

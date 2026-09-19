@@ -15,6 +15,10 @@ import {
 } from "@/lib/pearson/examTitle";
 import { formatPearsonSectionHeading } from "@/lib/pearson/splitPaperSections";
 import type { PearsonIntroMode } from "@/lib/pearson/usePearsonExamController";
+import {
+  peekPaperResumeAfterAuth,
+  resumePaperSessionAfterAuth,
+} from "@/lib/papers/resumeAfterAuth";
 import { useShallow } from "zustand/react/shallow";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 
@@ -23,6 +27,10 @@ export function PearsonPastPaperSession() {
   const paperStoreHydrated = usePaperSessionHydrated();
   const loadedPaperIdRef = useRef<number | null>(null);
   const [loadingResults, setLoadingResults] = useState(false);
+  const [authResumeReady, setAuthResumeReady] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return peekPaperResumeAfterAuth() == null;
+  });
 
   const {
     sessionId,
@@ -83,6 +91,18 @@ export function PearsonPastPaperSession() {
   );
 
   useSessionActivity();
+
+  useEffect(() => {
+    if (!paperStoreHydrated) return;
+    let cancelled = false;
+    void (async () => {
+      await resumePaperSessionAfterAuth();
+      if (!cancelled) setAuthResumeReady(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [paperStoreHydrated, sessionId]);
 
   const sectionModules = useMemo(() => {
     if (allSectionsQuestions.length > 0) return allSectionsQuestions;
@@ -277,7 +297,7 @@ export function PearsonPastPaperSession() {
     setSectionInstructionTimer(0);
   }, [currentSectionIndex, setSectionInstructionTimer, setSectionStartTime]);
 
-  if (!paperStoreHydrated || isRestoring) {
+  if (!paperStoreHydrated || isRestoring || !authResumeReady) {
     return <PearsonPleaseWaitScreen />;
   }
 

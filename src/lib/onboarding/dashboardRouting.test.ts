@@ -46,6 +46,9 @@ describe("post-auth redirect defaults", () => {
     expect(resolvePostOnboardingPath("/past-papers/mark")).toBe(
       "/past-papers/mark",
     );
+    expect(resolvePostOnboardingPath("/past-papers/solve")).toBe(
+      "/past-papers/solve",
+    );
   });
 
   it("preserves explicit public homepage and app paths", () => {

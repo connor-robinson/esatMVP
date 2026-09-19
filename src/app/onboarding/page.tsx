@@ -7,7 +7,7 @@ import {
   esatSubjectPillClass,
 } from "@/components/profile/settingsSubjectPills";
 import { cn } from "@/lib/utils";
-import { sanitizeRedirectTo, resolvePostOnboardingPath, isPastPaperMarkRedirect } from "@/lib/onboarding/redirect";
+import { sanitizeRedirectTo, resolvePostOnboardingPath, isPastPaperMarkRedirect, isPastPaperSolveRedirect } from "@/lib/onboarding/redirect";
 import {
   REFERRAL_SOURCES,
   TARGET_UNIVERSITIES,
@@ -174,6 +174,7 @@ function OnboardingContent() {
     [searchParams],
   );
   const fromPastPaperMark = isPastPaperMarkRedirect(redirectTo);
+  const fromPastPaperSolve = isPastPaperSolveRedirect(redirectTo);
   const { startTrial, loading: trialLoading } = useStartMonthlyTrialCheckout();
 
   const [steps, setSteps] = useState<Step[]>(ALL_STEPS);
@@ -586,6 +587,18 @@ function OnboardingContent() {
                 <p className="mt-0.5 text-xs text-text-muted">
                   We will take you straight back to your past paper mark page when
                   you finish.
+                </p>
+              </div>
+            ) : null}
+
+            {fromPastPaperSolve ? (
+              <div className="mt-4 shrink-0 rounded-xl bg-[#4C8BF5]/15 px-3.5 py-2.5 text-sm text-text">
+                <p className="font-semibold">
+                  You will resume your paper after this onboarding process.
+                </p>
+                <p className="mt-0.5 text-xs text-text-muted">
+                  Your answers and remaining time are saved. We will take you
+                  straight back into the sitting when you finish.
                 </p>
               </div>
             ) : null}

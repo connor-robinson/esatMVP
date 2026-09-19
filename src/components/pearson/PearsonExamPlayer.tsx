@@ -82,6 +82,9 @@ export interface PearsonExamPlayerProps {
   }) => ReactNode;
   /** ESAT CAMP mock welcome title; swaps UAT branding on the NDA screen. */
   campWelcomeTitle?: string | null;
+  /** Guest: show "Log in to save your progress" left of the timer. */
+  showLoginToSave?: boolean;
+  onLoginToSave?: () => void;
 }
 
 export function PearsonExamPlayer({
@@ -111,6 +114,8 @@ export function PearsonExamPlayer({
   renderBelowQuestion,
   renderHeaderAfterTitle,
   campWelcomeTitle = null,
+  showLoginToSave = false,
+  onLoginToSave,
 }: PearsonExamPlayerProps) {
   const c = usePearsonExamController({
     mode,
@@ -209,6 +214,8 @@ export function PearsonExamPlayer({
                 canTakeRestBreak={c.canTakeRestBreak}
                 restBreaksLeft={c.restBreaksLeft}
                 onStartRestBreak={c.startRestBreak}
+                showLoginToSave={showLoginToSave && Boolean(onLoginToSave)}
+                onLoginToSave={onLoginToSave}
               />
               {showToolbar ? (
                 <PearsonToolbar

@@ -20,6 +20,9 @@ interface PearsonHeaderProps {
   canTakeRestBreak?: boolean;
   restBreaksLeft?: number;
   onStartRestBreak?: () => void;
+  /** Guest CTA shown immediately left of the time remaining control. */
+  showLoginToSave?: boolean;
+  onLoginToSave?: () => void;
 }
 
 export function PearsonHeader({
@@ -38,9 +41,15 @@ export function PearsonHeader({
   canTakeRestBreak = false,
   restBreaksLeft = 0,
   onStartRestBreak,
+  showLoginToSave = false,
+  onLoginToSave,
 }: PearsonHeaderProps) {
   const n = questionIndex + 1;
-  const showRight = showTimer || showQuestionCounter || showRestBreakControl;
+  const showRight =
+    showTimer ||
+    showQuestionCounter ||
+    showRestBreakControl ||
+    showLoginToSave;
   const headerClass = showRight
     ? "pearson-header-bar pearson-header-bar--full"
     : "pearson-header-bar pearson-header-bar--compact";
@@ -76,28 +85,43 @@ export function PearsonHeader({
               <span className="pearson-rest-break-count">{restBreaksLeft}</span>
             </button>
           ) : null}
-          {showTimer ? (
-            <button
-              type="button"
-              className={
-                timerHidden
-                  ? "pearson-timer-btn pearson-timer-btn--icon-only"
-                  : "pearson-timer-btn"
-              }
-              onClick={onToggleTimer}
-              aria-label={
-                timerHidden ? "Show time remaining" : "Hide time remaining"
-              }
-              aria-pressed={timerHidden}
-              title={timerHidden ? "Show time remaining" : "Hide time remaining"}
-            >
-              <TimerClockIcon yellow={timerHidden} />
-              {!timerHidden ? (
-                <span className="pearson-timer-label">
-                  Time Remaining {remainingLabel}
-                </span>
+          {showTimer || showLoginToSave ? (
+            <div className="pearson-header-timer-row">
+              {showLoginToSave ? (
+                <button
+                  type="button"
+                  className="pearson-login-save-btn"
+                  onClick={onLoginToSave}
+                >
+                  Log in to save your progress
+                </button>
               ) : null}
-            </button>
+              {showTimer ? (
+                <button
+                  type="button"
+                  className={
+                    timerHidden
+                      ? "pearson-timer-btn pearson-timer-btn--icon-only"
+                      : "pearson-timer-btn"
+                  }
+                  onClick={onToggleTimer}
+                  aria-label={
+                    timerHidden ? "Show time remaining" : "Hide time remaining"
+                  }
+                  aria-pressed={timerHidden}
+                  title={
+                    timerHidden ? "Show time remaining" : "Hide time remaining"
+                  }
+                >
+                  <TimerClockIcon yellow={timerHidden} />
+                  {!timerHidden ? (
+                    <span className="pearson-timer-label">
+                      Time Remaining {remainingLabel}
+                    </span>
+                  ) : null}
+                </button>
+              ) : null}
+            </div>
           ) : null}
           {showQuestionCounter ? (
             <button
@@ -114,7 +138,9 @@ export function PearsonHeader({
                   : "Hide question counter"
               }
               aria-pressed={counterHidden}
-              title={counterHidden ? "Show question counter" : "Hide question counter"}
+              title={
+                counterHidden ? "Show question counter" : "Hide question counter"
+              }
             >
               <QuestionCounterIcon />
               {!counterHidden ? (
