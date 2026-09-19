@@ -2,6 +2,7 @@
 
 import type { CSSProperties } from "react";
 import { PearsonRichQuestion } from "@/components/pearson/PearsonRichQuestion";
+import type { PearsonReviewFeedback } from "@/components/pearson/PearsonRadioGroup";
 import "@/components/pearson/pearson.css";
 import { colorTokens } from "@/config/theme";
 import { cn } from "@/lib/utils";
@@ -36,6 +37,8 @@ const LIGHT_REVIEW_VARS: CSSProperties = {
 interface MarkReviewPearsonQuestionProps {
   question: Question;
   selectedChoice: Letter | null;
+  correctLetter?: Letter | null;
+  hideCorrect?: boolean;
   className?: string;
   /** Scroll area height; defaults to match prior review panel. */
   heightClassName?: string;
@@ -50,11 +53,19 @@ interface MarkReviewPearsonQuestionProps {
 export function MarkReviewPearsonQuestion({
   question,
   selectedChoice,
+  correctLetter = null,
+  hideCorrect = false,
   className,
   heightClassName = "h-[60vh]",
   colourScheme = "review-dark",
 }: MarkReviewPearsonQuestionProps) {
   const isLight = colourScheme === "review-light";
+  const reviewFeedback: PearsonReviewFeedback = {
+    selected: selectedChoice,
+    correctLetter: hideCorrect ? null : correctLetter,
+    hideCorrect,
+  };
+
   return (
     <div
       className={cn(
@@ -79,6 +90,7 @@ export function MarkReviewPearsonQuestion({
               selected={selectedChoice}
               onSelect={() => {}}
               disabled
+              reviewFeedback={reviewFeedback}
             />
           </div>
         </div>

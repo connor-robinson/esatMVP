@@ -9,6 +9,15 @@ export interface PearsonRadioOption {
   content: ReactNode;
 }
 
+export type PearsonReviewFeedback = {
+  /** Letter the student selected (may be null if blank). */
+  selected: Letter | null;
+  /** Official correct letter; omit/null when gated behind login. */
+  correctLetter?: Letter | null;
+  /** When true, do not reveal which option is correct. */
+  hideCorrect?: boolean;
+};
+
 interface PearsonRadioGroupProps {
   name: string;
   options: PearsonRadioOption[];
@@ -16,6 +25,25 @@ interface PearsonRadioGroupProps {
   onChange: (letter: Letter) => void;
   disabled?: boolean;
   className?: string;
+  /** Mark-review: highlight your answer / correct answer on the options. */
+  reviewFeedback?: PearsonReviewFeedback | null;
+}
+
+function reviewBadgesForLetter(
+  letter: Letter,
+  review: PearsonReviewFeedback,
+): { isYours: boolean; isCorrect: boolean; wrongPick: boolean } {
+  const isYours = review.selected === letter;
+  const isCorrect =
+    !review.hideCorrect &&
+    Boolean(review.correctLetter) &&
+    review.correctLetter === letter;
+  const wrongPick =
+    isYours &&
+    !review.hideCorrect &&
+    Boolean(review.correctLetter) &&
+    review.correctLetter !== letter;
+  return { isYours, isCorrect, wrongPick };
 }
 
 /**
@@ -29,14 +57,29 @@ export function PearsonRadioGroup({
   onChange,
   disabled = false,
   className,
+  reviewFeedback = null,
 }: PearsonRadioGroupProps) {
   return (
     <ul className={cn("pearson-radio-list", className)} role="radiogroup">
       {options.map((opt) => {
         const id = `${name}-${opt.letter}`;
+        const review = reviewFeedback
+          ? reviewBadgesForLetter(opt.letter, reviewFeedback)
+          : null;
         return (
           <li key={opt.letter}>
-            <label className="pearson-radio-row" htmlFor={id}>
+            <label
+              className={cn(
+                "pearson-radio-row",
+                review?.isCorrect && "pearson-radio-row--correct",
+                review?.wrongPick && "pearson-radio-row--wrong",
+                review?.isYours &&
+                  !review.wrongPick &&
+                  !review.isCorrect &&
+                  "pearson-radio-row--yours",
+              )}
+              htmlFor={id}
+            >
               <span className="pearson-radio-control">
                 <input
                   id={id}
@@ -48,7 +91,30 @@ export function PearsonRadioGroup({
                   onChange={() => onChange(opt.letter)}
                 />
               </span>
-              <span className="pearson-radio-body">{opt.content}</span>
+              <span className="pearson-radio-body">
+                {opt.content}
+                {review && (review.isYours || review.isCorrect) ? (
+                  <span className="pearson-review-badges" aria-hidden={false}>
+                    {review.isYours ? (
+                      <span
+                        className={cn(
+                          "pearson-review-badge",
+                          review.wrongPick
+                            ? "pearson-review-badge--yours-wrong"
+                            : "pearson-review-badge--yours",
+                        )}
+                      >
+                        Your answer
+                      </span>
+                    ) : null}
+                    {review.isCorrect ? (
+                      <span className="pearson-review-badge pearson-review-badge--correct">
+                        Correct answer
+                      </span>
+                    ) : null}
+                  </span>
+                ) : null}
+              </span>
             </label>
           </li>
         );

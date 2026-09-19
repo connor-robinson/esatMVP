@@ -2451,38 +2451,19 @@ export default function PapersMarkPage() {
                 </div>
                   </div>
 
-              {/* Answers summary */}
-              <div className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-3">
-                <div>
-                  <div className="text-xs text-text-muted">Your answer</div>
-                  <div className="mt-1.5 inline-flex min-h-[1.75rem] min-w-[2.25rem] items-center justify-center rounded-full bg-surface-mid px-3 py-1 text-sm font-medium tabular-nums text-text">
-                    {answers[selectedIndex]?.choice ?? "-"}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-xs text-text-muted">Correct answer</div>
-                  {hideResultsBehindLogin ? (
-                    <div className="mt-1.5">
-                      <LoginToViewLink
-                        href={loginRedirectHref}
-                        variant="button"
-                      />
-                    </div>
-                  ) : (
-                    <div className="mt-1.5 inline-flex min-h-[1.75rem] min-w-[2.25rem] items-center justify-center rounded-full bg-surface-mid px-3 py-1 text-sm font-medium tabular-nums text-text">
-                      {(
-                        usePaperSessionStore.getState().questions[selectedIndex]
-                          ?.answerLetter || ""
-                      ).toUpperCase() || "-"}
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <div className="text-xs text-text-muted">Time taken</div>
-                  <div className="mt-1.5 inline-flex min-h-[1.75rem] items-center justify-center rounded-full bg-surface-mid px-3 py-1 text-sm font-medium tabular-nums text-text">
-                    {formatTime(perQuestionSec[selectedIndex] || 0)}
-                  </div>
-                </div>
+              {/* Answers shown on the multiple-choice options below. */}
+              <div className="mb-3 flex items-center gap-2 text-xs text-text-muted">
+                <span>Time taken</span>
+                <span className="inline-flex min-h-[1.5rem] items-center rounded-full bg-surface-mid px-2.5 py-0.5 font-medium tabular-nums text-text">
+                  {formatTime(perQuestionSec[selectedIndex] || 0)}
+                </span>
+                {hideResultsBehindLogin ? (
+                  <LoginToViewLink
+                    href={loginRedirectHref}
+                    variant="button"
+                    className="ml-auto"
+                  />
+                ) : null}
               </div>
 
               {/* Question (Pearson UI, dark) + solution below */}
@@ -2492,6 +2473,9 @@ export default function PapersMarkPage() {
 
                 const isTMUA = question?.questionImage && question?.solutionImage && !question?.solutionText;
                 const answerImgSrc = (isTMUA && croppedAnswerImage) ? croppedAnswerImage : question?.solutionImage;
+                const correctLetter = (
+                  (question.answerLetter || "").toUpperCase() || null
+                ) as Letter | null;
 
                 return (
                   <div className="grid grid-cols-1 gap-4 transition-all duration-300">
@@ -2500,6 +2484,8 @@ export default function PapersMarkPage() {
                       selectedChoice={
                         (answers[selectedIndex]?.choice as Letter | null) ?? null
                       }
+                      correctLetter={correctLetter}
+                      hideCorrect={hideResultsBehindLogin}
                       colourScheme={
                         hubMarkPreview || !isDarkMode
                           ? "review-light"

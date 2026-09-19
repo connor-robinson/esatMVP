@@ -1075,6 +1075,91 @@ html.pearson-exam-active body {
   flex: 1;
   min-width: 0;
   padding-top: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 10px;
+}
+
+.pearson-radio-row--correct {
+  border-radius: 4px;
+  background: rgba(34, 197, 94, 0.12);
+  padding: 4px 6px 4px 2px;
+  margin-left: -2px;
+}
+
+.pearson-radio-row--wrong {
+  border-radius: 4px;
+  background: rgba(239, 68, 68, 0.12);
+  padding: 4px 6px 4px 2px;
+  margin-left: -2px;
+}
+
+.pearson-radio-row--yours {
+  border-radius: 4px;
+  background: rgba(59, 130, 246, 0.1);
+  padding: 4px 6px 4px 2px;
+  margin-left: -2px;
+}
+
+.pearson-review-badges {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.pearson-review-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.pearson-review-badge--yours {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+}
+
+.pearson-review-badge--yours-wrong {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+.pearson-review-badge--correct {
+  background: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+}
+
+.pearson-exam-root.pearson-exam-root--review-light .pearson-review-badge--yours {
+  background: rgba(37, 99, 235, 0.14);
+  color: #1d4ed8;
+}
+
+.pearson-exam-root.pearson-exam-root--review-light .pearson-review-badge--yours-wrong {
+  background: rgba(220, 38, 38, 0.14);
+  color: #b91c1c;
+}
+
+.pearson-exam-root.pearson-exam-root--review-light .pearson-review-badge--correct {
+  background: rgba(22, 163, 74, 0.14);
+  color: #15803d;
+}
+
+.pearson-option-table-row--correct td {
+  background: rgba(34, 197, 94, 0.12);
+}
+
+.pearson-option-table-row--wrong td {
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.pearson-option-table-letter .pearson-review-badges {
+  margin-left: 6px;
 }
 
 .pearson-option-table {

@@ -11,12 +11,15 @@ import {
   shouldUseLetterOnlyOptions,
 } from "@/lib/papers/tableBackedOptions";
 import type { Letter, Question } from "@/types/papers";
+import type { PearsonReviewFeedback } from "@/components/pearson/PearsonRadioGroup";
 
 interface PearsonRichQuestionProps {
   question: Question;
   selected: Letter | null;
   onSelect: (letter: Letter) => void;
   disabled?: boolean;
+  /** Mark-review feedback overlaid on the multiple-choice list. */
+  reviewFeedback?: PearsonReviewFeedback | null;
 }
 
 function hasTextStem(question: Question): boolean {
@@ -38,6 +41,7 @@ export function PearsonRichQuestion({
   selected,
   onSelect,
   disabled = false,
+  reviewFeedback = null,
 }: PearsonRichQuestionProps) {
   if (useImageFallback(question)) {
     return (
@@ -55,6 +59,7 @@ export function PearsonRichQuestion({
             value={selected}
             onChange={onSelect}
             disabled={disabled}
+            reviewFeedback={reviewFeedback}
             options={getPastPaperOptionLetters(question).map((letter) => {
               const L = letter as Letter;
               const text = question.options?.[L];
@@ -147,6 +152,7 @@ export function PearsonRichQuestion({
               value={selected}
               onChange={onSelect}
               disabled={disabled}
+              reviewFeedback={reviewFeedback}
             />
             {extractedTable.after.trim() ? (
               <StemContent content={extractedTable.after} className="text-inherit" />
@@ -180,6 +186,7 @@ export function PearsonRichQuestion({
           value={selected}
           onChange={onSelect}
           disabled={disabled}
+          reviewFeedback={reviewFeedback}
           options={letters
             .map((letter) => {
               const L = letter as Letter;

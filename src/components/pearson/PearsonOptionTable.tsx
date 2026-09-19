@@ -4,6 +4,7 @@ import { MathContent } from "@/components/shared/MathContent";
 import type { LetterLabeledTable } from "@/lib/papers/tableBackedOptions";
 import type { Letter } from "@/types/papers";
 import { cn } from "@/lib/utils";
+import type { PearsonReviewFeedback } from "@/components/pearson/PearsonRadioGroup";
 
 interface PearsonOptionTableProps {
   name: string;
@@ -11,6 +12,7 @@ interface PearsonOptionTableProps {
   value: Letter | null;
   onChange: (letter: Letter) => void;
   disabled?: boolean;
+  reviewFeedback?: PearsonReviewFeedback | null;
 }
 
 /**
@@ -22,6 +24,7 @@ export function PearsonOptionTable({
   value,
   onChange,
   disabled = false,
+  reviewFeedback = null,
 }: PearsonOptionTableProps) {
   return (
     <div className="stem-content">
@@ -42,12 +45,25 @@ export function PearsonOptionTable({
             {table.rows.map((row) => {
               const id = `${name}-${row.letter}`;
               const selected = value === row.letter;
+              const isYours = reviewFeedback?.selected === row.letter;
+              const isCorrect =
+                Boolean(reviewFeedback) &&
+                !reviewFeedback?.hideCorrect &&
+                Boolean(reviewFeedback?.correctLetter) &&
+                reviewFeedback?.correctLetter === row.letter;
+              const wrongPick =
+                isYours &&
+                !reviewFeedback?.hideCorrect &&
+                Boolean(reviewFeedback?.correctLetter) &&
+                reviewFeedback?.correctLetter !== row.letter;
               return (
                 <tr
                   key={row.letter}
                   className={cn(
                     "pearson-option-table-row",
                     selected && "pearson-option-table-row-selected",
+                    isCorrect && "pearson-option-table-row--correct",
+                    wrongPick && "pearson-option-table-row--wrong",
                   )}
                   onClick={() => {
                     if (!disabled) onChange(row.letter);
@@ -68,6 +84,27 @@ export function PearsonOptionTable({
                         />
                       </span>
                       {row.letter}
+                      {isYours || isCorrect ? (
+                        <span className="pearson-review-badges">
+                          {isYours ? (
+                            <span
+                              className={cn(
+                                "pearson-review-badge",
+                                wrongPick
+                                  ? "pearson-review-badge--yours-wrong"
+                                  : "pearson-review-badge--yours",
+                              )}
+                            >
+                              Your answer
+                            </span>
+                          ) : null}
+                          {isCorrect ? (
+                            <span className="pearson-review-badge pearson-review-badge--correct">
+                              Correct answer
+                            </span>
+                          ) : null}
+                        </span>
+                      ) : null}
                     </label>
                   </td>
                   {row.cells.map((cell, index) => (
