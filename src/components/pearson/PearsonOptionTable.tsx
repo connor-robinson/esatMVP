@@ -66,10 +66,6 @@ export function PearsonOptionTable({
                     selected && "pearson-option-table-row-selected",
                     isCorrect && "pearson-option-table-row--correct",
                     wrongPick && "pearson-option-table-row--wrong",
-                    isYours &&
-                      !wrongPick &&
-                      !isCorrect &&
-                      "pearson-option-table-row--yours",
                   )}
                   onClick={() => {
                     if (!disabled) onChange(row.letter);
@@ -99,8 +95,8 @@ export function PearsonOptionTable({
                                 wrongPick
                                   ? "pearson-review-badge--yours-wrong"
                                   : isCorrect
-                                    ? "pearson-review-badge--correct"
-                                    : "pearson-review-badge--yours",
+                                    ? "pearson-review-badge--yours"
+                                    : null,
                               )}
                             >
                               Your answer

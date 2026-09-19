@@ -22,3 +22,15 @@ export const TMUA_2017_P1_QUESTION_CROP = {
   contentThreshold: 240,
   minContentRatio: 0.0015,
 } as const;
+
+/**
+ * Official answer scans often put the final answer near the page bottom.
+ * Never force-trim a footer %, that chops the answer. Only trim trailing whitespace.
+ */
+export const TMUA_SOLUTION_CROP = {
+  removeFooterPercent: 0,
+  paddingBottom: 80,
+  paddingBottomPercent: 0.05,
+  contentThreshold: 240,
+  minContentRatio: 0.0015,
+} as const;

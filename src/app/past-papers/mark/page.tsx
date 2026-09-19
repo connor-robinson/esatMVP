@@ -66,6 +66,7 @@ import { cropImageToContent } from "@/lib/utils/imageCrop";
 import {
   isTmua2017OfficialPaper1,
   TMUA_2017_P1_QUESTION_CROP,
+  TMUA_SOLUTION_CROP,
 } from "@/lib/papers/tmuaImageCrop";
 import type { ConversionRow, ExamName, Letter, MistakeTag } from "@/types/papers";
 import { MarkSectionNav,
@@ -184,6 +185,10 @@ export default function PapersMarkPage() {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [fullscreenImage, setFullscreenImage] = useState<'question' | 'solution' | null>(null);
+  const [fullscreenZoom, setFullscreenZoom] = useState(1);
+  const [fullscreenPan, setFullscreenPan] = useState({ x: 0, y: 0 });
+  const [fullscreenDragging, setFullscreenDragging] = useState(false);
+  const fullscreenDragStartRef = useRef({ x: 0, y: 0 });
   const [drillSelection, setDrillSelection] = useState<number[]>([]);
   const [showSavedToast, setShowSavedToast] = useState(false);
   const [conversionRows, setConversionRows] = useState<ConversionRow[]>([]);
@@ -1161,7 +1166,7 @@ export default function PapersMarkPage() {
     return () => window.clearTimeout(timer);
   }, [isLoggedIn, sessionId, predictedScore, sectionPercentiles]);
 
-  // Crop images for TMUA (when both question and answer are images)
+  // Crop images for TMUA-style official scans (question + solution images, no text solution)
   useEffect(() => {
     if (selectedIndex === -1) {
       setCroppedQuestionImage(null);
@@ -1172,30 +1177,67 @@ export default function PapersMarkPage() {
     const question = usePaperSessionStore.getState().questions[selectedIndex];
     if (!question) return;
 
-    const isTMUA = question.questionImage && question.solutionImage && !question.solutionText;
+    const isImageOnlyOfficial =
+      Boolean(question.questionImage) &&
+      Boolean(question.solutionImage) &&
+      !question.solutionText;
 
-    if (isTMUA) {
-      // Crop question image; TMUA 2017 Paper 1 also strips the scanned footer.
-      if (question.questionImage) {
-        const questionCrop = isTmua2017OfficialPaper1(question)
-          ? TMUA_2017_P1_QUESTION_CROP
-          : { paddingBottom: 60 };
-        cropImageToContent(question.questionImage, questionCrop)
-          .then(cropped => setCroppedQuestionImage(cropped))
-          .catch(() => setCroppedQuestionImage(question.questionImage || null));
-      }
-
-      // Crop answer image (remove footer 6.5%, then trim whitespace)
-      if (question.solutionImage) {
-        cropImageToContent(question.solutionImage as string, { removeFooterPercent: 6.5, paddingBottom: 60 })
-          .then(cropped => setCroppedAnswerImage(cropped))
-          .catch(() => setCroppedAnswerImage(question.solutionImage as string || null));
-      }
-    } else {
+    if (!isImageOnlyOfficial) {
       setCroppedQuestionImage(null);
       setCroppedAnswerImage(null);
+      return;
     }
+
+    let cancelled = false;
+    setCroppedQuestionImage(null);
+    setCroppedAnswerImage(null);
+
+    // Crop question image; TMUA 2017 Paper 1 also strips the scanned footer.
+    if (question.questionImage) {
+      const questionCrop = isTmua2017OfficialPaper1(question)
+        ? TMUA_2017_P1_QUESTION_CROP
+        : { paddingBottom: 60 };
+      void cropImageToContent(question.questionImage, questionCrop)
+        .then((cropped) => {
+          if (!cancelled) setCroppedQuestionImage(cropped);
+        })
+        .catch(() => {
+          if (!cancelled) setCroppedQuestionImage(question.questionImage || null);
+        });
+    }
+
+    // Solutions: whitespace-only trim. Never force-remove a footer band; answers sit near the bottom.
+    if (question.solutionImage) {
+      void cropImageToContent(question.solutionImage as string, TMUA_SOLUTION_CROP)
+        .then((cropped) => {
+          if (!cancelled) setCroppedAnswerImage(cropped);
+        })
+        .catch(() => {
+          if (!cancelled) {
+            setCroppedAnswerImage((question.solutionImage as string) || null);
+          }
+        });
+    }
+
+    return () => {
+      cancelled = true;
+    };
   }, [selectedIndex]);
+
+  // Escape closes mark-page image fullscreen
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setIsFullscreen(false);
+      setFullscreenImage(null);
+      setFullscreenZoom(1);
+      setFullscreenPan({ x: 0, y: 0 });
+      setFullscreenDragging(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isFullscreen]);
 
   // Format duration helper
   const formatDuration = (seconds: number) => {
@@ -2517,11 +2559,7 @@ export default function PapersMarkPage() {
                       }
                       correctLetter={correctLetter}
                       hideCorrect={hideResultsBehindLogin}
-                      colourScheme={
-                        hubMarkPreview || !isDarkMode
-                          ? "review-light"
-                          : "review-dark"
-                      }
+                      colourScheme={isDark ? "review-dark" : "review-light"}
                     />
 
                     {!treatAsFullAccess && (
@@ -2539,16 +2577,16 @@ export default function PapersMarkPage() {
                         style={{ height: "60vh", backgroundColor: cssVar.background }}
                       >
                         <div
-                          className="absolute inset-0 overflow-y-auto overflow-x-hidden rounded-organic-lg scrollbar-hide transition-colors duration-300 ease-in-out"
+                          className="absolute inset-0 overflow-y-auto overflow-x-auto rounded-organic-lg scrollbar-hide transition-colors duration-300 ease-in-out"
                           style={{ backgroundColor: cssVar.background }}
                         >
-                          <div className="flex min-h-full flex-col items-center justify-center px-8 pb-12 pt-12">
+                          <div className="flex min-h-full flex-col items-center justify-start px-6 pb-16 pt-14 sm:px-8">
                             <div className="relative flex w-full justify-center" style={{ isolation: "isolate" }}>
                               <div
                                 className="relative inline-block"
                                 style={{
-                                  width: "min(72%, 1100px)",
-                                  maxWidth: "1100px",
+                                  width: "min(92%, 1200px)",
+                                  maxWidth: "1200px",
                                   lineHeight: 0,
                                   transition: "background-color 300ms ease-in-out",
                                 }}
@@ -2585,7 +2623,7 @@ export default function PapersMarkPage() {
                           </div>
                         </div>
 
-                        <div className="absolute left-6 top-6 z-10 rounded-md border border-white/10 bg-black/30 px-3 py-1.5 text-white/80 shadow-sm backdrop-blur-md pointer-events-auto">
+                        <div className="absolute left-6 top-6 z-10 rounded-md bg-black/30 px-3 py-1.5 text-white/80 shadow-sm backdrop-blur-md pointer-events-auto">
                           <div className="text-sm font-normal" style={{ fontFamily: "Garamond, serif" }}>
                             Official Solution
                           </div>
@@ -2595,6 +2633,9 @@ export default function PapersMarkPage() {
                           <div className="pointer-events-auto absolute right-6 top-6">
                             <button
                               onClick={() => {
+                                setFullscreenZoom(1);
+                                setFullscreenPan({ x: 0, y: 0 });
+                                setFullscreenDragging(false);
                                 setIsFullscreen(true);
                                 setFullscreenImage("solution");
                               }}
@@ -2671,10 +2712,13 @@ export default function PapersMarkPage() {
                               <div className="pointer-events-auto absolute bottom-4 right-4">
                                 <button
                                   onClick={() => {
+                                    setFullscreenZoom(1);
+                                    setFullscreenPan({ x: 0, y: 0 });
+                                    setFullscreenDragging(false);
                                     setIsFullscreen(true);
                                     setFullscreenImage("solution");
                                   }}
-                                  className="flex items-center gap-1.5 rounded-md border border-white/15 bg-black/40 px-2.5 py-1.5 text-xs font-normal text-white/70 shadow-sm backdrop-blur-sm transition-all duration-200 hover:border-white/25 hover:bg-black/50 hover:text-white/90"
+                                  className="flex items-center gap-1.5 rounded-md bg-black/40 px-2.5 py-1.5 text-xs font-normal text-white/70 shadow-sm backdrop-blur-sm transition-all duration-200 hover:bg-black/50 hover:text-white/90"
                                   title="View solution in fullscreen"
                                 >
                                   <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2743,25 +2787,60 @@ export default function PapersMarkPage() {
                 </div>
               )}
               
-              {/* Fullscreen overlay */}
+              {/* Fullscreen overlay: fit-to-viewport by default, scroll + wheel zoom + drag pan */}
               {selectedIndex !== -1 && isFullscreen && createPortal(
-                <div className="fixed inset-0 z-[99999] bg-black">
-                  <div className="absolute top-6 right-6 z-[100001] pointer-events-auto">
+                <div
+                  className="fixed inset-0 z-[99999] bg-black"
+                  onWheel={(e) => {
+                    e.preventDefault();
+                    const delta = e.deltaY > 0 ? -0.12 : 0.12;
+                    setFullscreenZoom((prev) => {
+                      const next = Math.max(0.5, Math.min(5, prev + delta));
+                      if (next <= 1) setFullscreenPan({ x: 0, y: 0 });
+                      return next;
+                    });
+                  }}
+                  onMouseMove={(e) => {
+                    if (!fullscreenDragging || fullscreenZoom <= 1) return;
+                    e.preventDefault();
+                    setFullscreenPan({
+                      x: e.clientX - fullscreenDragStartRef.current.x,
+                      y: e.clientY - fullscreenDragStartRef.current.y,
+                    });
+                  }}
+                  onMouseUp={() => setFullscreenDragging(false)}
+                  onMouseLeave={() => setFullscreenDragging(false)}
+                >
+                  <div className="absolute top-6 right-6 z-[100001] pointer-events-auto flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        setFullscreenZoom(1);
+                        setFullscreenPan({ x: 0, y: 0 });
+                      }}
+                      className="flex items-center gap-1.5 rounded-md bg-black/40 px-2.5 py-1.5 text-xs font-normal text-white/70 shadow-sm backdrop-blur-sm transition-all duration-200 hover:bg-black/50 hover:text-white/90"
+                      title="Reset zoom"
+                    >
+                      Reset
+                    </button>
                     <button
                       onClick={() => {
                         setIsFullscreen(false);
                         setFullscreenImage(null);
+                        setFullscreenZoom(1);
+                        setFullscreenPan({ x: 0, y: 0 });
+                        setFullscreenDragging(false);
                       }}
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-normal transition-all duration-200 backdrop-blur-sm border shadow-sm bg-black/40 border-white/15 text-white/70 hover:bg-black/50 hover:text-white/90 hover:border-white/25"
+                      className="flex items-center gap-1.5 rounded-md bg-black/40 px-2.5 py-1.5 text-xs font-normal text-white/70 shadow-sm backdrop-blur-sm transition-all duration-200 hover:bg-black/50 hover:text-white/90"
                       title="Exit fullscreen mode"
                     >
                       <span className="hidden sm:inline">Exit Fullscreen</span>
+                      <span className="sm:hidden">Exit</span>
                     </button>
                   </div>
                   <div className="absolute bottom-8 right-8 z-[100001] pointer-events-auto">
                     <button
                       onClick={() => setIsDarkMode(!isDarkMode)}
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-normal transition-all duration-200 backdrop-blur-sm border shadow-sm bg-black/40 border-white/15 text-white/70 hover:bg-black/50 hover:text-white/90 hover:border-white/25"
+                      className="flex items-center gap-1.5 rounded-md bg-black/40 px-2.5 py-1.5 text-xs font-normal text-white/70 shadow-sm backdrop-blur-sm transition-all duration-200 hover:bg-black/50 hover:text-white/90"
                       title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
                     >
                       {isDarkMode ? (
@@ -2781,33 +2860,59 @@ export default function PapersMarkPage() {
                       )}
                     </button>
                   </div>
-                  <div className="absolute inset-0 z-[100000] flex items-center justify-center p-6">
+                  <div className="absolute inset-0 z-[100000] overflow-auto">
                     {(() => {
                       const question = usePaperSessionStore.getState().questions[selectedIndex];
                       const isSolution = fullscreenImage === 'solution';
-                      const imgSrc = isSolution 
-                        ? (croppedAnswerImage || question?.solutionImage)
+                      // Prefer the full original scan in fullscreen so crop mistakes never hide content.
+                      const imgSrc = isSolution
+                        ? (question?.solutionImage || croppedAnswerImage)
                         : (croppedQuestionImage || question?.questionImage);
                       const imgAlt = isSolution ? 'Solution' : `Question ${questionNumbers[selectedIndex]}`;
                       return (
-                        <div
-                          className="inline-block"
-                          style={{
-                            lineHeight: 0,
-                            backgroundColor: isDarkMode ? cssVar.text : "transparent",
-                          }}
-                        >
-                          <img
-                            src={imgSrc as string}
-                            alt={imgAlt}
+                        <div className="flex min-h-full min-w-full items-center justify-center p-6">
+                          <div
                             className={cn(
-                              "max-h-full max-w-full rounded-md object-contain",
-                              isDarkMode && "mix-blend-difference",
+                              "relative select-none",
+                              fullscreenZoom > 1 ? "cursor-grab" : "cursor-default",
+                              fullscreenDragging && "cursor-grabbing",
                             )}
-                          />
+                            onMouseDown={(e) => {
+                              if (fullscreenZoom <= 1) return;
+                              e.preventDefault();
+                              setFullscreenDragging(true);
+                              fullscreenDragStartRef.current = {
+                                x: e.clientX - fullscreenPan.x,
+                                y: e.clientY - fullscreenPan.y,
+                              };
+                            }}
+                            style={{
+                              lineHeight: 0,
+                              transform: `translate(${fullscreenPan.x}px, ${fullscreenPan.y}px) scale(${fullscreenZoom})`,
+                              transformOrigin: "center center",
+                              backgroundColor: isDarkMode ? cssVar.text : "transparent",
+                            }}
+                          >
+                            <img
+                              src={imgSrc as string}
+                              alt={imgAlt}
+                              draggable={false}
+                              className={cn(
+                                "block h-auto w-auto rounded-md object-contain",
+                                isDarkMode && "mix-blend-difference",
+                              )}
+                              style={{
+                                maxWidth: "calc(100vw - 3rem)",
+                                maxHeight: "calc(100vh - 3rem)",
+                              }}
+                            />
+                          </div>
                         </div>
                       );
                     })()}
+                  </div>
+                  <div className="pointer-events-none absolute bottom-8 left-8 z-[100001] rounded-md bg-black/40 px-2.5 py-1.5 text-xs text-white/60 backdrop-blur-sm">
+                    Scroll to zoom · drag when zoomed
                   </div>
                 </div>,
                 document.body

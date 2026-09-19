@@ -78,10 +78,6 @@ export function PearsonRadioGroup({
                 "pearson-radio-row",
                 review?.isCorrect && "pearson-radio-row--correct",
                 review?.wrongPick && "pearson-radio-row--wrong",
-                review?.isYours &&
-                  !review.wrongPick &&
-                  !review.isCorrect &&
-                  "pearson-radio-row--yours",
               )}
               htmlFor={id}
             >
@@ -107,8 +103,8 @@ export function PearsonRadioGroup({
                           review.wrongPick
                             ? "pearson-review-badge--yours-wrong"
                             : review.isCorrect
-                              ? "pearson-review-badge--correct"
-                              : "pearson-review-badge--yours",
+                              ? "pearson-review-badge--yours"
+                              : null,
                         )}
                       >
                         Your answer
