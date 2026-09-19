@@ -97,14 +97,15 @@ export async function getAdminEsatMockQuestionsForPaperId(
   if (!parsed) return [];
 
   const service = createTesterServiceClient();
-  const mocks = await listMocks(service, { light: true });
-  const match = mocks.find(
-    (m) =>
-      isVisibleMock(m) &&
-      m.mock_number === parsed.mockNumber &&
-      m.subject === parsed.subject,
-  );
-  if (!match) return [];
+  // Direct lookup: avoid listMocks() on every module (full mock = 5× catalog scan).
+  const { data: match, error } = await service
+    .from("esat_mocks")
+    .select("id, status, mock_number, subject")
+    .eq("mock_number", parsed.mockNumber)
+    .eq("subject", parsed.subject)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!match || !isVisibleMock(match)) return [];
 
   const { mock, slots } = await getMockWithSlots(service, match.id);
   return adminMockSlotsToPaperQuestions(slots, mock, paperId);

@@ -35,7 +35,7 @@ import type { PaperSection, Question, Paper } from '@/types/papers';
 import type { RoadmapPart } from '@/lib/papers/roadmapConfig';
 import { LoadingPage } from '@/components/shared/LoadingPage';
 import { allowLoadingPaint } from '@/lib/papers/allowLoadingPaint';
-import { preloadQuestionsAssets } from '@/lib/pearson/preloadQuestionAssets';
+import { preloadQuestionAssets, preloadQuestionsAssets } from '@/lib/pearson/preloadQuestionAssets';
 import { applyEsatSubjectsToRoadmapStages } from '@/lib/papers/roadmapEsatFilter';
 import { PastPaperGuestStartModal } from '@/components/papers/PastPaperGuestStartModal';
 import { rememberHubMarkPreview } from '@/lib/papers/hubMarkPreview';
@@ -454,10 +454,10 @@ export default function PapersRoadmapPage() {
           }
 
           let combined: Question[] = [];
-          for (const modulePaper of modulePapers) {
-            const qs = await getQuestions(modulePaper.id);
-            combined = [...combined, ...qs];
-          }
+          const batches = await Promise.all(
+            modulePapers.map((modulePaper) => getQuestions(modulePaper.id)),
+          );
+          combined = batches.flat();
           allQuestionsByPaper.set(paper.id, combined);
         }
 
@@ -602,8 +602,11 @@ export default function PapersRoadmapPage() {
           if (sessionId) rememberHubMarkPreview(sessionId);
         }
 
-        // Stay on LoadingPage until every question diagram/image is decoded.
-        await preloadQuestionsAssets(matchingQuestions);
+        // Gate on first question assets only; warm the rest in the background.
+        if (matchingQuestions[0]) {
+          await preloadQuestionAssets(matchingQuestions[0]);
+        }
+        void preloadQuestionsAssets(matchingQuestions);
 
         navigated = true;
         router.push('/past-papers/solve');

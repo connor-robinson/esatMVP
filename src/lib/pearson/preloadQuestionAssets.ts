@@ -91,8 +91,8 @@ export async function preloadQuestionAssets(question: Question): Promise<void> {
 }
 
 /**
- * Decode every image asset referenced by the session (including CAMP mock
- * diagram SVGs) before the question UI is allowed to appear.
+ * Decode image assets for a sitting. Prefer awaiting only Q1 on the critical
+ * path; call this without await to warm the rest in the background.
  */
 export async function preloadQuestionsAssets(
   questions: Question[],

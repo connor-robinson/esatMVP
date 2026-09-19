@@ -10,7 +10,10 @@ import {
   getEsatCampMockModuleByPaperId,
 } from "@/data/esatCampMocks";
 import { generateSectionId } from "@/lib/papers/partIdUtils";
-import { preloadQuestionsAssets } from "@/lib/pearson/preloadQuestionAssets";
+import {
+  preloadQuestionAssets,
+  preloadQuestionsAssets,
+} from "@/lib/pearson/preloadQuestionAssets";
 import type { PaperSection } from "@/types/papers";
 import {
   markCompareStarted,
@@ -59,7 +62,10 @@ export async function startCompareCatalogSitting(
     throw new Error("No questions loaded for this mock");
   }
 
-  await preloadQuestionsAssets(storeAfter.questions);
+  if (storeAfter.questions[0]) {
+    await preloadQuestionAssets(storeAfter.questions[0]);
+  }
+  void preloadQuestionsAssets(storeAfter.questions);
   await markCompareStarted(ctx.roomId, ctx.participantId);
   setActiveMockCompare(ctx);
 }

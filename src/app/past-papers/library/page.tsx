@@ -30,7 +30,7 @@ import { PastPaperUatNotice } from '@/components/papers/PastPaperUatNotice';
 import { PastPapersLegacyLinks } from '@/components/papers/PastPapersLegacyLinks';
 import { LoadingPage } from '@/components/shared/LoadingPage';
 import { allowLoadingPaint } from '@/lib/papers/allowLoadingPaint';
-import { preloadQuestionsAssets } from '@/lib/pearson/preloadQuestionAssets';
+import { preloadQuestionAssets, preloadQuestionsAssets } from '@/lib/pearson/preloadQuestionAssets';
 import {
   filterSectionsByEsatSubjects,
   filterSubjectPartsByEsatSubjects,
@@ -119,7 +119,7 @@ export default function PapersLibraryPage() {
   // Papers are free to sit; upgrade unlocks full marking / analytics.
   const showMarkingUpgrade = !subscriptionLoading && !hasFullAccess;
   const treatAsFullAccess = subscriptionLoading || hasFullAccess;
-  const { startSession, loadQuestions } = usePaperSessionStore();
+  const { startSession } = usePaperSessionStore();
 
   // Papers data
   const [papers, setPapers] = useState<Paper[]>([]);
@@ -467,10 +467,10 @@ export default function PapersLibraryPage() {
             : [paper];
 
         let allQuestions: Question[] = [];
-        for (const catalogPaper of catalog) {
-          const qs = await getQuestions(catalogPaper.id);
-          allQuestions = [...allQuestions, ...qs];
-        }
+        const batches = await Promise.all(
+          catalog.map((catalogPaper) => getQuestions(catalogPaper.id)),
+        );
+        allQuestions = batches.flat();
 
         let filteredQuestions: Question[] = [];
         if (paperType === 'TMUA') {
@@ -567,8 +567,7 @@ export default function PapersLibraryPage() {
           });
         }
 
-        // Must await: startSession sets sessionId/paperId after async in-progress cleanup;
-        // loadQuestions reads store state and breaks navigation if it runs too early.
+        // Must await: startSession sets sessionId/paperId after async in-progress cleanup.
         await startSession({
           paperId: anchorPaper.id,
           paperName: paperTypeName,
@@ -585,7 +584,10 @@ export default function PapersLibraryPage() {
             selectedPartIds.length > 0 ? selectedPartIds : undefined,
         });
 
-        await loadQuestions(anchorPaper.id);
+        // Prefer the already-filtered set for CAMP (and generally). Reloading
+        // by paperId re-fetches sibling modules and was a large redundant wait.
+        const { setQuestions } = usePaperSessionStore.getState();
+        setQuestions(filteredQuestions);
 
         const storeAfter = usePaperSessionStore.getState();
         if (storeAfter.questionsError) {
@@ -601,8 +603,11 @@ export default function PapersLibraryPage() {
           return;
         }
 
-        // Stay on LoadingPage until every question diagram/image is decoded.
-        await preloadQuestionsAssets(storeAfter.questions);
+        // Gate on first question assets only; warm the rest in the background.
+        if (storeAfter.questions[0]) {
+          await preloadQuestionAssets(storeAfter.questions[0]);
+        }
+        void preloadQuestionsAssets(storeAfter.questions);
 
         navigated = true;
         router.push('/past-papers/solve');

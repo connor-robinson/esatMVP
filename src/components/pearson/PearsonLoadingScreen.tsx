@@ -19,7 +19,7 @@ interface PearsonLoadingScreenProps {
  */
 export function PearsonLoadingScreen({
   onComplete,
-  durationMs = 2200,
+  durationMs = 900,
   label = "Loading, please wait...",
 }: PearsonLoadingScreenProps) {
   const [filled, setFilled] = useState(0);

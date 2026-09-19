@@ -326,8 +326,8 @@ export function usePearsonExamController(
       setNavigatorOpen(false);
 
       try {
-        // Hard gate: every diagram in the module must decode before Q1.
-        await preloadQuestionsAssets(questions);
+        // Gate on Q1 only; warm the rest of the module in the background.
+        void preloadQuestionsAssets(questions);
         await preloadQuestionWithMinimumDelay(questions[0]);
         commitQuestionIndex(0);
       } finally {

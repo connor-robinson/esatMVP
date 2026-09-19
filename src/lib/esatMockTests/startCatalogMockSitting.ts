@@ -18,7 +18,10 @@ import {
 import { rememberHubMarkPreview } from "@/lib/papers/hubMarkPreview";
 import { generateSectionId } from "@/lib/papers/partIdUtils";
 import { getQuestions } from "@/lib/supabase/questions";
-import { preloadQuestionsAssets } from "@/lib/pearson/preloadQuestionAssets";
+import {
+  preloadQuestionAssets,
+  preloadQuestionsAssets,
+} from "@/lib/pearson/preloadQuestionAssets";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import type { PaperSection, Question } from "@/types/papers";
 import {
@@ -143,7 +146,12 @@ export async function startCatalogMockSitting(
     rememberHubMarkPreview(sessionId);
   }
 
-  await preloadQuestionsAssets(questions);
+  // Only gate on Q1 assets. Full-sitting preload (up to 5×27) used to keep
+  // the solve "please wait" screen up for many seconds on CAMP mocks.
+  if (questions[0]) {
+    await preloadQuestionAssets(questions[0]);
+  }
+  void preloadQuestionsAssets(questions);
 }
 
 /** Prefetch solve route + warm question payload for a catalog slot. */
