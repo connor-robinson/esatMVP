@@ -12,13 +12,32 @@
  */
 import fs from "node:fs";
 import path from "node:path";
+import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
 import { spawnSync } from "node:child_process";
-import katex from "katex";
 import { chromium } from "playwright";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { getMockWithSlots } from "../src/lib/mockBuilder/server";
 import type { EsatMockRow, MockBuilderSubject } from "../src/lib/mockBuilder/types";
+import { prepareQuestionBankMathText } from "../src/lib/utils/convertLatexDelimiters";
+
+// Load KaTeX + mhchem via CJS so mhchem patches the same katex instance used
+// for renderToString. ESM side-effect imports can leave `\ce` / `\pu` unregistered.
+const require = createRequire(__filename);
+const katex = require("katex") as typeof import("katex");
+require("katex/dist/contrib/mhchem.min.js");
+
+{
+  const probe = katex.renderToString("\\ce{CO2}", {
+    throwOnError: false,
+    strict: "ignore",
+  });
+  if (probe.includes("mathcolor") || probe.includes("katex-error")) {
+    throw new Error(
+      "KaTeX mhchem failed to register (\\ce probe rendered as an error). Aborting PDF generation.",
+    );
+  }
+}
 
 const ROOT = path.join(__dirname, "..");
 const OUT_ROOT = path.join(ROOT, "public", "downloads", "mocks");
@@ -1176,9 +1195,11 @@ function toPdfPaper(
       }
       const options: PdfQuestion["options"] = {};
       for (const letter of OPTION_ORDER) {
-        if (q.options?.[letter] != null) options[letter] = String(q.options[letter]);
+        if (q.options?.[letter] != null) {
+          options[letter] = prepareQuestionBankMathText(String(q.options[letter]));
+        }
       }
-      const stem = q.questionStem ?? "";
+      const stem = prepareQuestionBankMathText(q.questionStem ?? "");
       return {
         number: slot.position,
         stem,
