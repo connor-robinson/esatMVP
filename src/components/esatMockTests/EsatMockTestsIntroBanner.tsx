@@ -74,13 +74,16 @@ export function EsatMockTestsIntroBanner({
         className="relative mx-auto w-full max-w-[22rem] lg:mx-0 lg:max-w-none lg:min-h-full"
       >
         <div className="relative aspect-square w-full overflow-hidden bg-[#0A1628] lg:absolute lg:inset-0 lg:aspect-auto">
-          <Image
+          {/* Plain img: already-optimized webp; avoids unused next/image preloads after Start → solve. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src={SIMULATOR_STILL.src}
             alt={SIMULATOR_STILL.alt}
-            fill
-            priority
-            sizes="(max-width: 1024px) 22rem, 26rem"
-            className="object-cover object-[center_18%]"
+            width={SIMULATOR_STILL.width}
+            height={SIMULATOR_STILL.height}
+            decoding="async"
+            fetchPriority="high"
+            className="absolute inset-0 h-full w-full object-cover object-[center_18%]"
           />
           <p className="absolute bottom-0 left-0 right-0 bg-[#0A0F1D]/75 px-2.5 py-1.5 text-xs text-[#94A3B8]">
             Preview of the ESAT simulator
