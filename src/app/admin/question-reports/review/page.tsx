@@ -280,6 +280,15 @@ function AdminReportedQuestionsReviewPage() {
     setEditing(false);
   }, []);
 
+  const removeTicketFromQueue = useCallback((ticketId: string) => {
+    setItems((prev) => {
+      const next = prev.filter((item) => item.meta.ticketId !== ticketId);
+      setIndex((i) => Math.max(0, Math.min(i, Math.max(0, next.length - 1))));
+      return next;
+    });
+    setEditing(false);
+  }, []);
+
   const resolveTicket = async (ticketId: string) => {
     const res = await fetch("/api/admin/support", {
       method: "PATCH",
@@ -298,6 +307,31 @@ function AdminReportedQuestionsReviewPage() {
     }
     markTicketResolvedLocally(ticketId);
     requestAdminBadgesRefresh();
+  };
+
+  const markResolved = async () => {
+    if (!current) return;
+    const ticketId = current.meta.ticketId;
+    if (current.meta.ticketStatus === "resolved") {
+      setActionMsg("Ticket is already resolved.");
+      return;
+    }
+    setBusy("resolve");
+    setActionMsg(null);
+    try {
+      await resolveTicket(ticketId);
+      if (statusFilter === "open") {
+        removeTicketFromQueue(ticketId);
+        setActionMsg("Marked resolved.");
+      } else {
+        setActionMsg("Marked resolved.");
+      }
+      pushToast("Resolved", "ok");
+    } catch (err) {
+      setActionMsg(err instanceof Error ? err.message : "Resolve failed");
+    } finally {
+      setBusy(null);
+    }
   };
 
   const sendThankYou = async () => {
@@ -607,6 +641,20 @@ function AdminReportedQuestionsReviewPage() {
               className="eup-footer-action text-sm font-semibold text-red-700 dark:text-red-300 disabled:opacity-50"
             >
               {busy === "delete" ? "Deleting…" : "Delete"}
+            </button>
+            <button
+              type="button"
+              disabled={
+                Boolean(busy) || current.meta.ticketStatus === "resolved"
+              }
+              onClick={() => void markResolved()}
+              className="eup-footer-action text-sm font-semibold disabled:opacity-50"
+            >
+              {busy === "resolve"
+                ? "Resolving…"
+                : current.meta.ticketStatus === "resolved"
+                  ? "Resolved"
+                  : "Mark resolved"}
             </button>
             <button
               type="button"
