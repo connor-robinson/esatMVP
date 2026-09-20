@@ -1,0 +1,749 @@
+/**
+ * Build ESAT Chemistry gap-fill source JSON from the reviewed 30-question pack.
+ * Run: npx tsx scripts/build-chem-gap-fill-30-json.ts
+ */
+import fs from "node:fs";
+import path from "node:path";
+
+const ROOT = path.join(__dirname, "..");
+const OUT = path.join(ROOT, "tmp_chem_gap_fill_30", "questions.json");
+
+const MULTI = {
+  A: "none of them",
+  B: "1 only",
+  C: "2 only",
+  D: "3 only",
+  E: "1 and 2 only",
+  F: "1 and 3 only",
+  G: "2 and 3 only",
+  H: "1, 2 and 3",
+};
+
+type Q = {
+  id: string;
+  number: number;
+  topic: string;
+  area: string;
+  spec: string;
+  difficulty: "Easy" | "Medium" | "Hard";
+  estimated_time_seconds: number;
+  stem: string;
+  options: string[];
+  answer: string;
+  solution: string;
+  diagram: string | null;
+  table: { headers: string[]; rows: string[][] } | null;
+};
+
+function multiOptions(): string[] {
+  return Object.values(MULTI);
+}
+
+const questions: Q[] = [
+  {
+    id: "GF01",
+    number: 1,
+    topic: "Composition of air / reacting oxygen with copper",
+    area: "C17",
+    spec: "chemistry-C17",
+    difficulty: "Easy",
+    estimated_time_seconds: 70,
+    stem:
+      "A $200\\text{ cm}^3$ sample of dry air is passed repeatedly over excess heated copper until no further reaction occurs. Assume dry air contains $20.95\\%$ oxygen by volume and that only oxygen reacts with the copper.\n\nWhat volume of gas remains, measured under the same conditions?",
+    options: [
+      "$42.0\\text{ cm}^3$",
+      "$158\\text{ cm}^3$",
+      "$160\\text{ cm}^3$",
+      "$179\\text{ cm}^3$",
+      "$200\\text{ cm}^3$",
+    ],
+    answer: "B",
+    solution:
+      "Oxygen occupies $0.2095 \\times 200 = 41.9\\text{ cm}^3$, so $200 - 41.9 = 158.1\\text{ cm}^3$ remains. The closest option is $158\\text{ cm}^3$.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF02",
+    number: 2,
+    topic: "Fractional distillation of liquefied air",
+    area: "C17",
+    spec: "chemistry-C17",
+    difficulty: "Easy",
+    estimated_time_seconds: 70,
+    stem:
+      "After water vapour and carbon dioxide have been removed, liquefied air contains mainly nitrogen, argon and oxygen. Their boiling points are shown.\n\nAs the liquid is warmed slowly, in which order are the gases collected first to last?",
+    options: [
+      "oxygen, argon, nitrogen",
+      "nitrogen, oxygen, argon",
+      "nitrogen, argon, oxygen",
+      "argon, nitrogen, oxygen",
+      "argon, oxygen, nitrogen",
+    ],
+    answer: "C",
+    solution:
+      "The component with the lowest boiling point vaporises first: nitrogen ($-196\\,^\\circ\\text{C}$), then argon ($-186\\,^\\circ\\text{C}$), then oxygen ($-183\\,^\\circ\\text{C}$).",
+    diagram: null,
+    table: {
+      headers: ["gas", "boiling point / $^\\circ\\text{C}$"],
+      rows: [
+        ["nitrogen", "$-196$"],
+        ["argon", "$-186$"],
+        ["oxygen", "$-183$"],
+      ],
+    },
+  },
+  {
+    id: "GF03",
+    number: 3,
+    topic: "Greenhouse gases",
+    area: "C17",
+    spec: "chemistry-C17",
+    difficulty: "Easy",
+    estimated_time_seconds: 75,
+    stem:
+      "Which of the following statements about greenhouse gases is/are correct?\n\n1. Methane can be released by the decomposition of organic waste in landfill sites.\n2. Greenhouse gases mainly cool the Earth by reflecting incoming visible light back into space.\n3. Burning fossil fuels can increase atmospheric carbon dioxide and strengthen the greenhouse effect.",
+    options: multiOptions(),
+    answer: "F",
+    solution:
+      "Statements 1 and 3 are correct. Greenhouse warming is associated with reduced loss of infrared radiation, not mainly reflection of visible light, so statement 2 is incorrect.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF04",
+    number: 4,
+    topic: "Air pollutants from combustion",
+    area: "C17",
+    spec: "chemistry-C17",
+    difficulty: "Medium",
+    estimated_time_seconds: 80,
+    stem:
+      "Pollutant P is formed when a carbon-containing fuel burns with insufficient oxygen. Pollutant Q can form inside a hot car engine when nitrogen and oxygen from the air react.\n\nWhich pair correctly identifies P and Q?",
+    options: [
+      "P: carbon monoxide; Q: nitrogen oxides",
+      "P: carbon dioxide; Q: sulfur dioxide",
+      "P: sulfur dioxide; Q: carbon monoxide",
+      "P: nitrogen oxides; Q: carbon dioxide",
+      "P: methane; Q: carbon monoxide",
+    ],
+    answer: "A",
+    solution:
+      "Incomplete combustion can form carbon monoxide. High engine temperatures can produce nitrogen oxides from nitrogen and oxygen in air.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF05",
+    number: 5,
+    topic: "Sulfur dioxide and acid rain",
+    area: "C17",
+    spec: "chemistry-C17",
+    difficulty: "Easy",
+    estimated_time_seconds: 65,
+    stem:
+      "A power station burns a fuel containing a small amount of sulfur. Which pollutant-effect pair is most directly associated with the sulfur impurity?",
+    options: [
+      "carbon monoxide - reduced oxygen transport in blood",
+      "carbon dioxide - ozone depletion",
+      "sulfur dioxide - acidification of lakes and soils",
+      "nitrogen - global warming",
+      "methane - acid rain",
+    ],
+    answer: "C",
+    solution:
+      "Sulfur in the fuel can form $\\ce{SO2}$ on combustion; $\\ce{SO2}$ contributes to acid rain and environmental acidification.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF06",
+    number: 6,
+    topic: "Drinking-water treatment",
+    area: "C17",
+    spec: "chemistry-C17",
+    difficulty: "Easy",
+    estimated_time_seconds: 70,
+    stem:
+      "Which of the following statements about drinking-water treatment is/are correct?\n\n1. Chlorine is used to reduce the number of harmful microorganisms.\n2. Fluoride ions may be added to help reduce tooth decay.\n3. Chlorine is added mainly to remove dissolved salts from the water.",
+    options: multiOptions(),
+    answer: "E",
+    solution:
+      "Statements 1 and 2 are correct. Chlorination is for disinfection, not desalination, so statement 3 is incorrect.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF07",
+    number: 7,
+    topic: "Particle diagram of a liquid",
+    area: "C15",
+    spec: "chemistry-C15",
+    difficulty: "Easy",
+    estimated_time_seconds: 55,
+    stem:
+      "Which particle diagram best represents a liquid? The particles are shown at one instant and are not drawn to scale.",
+    options: ["A", "B", "C", "D"],
+    answer: "B",
+    solution:
+      "A liquid has particles close together but in a disordered arrangement, able to move past one another. Diagram B matches this.",
+    diagram: "q07_particle_states.svg",
+    table: null,
+  },
+  {
+    id: "GF08",
+    number: 8,
+    topic: "Particle changes on melting",
+    area: "C15",
+    spec: "chemistry-C15",
+    difficulty: "Easy",
+    estimated_time_seconds: 70,
+    stem:
+      "A pure solid is heated until it melts completely. Which of the following statements about its particles during melting is/are correct?\n\n1. The particles remain particles of the same substance.\n2. Their arrangement becomes less ordered and they become able to move past one another.\n3. They become widely separated from one another as in a gas.",
+    options: multiOptions(),
+    answer: "E",
+    solution:
+      "Melting changes particle arrangement and freedom of movement, not chemical identity. Particles in a liquid remain close together, so statement 3 is incorrect.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF09",
+    number: 9,
+    topic: "Constant temperature while boiling",
+    area: "C15",
+    spec: "chemistry-C15",
+    difficulty: "Easy",
+    estimated_time_seconds: 65,
+    stem:
+      "A pure liquid is boiling at its normal boiling point while energy is supplied continuously. Why can the temperature remain constant while boiling continues?",
+    options: [
+      "The particles stop moving while bonds are broken.",
+      "The supplied energy is destroyed as the gas forms.",
+      "The supplied energy is used to overcome attractions between particles as they separate.",
+      "The particles lose kinetic energy as the liquid boils.",
+      "The mass of each particle decreases during boiling.",
+    ],
+    answer: "C",
+    solution:
+      "During a change of state, energy is used to overcome attractive forces and change particle arrangement rather than raise the temperature.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF10",
+    number: 10,
+    topic: "Condensation and energy transfer",
+    area: "C15",
+    spec: "chemistry-C15",
+    difficulty: "Easy",
+    estimated_time_seconds: 65,
+    stem:
+      "Water vapour condenses on a cold surface. Which description is correct?",
+    options: [
+      "The particles become farther apart and energy is absorbed from the surroundings.",
+      "The particles become closer together and energy is transferred to the surroundings.",
+      "The particles become fixed in a regular lattice immediately and energy is absorbed.",
+      "The particles change into different molecules and energy is released.",
+      "The particles remain equally spaced but move faster.",
+    ],
+    answer: "B",
+    solution:
+      "Condensation changes gas to liquid: particles become closer and less free to move, and energy is released to the surroundings.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF11",
+    number: 11,
+    topic: "Gas identification tests",
+    area: "C16",
+    spec: "chemistry-C16",
+    difficulty: "Easy",
+    estimated_time_seconds: 60,
+    stem:
+      "Four gases W, X, Y and Z give the observations shown. Which row correctly identifies all four gases?",
+    options: [
+      "$\\ce{W = H2}$, $\\ce{X = O2}$, $\\ce{Y = CO2}$, $\\ce{Z = Cl2}$",
+      "$\\ce{W = O2}$, $\\ce{X = H2}$, $\\ce{Y = Cl2}$, $\\ce{Z = CO2}$",
+      "$\\ce{W = H2}$, $\\ce{X = CO2}$, $\\ce{Y = O2}$, $\\ce{Z = Cl2}$",
+      "$\\ce{W = CO2}$, $\\ce{X = O2}$, $\\ce{Y = H2}$, $\\ce{Z = Cl2}$",
+      "$\\ce{W = Cl2}$, $\\ce{X = H2}$, $\\ce{Y = CO2}$, $\\ce{Z = O2}$",
+    ],
+    answer: "A",
+    solution:
+      "A burning splint gives a squeaky pop with $\\ce{H2}$; a glowing splint relights in $\\ce{O2}$; limewater turns cloudy with $\\ce{CO2}$; damp blue litmus turns red then bleaches with $\\ce{Cl2}$.",
+    diagram: null,
+    table: {
+      headers: ["gas", "observation"],
+      rows: [
+        ["W", "burning splint gives a squeaky pop"],
+        ["X", "relights a glowing splint"],
+        ["Y", "turns limewater cloudy"],
+        ["Z", "damp blue litmus turns red and is then bleached"],
+      ],
+    },
+  },
+  {
+    id: "GF12",
+    number: 12,
+    topic: "Flame test and halide test",
+    area: "C16",
+    spec: "chemistry-C16",
+    difficulty: "Easy",
+    estimated_time_seconds: 70,
+    stem:
+      "An aqueous solution gives a lilac flame. After acidification with dilute nitric acid, aqueous silver nitrate gives a cream precipitate. Which compound could be present?",
+    options: [
+      "$\\ce{LiCl}$",
+      "$\\ce{NaBr}$",
+      "$\\ce{KCl}$",
+      "$\\ce{KBr}$",
+      "$\\ce{CaI2}$",
+      "$\\ce{CuBr2}$",
+    ],
+    answer: "D",
+    solution:
+      "A lilac flame indicates $\\ce{K+}$; a cream silver halide precipitate indicates $\\ce{Br-}$, so $\\ce{KBr}$ fits both tests.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF13",
+    number: 13,
+    topic: "Cation and sulfate tests",
+    area: "C16",
+    spec: "chemistry-C16",
+    difficulty: "Easy",
+    estimated_time_seconds: 75,
+    stem:
+      "An aqueous solution gives a green precipitate when aqueous sodium hydroxide is added. A separate sample gives a white precipitate when aqueous barium chloride is added in the presence of dilute hydrochloric acid. Which salt could the solution contain?",
+    options: [
+      "$\\ce{FeSO4}$",
+      "$\\ce{FeCl2}$",
+      "$\\ce{CuSO4}$",
+      "$\\ce{Fe2(SO4)3}$",
+      "$\\ce{MgSO4}$",
+      "$\\ce{CaCl2}$",
+    ],
+    answer: "A",
+    solution:
+      "A green precipitate with $\\ce{NaOH}$ identifies $\\ce{Fe^{2+}}$, while the acidified barium test identifies sulfate, giving $\\ce{FeSO4}$.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF14",
+    number: 14,
+    topic: "Flame and chloride tests",
+    area: "C16",
+    spec: "chemistry-C16",
+    difficulty: "Easy",
+    estimated_time_seconds: 70,
+    stem:
+      "A salt solution gives a green flame. After acidification with dilute nitric acid, aqueous silver nitrate produces a white precipitate. Which salt is consistent with both observations?",
+    options: [
+      "$\\ce{NaCl}$",
+      "$\\ce{KCl}$",
+      "$\\ce{CuCl2}$",
+      "$\\ce{CuBr2}$",
+      "$\\ce{CaCl2}$",
+      "$\\ce{LiBr}$",
+    ],
+    answer: "C",
+    solution:
+      "A green flame identifies $\\ce{Cu^{2+}}$ and a white silver halide precipitate identifies chloride, so $\\ce{CuCl2}$ is consistent.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF15",
+    number: 15,
+    topic: "Test for water",
+    area: "C16",
+    spec: "chemistry-C16",
+    difficulty: "Easy",
+    estimated_time_seconds: 55,
+    stem:
+      "A colourless liquid turns anhydrous copper(II) sulfate from white to blue. Which conclusion is justified by this observation alone?",
+    options: [
+      "The liquid is pure water.",
+      "The liquid contains water.",
+      "The liquid contains no dissolved substances.",
+      "The liquid has pH 7.",
+      "The liquid boils at exactly $100\\,^\\circ\\text{C}$.",
+    ],
+    answer: "B",
+    solution:
+      "The test confirms the presence of water, but it does not establish purity, pH or boiling point.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF16",
+    number: 16,
+    topic: "Metal properties for cables",
+    area: "C14",
+    spec: "chemistry-C14",
+    difficulty: "Medium",
+    estimated_time_seconds: 85,
+    stem:
+      "Four metals are being considered for an overhead electrical cable. The cable must have the lowest possible mass while still having at least good electrical conductivity and good corrosion resistance. Which metal is most suitable based only on the data shown?",
+    options: ["P", "Q", "R", "S", "There is not enough information"],
+    answer: "A",
+    solution:
+      "For an overhead cable, low mass is important while good conductivity and corrosion resistance are also needed. Metal P best combines these properties.",
+    diagram: null,
+    table: {
+      headers: [
+        "metal",
+        "density / $\\text{g cm}^{-3}$",
+        "electrical conductivity",
+        "corrosion resistance",
+      ],
+      rows: [
+        ["P", "2.7", "good", "good"],
+        ["Q", "8.9", "excellent", "good"],
+        ["R", "7.9", "moderate", "poor"],
+        ["S", "4.5", "poor", "excellent"],
+      ],
+    },
+  },
+  {
+    id: "GF17",
+    number: 17,
+    topic: "Alloy vs pure metal properties",
+    area: "C14",
+    spec: "chemistry-C14",
+    difficulty: "Easy",
+    estimated_time_seconds: 70,
+    stem:
+      "A pure metal and an alloy made from it have the properties shown. Which statement is best supported by the data?",
+    options: [
+      "The alloy is weaker and more ductile than the pure metal.",
+      "The alloy is stronger and less ductile than the pure metal.",
+      "The alloy must conduct electricity better than the pure metal.",
+      "The alloy must have a lower density than the pure metal.",
+      "The two materials have identical mechanical properties.",
+    ],
+    answer: "B",
+    solution:
+      "The alloy has a much greater tensile strength but a smaller extension before breaking, so it is stronger and less ductile.",
+    diagram: null,
+    table: {
+      headers: [
+        "material",
+        "tensile strength / MPa",
+        "percentage extension before breaking",
+      ],
+      rows: [
+        ["pure metal", "210", "42"],
+        ["alloy", "510", "13"],
+      ],
+    },
+  },
+  {
+    id: "GF18",
+    number: 18,
+    topic: "Transition metal properties",
+    area: "C14",
+    spec: "chemistry-C14",
+    difficulty: "Easy",
+    estimated_time_seconds: 60,
+    stem:
+      "Which of the following are common properties of transition metals?\n\n1. They can form stable ions in different oxidation states.\n2. Their compounds are often coloured.\n3. They or their compounds are often used as catalysts.",
+    options: multiOptions(),
+    answer: "H",
+    solution:
+      "All three are specified common properties of transition metals.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF19",
+    number: 19,
+    topic: "Metal extraction and reactivity",
+    area: "C14",
+    spec: "chemistry-C14",
+    difficulty: "Easy",
+    estimated_time_seconds: 75,
+    stem:
+      "Metal P can be extracted from its oxide by heating the oxide with carbon. Metal Q is extracted by electrolysis of a molten compound. Which statements are consistent with this information?\n\n1. Q is more reactive than P.\n2. Formation of Q metal at the cathode is a reduction process.\n3. When carbon removes oxygen from the oxide of P, the oxide of P is reduced.",
+    options: multiOptions(),
+    answer: "H",
+    solution:
+      "All three are consistent with the reactivity/extraction model: highly reactive metals require electrolysis, and metal extraction involves reduction.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF20",
+    number: 20,
+    topic: "Cracking and alkene test",
+    area: "C13",
+    spec: "chemistry-C13",
+    difficulty: "Easy",
+    estimated_time_seconds: 75,
+    stem:
+      "A long-chain alkane is cracked according to the incomplete equation:\n\n$$\\ce{C12H26 -> C7H16 + X}$$\n\nWhich option correctly gives X and one expected property of X?",
+    options: [
+      "$\\ce{C5H10}$; decolourises bromine water",
+      "$\\ce{C5H12}$; decolourises bromine water",
+      "$\\ce{C5H10}$; does not react with bromine water",
+      "$\\ce{C5H12}$; is an alkene",
+      "$\\ce{C6H12}$; decolourises bromine water",
+    ],
+    answer: "A",
+    solution:
+      "Balancing atoms gives $\\ce{C5H10}$, an alkene, so it decolourises bromine water.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF21",
+    number: 21,
+    topic: "Structural isomerism",
+    area: "C13",
+    spec: "chemistry-C13",
+    difficulty: "Easy",
+    estimated_time_seconds: 65,
+    stem:
+      "Compound P has condensed structural formula $\\ce{CH3CH2CH2CH3}$. Compound Q has condensed structural formula $\\ce{CH3CH(CH3)CH3}$.\n\nWhich statement is correct?",
+    options: [
+      "P and Q have different molecular formulae.",
+      "P and Q are structural isomers.",
+      "P is an alkane but Q is an alkene.",
+      "P and Q differ only in the positions of their hydrogen atoms in space.",
+      "P and Q must have identical physical properties.",
+    ],
+    answer: "B",
+    solution:
+      "Both have molecular formula $\\ce{C4H10}$ but different atom connectivity, so they are structural isomers.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF22",
+    number: 22,
+    topic: "Polyester repeating unit",
+    area: "C13",
+    spec: "chemistry-C13",
+    difficulty: "Hard",
+    estimated_time_seconds: 100,
+    stem:
+      "Propane-1,3-diol, $\\ce{HOCH2CH2CH2OH}$, reacts with butanedioic acid, $\\ce{HOOCCH2CH2COOH}$, to form a polyester.\n\nWhich expression represents a repeating unit of the polyester?",
+    options: [
+      "$[\\ce{-OCH2CH2CH2OCOCH2CH2CO-}]_n$",
+      "$[\\ce{-CH2CH2CH2COOCH2CH2COO-}]_n$",
+      "$[\\ce{-NHCH2CH2CH2NHCOCH2CH2CO-}]_n$",
+      "$[\\ce{-OCH2CH2CH2OCH2CH2CH2O-}]_n$",
+      "$[\\ce{-CH2CH2CH2CH2CH2CH2-}]_n$",
+    ],
+    answer: "A",
+    solution:
+      "A diol plus a dicarboxylic acid forms ester links, giving $-\\ce{O}-$(diol residue)$-\\ce{OCO}-$(diacid residue)$-\\ce{CO}-$.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF23",
+    number: 23,
+    topic: "Polyamide linkage and elimination",
+    area: "C13",
+    spec: "chemistry-C13",
+    difficulty: "Medium",
+    estimated_time_seconds: 80,
+    stem:
+      "A diamine, $\\ce{H2N(CH2)4NH2}$, reacts with a dicarboxylic acid, $\\ce{HOOC(CH2)2COOH}$, to form a polymer.\n\nWhich pair correctly identifies the linkage formed in the polymer and the small molecule eliminated during polymerisation?",
+    options: [
+      "$-\\ce{COO}-$ and $\\ce{H2}$",
+      "$-\\ce{CONH}-$ and $\\ce{H2O}$",
+      "$-\\ce{C=C}-$ and $\\ce{H2O}$",
+      "$-\\ce{CONH}-$ and $\\ce{CO2}$",
+      "$-\\ce{O-O}-$ and $\\ce{H2}$",
+    ],
+    answer: "B",
+    solution:
+      "A diamine and dicarboxylic acid form a polyamide with $-\\ce{CONH}-$ links by condensation, eliminating water.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF24",
+    number: 24,
+    topic: "Avogadro and atoms in O2",
+    area: "C4",
+    spec: "chemistry-C4",
+    difficulty: "Easy",
+    estimated_time_seconds: 70,
+    stem:
+      "Avogadro's number is $6.0 \\times 10^{23}\\text{ mol}^{-1}$. How many oxygen atoms are present in $0.25\\text{ mol}$ of $\\ce{O2}$ molecules?",
+    options: [
+      "$1.5 \\times 10^{23}$",
+      "$3.0 \\times 10^{23}$",
+      "$6.0 \\times 10^{23}$",
+      "$1.2 \\times 10^{24}$",
+      "$2.4 \\times 10^{24}$",
+    ],
+    answer: "B",
+    solution:
+      "$0.25\\text{ mol}$ $\\ce{O2}$ contains $0.50\\text{ mol}$ O atoms, so the number of atoms is $0.50 \\times 6.0 \\times 10^{23} = 3.0 \\times 10^{23}$.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF25",
+    number: 25,
+    topic: "Solubility and crystallisation",
+    area: "C4",
+    spec: "chemistry-C4",
+    difficulty: "Medium",
+    estimated_time_seconds: 90,
+    stem:
+      "The solubility of solid X in water is shown. A saturated solution is prepared using $50\\text{ g}$ of water at $60\\,^\\circ\\text{C}$ and is then cooled to $20\\,^\\circ\\text{C}$. Assume no water evaporates.\n\nWhat mass of X crystallises?",
+    options: [
+      "$10\\text{ g}$",
+      "$15\\text{ g}$",
+      "$20\\text{ g}$",
+      "$25\\text{ g}$",
+      "$40\\text{ g}$",
+    ],
+    answer: "D",
+    solution:
+      "At $60\\,^\\circ\\text{C}$, $50\\text{ g}$ water dissolves $40\\text{ g}$ X. At $20\\,^\\circ\\text{C}$ it can retain $15\\text{ g}$, so $25\\text{ g}$ crystallises.",
+    diagram: null,
+    table: {
+      headers: [
+        "temperature / $^\\circ\\text{C}$",
+        "solubility of X / g per $100\\text{ g}$ water",
+      ],
+      rows: [
+        ["20", "30"],
+        ["60", "80"],
+      ],
+    },
+  },
+  {
+    id: "GF26",
+    number: 26,
+    topic: "Percentage yield",
+    area: "C4",
+    spec: "chemistry-C4",
+    difficulty: "Medium",
+    estimated_time_seconds: 85,
+    stem:
+      "Calcium carbonate decomposes according to $\\ce{CaCO3(s) -> CaO(s) + CO2(g)}$. A student heats $0.100\\text{ mol}$ of $\\ce{CaCO3}$ and obtains $4.20\\text{ g}$ of $\\ce{CaO}$. The relative formula mass of $\\ce{CaO}$ is $56.0$.\n\nWhat is the percentage yield of $\\ce{CaO}$?",
+    options: ["$60\\%$", "$70\\%$", "$75\\%$", "$80\\%$", "$90\\%$"],
+    answer: "C",
+    solution:
+      "The predicted mass is $0.100 \\times 56.0 = 5.60\\text{ g}$. Percentage yield $= \\dfrac{4.20}{5.60} \\times 100 = 75\\%$.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF27",
+    number: 27,
+    topic: "Filtration and crystallisation",
+    area: "C8",
+    spec: "chemistry-C8",
+    difficulty: "Easy",
+    estimated_time_seconds: 65,
+    stem:
+      "A dry mixture contains sand and copper(II) sulfate crystals. Which sequence would allow a student to obtain both the sand and pure copper(II) sulfate crystals?",
+    options: [
+      "Add water, filter, then crystallise the filtrate.",
+      "Heat strongly, then use a separating funnel.",
+      "Add water, evaporate the whole mixture to dryness, then filter.",
+      "Use fractional distillation, then centrifuge the residue.",
+      "Filter the dry mixture, then add water to the residue.",
+    ],
+    answer: "A",
+    solution:
+      "Copper(II) sulfate dissolves in water but sand does not. Filtration separates sand; crystallisation recovers the dissolved salt.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF28",
+    number: 28,
+    topic: "Filtration then fractional distillation",
+    area: "C8",
+    spec: "chemistry-C8",
+    difficulty: "Medium",
+    estimated_time_seconds: 80,
+    stem:
+      "A mixture contains an insoluble solid and two miscible liquids with boiling points $70\\,^\\circ\\text{C}$ and $120\\,^\\circ\\text{C}$. Which procedure is most suitable for obtaining a pure sample of the $70\\,^\\circ\\text{C}$ liquid?",
+    options: [
+      "Fractional distillation only",
+      "Filtration followed by fractional distillation",
+      "Separating funnel followed by evaporation",
+      "Centrifugation followed by crystallisation",
+      "Filtration followed by a separating funnel",
+    ],
+    answer: "B",
+    solution:
+      "First remove the insoluble solid by filtration, then separate the two miscible liquids by fractional distillation.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF29",
+    number: 29,
+    topic: "Noble gas unreactivity",
+    area: "C7",
+    spec: "chemistry-C7",
+    difficulty: "Easy",
+    estimated_time_seconds: 50,
+    stem:
+      "Argon is used to provide a protective atmosphere around some hot metals during welding. Which property of argon is most important for this use?",
+    options: [
+      "It is very reactive with metals.",
+      "It is chemically very unreactive.",
+      "It is a strong oxidising agent.",
+      "It has a very high melting point.",
+      "It forms acidic oxides readily.",
+    ],
+    answer: "B",
+    solution:
+      "Argon is a noble gas and is very unreactive, so it can protect hot metal from reaction with the surrounding air.",
+    diagram: null,
+    table: null,
+  },
+  {
+    id: "GF30",
+    number: 30,
+    topic: "Electroplating with silver",
+    area: "C12",
+    spec: "chemistry-C12",
+    difficulty: "Medium",
+    estimated_time_seconds: 85,
+    stem:
+      "The apparatus is used to coat a metal spoon with silver. Which of the following statements is/are correct?\n\n1. The spoon should be connected to the negative terminal so that $\\ce{Ag+}$ ions are reduced on its surface.\n2. A silver anode can replace $\\ce{Ag+}$ ions removed from the electrolyte during plating.\n3. Alternating current is preferred because regularly reversing the electrode polarity increases the thickness of the coating.",
+    options: multiOptions(),
+    answer: "E",
+    solution:
+      "The object being plated is the cathode; a silver anode can replenish $\\ce{Ag+}$. Direct current is required so the electrode roles do not keep reversing, so statement 3 is incorrect.",
+    diagram: null,
+    table: null,
+  },
+];
+
+if (questions.length !== 30) {
+  throw new Error(`Expected 30 questions, got ${questions.length}`);
+}
+
+fs.mkdirSync(path.dirname(OUT), { recursive: true });
+fs.writeFileSync(
+  OUT,
+  JSON.stringify(
+    {
+      source: "ESAT_Chemistry_Gap_Fill_30_Questions.pdf",
+      createdAt: new Date().toISOString(),
+      questions,
+    },
+    null,
+    2,
+  ),
+  "utf8",
+);
+console.log(`Wrote ${questions.length} questions to ${OUT}`);
