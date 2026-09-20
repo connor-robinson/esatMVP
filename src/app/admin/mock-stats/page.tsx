@@ -238,8 +238,8 @@ export default function AdminMockStatsPage() {
         <div>
           <h1 className="text-2xl font-bold text-text">ESAT mock stats</h1>
           <p className="mt-2 text-sm text-text-muted">
-            Sitting volume, subject mix, predicted marks, and hardest mock
-            questions. Operator and admin accounts are excluded.{" "}
+            Sitting volume, PDF downloads, subject mix, predicted marks, and
+            hardest mock questions. Operator and admin accounts are excluded.{" "}
             <Link
               href="/admin/mock-builder"
               className="underline-offset-2 hover:underline"
@@ -344,6 +344,22 @@ export default function AdminMockStatsPage() {
                 label="Answered attempts"
                 value={stats.summary.answered_attempts}
               />
+              <Stat
+                label="PDF downloads"
+                value={stats.summary.pdf_downloads ?? 0}
+              />
+              <Stat
+                label="Paper PDFs"
+                value={stats.summary.pdf_paper_downloads ?? 0}
+              />
+              <Stat
+                label="Answer PDFs"
+                value={stats.summary.pdf_answer_downloads ?? 0}
+              />
+              <Stat
+                label="Download users"
+                value={stats.summary.pdf_download_users ?? 0}
+              />
             </div>
             {stats.generated_at ? (
               <p className="mt-3 text-xs text-text-subtle">
@@ -356,6 +372,120 @@ export default function AdminMockStatsPage() {
                 {stats.summary.wrong_attempts} wrong attempts
               </p>
             ) : null}
+          </section>
+
+          <section>
+            <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-text-muted">
+              PDF downloads
+            </h2>
+            <p className="mt-2 text-xs text-text-subtle">
+              Paper and answer-key clicks from /esat-mock-tests and the past
+              papers roadmap. Guest downloads count toward totals but not unique
+              users.
+            </p>
+            <div className="mt-4 grid gap-4 lg:grid-cols-2">
+              <div className="min-w-0 overflow-x-auto rounded-organic-xl bg-surface-elevated">
+                <table className="w-full min-w-[360px] text-left text-sm">
+                  <thead className="text-xs uppercase tracking-wide text-text-muted">
+                    <tr>
+                      <th className="px-4 py-3 font-medium">Mock</th>
+                      <th className="px-4 py-3 font-medium">Paper</th>
+                      <th className="px-4 py-3 font-medium">Answers</th>
+                      <th className="px-4 py-3 font-medium">Total</th>
+                      <th className="px-4 py-3 font-medium">Users</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(stats.downloadsByMock ?? []).map((row) => (
+                      <tr
+                        key={row.mock_number}
+                        className="border-t border-border-subtle"
+                      >
+                        <td className="px-4 py-2.5 text-text">
+                          {row.mock_label}
+                        </td>
+                        <td className="px-4 py-2.5 tabular-nums text-text">
+                          {row.paper_downloads}
+                        </td>
+                        <td className="px-4 py-2.5 tabular-nums text-text-muted">
+                          {row.answer_downloads}
+                        </td>
+                        <td className="px-4 py-2.5 tabular-nums text-text">
+                          {row.total_downloads}
+                        </td>
+                        <td className="px-4 py-2.5 tabular-nums text-text-muted">
+                          {row.users}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="min-w-0 overflow-x-auto rounded-organic-xl bg-surface-elevated">
+                <table className="w-full min-w-[360px] text-left text-sm">
+                  <thead className="text-xs uppercase tracking-wide text-text-muted">
+                    <tr>
+                      <th className="px-4 py-3 font-medium">Module</th>
+                      <th className="px-4 py-3 font-medium">Paper</th>
+                      <th className="px-4 py-3 font-medium">Answers</th>
+                      <th className="px-4 py-3 font-medium">Total</th>
+                      <th className="px-4 py-3 font-medium">Users</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(stats.downloadsByModule ?? []).map((row) => (
+                      <tr
+                        key={row.module_id}
+                        className="border-t border-border-subtle"
+                      >
+                        <td className="px-4 py-2.5 text-text">{row.label}</td>
+                        <td className="px-4 py-2.5 tabular-nums text-text">
+                          {row.paper_downloads}
+                        </td>
+                        <td className="px-4 py-2.5 tabular-nums text-text-muted">
+                          {row.answer_downloads}
+                        </td>
+                        <td className="px-4 py-2.5 tabular-nums text-text">
+                          {row.total_downloads}
+                        </td>
+                        <td className="px-4 py-2.5 tabular-nums text-text-muted">
+                          {row.users}
+                        </td>
+                      </tr>
+                    ))}
+                    {(stats.downloadsByModule ?? []).length === 0 ? (
+                      <tr className="border-t border-border-subtle">
+                        <td
+                          colSpan={5}
+                          className="px-4 py-3 text-sm text-text-muted"
+                        >
+                          No mock PDF downloads yet.
+                        </td>
+                      </tr>
+                    ) : null}
+                  </tbody>
+                </table>
+                <div className="border-t border-border-subtle px-4 py-3">
+                  <p className="text-xs uppercase tracking-wide text-text-muted">
+                    By source
+                  </p>
+                  <ul className="mt-2 space-y-1.5 text-sm">
+                    {(stats.downloadsBySource ?? []).map((row) => (
+                      <li
+                        key={row.source}
+                        className="flex items-center justify-between gap-3"
+                      >
+                        <span className="text-text">{row.label}</span>
+                        <span className="tabular-nums text-text-muted">
+                          {row.downloads} · {row.users} users
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
           </section>
 
           <section>

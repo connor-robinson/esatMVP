@@ -26,6 +26,7 @@ import {
   getRoadmapStageAllAnswersUrls,
   getRoadmapStageAllPaperUrls,
 } from "@/lib/papers/roadmapDownloads";
+import { downloadAndTrackMockPdfs } from "@/lib/downloads/mockPdfDownload";
 import {
   averageScoreForStage,
   formatNumericScore,
@@ -143,6 +144,27 @@ function commentaryForStage(
     return null;
   }
   return getStageCommentary(stage.id);
+}
+
+function downloadStagePdfs(
+  stage: RoadmapStage,
+  urls: string[],
+  asset: "paper" | "answers",
+) {
+  if (urls.length === 0) return;
+  if (isEsatCampMockRoadmapStage(stage)) {
+    const parsed =
+      parseAdminMockPaperName(stage.label) ??
+      Number(stage.id.replace("esat-camp-full-mock-", ""));
+    downloadAndTrackMockPdfs(urls, {
+      asset,
+      source: "roadmap",
+      moduleId: "full",
+      mockNumber: Number.isFinite(parsed) ? parsed : null,
+    });
+    return;
+  }
+  downloadAllUrls(urls);
 }
 
 function CompactBtn({
@@ -340,7 +362,9 @@ function SectionsExpandRows({
                 tone="slate"
                 disabled={!links?.paperUrl}
                 onClick={() => {
-                  if (links?.paperUrl) downloadAllUrls([links.paperUrl]);
+                  if (links?.paperUrl) {
+                    downloadStagePdfs(stage, [links.paperUrl], "paper");
+                  }
                 }}
                 className={ACTION_BTN}
               >
@@ -351,7 +375,9 @@ function SectionsExpandRows({
                 tone="slate"
                 disabled={!links?.answersUrl}
                 onClick={() => {
-                  if (links?.answersUrl) downloadAllUrls([links.answersUrl]);
+                  if (links?.answersUrl) {
+                    downloadStagePdfs(stage, [links.answersUrl], "answers");
+                  }
                 }}
                 className={ACTION_BTN}
               >
@@ -739,7 +765,9 @@ export function RoadmapTable({
                       <CompactBtn
                         tone="slate"
                         disabled={paperUrls.length === 0}
-                        onClick={() => downloadAllUrls(paperUrls)}
+                        onClick={() =>
+                          downloadStagePdfs(stage, paperUrls, "paper")
+                        }
                         className={ACTION_BTN}
                       >
                         Paper
@@ -748,7 +776,9 @@ export function RoadmapTable({
                       <CompactBtn
                         tone="slate"
                         disabled={answersUrls.length === 0}
-                        onClick={() => downloadAllUrls(answersUrls)}
+                        onClick={() =>
+                          downloadStagePdfs(stage, answersUrls, "answers")
+                        }
                         className={ACTION_BTN}
                       >
                         Answers

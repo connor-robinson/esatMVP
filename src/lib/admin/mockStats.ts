@@ -20,7 +20,11 @@ import {
   parseAdminMockPaperName,
   type AdminEsatMockSubject,
 } from "@/lib/papers/adminEsatMocks";
-import { mockLetterForNumber } from "@/lib/esatMockTests/catalog";
+import {
+  ESAT_MOCK_MODULES,
+  mockLetterForNumber,
+  type EsatMockModuleId,
+} from "@/lib/esatMockTests/catalog";
 import {
   inferMockEntrySource,
   PAPER_SESSION_ENTRY_SOURCE_LABELS,
@@ -94,6 +98,31 @@ export type MockSourceStat = {
   users: number;
 };
 
+export type MockDownloadByMock = {
+  mock_number: number;
+  mock_label: string;
+  paper_downloads: number;
+  answer_downloads: number;
+  total_downloads: number;
+  users: number;
+};
+
+export type MockDownloadByModule = {
+  module_id: string;
+  label: string;
+  paper_downloads: number;
+  answer_downloads: number;
+  total_downloads: number;
+  users: number;
+};
+
+export type MockDownloadBySource = {
+  source: string;
+  label: string;
+  downloads: number;
+  users: number;
+};
+
 export type MockStatsPayload = {
   since: string | null;
   generated_at: string;
@@ -113,12 +142,19 @@ export type MockStatsPayload = {
     unique_questions: number;
     correct_attempts: number;
     wrong_attempts: number;
+    pdf_downloads: number;
+    pdf_paper_downloads: number;
+    pdf_answer_downloads: number;
+    pdf_download_users: number;
   };
   bySource: MockSourceStat[];
   byMock: MockSittingStat[];
   bySubject: MockSubjectStat[];
   predictedBuckets: MockPredictedBucket[];
   mostWrong: MockWrongStat[];
+  downloadsByMock: MockDownloadByMock[];
+  downloadsByModule: MockDownloadByModule[];
+  downloadsBySource: MockDownloadBySource[];
 };
 
 type SessionRow = {
@@ -180,6 +216,217 @@ function isExcludedProfile(email: string | null, role: string | null): boolean {
   const lower = (email ?? "").toLowerCase();
   if (lower.includes("@seed.esatcamp.local")) return true;
   return EXCLUDED_EMAILS.has(lower);
+}
+
+type PdfDownloadRow = {
+  user_id: string | null;
+  asset: string;
+  module_id: string | null;
+  mock_number: number | null;
+  source: string;
+  created_at: string;
+};
+
+const DOWNLOAD_SOURCE_LABELS: Record<string, string> = {
+  esat_mock_tests: "/esat-mock-tests",
+  roadmap: "Past papers roadmap",
+  other: "Other",
+};
+
+function moduleDownloadLabel(moduleId: string | null): string {
+  if (!moduleId || moduleId === "full") return "Full sitting";
+  return (
+    ESAT_MOCK_MODULES.find((m) => m.id === (moduleId as EsatMockModuleId))
+      ?.label ?? moduleId
+  );
+}
+
+async function fetchMockPdfDownloads(
+  service: SupabaseClient,
+  since: string | null,
+): Promise<PdfDownloadRow[]> {
+  const pageSize = 1000;
+  const rows: PdfDownloadRow[] = [];
+  let from = 0;
+  for (;;) {
+    let query = service
+      .from("pdf_download_events")
+      .select("user_id, asset, module_id, mock_number, source, created_at")
+      .eq("category", "mock")
+      .order("created_at", { ascending: true })
+      .range(from, from + pageSize - 1);
+    if (since) query = query.gte("created_at", since);
+    const { data, error } = await query;
+    if (error) {
+      // Table may not exist yet on a stale deploy; treat as empty.
+      if (
+        error.message?.includes("pdf_download_events") ||
+        error.code === "42P01" ||
+        error.code === "PGRST205"
+      ) {
+        return [];
+      }
+      throw new Error(error.message);
+    }
+    const batch = (data ?? []) as PdfDownloadRow[];
+    rows.push(...batch);
+    if (batch.length < pageSize) break;
+    from += pageSize;
+  }
+  return rows;
+}
+
+function aggregateMockDownloads(
+  rows: PdfDownloadRow[],
+  excludedUserIds: Set<string>,
+): {
+  summary: {
+    pdf_downloads: number;
+    pdf_paper_downloads: number;
+    pdf_answer_downloads: number;
+    pdf_download_users: number;
+  };
+  downloadsByMock: MockDownloadByMock[];
+  downloadsByModule: MockDownloadByModule[];
+  downloadsBySource: MockDownloadBySource[];
+} {
+  const filtered = rows.filter(
+    (row) => !row.user_id || !excludedUserIds.has(row.user_id),
+  );
+
+  let paper = 0;
+  let answers = 0;
+  const allUsers = new Set<string>();
+
+  const byMockAcc = new Map<
+    number,
+    { paper: number; answers: number; users: Set<string> }
+  >();
+  const byModuleAcc = new Map<
+    string,
+    { paper: number; answers: number; users: Set<string> }
+  >();
+  const bySourceAcc = new Map<
+    string,
+    { downloads: number; users: Set<string> }
+  >();
+
+  for (const row of filtered) {
+    const isAnswers = row.asset === "answers";
+    if (isAnswers) answers += 1;
+    else paper += 1;
+    if (row.user_id) allUsers.add(row.user_id);
+
+    const mockNumber =
+      typeof row.mock_number === "number" &&
+      row.mock_number >= 1 &&
+      row.mock_number <= 5
+        ? row.mock_number
+        : null;
+    if (mockNumber != null) {
+      const acc = byMockAcc.get(mockNumber) ?? {
+        paper: 0,
+        answers: 0,
+        users: new Set<string>(),
+      };
+      if (isAnswers) acc.answers += 1;
+      else acc.paper += 1;
+      if (row.user_id) acc.users.add(row.user_id);
+      byMockAcc.set(mockNumber, acc);
+    }
+
+    const moduleKey = row.module_id?.trim() || "unknown";
+    const mod = byModuleAcc.get(moduleKey) ?? {
+      paper: 0,
+      answers: 0,
+      users: new Set<string>(),
+    };
+    if (isAnswers) mod.answers += 1;
+    else mod.paper += 1;
+    if (row.user_id) mod.users.add(row.user_id);
+    byModuleAcc.set(moduleKey, mod);
+
+    const sourceKey = row.source?.trim() || "other";
+    const src = bySourceAcc.get(sourceKey) ?? {
+      downloads: 0,
+      users: new Set<string>(),
+    };
+    src.downloads += 1;
+    if (row.user_id) src.users.add(row.user_id);
+    bySourceAcc.set(sourceKey, src);
+  }
+
+  const downloadsByMock: MockDownloadByMock[] = [];
+  for (let n = 1; n <= ADMIN_ESAT_MOCK_COUNT; n++) {
+    const acc = byMockAcc.get(n);
+    downloadsByMock.push({
+      mock_number: n,
+      mock_label: `Mock ${mockLetterForNumber(n)}`,
+      paper_downloads: acc?.paper ?? 0,
+      answer_downloads: acc?.answers ?? 0,
+      total_downloads: (acc?.paper ?? 0) + (acc?.answers ?? 0),
+      users: acc?.users.size ?? 0,
+    });
+  }
+  downloadsByMock.sort(
+    (a, b) =>
+      b.total_downloads - a.total_downloads || a.mock_number - b.mock_number,
+  );
+
+  const preferredModules = [
+    "full",
+    ...ESAT_MOCK_MODULES.map((m) => m.id),
+    "unknown",
+  ];
+  const downloadsByModule: MockDownloadByModule[] = preferredModules
+    .filter((id) => byModuleAcc.has(id) || id !== "unknown")
+    .map((id) => {
+      const acc = byModuleAcc.get(id);
+      return {
+        module_id: id,
+        label: moduleDownloadLabel(id === "unknown" ? null : id),
+        paper_downloads: acc?.paper ?? 0,
+        answer_downloads: acc?.answers ?? 0,
+        total_downloads: (acc?.paper ?? 0) + (acc?.answers ?? 0),
+        users: acc?.users.size ?? 0,
+      };
+    })
+    .filter((row) => row.total_downloads > 0 || row.module_id !== "unknown")
+    .sort(
+      (a, b) =>
+        b.total_downloads - a.total_downloads ||
+        a.label.localeCompare(b.label),
+    );
+
+  const sourceOrder = ["esat_mock_tests", "roadmap", "other"];
+  const downloadsBySource: MockDownloadBySource[] = sourceOrder
+    .map((source) => {
+      const acc = bySourceAcc.get(source);
+      return {
+        source,
+        label: DOWNLOAD_SOURCE_LABELS[source] ?? source,
+        downloads: acc?.downloads ?? 0,
+        users: acc?.users.size ?? 0,
+      };
+    })
+    .filter(
+      (row) =>
+        row.downloads > 0 ||
+        row.source === "esat_mock_tests" ||
+        row.source === "roadmap",
+    );
+
+  return {
+    summary: {
+      pdf_downloads: paper + answers,
+      pdf_paper_downloads: paper,
+      pdf_answer_downloads: answers,
+      pdf_download_users: allUsers.size,
+    },
+    downloadsByMock,
+    downloadsByModule,
+    downloadsBySource,
+  };
 }
 
 function scorePct(score: unknown): number | null {
@@ -452,12 +699,20 @@ export async function computeEsatMockStats(
   },
 ): Promise<MockStatsPayload> {
   const { since, minAttempts, wrongLimit } = options;
-  const [allSessions, slotIndex] = await Promise.all([
+  const [allSessions, slotIndex, allDownloads] = await Promise.all([
     fetchAllMockSessions(service, since),
     loadSlotIndex(service),
+    fetchMockPdfDownloads(service, since),
   ]);
 
-  const userIds = [...new Set(allSessions.map((s) => s.user_id))];
+  const userIds = [
+    ...new Set([
+      ...allSessions.map((s) => s.user_id),
+      ...allDownloads
+        .map((d) => d.user_id)
+        .filter((id): id is string => typeof id === "string" && id.length > 0),
+    ]),
+  ];
   const excluded = new Set<string>();
   for (let i = 0; i < userIds.length; i += 200) {
     const chunk = userIds.slice(i, i + 200);
@@ -473,6 +728,7 @@ export async function computeEsatMockStats(
   }
 
   const sessions = allSessions.filter((s) => !excluded.has(s.user_id));
+  const downloadAgg = aggregateMockDownloads(allDownloads, excluded);
   const { catalog, slotsByMockSubject } = slotIndex;
 
   type Attempt = {
@@ -840,12 +1096,16 @@ export async function computeEsatMockStats(
       unique_questions: wrongMap.size,
       correct_attempts: correctAttempts,
       wrong_attempts: wrongAttempts,
+      ...downloadAgg.summary,
     },
     bySource,
     byMock,
     bySubject,
     predictedBuckets,
     mostWrong,
+    downloadsByMock: downloadAgg.downloadsByMock,
+    downloadsByModule: downloadAgg.downloadsByModule,
+    downloadsBySource: downloadAgg.downloadsBySource,
   };
 }
 

@@ -91,7 +91,7 @@ const CARDS: Array<{
   {
     href: "/admin/mock-stats",
     title: "Mock stats",
-    body: "ESAT mock sitting volume, scores, predicted marks, and hardest questions.",
+    body: "ESAT mock sittings, PDF downloads, scores, predicted marks, and hardest questions.",
     key: null,
   },
 ];

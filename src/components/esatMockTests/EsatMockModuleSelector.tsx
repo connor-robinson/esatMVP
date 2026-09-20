@@ -18,6 +18,7 @@ import {
   warmCatalogMockStart,
   type StartCatalogMockInput,
 } from "@/lib/esatMockTests/startCatalogMockSitting";
+import { trackMockPdfDownload } from "@/lib/downloads/mockPdfDownload";
 import { RoadmapInfoPopover } from "@/components/papers/roadmap/RoadmapInfoPopover";
 import { PastPaperGuestStartModal } from "@/components/papers/PastPaperGuestStartModal";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
@@ -84,12 +85,14 @@ function pillClass(selected: boolean) {
 function MockSlotRow({
   title,
   slot,
+  moduleId,
   starting,
   onStart,
   onWarm,
 }: {
   title: string;
   slot: EsatMockSlot;
+  moduleId: EsatMockModuleId | "full";
   starting: boolean;
   onStart: () => void;
   onWarm: () => void;
@@ -114,6 +117,15 @@ function MockSlotRow({
               download
               aria-label={`Download ${slot.displayName} paper PDF`}
               className={QUIET_BTN}
+              onClick={() =>
+                trackMockPdfDownload({
+                  href: slot.paperHref!,
+                  asset: "paper",
+                  source: "esat_mock_tests",
+                  moduleId,
+                  mockNumber: slot.mockNumber,
+                })
+              }
             >
               Paper
               <Download className="h-4 w-4 opacity-80" aria-hidden />
@@ -125,6 +137,15 @@ function MockSlotRow({
               download
               aria-label={`Download ${slot.displayName} answer key PDF`}
               className={QUIET_BTN}
+              onClick={() =>
+                trackMockPdfDownload({
+                  href: slot.answerKeyHref!,
+                  asset: "answers",
+                  source: "esat_mock_tests",
+                  moduleId,
+                  mockNumber: slot.mockNumber,
+                })
+              }
             >
               Answers
               <Download className="h-4 w-4 opacity-80" aria-hidden />
@@ -297,6 +318,7 @@ export function EsatMockModuleSelector({
                     : `ESAT CAMP Mock ${slot.letter} ${selectedModule.builderSubject}`
                 }
                 slot={slot}
+                moduleId={isFullTab ? "full" : selectedModule.id}
                 starting={starting}
                 onWarm={() => warmCatalogMockStart(buildStartInput(slot.mockNumber))}
                 onStart={() => requestStart(slot.mockNumber)}
