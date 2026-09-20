@@ -240,11 +240,12 @@ describe("publish gates", () => {
     );
     const hookId = freeTierQuestionIdsForSubject("Math 1")[0];
     const hook = makeQuestion({ id: hookId });
-    const reserved = makeQuestion({
-      id: "reserved-q",
+    const used = makeQuestion({ id: "used-elsewhere" });
+    // Orphan reserved flag alone does not block; collision is via usedElsewhere.
+    const orphanReserved = makeQuestion({
+      id: "orphan-reserved",
       reservedForMock: true,
     });
-    const used = makeQuestion({ id: "used-elsewhere" });
 
     expect(
       assertCanPublish({
@@ -260,9 +261,9 @@ describe("publish gates", () => {
         status: "published",
         fromStatus: "draft",
         questionCount: 1,
-        slots: [{ questionId: reserved.id, question: reserved }],
+        slots: [{ questionId: orphanReserved.id, question: orphanReserved }],
       }).ok,
-    ).toBe(false);
+    ).toBe(true);
 
     expect(
       assertCanPublish({

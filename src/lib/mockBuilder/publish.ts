@@ -12,7 +12,7 @@ export function assertCanPublish(input: {
   questionCount: number;
   /** IDs already used by other approved/published mocks (excludes this mock). */
   usedElsewhereIds?: Set<string>;
-  /** Status before this transition; used to detect reserved-from-elsewhere bugs. */
+  /** Status before this transition (reserved for callers; unused by gates). */
   fromStatus?: MockStatus;
 }): { ok: true } | { ok: false; error: string } {
   if (input.slots.length !== input.questionCount) {
@@ -23,8 +23,6 @@ export function assertCanPublish(input: {
   }
 
   const usedElsewhere = input.usedElsewhereIds ?? new Set<string>();
-  const fromReserves =
-    input.fromStatus != null && statusReservesQuestions(input.fromStatus);
 
   const ids = new Set<string>();
   for (const slot of input.slots) {
@@ -48,13 +46,8 @@ export function assertCanPublish(input: {
         error: `Question ${slot.questionId} is already used in another approved/published mock and cannot be reused.`,
       };
     }
-    // Draft/review must not ship questions reserved by another mock.
-    if (q.reservedForMock && !fromReserves) {
-      return {
-        ok: false,
-        error: `Question ${slot.questionId} is reserved for another mock and cannot be reused.`,
-      };
-    }
+    // Orphan reserved_for_mock on this mock's own slots (e.g. after a demote
+    // to review) is OK; usedElsewhere already covers live collisions.
     if (q.status !== "approved") {
       return {
         ok: false,
