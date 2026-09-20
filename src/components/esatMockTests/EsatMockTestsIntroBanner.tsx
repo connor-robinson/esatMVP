@@ -1,7 +1,4 @@
-﻿import Image from "next/image";
-import Link from "next/link";
-import { ABOUT_PATH, FOUNDERS } from "@/config/founders";
-import { cn } from "@/lib/utils";
+﻿import { cn } from "@/lib/utils";
 
 const SIMULATOR_STILL = {
   src: "/images/home/esat-camp-mock-player-hero-v2.webp",
@@ -11,14 +8,13 @@ const SIMULATOR_STILL = {
 } as const;
 
 const PAGE_TITLE = "ESAT CAMP Free Mock Tests";
-const EWAN = FOUNDERS.ewan;
 
 type EsatMockTestsIntroBannerProps = {
   className?: string;
 };
 
 /**
- * Above-the-fold hero: title, Ewan note, and simulator preview.
+ * Above-the-fold hero: title, intro note, and simulator preview.
  */
 export function EsatMockTestsIntroBanner({
   className,
@@ -36,30 +32,7 @@ export function EsatMockTestsIntroBanner({
         </h1>
 
         <aside className="bg-white/[0.04] px-3.5 py-3.5 sm:px-4">
-          <div className="flex items-center gap-2.5">
-            <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full bg-[#161D2F]">
-              <Image
-                src={EWAN.imageSrc}
-                alt={EWAN.imageAlt}
-                fill
-                sizes="32px"
-                className="object-cover"
-                style={{
-                  objectPosition: EWAN.imagePosition,
-                  transform: `scale(${EWAN.imageScale})`,
-                }}
-              />
-            </div>
-            <p className="text-sm font-semibold text-white sm:text-base">
-              <Link
-                href={`${ABOUT_PATH}#${EWAN.id}`}
-                className="transition-colors hover:text-[#93C5FD]"
-              >
-                {EWAN.name}
-              </Link>
-            </p>
-          </div>
-          <blockquote className="mt-3 text-base leading-relaxed text-[#CBD5E1] sm:text-[1.05rem] sm:leading-relaxed">
+          <blockquote className="text-base leading-relaxed text-[#CBD5E1] sm:text-[1.05rem] sm:leading-relaxed">
             Our past students said NSAA and ENGAA felt too easy relative to the
             real ESAT. Combined with their feedback and our tutors&apos; own
             experience of the exam, we built 5 ESAT mocks. We&apos;ve written
