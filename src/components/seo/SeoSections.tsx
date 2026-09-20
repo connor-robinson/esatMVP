@@ -434,6 +434,8 @@ export function InternalLinks({
   heading?: string;
   className?: string;
 }) {
+  if (links.length === 0) return null;
+
   return (
     <section className={className}>
       <h2 className="text-2xl font-display font-bold tracking-tight text-white">

@@ -6,6 +6,8 @@
  * real public route exists in the app.
  */
 
+import { SEO_ROUTES } from "@/lib/seo/config";
+
 export const ESAT_MOCK_QUESTION_COUNT = 27;
 export const ESAT_MOCK_TIME_LIMIT_MINUTES = 40;
 export const ESAT_MOCKS_PER_MODULE = 5;
@@ -55,6 +57,8 @@ export type EsatMockSlot = {
    * `predicted_difficulty` / AI review. A typical NSAA paper ≈ 2 stars.
    */
   difficultyStars: number;
+  /** Crawlable HTML paper page when published. */
+  htmlHref: string | null;
 };
 
 export type EsatMockAttemptSummary = {
@@ -167,6 +171,15 @@ function fullSittingPredictedDifficulty(mockNumber: number): number {
   return vals.reduce((a, b) => a + b, 0) / vals.length;
 }
 
+/** Public HTML subject slug (must match htmlRoutes.ts). */
+const HTML_SUBJECT_SLUG: Record<EsatMockModuleId, string> = {
+  "maths-1": "mathematics-1",
+  "maths-2": "mathematics-2",
+  physics: "physics",
+  chemistry: "chemistry",
+  biology: "biology",
+};
+
 /** Per-subject paper/answers PDFs. */
 function pdfHrefsForSlot(
   moduleId: EsatMockModuleId,
@@ -217,6 +230,7 @@ export function mockSlotsForModule(
       answerKeyHref: pdfs.answerKeyHref,
       fullHref: pdfs.fullHref,
       difficultyStars: starsFromPredictedDifficulty(predicted),
+      htmlHref: `${SEO_ROUTES.mockTests}/${HTML_SUBJECT_SLUG[module.id]}/mock-${mockNumber}`,
     };
   });
 }
@@ -240,6 +254,8 @@ export function fullMockSlots(): EsatMockSlot[] {
       difficultyStars: starsFromPredictedDifficulty(
         fullSittingPredictedDifficulty(mockNumber),
       ),
+      // Full sittings span five modules; HTML pages are per-module only.
+      htmlHref: null,
     };
   });
 }

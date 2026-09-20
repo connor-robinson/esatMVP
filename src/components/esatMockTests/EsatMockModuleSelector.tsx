@@ -1,11 +1,14 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Download, Play, Star } from "lucide-react";
+import { Download, FileText, Play, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   ESAT_MOCK_MODULES,
+  ESAT_MOCK_QUESTION_COUNT,
+  ESAT_MOCK_TIME_LIMIT_MINUTES,
   findMockModule,
   fullMockSlots,
   mockSlotsForModule,
@@ -34,9 +37,8 @@ type EsatMockModuleSelectorProps = {
 
 type TabId = EsatMockModuleId | "full";
 
-/** Mirrors past-papers RoadmapTable stage grid (without Parts / Avg / Your ESAT / Status). */
 const MOCK_ROW_GRID =
-  "grid min-w-[50rem] grid-cols-[18rem_7.5rem_minmax(16rem,1fr)] items-center gap-x-3";
+  "grid min-w-[56rem] grid-cols-[minmax(14rem,1.1fr)_6.5rem_minmax(22rem,1.4fr)] items-center gap-x-3";
 
 const ACTION_BTN =
   "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-sm px-3.5 py-2 text-[15px] font-medium leading-none transition-colors";
@@ -100,10 +102,14 @@ function MockSlotRow({
   return (
     <li role="listitem" className="rounded bg-[#161D2F] px-5 py-5">
       <div className={MOCK_ROW_GRID}>
-        <div className="flex items-center gap-1.5">
+        <div className="min-w-0 space-y-1">
           <span className="text-base font-semibold tracking-tight text-white sm:text-lg">
             {title}
           </span>
+          <p className="text-sm text-[#94A3B8]">
+            {ESAT_MOCK_QUESTION_COUNT} questions · {ESAT_MOCK_TIME_LIMIT_MINUTES}{" "}
+            minutes · full-length ESAT-style
+          </p>
         </div>
 
         <div>
@@ -111,11 +117,26 @@ function MockSlotRow({
         </div>
 
         <div className="flex flex-wrap items-center justify-end gap-2.5">
+          <button
+            type="button"
+            disabled={starting}
+            onMouseEnter={onWarm}
+            onFocus={onWarm}
+            onClick={onStart}
+            className={cn(
+              ACTION_BTN,
+              "bg-[#3B82F6] text-white hover:bg-[#2563EB] disabled:opacity-45",
+            )}
+            aria-label={`Start mock: ${slot.displayName}`}
+          >
+            Start Mock
+            <Play className="h-4 w-4 fill-current opacity-80" aria-hidden />
+          </button>
           {slot.paperHref ? (
             <a
               href={slot.paperHref}
               download
-              aria-label={`Download ${slot.displayName} paper PDF`}
+              aria-label={`Download ${slot.displayName} PDF`}
               className={QUIET_BTN}
               onClick={() =>
                 trackMockPdfDownload({
@@ -127,45 +148,20 @@ function MockSlotRow({
                 })
               }
             >
-              Paper
+              Download PDF
               <Download className="h-4 w-4 opacity-80" aria-hidden />
             </a>
           ) : null}
-          {slot.answerKeyHref ? (
-            <a
-              href={slot.answerKeyHref}
-              download
-              aria-label={`Download ${slot.displayName} answer key PDF`}
+          {slot.htmlHref ? (
+            <Link
+              href={slot.htmlHref}
+              aria-label={`View questions and solutions for ${slot.displayName}`}
               className={QUIET_BTN}
-              onClick={() =>
-                trackMockPdfDownload({
-                  href: slot.answerKeyHref!,
-                  asset: "answers",
-                  source: "esat_mock_tests",
-                  moduleId,
-                  mockNumber: slot.mockNumber,
-                })
-              }
             >
-              Answers
-              <Download className="h-4 w-4 opacity-80" aria-hidden />
-            </a>
+              View Questions &amp; Solutions
+              <FileText className="h-4 w-4 opacity-80" aria-hidden />
+            </Link>
           ) : null}
-          <button
-            type="button"
-            disabled={starting}
-            onMouseEnter={onWarm}
-            onFocus={onWarm}
-            onClick={onStart}
-            className={cn(
-              ACTION_BTN,
-              "bg-[#3B82F6] text-white hover:bg-[#2563EB] disabled:opacity-45",
-            )}
-            aria-label={`Open simulator: ${slot.displayName}`}
-          >
-            Simulator
-            <Play className="h-4 w-4 fill-current opacity-80" aria-hidden />
-          </button>
         </div>
       </div>
     </li>
@@ -315,7 +311,7 @@ export function EsatMockModuleSelector({
                 title={
                   isFullTab
                     ? `ESAT CAMP Mock ${slot.letter}`
-                    : `ESAT CAMP Mock ${slot.letter} ${selectedModule.builderSubject}`
+                    : `${selectedModule.fullLabel} Mock ${slot.mockNumber}`
                 }
                 slot={slot}
                 moduleId={isFullTab ? "full" : selectedModule.id}

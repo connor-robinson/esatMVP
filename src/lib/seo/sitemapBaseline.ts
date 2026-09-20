@@ -10,6 +10,7 @@
 
 import { APP_ROUTES, SEO_ROUTES } from "@/lib/seo/config";
 import type { PublicSitemapEntry } from "@/lib/seo/publicSitemap.types";
+import { allEsatMockHtmlPaths } from "@/lib/esatMockTests/htmlRoutes";
 
 export const APPROVED_SITEMAP_BASELINE: readonly PublicSitemapEntry[] = [
   { path: "/" },
@@ -45,6 +46,10 @@ export const APPROVED_SITEMAP_BASELINE: readonly PublicSitemapEntry[] = [
   { path: SEO_ROUTES.questionBank },
   { path: SEO_ROUTES.questionBankGuide },
   { path: SEO_ROUTES.mockTests },
+
+  // Complete ESAT CAMP mock HTML papers (one URL per module mock).
+  // Question anchors (#question-N) are never sitemap entries.
+  ...allEsatMockHtmlPaths().map((path) => ({ path })),
 
   // Free tools with public landing content (not gated app shells).
   { path: APP_ROUTES.calibration },
