@@ -38,19 +38,72 @@ const REVIEW: Array<{
   action: string;
   reason: string;
 }> = [
+  {
+    letter: "B",
+    position: 19,
+    action: "REPLACE AGAIN",
+    reason: "was repeating B3 dice→quadratic real-roots template",
+  },
+  {
+    letter: "C",
+    position: 21,
+    action: "REPLACE AGAIN",
+    reason: "tank/pipe/flow/rate overrepresented across A–E",
+  },
+  {
+    letter: "D",
+    position: 13,
+    action: "REPLACE AGAIN",
+    reason: "another three-dice probability; Mock D already probability-heavy",
+  },
+  {
+    letter: "D",
+    position: 22,
+    action: "REPLACE AGAIN",
+    reason: "density overrepresented in Mock D",
+  },
+];
+
+/** Optional: --all writes the full prior remediation set instead of this pass. */
+const REVIEW_ALL: typeof REVIEW = [
   { letter: "B", position: 7, action: "REPLACE", reason: "log_2 out of spec (MM5)" },
   { letter: "B", position: 18, action: "REPLACE", reason: "arithmetic-series sum (MM2.2)" },
-  { letter: "B", position: 19, action: "REPLACE", reason: "flagged for replacement" },
+  {
+    letter: "B",
+    position: 19,
+    action: "REPLACE AGAIN",
+    reason: "was repeating B3 dice→quadratic real-roots template",
+  },
   { letter: "C", position: 3, action: "REPLACE", reason: "log_2 out of spec (MM5)" },
   { letter: "C", position: 11, action: "FIX", reason: "supply sphere/cone volume formulae" },
-  { letter: "C", position: 21, action: "REPLACE", reason: "difficulty/style (tangent circles)" },
-  { letter: "D", position: 13, action: "REPLACE", reason: "heavy combinatorics" },
+  {
+    letter: "C",
+    position: 21,
+    action: "REPLACE AGAIN",
+    reason: "tank/pipe/flow/rate overrepresented across A–E",
+  },
+  {
+    letter: "D",
+    position: 13,
+    action: "REPLACE AGAIN",
+    reason: "another three-dice probability; Mock D already probability-heavy",
+  },
   { letter: "D", position: 16, action: "FIX", reason: "supply cone volume formula" },
-  { letter: "D", position: 22, action: "REPLACE", reason: "general circle equation (MM3.2)" },
+  {
+    letter: "D",
+    position: 22,
+    action: "REPLACE AGAIN",
+    reason: "density overrepresented in Mock D",
+  },
   { letter: "E", position: 6, action: "REWRITE", reason: "clarify single-piece cutting" },
   { letter: "E", position: 25, action: "REPLACE", reason: "radians / sector (MM4.2)" },
   { letter: "E", position: 26, action: "REPLACE", reason: "modulus inequality (Math 2)" },
 ];
+
+const ACTIVE_REVIEW = process.argv.includes("--all") ? REVIEW_ALL : REVIEW;
+const OUT_STEM = process.argv.includes("--all")
+  ? "ESAT CAMP Math 1 Spec Remediation Review"
+  : "ESAT CAMP Math 1 Repetition Re-replace Review";
 
 const OPTION_ORDER = ["A", "B", "C", "D", "E", "F", "G", "H"] as const;
 
@@ -260,10 +313,10 @@ function questionHtml(q: ReviewQ): string {
 function buildQuestionsHtml(questions: ReviewQ[], font500: string, font700: string): string {
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"/>
-<title>Math 1 Spec Remediation Review</title>
+<title>Math 1 Repetition Re-replace Review</title>
 <style>${reviewCss(font500, font700)}</style></head><body>
-<h1>Math 1 · Spec remediation review</h1>
-<p class="subtitle">Only replaced / fixed / rewritten questions from Mocks B–E (Mock A unchanged). For checking — not a full paper.</p>
+<h1>Math 1 · Repetition re-replace review</h1>
+<p class="subtitle">Only B19, C21, D13, D22 after the second replacement pass. For checking — not a full paper.</p>
 ${questions.map(questionHtml).join("\n")}
 </body></html>`;
 }
@@ -277,9 +330,9 @@ function buildKeyHtml(questions: ReviewQ[], font500: string, font700: string): s
     .join("");
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"/>
-<title>Math 1 Spec Remediation Review Answer Key</title>
+<title>Math 1 Repetition Re-replace Review Answer Key</title>
 <style>${reviewCss(font500, font700)}</style></head><body>
-<h1>Math 1 · Spec remediation answer key</h1>
+<h1>Math 1 · Repetition re-replace answer key</h1>
 <table class="key-table">
   <thead><tr><th>Slot</th><th>Action</th><th>Key</th></tr></thead>
   <tbody>${rows}</tbody>
@@ -322,7 +375,7 @@ async function main() {
   const service = createClient(url, key, { auth: { persistSession: false } });
   const questions: ReviewQ[] = [];
 
-  for (const item of REVIEW) {
+  for (const item of ACTIVE_REVIEW) {
     const { slots } = await getMockWithSlots(service, MOCKS[item.letter]!);
     const slot = slots.find((s) => s.position === item.position);
     const q = slot?.question;
@@ -343,13 +396,11 @@ async function main() {
     });
   }
 
-  const paperPath = path.join(
-    OUT_DIR,
-    "ESAT CAMP Math 1 Spec Remediation Review.pdf",
-  );
-  const keyPath = path.join(
-    OUT_DIR,
-    "ESAT CAMP Math 1 Spec Remediation Review Answer Key.pdf",
+  const paperPath = path.join(OUT_DIR, `${OUT_STEM}.pdf`);
+  const keyPath = path.join(OUT_DIR, `${OUT_STEM} Answer Key.pdf`);
+  const downloadsDir = path.join(
+    process.env.USERPROFILE || process.env.HOME || "",
+    "Downloads",
   );
 
   const browser = await chromium.launch({ headless: true });
@@ -358,6 +409,15 @@ async function main() {
     await htmlToPdf(buildKeyHtml(questions, font500, font700), keyPath, browser);
   } finally {
     await browser.close();
+  }
+
+  if (downloadsDir && fs.existsSync(downloadsDir)) {
+    const dlPaper = path.join(downloadsDir, path.basename(paperPath));
+    const dlKey = path.join(downloadsDir, path.basename(keyPath));
+    fs.copyFileSync(paperPath, dlPaper);
+    fs.copyFileSync(keyPath, dlKey);
+    console.log(`Copied to ${dlPaper}`);
+    console.log(`Copied to ${dlKey}`);
   }
 
   console.log(`Wrote ${pathToFileURL(paperPath).href}`);
