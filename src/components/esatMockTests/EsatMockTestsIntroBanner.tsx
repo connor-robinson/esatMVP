@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +30,11 @@ export function EsatMockTestsIntroBanner({
   const [visible, setVisible] = useState(false);
   const titleId = useId();
 
+  const closePreview = useCallback(() => {
+    setVisible(false);
+    window.setTimeout(() => setExpanded(false), 180);
+  }, []);
+
   useEffect(() => {
     if (!expanded) {
       setVisible(false);
@@ -51,12 +56,7 @@ export function EsatMockTestsIntroBanner({
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [expanded]);
-
-  const closePreview = () => {
-    setVisible(false);
-    window.setTimeout(() => setExpanded(false), 180);
-  };
+  }, [expanded, closePreview]);
 
   return (
     <>
