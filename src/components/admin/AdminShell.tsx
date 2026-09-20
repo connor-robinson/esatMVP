@@ -37,7 +37,13 @@ const PRIMARY = [
   {
     href: "/admin/emails",
     label: "Emails",
-    match: (p: string) => p.startsWith("/admin/emails"),
+    match: (p: string) =>
+      p.startsWith("/admin/emails") && !p.startsWith("/admin/emails/analytics"),
+  },
+  {
+    href: "/admin/emails/analytics",
+    label: "Email tracking",
+    match: (p: string) => p.startsWith("/admin/emails/analytics"),
   },
   {
     href: "/admin/surveys",

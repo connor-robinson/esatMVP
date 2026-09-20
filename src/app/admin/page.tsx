@@ -49,7 +49,13 @@ const CARDS: Array<{
   {
     href: "/admin/emails",
     title: "Emails",
-    body: "Tips and Tricks opt-in stats and product email sends.",
+    body: "Product sends, opt-in stats, and open/click tracking.",
+    key: null,
+  },
+  {
+    href: "/admin/emails/analytics",
+    title: "Email tracking",
+    body: "Open rates, click rates, and per-link campaign performance.",
     key: null,
   },
   {

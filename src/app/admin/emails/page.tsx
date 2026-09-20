@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Container } from "@/components/layout/Container";
 import { cn } from "@/lib/utils";
@@ -15,6 +16,8 @@ type Stats = {
 type Engagement = {
   emailsSent: number;
   campaignsSent: number;
+  openCount: number;
+  uniqueOpeners: number;
   clickCount: number;
   uniqueClickers: number;
   unsubscribeCount: number;
@@ -35,9 +38,18 @@ type Campaign = {
   failed_count: number;
   status: string;
   created_at: string;
+  open_count: number;
+  unique_openers: number;
   click_count: number;
   unique_clickers: number;
   unsubscribe_count: number;
+};
+
+type TemplateOption = {
+  id: string;
+  label: string;
+  subject: string;
+  text: string;
 };
 
 function Stat({ label, value }: { label: string; value: string | number }) {
@@ -57,6 +69,8 @@ export default function AdminEmailsPage() {
   const [engagement, setEngagement] = useState<Engagement | null>(null);
   const [recipients, setRecipients] = useState<Recipient[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [templates, setTemplates] = useState<TemplateOption[]>([]);
+  const [templateId, setTemplateId] = useState<string | null>(null);
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [confirmed, setConfirmed] = useState(false);
@@ -87,6 +101,7 @@ export default function AdminEmailsPage() {
     setEngagement((json.engagement ?? null) as Engagement | null);
     setRecipients(json.recipients ?? []);
     setCampaigns((json.campaigns ?? []) as Campaign[]);
+    setTemplates((json.templates ?? []) as TemplateOption[]);
     setConfigured(Boolean(json.configured));
     setLoading(false);
   }, []);
@@ -105,6 +120,15 @@ export default function AdminEmailsPage() {
         (r.exam_preference ?? "").toLowerCase().includes(q),
     );
   }, [recipients, filter]);
+
+  const applyTemplate = (id: string | null) => {
+    setTemplateId(id);
+    if (!id) return;
+    const template = templates.find((t) => t.id === id);
+    if (!template) return;
+    setSubject(template.subject);
+    setBody(template.text);
+  };
 
   const toggle = (id: string) => {
     setSelected((prev) => {
@@ -126,6 +150,7 @@ export default function AdminEmailsPage() {
         body: JSON.stringify({
           subject,
           body,
+          templateId,
           dryRun,
           confirmed: dryRun ? true : confirmed,
           recipientIds:
@@ -153,6 +178,7 @@ export default function AdminEmailsPage() {
         );
         setSubject("");
         setBody("");
+        setTemplateId(null);
         setConfirmed(false);
         setSelected(new Set());
       }
@@ -181,17 +207,26 @@ export default function AdminEmailsPage() {
         <div>
           <h1 className="text-2xl font-semibold text-text">Product emails</h1>
           <p className="mt-1 text-sm text-text-muted">
-            Tips and Tricks / product updates for users who opted in.
+            Tips and Tricks / product updates for users who opted in. Opens and
+            clicks are tracked automatically.
           </p>
         </div>
-        <p
-          className={cn(
-            "text-xs font-medium",
-            configured ? "text-text-muted" : "text-red-600 dark:text-red-400",
-          )}
-        >
-          {configured ? "Resend configured" : "RESEND_API_KEY missing"}
-        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href="/admin/emails/analytics"
+            className="rounded-organic-md bg-surface-mid px-3 py-1.5 text-sm font-semibold text-text"
+          >
+            Tracking analytics
+          </Link>
+          <p
+            className={cn(
+              "text-xs font-medium",
+              configured ? "text-text-muted" : "text-red-600 dark:text-red-400",
+            )}
+          >
+            {configured ? "Resend configured" : "RESEND_API_KEY missing"}
+          </p>
+        </div>
       </div>
 
       {loading ? (
@@ -206,11 +241,15 @@ export default function AdminEmailsPage() {
             <Stat label="Profiles total" value={stats?.totalProfiles ?? 0} />
           </div>
 
-          <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             <Stat label="Emails sent" value={engagement?.emailsSent ?? 0} />
             <Stat
               label="Campaigns sent"
               value={engagement?.campaignsSent ?? 0}
+            />
+            <Stat
+              label="Unique opens"
+              value={engagement?.uniqueOpeners ?? 0}
             />
             <Stat label="Link clicks" value={engagement?.clickCount ?? 0} />
             <Stat
@@ -228,6 +267,49 @@ export default function AdminEmailsPage() {
               <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-text-muted">
                 Compose tips email
               </h2>
+
+              {templates.length > 0 ? (
+                <div className="mt-4">
+                  <p className="text-xs font-medium text-text-muted">
+                    Template
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => applyTemplate(null)}
+                      className={cn(
+                        "rounded-organic-md px-3 py-1.5 text-sm font-medium",
+                        templateId === null
+                          ? "bg-secondary/25 text-text"
+                          : "bg-surface-mid text-text-muted hover:text-text",
+                      )}
+                    >
+                      Custom text
+                    </button>
+                    {templates.map((t) => (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => applyTemplate(t.id)}
+                        className={cn(
+                          "rounded-organic-md px-3 py-1.5 text-sm font-medium",
+                          templateId === t.id
+                            ? "bg-secondary/25 text-text"
+                            : "bg-surface-mid text-text-muted hover:text-text",
+                        )}
+                      >
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                  {templateId ? (
+                    <p className="mt-2 text-xs text-text-subtle">
+                      HTML template selected. Links, opens, and unsubscribe
+                      are tracked on send.
+                    </p>
+                  ) : null}
+                </div>
+              ) : null}
 
               <div className="mt-4 flex flex-wrap gap-2">
                 {(
@@ -258,25 +340,28 @@ export default function AdminEmailsPage() {
                 <input
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
-                  className="mt-1.5 w-full rounded-organic-md border border-border-subtle bg-surface-mid px-3 py-2 text-sm text-text"
+                  className="mt-1.5 w-full rounded-organic-md bg-surface-mid px-3 py-2 text-sm text-text"
                   placeholder="Tips and Tricks: …"
                 />
               </label>
 
               <label className="mt-3 block text-xs font-medium text-text-muted">
-                Body
+                Body {templateId ? "(plain-text fallback)" : ""}
                 <textarea
                   value={body}
-                  onChange={(e) => setBody(e.target.value)}
+                  onChange={(e) => {
+                    setBody(e.target.value);
+                    if (templateId) setTemplateId(null);
+                  }}
                   rows={8}
-                  className="mt-1.5 w-full rounded-organic-md border border-border-subtle bg-surface-mid px-3 py-2 text-sm text-text"
+                  className="mt-1.5 w-full rounded-organic-md bg-surface-mid px-3 py-2 text-sm text-text"
                   placeholder="Write the product email…"
                 />
               </label>
 
               <p className="mt-2 text-xs text-text-subtle">
-                Footer auto-adds manage-preferences and unsubscribe links.
-                Links in the body are tracked for admin stats.
+                Every send includes open tracking and click-tracked links, plus
+                manage-preferences and unsubscribe footer links.
               </p>
 
               <label className="mt-4 flex items-start gap-2 text-sm text-text-muted">
@@ -340,7 +425,7 @@ export default function AdminEmailsPage() {
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
                   placeholder="Filter…"
-                  className="w-40 rounded-organic-md border border-border-subtle bg-surface-mid px-2.5 py-1.5 text-xs text-text"
+                  className="w-40 rounded-organic-md bg-surface-mid px-2.5 py-1.5 text-xs text-text"
                 />
               </div>
               <div className="mt-3 max-h-[28rem] overflow-auto">
@@ -397,15 +482,26 @@ export default function AdminEmailsPage() {
           </div>
 
           <section className="mt-8">
-            <h2 className="text-sm font-semibold text-text">Recent campaigns</h2>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-sm font-semibold text-text">
+                Recent campaigns
+              </h2>
+              <Link
+                href="/admin/emails/analytics"
+                className="text-sm font-medium text-text-muted underline-offset-2 hover:text-text hover:underline"
+              >
+                Full tracking →
+              </Link>
+            </div>
             <div className="mt-3 overflow-x-auto rounded-organic-xl bg-surface-elevated">
-              <table className="w-full min-w-[760px] text-left text-sm">
+              <table className="w-full min-w-[860px] text-left text-sm">
                 <thead className="text-xs uppercase tracking-wide text-text-muted">
                   <tr>
                     <th className="px-4 py-3 font-medium">When</th>
                     <th className="px-4 py-3 font-medium">Subject</th>
                     <th className="px-4 py-3 font-medium">Status</th>
                     <th className="px-4 py-3 font-medium">Sent</th>
+                    <th className="px-4 py-3 font-medium">Opens</th>
                     <th className="px-4 py-3 font-medium">Clicks</th>
                     <th className="px-4 py-3 font-medium">People</th>
                     <th className="px-4 py-3 font-medium">Unsub</th>
@@ -424,6 +520,9 @@ export default function AdminEmailsPage() {
                         {c.failed_count ? ` · ${c.failed_count} fail` : ""}
                       </td>
                       <td className="px-4 py-2.5 tabular-nums text-text-muted">
+                        {c.unique_openers ?? 0}
+                      </td>
+                      <td className="px-4 py-2.5 tabular-nums text-text-muted">
                         {c.click_count ?? 0}
                       </td>
                       <td className="px-4 py-2.5 tabular-nums text-text-muted">
@@ -437,7 +536,7 @@ export default function AdminEmailsPage() {
                   {campaigns.length === 0 ? (
                     <tr>
                       <td
-                        colSpan={7}
+                        colSpan={8}
                         className="px-4 py-6 text-sm text-text-muted"
                       >
                         No campaigns yet.

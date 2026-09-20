@@ -23,6 +23,7 @@ export async function sendResendEmail(params: {
   to: string;
   subject: string;
   text: string;
+  html?: string;
   replyTo?: string;
   from?: string;
 }): Promise<ResendSendResult> {
@@ -50,6 +51,7 @@ export async function sendResendEmail(params: {
         reply_to: params.replyTo,
         subject: params.subject.slice(0, 200),
         text: params.text,
+        ...(params.html ? { html: params.html } : {}),
       }),
     });
 

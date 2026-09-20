@@ -5,6 +5,7 @@ import {
   listProductEmailRecipients,
   sendProductEmailCampaign,
 } from "@/lib/email/productEmails";
+import { PRODUCT_EMAIL_TEMPLATES } from "@/lib/email/templates";
 import {
   getCampaignEngagementByIds,
   getProductEmailEngagementStats,
@@ -47,6 +48,8 @@ export async function GET(request: NextRequest) {
       const e = byCampaign[id];
       return {
         ...c,
+        open_count: e?.openCount ?? 0,
+        unique_openers: e?.uniqueOpeners ?? 0,
         click_count: e?.clickCount ?? 0,
         unique_clickers: e?.uniqueClickers ?? 0,
         unsubscribe_count: e?.unsubscribeCount ?? 0,
@@ -58,6 +61,12 @@ export async function GET(request: NextRequest) {
       engagement,
       recipients,
       campaigns: campaignsWithEngagement,
+      templates: PRODUCT_EMAIL_TEMPLATES.map((t) => ({
+        id: t.id,
+        label: t.label,
+        subject: t.subject,
+        text: t.text,
+      })),
       configured: Boolean(process.env.RESEND_API_KEY?.trim()),
     });
   } catch (err) {
@@ -84,6 +93,8 @@ export async function POST(request: NextRequest) {
 
   const subject = String(body.subject ?? "").trim();
   const message = String(body.body ?? "").trim();
+  const templateId =
+    typeof body.templateId === "string" ? body.templateId.trim() : null;
   const dryRun = Boolean(body.dryRun);
   const confirmed = Boolean(body.confirmed);
   const recipientIds = Array.isArray(body.recipientIds)
@@ -110,6 +121,7 @@ export async function POST(request: NextRequest) {
       createdBy: admin.userId,
       subject,
       body: message,
+      templateId,
       dryRun,
       recipientIds,
     });

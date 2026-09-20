@@ -2,7 +2,12 @@ import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { sendResendEmail } from "@/lib/email/resend";
-import { buildTrackedProductEmailBody } from "@/lib/email/tracking";
+import { getProductEmailTemplate } from "@/lib/email/templates";
+import {
+  buildTrackedHtmlFromPlainText,
+  buildTrackedProductEmailBody,
+  buildTrackedProductEmailHtml,
+} from "@/lib/email/tracking";
 
 export type ProductEmailRecipient = {
   id: string;
@@ -89,6 +94,10 @@ export async function sendProductEmailCampaign(params: {
   createdBy: string;
   subject: string;
   body: string;
+  /** Optional HTML template id from PRODUCT_EMAIL_TEMPLATES */
+  templateId?: string | null;
+  /** Optional raw HTML (used when templateId is not set) */
+  html?: string | null;
   dryRun?: boolean;
   /** If set, only send to these profile ids (must still be opted in). */
   recipientIds?: string[];
@@ -106,6 +115,12 @@ export async function sendProductEmailCampaign(params: {
   if (!subject || !body) {
     throw new Error("Subject and body are required");
   }
+
+  const template = getProductEmailTemplate(params.templateId);
+  const htmlSource =
+    template?.html?.trim() ||
+    (typeof params.html === "string" ? params.html.trim() : "") ||
+    null;
 
   let recipients = await listProductEmailRecipients(params.service, 500);
   if (params.recipientIds?.length) {
@@ -172,10 +187,24 @@ export async function sendProductEmailCampaign(params: {
       campaignId,
       recipientId: recipient.id,
     });
+    const html = htmlSource
+      ? buildTrackedProductEmailHtml({
+          html: htmlSource,
+          campaignId,
+          recipientId: recipient.id,
+          firstName: recipient.username,
+        })
+      : buildTrackedHtmlFromPlainText({
+          body,
+          campaignId,
+          recipientId: recipient.id,
+        });
+
     const result = await sendResendEmail({
       to: recipient.email,
       subject,
       text,
+      html,
     });
     if (result.ok) {
       sentCount += 1;
