@@ -941,6 +941,9 @@ async function blackenDiagramImagesInPage(
                 const px = data.data;
                 const sample = (x, y) => {
                   const i = (y * w + x) * 4;
+                  // Transparent corners must not count as black ink, or inkCut
+                  // collapses and the whole diagram is wiped (Physics-40 PNGs).
+                  if (px[i + 3] < 8) return 255;
                   return 0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2];
                 };
                 const corners = [
@@ -949,9 +952,11 @@ async function blackenDiagramImagesInPage(
                   sample(0, h - 1),
                   sample(w - 1, h - 1),
                 ].sort((a, b) => a - b);
-                const bg = corners[1];
+                let bg = corners[1];
+                // If the plate is mostly transparent / light, assume white paper.
+                if (!(bg > 8)) bg = 255;
                 // Anything near the plate luminance (or lighter) → transparent.
-                const inkCut = Math.min(bg - 24, 160);
+                const inkCut = Math.min(bg - 24, 200);
                 for (let i = 0; i < px.length; i += 4) {
                   const a = px[i + 3];
                   if (a < 8) {
