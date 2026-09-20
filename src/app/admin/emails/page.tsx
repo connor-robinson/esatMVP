@@ -33,6 +33,7 @@ type Recipient = {
 type Campaign = {
   id: string;
   subject: string;
+  subject_b?: string | null;
   recipient_count: number;
   sent_count: number;
   failed_count: number;
@@ -49,6 +50,7 @@ type TemplateOption = {
   id: string;
   label: string;
   subject: string;
+  subjectB?: string | null;
   text: string;
 };
 
@@ -72,7 +74,9 @@ export default function AdminEmailsPage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [templates, setTemplates] = useState<TemplateOption[]>([]);
   const [templateId, setTemplateId] = useState<string | null>(null);
+  const [abEnabled, setAbEnabled] = useState(false);
   const [subject, setSubject] = useState("");
+  const [subjectB, setSubjectB] = useState("");
   const [body, setBody] = useState("");
   const [confirmed, setConfirmed] = useState(false);
   const [mode, setMode] = useState<"all" | "selected">("all");
@@ -131,8 +135,23 @@ export default function AdminEmailsPage() {
     const template = templates.find((t) => t.id === id);
     if (!template) return;
     setSubject(template.subject);
+    if (template.subjectB) {
+      setAbEnabled(true);
+      setSubjectB(template.subjectB);
+    } else {
+      setAbEnabled(false);
+      setSubjectB("");
+    }
     setBody(template.text);
   };
+
+  const effectiveSubjectB = abEnabled ? subjectB.trim() : "";
+  const canCompose =
+    Boolean(subject.trim()) &&
+    Boolean(body.trim()) &&
+    (!abEnabled ||
+      (Boolean(effectiveSubjectB) &&
+        effectiveSubjectB !== subject.trim()));
 
   const toggle = (id: string) => {
     setSelected((prev) => {
@@ -143,7 +162,11 @@ export default function AdminEmailsPage() {
     });
   };
 
-  const send = async (opts: { dryRun?: boolean; testSend?: boolean }) => {
+  const send = async (opts: {
+    dryRun?: boolean;
+    testSend?: boolean;
+    testVariant?: "a" | "b";
+  }) => {
     const dryRun = Boolean(opts.dryRun);
     const testSend = Boolean(opts.testSend);
     setActionError(null);
@@ -155,10 +178,12 @@ export default function AdminEmailsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           subject,
+          subjectB: abEnabled ? subjectB.trim() : null,
           body,
           templateId,
           dryRun,
           testSend,
+          testVariant: opts.testVariant ?? null,
           confirmed: dryRun || testSend ? true : confirmed,
           recipientIds:
             mode === "selected" && !testSend
@@ -175,19 +200,30 @@ export default function AdminEmailsPage() {
       }
       if (dryRun) {
         setActionOk(
-          `Dry run: would send to ${json.recipientCount ?? 0} opted-in users.`,
+          `Dry run: would send to ${json.recipientCount ?? 0} opted-in users` +
+            (json.abEnabled ? " with A/B subjects." : "."),
         );
       } else if (testSend) {
-        setActionOk(`Test sent to ${testAddress}.`);
+        const variantLabel =
+          opts.testVariant === "b"
+            ? "B"
+            : opts.testVariant === "a"
+              ? "A"
+              : "";
+        setActionOk(
+          `Test${variantLabel ? ` ${variantLabel}` : ""} sent to ${testAddress}.`,
+        );
       } else {
         setActionOk(
           `Sent ${json.sentCount ?? 0} of ${json.recipientCount ?? 0}` +
             (json.failedCount
               ? ` (${json.failedCount} failed)`
               : "") +
-            ".",
+            (json.abEnabled ? " (A/B subjects)." : "."),
         );
         setSubject("");
+        setSubjectB("");
+        setAbEnabled(false);
         setBody("");
         setTemplateId(null);
         setConfirmed(false);
@@ -346,15 +382,40 @@ export default function AdminEmailsPage() {
                 ))}
               </div>
 
-              <label className="mt-4 block text-xs font-medium text-text-muted">
-                Subject
+              <label className="mt-4 flex items-center gap-2 text-sm text-text-muted">
+                <input
+                  type="checkbox"
+                  checked={abEnabled}
+                  onChange={(e) => setAbEnabled(e.target.checked)}
+                />
+                <span>A/B test subject line (50/50 split)</span>
+              </label>
+
+              <label className="mt-3 block text-xs font-medium text-text-muted">
+                {abEnabled ? "Subject A" : "Subject"}
                 <input
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   className="mt-1.5 w-full rounded-organic-md bg-surface-mid px-3 py-2 text-sm text-text"
-                  placeholder="Tips and Tricks: …"
+                  placeholder={
+                    abEnabled
+                      ? "Access your 5 Free ESAT Mocks from us"
+                      : "Tips and Tricks: …"
+                  }
                 />
               </label>
+
+              {abEnabled ? (
+                <label className="mt-3 block text-xs font-medium text-text-muted">
+                  Subject B
+                  <input
+                    value={subjectB}
+                    onChange={(e) => setSubjectB(e.target.value)}
+                    className="mt-1.5 w-full rounded-organic-md bg-surface-mid px-3 py-2 text-sm text-text"
+                    placeholder="About the ESAT Mock papers"
+                  />
+                </label>
+              ) : null}
 
               <label className="mt-3 block text-xs font-medium text-text-muted">
                 Body {templateId ? "(plain-text fallback)" : ""}
@@ -374,6 +435,9 @@ export default function AdminEmailsPage() {
                 Every send includes open tracking and click-tracked links, plus
                 manage-preferences and unsubscribe footer links. Test sends
                 always go only to {testAddress}.
+                {abEnabled
+                  ? " Recipients are split evenly between subjects A and B."
+                  : ""}
               </p>
 
               <label className="mt-4 flex items-start gap-2 text-sm text-text-muted">
@@ -405,33 +469,57 @@ export default function AdminEmailsPage() {
               <div className="mt-4 flex flex-wrap gap-2">
                 <button
                   type="button"
-                  disabled={busy || !subject.trim() || !body.trim()}
+                  disabled={busy || !canCompose}
                   onClick={() => void send({ dryRun: true })}
                   className="rounded-organic-md bg-surface-mid px-3 py-1.5 text-sm font-semibold text-text disabled:opacity-50"
                 >
                   Dry run
                 </button>
-                <button
-                  type="button"
-                  disabled={busy || !subject.trim() || !body.trim()}
-                  onClick={() => void send({ testSend: true })}
-                  className="rounded-organic-md bg-surface-mid px-3 py-1.5 text-sm font-semibold text-text disabled:opacity-50"
-                >
-                  {busy ? "Sending…" : `Send test to ${testAddress}`}
-                </button>
+                {abEnabled ? (
+                  <>
+                    <button
+                      type="button"
+                      disabled={busy || !canCompose}
+                      onClick={() =>
+                        void send({ testSend: true, testVariant: "a" })
+                      }
+                      className="rounded-organic-md bg-surface-mid px-3 py-1.5 text-sm font-semibold text-text disabled:opacity-50"
+                    >
+                      {busy ? "Sending…" : "Send test A"}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={busy || !canCompose}
+                      onClick={() =>
+                        void send({ testSend: true, testVariant: "b" })
+                      }
+                      className="rounded-organic-md bg-surface-mid px-3 py-1.5 text-sm font-semibold text-text disabled:opacity-50"
+                    >
+                      {busy ? "Sending…" : "Send test B"}
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={busy || !canCompose}
+                    onClick={() => void send({ testSend: true })}
+                    className="rounded-organic-md bg-surface-mid px-3 py-1.5 text-sm font-semibold text-text disabled:opacity-50"
+                  >
+                    {busy ? "Sending…" : `Send test to ${testAddress}`}
+                  </button>
+                )}
                 <button
                   type="button"
                   disabled={
                     busy ||
-                    !subject.trim() ||
-                    !body.trim() ||
+                    !canCompose ||
                     !confirmed ||
                     (mode === "selected" && selected.size === 0)
                   }
                   onClick={() => void send({})}
                   className="rounded-organic-md bg-secondary/25 px-3 py-1.5 text-sm font-semibold text-text disabled:opacity-50"
                 >
-                  {busy ? "Sending…" : "Send email"}
+                  {busy ? "Sending…" : abEnabled ? "Send A/B email" : "Send email"}
                 </button>
               </div>
             </section>
@@ -533,7 +621,23 @@ export default function AdminEmailsPage() {
                       <td className="px-4 py-2.5 tabular-nums text-text-muted">
                         {new Date(c.created_at).toLocaleString("en-GB")}
                       </td>
-                      <td className="px-4 py-2.5 text-text">{c.subject}</td>
+                      <td className="px-4 py-2.5 text-text">
+                        {c.subject_b ? (
+                          <span>
+                            <span className="mr-1.5 rounded-organic-md bg-secondary/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-text">
+                              A/B
+                            </span>
+                            <span className="block text-xs text-text-muted">
+                              A: {c.subject}
+                            </span>
+                            <span className="block text-xs text-text-muted">
+                              B: {c.subject_b}
+                            </span>
+                          </span>
+                        ) : (
+                          c.subject
+                        )}
+                      </td>
                       <td className="px-4 py-2.5 text-text-muted">{c.status}</td>
                       <td className="px-4 py-2.5 tabular-nums text-text-muted">
                         {c.sent_count}/{c.recipient_count}

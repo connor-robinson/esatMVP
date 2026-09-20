@@ -97,13 +97,20 @@ async function main() {
     `Sending template "${template.id}" to test address ${PRODUCT_EMAIL_TEST_ADDRESS}…`,
   );
 
+  const testVariant =
+    process.argv.includes("--variant=b") || process.argv.includes("--b")
+      ? "b"
+      : "a";
+
   const result = await sendProductEmailCampaign({
     service,
     createdBy: String(admin.id),
     subject: template.subject,
+    subjectB: template.subjectB ?? null,
     body: template.text,
     templateId: template.id,
     testSend: true,
+    testVariant,
   });
 
   console.log(JSON.stringify(result, null, 2));

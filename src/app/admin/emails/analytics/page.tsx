@@ -17,9 +17,29 @@ type Engagement = {
   click_rate: number;
 };
 
+type AbVariant = {
+  variant: "a" | "b";
+  subject: string;
+  sentCount: number;
+  failedCount: number;
+  openCount: number;
+  uniqueOpeners: number;
+  clickCount: number;
+  uniqueClickers: number;
+  unsubscribeCount: number;
+  openRate: number;
+  clickRate: number;
+};
+
+type AbStats = {
+  enabled: boolean;
+  variants: AbVariant[];
+};
+
 type CampaignRow = {
   id: string;
   subject: string;
+  subject_b?: string | null;
   recipient_count: number;
   sent_count: number;
   failed_count: number;
@@ -33,6 +53,7 @@ type CampaignRow = {
   open_rate: number;
   click_rate: number;
   click_to_open_rate: number;
+  ab?: AbStats | null;
 };
 
 type LinkStat = {
@@ -62,6 +83,7 @@ export default function AdminEmailAnalyticsPage() {
   const [campaigns, setCampaigns] = useState<CampaignRow[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [links, setLinks] = useState<LinkStat[]>([]);
+  const [selectedAb, setSelectedAb] = useState<AbStats | null>(null);
   const [linksLoading, setLinksLoading] = useState(false);
 
   const load = useCallback(async () => {
@@ -95,6 +117,7 @@ export default function AdminEmailAnalyticsPage() {
   useEffect(() => {
     if (!selectedId) {
       setLinks([]);
+      setSelectedAb(null);
       return;
     }
     let cancelled = false;
@@ -108,8 +131,10 @@ export default function AdminEmailAnalyticsPage() {
       if (cancelled) return;
       if (res.ok) {
         setLinks((json.links ?? []) as LinkStat[]);
+        setSelectedAb((json.ab ?? null) as AbStats | null);
       } else {
         setLinks([]);
+        setSelectedAb(null);
       }
       setLinksLoading(false);
     })();
@@ -127,6 +152,12 @@ export default function AdminEmailAnalyticsPage() {
   }
 
   const selected = campaigns.find((c) => c.id === selectedId) ?? null;
+  const abToShow =
+    selectedAb?.enabled
+      ? selectedAb
+      : selected?.ab?.enabled
+        ? selected.ab
+        : null;
 
   return (
     <Container size="lg" className="py-10">
@@ -146,7 +177,7 @@ export default function AdminEmailAnalyticsPage() {
             Email tracking
           </h1>
           <p className="mt-1 text-sm text-text-muted">
-            Opens, clicks, and per-link performance for product campaigns.
+            Opens, clicks, A/B subjects, and per-link performance.
           </p>
         </div>
         <button
@@ -228,7 +259,23 @@ export default function AdminEmailAnalyticsPage() {
                       <td className="px-4 py-2.5 tabular-nums text-text-muted">
                         {new Date(c.created_at).toLocaleString("en-GB")}
                       </td>
-                      <td className="px-4 py-2.5 text-text">{c.subject}</td>
+                      <td className="px-4 py-2.5 text-text">
+                        {c.subject_b ? (
+                          <span>
+                            <span className="mr-1.5 rounded-organic-md bg-secondary/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-text">
+                              A/B
+                            </span>
+                            <span className="block text-xs text-text-muted">
+                              A: {c.subject}
+                            </span>
+                            <span className="block text-xs text-text-muted">
+                              B: {c.subject_b}
+                            </span>
+                          </span>
+                        ) : (
+                          c.subject
+                        )}
+                      </td>
                       <td className="px-4 py-2.5 tabular-nums text-text-muted">
                         {c.sent_count}/{c.recipient_count}
                       </td>
@@ -274,10 +321,41 @@ export default function AdminEmailAnalyticsPage() {
               </table>
             </div>
             <p className="mt-2 text-xs text-text-subtle">
-              Click a campaign to see which links were clicked. Open rates can
-              be inflated by privacy proxies in some inboxes.
+              Click a campaign to see A/B results and link clicks. Open rates
+              can be inflated by privacy proxies in some inboxes.
             </p>
           </section>
+
+          {selected && abToShow ? (
+            <section className="mt-8 rounded-organic-xl bg-surface-elevated px-5 py-5">
+              <h2 className="text-sm font-semibold text-text">
+                Subject A/B results
+              </h2>
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
+                {abToShow.variants.map((v) => (
+                  <div
+                    key={v.variant}
+                    className="rounded-organic-lg bg-surface-mid px-4 py-4"
+                  >
+                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">
+                      Subject {v.variant.toUpperCase()}
+                    </p>
+                    <p className="mt-2 text-sm font-medium text-text">
+                      {v.subject}
+                    </p>
+                    <div className="mt-4 grid grid-cols-2 gap-3">
+                      <Stat label="Sent" value={v.sentCount} />
+                      <Stat label="Open %" value={pct(v.openRate)} />
+                      <Stat label="Unique opens" value={v.uniqueOpeners} />
+                      <Stat label="Click %" value={pct(v.clickRate)} />
+                      <Stat label="Unique clicks" value={v.uniqueClickers} />
+                      <Stat label="Unsub" value={v.unsubscribeCount} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
           {selected ? (
             <section className="mt-8 rounded-organic-xl bg-surface-elevated px-5 py-5">

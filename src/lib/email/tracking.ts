@@ -38,6 +38,25 @@ export type CampaignLinkClickStat = {
   uniqueClickers: number;
 };
 
+export type CampaignAbVariantStats = {
+  variant: "a" | "b";
+  subject: string;
+  sentCount: number;
+  failedCount: number;
+  openCount: number;
+  uniqueOpeners: number;
+  clickCount: number;
+  uniqueClickers: number;
+  unsubscribeCount: number;
+  openRate: number;
+  clickRate: number;
+};
+
+export type CampaignAbStats = {
+  enabled: boolean;
+  variants: CampaignAbVariantStats[];
+};
+
 const URL_RE = /https?:\/\/[^\s<>"'\)\]]+/gi;
 const HREF_RE = /href=(["'])(https?:\/\/[^"']+)\1/gi;
 
@@ -483,6 +502,126 @@ export async function getCampaignLinkClickStats(
       uniqueClickers: bucket.recipients.size,
     }))
     .sort((a, b) => b.clickCount - a.clickCount);
+}
+
+export async function getCampaignAbStats(
+  service: SupabaseClient,
+  campaignId: string,
+): Promise<CampaignAbStats> {
+  const [{ data: campaign }, { data: sends }, { data: events }] =
+    await Promise.all([
+      service
+        .from("product_email_campaigns")
+        .select("subject, subject_b")
+        .eq("id", campaignId)
+        .maybeSingle(),
+      service
+        .from("product_email_sends")
+        .select("recipient_id, variant, subject, status")
+        .eq("campaign_id", campaignId),
+      service
+        .from("product_email_events")
+        .select("event_type, recipient_id")
+        .eq("campaign_id", campaignId),
+    ]);
+
+  if (!campaign?.subject_b) {
+    return { enabled: false, variants: [] };
+  }
+
+  const subjectA = String(campaign.subject ?? "");
+  const subjectB = String(campaign.subject_b);
+
+  const byVariant: Record<
+    "a" | "b",
+    {
+      subject: string;
+      sentCount: number;
+      failedCount: number;
+      recipients: Set<string>;
+      openCount: number;
+      uniqueOpeners: Set<string>;
+      clickCount: number;
+      uniqueClickers: Set<string>;
+      unsubscribeCount: number;
+    }
+  > = {
+    a: {
+      subject: subjectA,
+      sentCount: 0,
+      failedCount: 0,
+      recipients: new Set(),
+      openCount: 0,
+      uniqueOpeners: new Set(),
+      clickCount: 0,
+      uniqueClickers: new Set(),
+      unsubscribeCount: 0,
+    },
+    b: {
+      subject: subjectB,
+      sentCount: 0,
+      failedCount: 0,
+      recipients: new Set(),
+      openCount: 0,
+      uniqueOpeners: new Set(),
+      clickCount: 0,
+      uniqueClickers: new Set(),
+      unsubscribeCount: 0,
+    },
+  };
+
+  const recipientVariant = new Map<string, "a" | "b">();
+
+  for (const row of sends ?? []) {
+    const variant = row.variant === "b" ? "b" : "a";
+    const bucket = byVariant[variant];
+    if (row.subject) bucket.subject = String(row.subject);
+    if (row.status === "sent") bucket.sentCount += 1;
+    else bucket.failedCount += 1;
+    if (row.recipient_id) {
+      const id = String(row.recipient_id);
+      bucket.recipients.add(id);
+      recipientVariant.set(id, variant);
+    }
+  }
+
+  for (const row of events ?? []) {
+    if (!row.recipient_id) continue;
+    const id = String(row.recipient_id);
+    const variant = recipientVariant.get(id);
+    if (!variant) continue;
+    const bucket = byVariant[variant];
+    if (row.event_type === "open") {
+      bucket.openCount += 1;
+      bucket.uniqueOpeners.add(id);
+    } else if (row.event_type === "click") {
+      bucket.clickCount += 1;
+      bucket.uniqueClickers.add(id);
+    } else if (row.event_type === "unsubscribe") {
+      bucket.unsubscribeCount += 1;
+    }
+  }
+
+  const variants: CampaignAbVariantStats[] = (["a", "b"] as const).map(
+    (variant) => {
+      const bucket = byVariant[variant];
+      return {
+        variant,
+        subject: bucket.subject,
+        sentCount: bucket.sentCount,
+        failedCount: bucket.failedCount,
+        openCount: bucket.openCount,
+        uniqueOpeners: bucket.uniqueOpeners.size,
+        clickCount: bucket.clickCount,
+        uniqueClickers: bucket.uniqueClickers.size,
+        unsubscribeCount: bucket.unsubscribeCount,
+        openRate: ratePercent(bucket.uniqueOpeners.size, bucket.sentCount),
+        clickRate: ratePercent(bucket.uniqueClickers.size, bucket.sentCount),
+      };
+    },
+  );
+
+  return { enabled: true, variants };
 }
 
 export function isSafeRedirectUrl(raw: string): boolean {

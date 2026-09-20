@@ -27,6 +27,14 @@ export type ProductEmailConsentStats = {
   totalProfiles: number;
 };
 
+export type ProductEmailAbVariant = "a" | "b";
+
+type AssignedSend = {
+  recipient: ProductEmailRecipient;
+  variant: ProductEmailAbVariant;
+  subject: string;
+};
+
 export async function getProductEmailConsentStats(
   service: SupabaseClient,
 ): Promise<ProductEmailConsentStats> {
@@ -121,10 +129,53 @@ export async function resolveProductEmailTestRecipient(
   };
 }
 
+/** Stable ~50/50 subject assignment by recipient id. */
+export function assignSubjectVariants(params: {
+  recipients: ProductEmailRecipient[];
+  subjectA: string;
+  subjectB: string | null;
+  /** Force a variant (used for single-recipient test sends). */
+  forceVariant?: ProductEmailAbVariant | null;
+}): AssignedSend[] {
+  const subjectA = params.subjectA.trim();
+  const subjectB = params.subjectB?.trim() || null;
+
+  if (!subjectB || params.forceVariant === "a") {
+    return params.recipients.map((recipient) => ({
+      recipient,
+      variant: "a" as const,
+      subject: subjectA,
+    }));
+  }
+
+  if (params.forceVariant === "b") {
+    return params.recipients.map((recipient) => ({
+      recipient,
+      variant: "b" as const,
+      subject: subjectB,
+    }));
+  }
+
+  const sorted = [...params.recipients].sort((a, b) =>
+    a.id.localeCompare(b.id),
+  );
+
+  return sorted.map((recipient, index) => {
+    const variant: ProductEmailAbVariant = index % 2 === 0 ? "a" : "b";
+    return {
+      recipient,
+      variant,
+      subject: variant === "a" ? subjectA : subjectB,
+    };
+  });
+}
+
 export async function sendProductEmailCampaign(params: {
   service: SupabaseClient;
   createdBy: string;
   subject: string;
+  /** Optional B subject enables A/B testing */
+  subjectB?: string | null;
   body: string;
   /** Optional HTML template id from PRODUCT_EMAIL_TEMPLATES */
   templateId?: string | null;
@@ -133,6 +184,8 @@ export async function sendProductEmailCampaign(params: {
   dryRun?: boolean;
   /** Send only to PRODUCT_EMAIL_TEST_ADDRESS (ignores audience selection). */
   testSend?: boolean;
+  /** Which subject to use on a test send when A/B is enabled. */
+  testVariant?: ProductEmailAbVariant | null;
   /** If set, only send to these profile ids (must still be opted in). */
   recipientIds?: string[];
 }): Promise<{
@@ -142,12 +195,17 @@ export async function sendProductEmailCampaign(params: {
   failedCount: number;
   skippedCount: number;
   campaignId: string | null;
+  abEnabled: boolean;
   errors: string[];
 }> {
   const subject = params.subject.trim();
+  const subjectB = params.subjectB?.trim() || null;
   const body = params.body.trim();
   if (!subject || !body) {
     throw new Error("Subject and body are required");
+  }
+  if (subjectB && subjectB === subject) {
+    throw new Error("A/B subjects must be different");
   }
 
   const template = getProductEmailTemplate(params.templateId);
@@ -167,11 +225,26 @@ export async function sendProductEmailCampaign(params: {
     }
   }
 
+  const forceVariant =
+    params.testSend && subjectB
+      ? params.testVariant === "b"
+        ? "b"
+        : "a"
+      : null;
+
+  const assigned = assignSubjectVariants({
+    recipients,
+    subjectA: subject,
+    subjectB,
+    forceVariant,
+  });
+
   if (params.dryRun) {
     const { data: inserted } = await params.service
       .from("product_email_campaigns")
       .insert({
         subject,
+        subject_b: subjectB,
         body,
         created_by: params.createdBy,
         recipient_count: recipients.length,
@@ -190,6 +263,7 @@ export async function sendProductEmailCampaign(params: {
       failedCount: 0,
       skippedCount: recipients.length,
       campaignId: (inserted?.id as string | undefined) ?? null,
+      abEnabled: Boolean(subjectB),
       errors: [],
     };
   }
@@ -198,6 +272,7 @@ export async function sendProductEmailCampaign(params: {
     .from("product_email_campaigns")
     .insert({
       subject,
+      subject_b: subjectB,
       body,
       created_by: params.createdBy,
       recipient_count: recipients.length,
@@ -220,7 +295,8 @@ export async function sendProductEmailCampaign(params: {
   let failedCount = 0;
   const errors: string[] = [];
 
-  for (const recipient of recipients) {
+  for (const row of assigned) {
+    const { recipient, variant, subject: sendSubject } = row;
     const text = buildTrackedProductEmailBody({
       body,
       campaignId,
@@ -241,10 +317,23 @@ export async function sendProductEmailCampaign(params: {
 
     const result = await sendResendEmail({
       to: recipient.email,
-      subject,
+      subject: sendSubject,
       text,
       html,
     });
+
+    const sendStatus = result.ok ? "sent" : "failed";
+    await params.service.from("product_email_sends").upsert(
+      {
+        campaign_id: campaignId,
+        recipient_id: recipient.id,
+        variant,
+        subject: sendSubject,
+        status: sendStatus,
+      },
+      { onConflict: "campaign_id,recipient_id" },
+    );
+
     if (result.ok) {
       sentCount += 1;
     } else {
@@ -283,6 +372,7 @@ export async function sendProductEmailCampaign(params: {
     failedCount,
     skippedCount: 0,
     campaignId,
+    abEnabled: Boolean(subjectB),
     errors,
   };
 }

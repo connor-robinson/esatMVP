@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
       admin.service
         .from("product_email_campaigns")
         .select(
-          "id, subject, recipient_count, sent_count, failed_count, status, created_at",
+          "id, subject, subject_b, recipient_count, sent_count, failed_count, status, created_at",
         )
         .order("created_at", { ascending: false })
         .limit(20),
@@ -66,6 +66,7 @@ export async function GET(request: NextRequest) {
         id: t.id,
         label: t.label,
         subject: t.subject,
+        subjectB: t.subjectB ?? null,
         text: t.text,
       })),
       testAddress: PRODUCT_EMAIL_TEST_ADDRESS,
@@ -94,11 +95,16 @@ export async function POST(request: NextRequest) {
   }
 
   const subject = String(body.subject ?? "").trim();
+  const subjectBRaw =
+    typeof body.subjectB === "string" ? body.subjectB.trim() : "";
+  const subjectB = subjectBRaw || null;
   const message = String(body.body ?? "").trim();
   const templateId =
     typeof body.templateId === "string" ? body.templateId.trim() : null;
   const dryRun = Boolean(body.dryRun);
   const testSend = Boolean(body.testSend);
+  const testVariant =
+    body.testVariant === "b" ? "b" : body.testVariant === "a" ? "a" : null;
   const confirmed = Boolean(body.confirmed);
   const recipientIds = Array.isArray(body.recipientIds)
     ? body.recipientIds.map((id) => String(id))
@@ -123,10 +129,12 @@ export async function POST(request: NextRequest) {
       service: admin.service,
       createdBy: admin.userId,
       subject,
+      subjectB,
       body: message,
       templateId,
       dryRun,
       testSend,
+      testVariant,
       recipientIds: testSend ? undefined : recipientIds,
     });
     return NextResponse.json(result);

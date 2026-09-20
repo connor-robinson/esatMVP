@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireTesterAdmin } from "@/lib/tester/admin";
 import {
+  getCampaignAbStats,
   getCampaignEngagementByIds,
   getCampaignLinkClickStats,
   getProductEmailEngagementStats,
@@ -22,16 +23,17 @@ export async function GET(request: NextRequest) {
 
   try {
     if (campaignId) {
-      const [{ data: campaign }, engagementMap, links] = await Promise.all([
+      const [{ data: campaign }, engagementMap, links, ab] = await Promise.all([
         admin.service
           .from("product_email_campaigns")
           .select(
-            "id, subject, body, recipient_count, sent_count, failed_count, status, created_at",
+            "id, subject, subject_b, body, recipient_count, sent_count, failed_count, status, created_at",
           )
           .eq("id", campaignId)
           .maybeSingle(),
         getCampaignEngagementByIds(admin.service, [campaignId]),
         getCampaignLinkClickStats(admin.service, campaignId),
+        getCampaignAbStats(admin.service, campaignId),
       ]);
 
       if (!campaign) {
@@ -60,6 +62,7 @@ export async function GET(request: NextRequest) {
           ),
         },
         links,
+        ab,
       });
     }
 
@@ -68,7 +71,7 @@ export async function GET(request: NextRequest) {
       admin.service
         .from("product_email_campaigns")
         .select(
-          "id, subject, recipient_count, sent_count, failed_count, status, created_at",
+          "id, subject, subject_b, recipient_count, sent_count, failed_count, status, created_at",
         )
         .neq("status", "dry_run")
         .order("created_at", { ascending: false })
@@ -80,6 +83,15 @@ export async function GET(request: NextRequest) {
       admin.service,
       campaigns.map((c) => String(c.id)),
     );
+
+    const abByCampaign = await Promise.all(
+      campaigns.map(async (c) => {
+        const id = String(c.id);
+        if (!c.subject_b) return [id, null] as const;
+        return [id, await getCampaignAbStats(admin.service!, id)] as const;
+      }),
+    );
+    const abMap = Object.fromEntries(abByCampaign);
 
     const campaignsWithRates = campaigns.map((c) => {
       const id = String(c.id);
@@ -98,6 +110,7 @@ export async function GET(request: NextRequest) {
           e?.uniqueClickers ?? 0,
           e?.uniqueOpeners ?? 0,
         ),
+        ab: abMap[id] ?? null,
       };
     });
 

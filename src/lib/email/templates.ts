@@ -7,6 +7,8 @@ export type ProductEmailTemplate = {
   id: string;
   label: string;
   subject: string;
+  /** Optional second subject for A/B testing */
+  subjectB?: string;
   /** Plain-text fallback / preview in compose UI */
   text: string;
   html: string;
@@ -193,7 +195,8 @@ export const PRODUCT_EMAIL_TEMPLATES: ProductEmailTemplate[] = [
   {
     id: ESAT_FREE_MOCKS_V4_ID,
     label: "5 free written ESAT Mocks (v4)",
-    subject: "5 free written ESAT Mocks from us",
+    subject: "Access your 5 Free ESAT Mocks from us",
+    subjectB: "About the ESAT Mock papers",
     text: ESAT_FREE_MOCKS_V4_TEXT,
     html: ESAT_FREE_MOCKS_V4_HTML,
   },
