@@ -35,6 +35,7 @@ import { rememberHubMarkPreview } from '@/lib/papers/hubMarkPreview';
 import type { RoadmapStartOptions } from '@/components/papers/roadmap/StageListCard';
 import { questionMatchesRoadmapPart } from '@/lib/papers/roadmapQuestionMatch';
 import { generatePartIdFromRoadmapPart } from '@/lib/papers/partIdUtils';
+import { filterStartablePastPaperParts } from '@/lib/papers/pastPaperSubjectAvailability';
 import {
   filterToUniqueQuestionsOnly,
   loadAttemptedQuestionsContext,
@@ -363,6 +364,7 @@ export default function PastPapersHomePage({
       selectedParts: RoadmapPart[],
       options: RoadmapStartOptions,
     ) => {
+      selectedParts = filterStartablePastPaperParts(selectedParts);
       if (selectedParts.length === 0) {
         return;
       }

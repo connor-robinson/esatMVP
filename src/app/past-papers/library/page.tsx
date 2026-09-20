@@ -23,6 +23,7 @@ import { filterEngaaQuestionsByEsatSubjects } from "@/lib/papers/engaaQuestionFi
 import { isEsatCampMockExamType } from "@/lib/papers/esatCampMocks";
 import { getAdminEsatMockModulePapersByPaperName } from "@/lib/papers/adminEsatMocks";
 import { generateSectionId } from '@/lib/papers/partIdUtils';
+import { isPastPaperSectionComingSoon } from '@/lib/papers/pastPaperSubjectAvailability';
 import type { Paper, PaperSection, Question, ExamName } from '@/types/papers';
 import { PaperLibraryGrid } from '@/components/papers/library/PaperLibraryGrid';
 import { PaperSessionSummary } from '@/components/papers/library/PaperSessionSummary';
@@ -246,6 +247,15 @@ export default function PapersLibraryPage() {
       paper,
       subjectsForAdd,
     );
+    // Strip paused subjects (Biology coming soon) from bulk adds.
+    sectionsToAdd.forEach((subjects, mainSectionName) => {
+      const kept = new Set(
+        [...subjects].filter((s) => !isPastPaperSectionComingSoon(s)),
+      );
+      if (kept.size === 0) sectionsToAdd.delete(mainSectionName);
+      else sectionsToAdd.set(mainSectionName, kept);
+    });
+    if (sectionsToAdd.size === 0) return;
     const existingPaper = selectedPapers.find((sp) => sp.paper.id === paper.id);
     if (existingPaper) {
       handleUpdateSections(
@@ -270,7 +280,7 @@ export default function PapersLibraryPage() {
       subjectParts,
       paper,
       subjectsForAdd,
-    );
+    ).filter((subject) => !isPastPaperSectionComingSoon(subject));
     const existingPaper = selectedPapers.find((sp) => sp.paper.id === paper.id);
 
     if (existingPaper) {
@@ -554,6 +564,7 @@ export default function PapersLibraryPage() {
           firstPaper.selectedSections,
         )) {
           subjects.forEach((subject) => {
+            if (isPastPaperSectionComingSoon(subject)) return;
             selectedSections.push(subject);
             selectedPartIds.push(
               generateSectionId(
@@ -565,6 +576,11 @@ export default function PapersLibraryPage() {
               ),
             );
           });
+        }
+
+        if (selectedSections.length === 0) {
+          alert("Biology past papers are coming soon. Please select another subject.");
+          return;
         }
 
         // Must await: startSession sets sessionId/paperId after async in-progress cleanup.

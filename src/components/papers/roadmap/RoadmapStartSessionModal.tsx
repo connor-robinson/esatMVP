@@ -18,6 +18,10 @@ import {
   isDisplayGroupCompleted,
 } from "@/lib/papers/roadmapDisplayGroups";
 import { roadmapPartMatchesEsatSubjects } from "@/lib/papers/roadmapEsatFilter";
+import {
+  filterStartablePastPaperParts,
+  isPastPaperPartComingSoon,
+} from "@/lib/papers/pastPaperSubjectAvailability";
 import { RoadmapInfoPopover } from "./RoadmapInfoPopover";
 import type { RoadmapStartOptions } from "./StageListCard";
 
@@ -132,10 +136,20 @@ function defaultSelectedGroupKeys(
   }
 
   const incomplete = displayGroups.filter(
-    (group) => !isDisplayGroupCompleted(group, partCompletion, getPartKey),
+    (group) =>
+      !isDisplayGroupCompleted(group, partCompletion, getPartKey) &&
+      !group.internalParts.every((part) => isPastPaperPartComingSoon(part)),
   );
   return new Set(
-    (incomplete.length > 0 ? incomplete : displayGroups).map((g) => g.key),
+    (incomplete.length > 0
+      ? incomplete
+      : displayGroups.filter(
+          (group) =>
+            !group.internalParts.every((part) =>
+              isPastPaperPartComingSoon(part),
+            ),
+        )
+    ).map((g) => g.key),
   );
 }
 
@@ -191,7 +205,10 @@ export function RoadmapStartSessionModal({
 
   const resolveSelection = () => {
     if (selectedGroups.size === 0) return null;
-    const parts = expandDisplayGroupsToParts(stage.parts, selectedGroups);
+    const parts = filterStartablePastPaperParts(
+      expandDisplayGroupsToParts(stage.parts, selectedGroups),
+    );
+    if (parts.length === 0) return null;
     return {
       parts,
       options: { newQuestionsOnly: effectiveNewQuestionsOnly } as RoadmapStartOptions,
@@ -258,6 +275,9 @@ export function RoadmapStartSessionModal({
 
           <ul className="space-y-1">
             {displayGroups.map((group) => {
+              const comingSoon = group.internalParts.every((part) =>
+                isPastPaperPartComingSoon(part),
+              );
               const selected = selectedGroups.has(group.key);
               const done = isDisplayGroupCompleted(
                 group,
@@ -268,25 +288,39 @@ export function RoadmapStartSessionModal({
                 <li key={group.key}>
                   <label
                     className={cn(
-                      "flex cursor-pointer items-center gap-3 rounded-sm px-3 py-2.5 transition-colors",
-                      selected
+                      "flex items-center gap-3 rounded-sm px-3 py-2.5 transition-colors",
+                      comingSoon
+                        ? "cursor-not-allowed opacity-70"
+                        : "cursor-pointer",
+                      selected && !comingSoon
                         ? "bg-surface-mid"
-                        : "hover:bg-surface-mid/60",
+                        : !comingSoon
+                          ? "hover:bg-surface-mid/60"
+                          : "bg-surface-mid/40",
                     )}
                   >
                     <input
                       type="checkbox"
-                      checked={selected}
-                      onChange={() => toggleGroup(group.key)}
+                      checked={comingSoon ? false : selected}
+                      disabled={comingSoon}
+                      onChange={() => {
+                        if (!comingSoon) toggleGroup(group.key);
+                      }}
                       className="h-4 w-4 accent-[var(--color-primary)]"
                     />
                     <span className="min-w-0 flex-1">
                       <span className="block text-sm font-medium text-text">
                         {displayLabelForGroup(group)}
+                        {comingSoon ? (
+                          <span className="ml-2 text-xs font-medium text-text-muted">
+                            Coming soon
+                          </span>
+                        ) : null}
                       </span>
                       <span className="mt-0.5 block text-xs text-text-muted">
-                        {group.paperName}
-                        {done ? " · Done" : ""}
+                        {comingSoon
+                          ? "Biology past papers are paused for now"
+                          : `${group.paperName}${done ? " · Done" : ""}`}
                       </span>
                     </span>
                   </label>

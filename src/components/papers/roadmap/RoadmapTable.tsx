@@ -46,6 +46,10 @@ import {
 import type { RoadmapStartOptions } from "./StageListCard";
 import { RoadmapStartSessionModal } from "./RoadmapStartSessionModal";
 import { CompareInviteModal } from "@/components/mockCompare/CompareInviteModal";
+import {
+  filterStartablePastPaperParts,
+  isPastPaperPartComingSoon,
+} from "@/lib/papers/pastPaperSubjectAvailability";
 
 type StageCompletionEntry = {
   completed: number;
@@ -275,14 +279,14 @@ function SectionsExpandRows({
   );
 
   const startGroup = (group: RoadmapDisplayGroup) => {
-    onStartSession(
-      stage,
+    const parts = filterStartablePastPaperParts(
       expandDisplayGroupsToParts(stage.parts, new Set([group.key])),
-      {
-        newQuestionsOnly:
-          stage.examName === "ENGAA" ? newQuestionsOnly : false,
-      },
     );
+    if (parts.length === 0) return;
+    onStartSession(stage, parts, {
+      newQuestionsOnly:
+        stage.examName === "ENGAA" ? newQuestionsOnly : false,
+    });
   };
 
   return (
@@ -354,15 +358,28 @@ function SectionsExpandRows({
                 Answers
                 <Download className="h-4 w-4 opacity-80" aria-hidden />
               </CompactBtn>
-              <CompactBtn
-                tone="exam"
-                examName={stage.examName}
-                onClick={() => startGroup(group)}
-                className={ACTION_BTN}
-              >
-                Start now
-                <Play className="h-4 w-4 fill-current opacity-80" aria-hidden />
-              </CompactBtn>
+              {group.internalParts.every((part) =>
+                isPastPaperPartComingSoon(part),
+              ) ? (
+                <span
+                  className={cn(
+                    ACTION_BTN,
+                    "inline-flex items-center justify-center bg-surface-mid text-text-muted",
+                  )}
+                >
+                  Coming soon
+                </span>
+              ) : (
+                <CompactBtn
+                  tone="exam"
+                  examName={stage.examName}
+                  onClick={() => startGroup(group)}
+                  className={ACTION_BTN}
+                >
+                  Start now
+                  <Play className="h-4 w-4 fill-current opacity-80" aria-hidden />
+                </CompactBtn>
+              )}
               <span className={CHEVRON_SPACER} aria-hidden />
             </div>
           </div>

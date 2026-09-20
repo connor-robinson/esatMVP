@@ -29,6 +29,7 @@ import {
   isDisplayGroupCompleted,
   displayLabelForGroup,
 } from "@/lib/papers/roadmapDisplayGroups";
+import { filterStartablePastPaperParts } from "@/lib/papers/pastPaperSubjectAvailability";
 import { RoadmapInfoPopover } from "./RoadmapInfoPopover";
 import {
   ROADMAP_EXPAND_TRANSITION_CLASS,
@@ -164,10 +165,10 @@ export function StageListCard({
   const handleStartSession = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isUnlocked && selectedGroups.size > 0) {
-      const selectedPartsList = expandDisplayGroupsToParts(
-        stage.parts,
-        selectedGroups,
+      const selectedPartsList = filterStartablePastPaperParts(
+        expandDisplayGroupsToParts(stage.parts, selectedGroups),
       );
+      if (selectedPartsList.length === 0) return;
       onStartSession(stage, selectedPartsList, { newQuestionsOnly });
     }
   };

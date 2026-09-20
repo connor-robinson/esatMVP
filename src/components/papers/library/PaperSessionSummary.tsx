@@ -30,6 +30,7 @@ import type { Paper, PaperSection, ExamName } from "@/types/papers";
 import { SectionsLoadingState } from "./SectionsLoadingState";
 import { GuestDrillHintCallout } from "@/components/builder/GuestDrillHint";
 import type { LibraryTutorialStep } from "@/lib/papers/libraryTutorial";
+import { isPastPaperSectionComingSoon } from "@/lib/papers/pastPaperSubjectAvailability";
 
 function paperHasSelectedSubjects(
   sections: Map<string, Set<PaperSection>>,
@@ -224,6 +225,7 @@ function PaperItemComponent({
 
               {showSubjectRows
                 ? mainSection.subjectParts.map((subject, subjectIndex) => {
+                    const comingSoon = isPastPaperSectionComingSoon(subject);
                     const isSelected = sectionSubjects.has(subject);
                     const subjectColor = getSectionColor(subject);
 
@@ -231,32 +233,54 @@ function PaperItemComponent({
                       <button
                         key={`${mainSection.name}-${subject}`}
                         type="button"
-                        onClick={() => onToggleSection(paper.id, subject, mainSection.name)}
+                        disabled={comingSoon}
+                        onClick={() => {
+                          if (comingSoon) return;
+                          onToggleSection(paper.id, subject, mainSection.name);
+                        }}
                         className={cn(
-                          "flex w-full items-center gap-3 border-t border-border-subtle/35 px-3 py-2.5 text-left font-heading transition-colors hover:bg-surface-mid/50",
+                          "flex w-full items-center gap-3 border-t border-border-subtle/35 px-3 py-2.5 text-left font-heading transition-colors",
+                          comingSoon
+                            ? "cursor-not-allowed opacity-70"
+                            : "hover:bg-surface-mid/50",
                           subjectIndex === mainSection.subjectParts.length - 1 && "pb-3",
                         )}
                       >
                         <div
                           className={cn(
                             "flex h-4 w-4 shrink-0 items-center justify-center rounded transition-all",
-                            isSelected ? "border-2" : "border-2 border-border bg-surface-mid",
+                            comingSoon
+                              ? "border-2 border-border bg-surface-mid"
+                              : isSelected
+                                ? "border-2"
+                                : "border-2 border-border bg-surface-mid",
                           )}
                           style={{
-                            backgroundColor: isSelected ? subjectColor : undefined,
-                            borderColor: isSelected ? subjectColor : undefined,
+                            backgroundColor:
+                              !comingSoon && isSelected ? subjectColor : undefined,
+                            borderColor:
+                              !comingSoon && isSelected ? subjectColor : undefined,
                           }}
                         >
-                          {isSelected ? <Check className="h-3 w-3 text-background" /> : null}
+                          {!comingSoon && isSelected ? (
+                            <Check className="h-3 w-3 text-background" />
+                          ) : null}
                         </div>
 
                         <span
                           className={cn(
                             "flex-1 text-sm font-medium",
-                            isSelected ? "text-text" : "text-text-muted",
+                            comingSoon
+                              ? "text-text-muted"
+                              : isSelected
+                                ? "text-text"
+                                : "text-text-muted",
                           )}
                         >
                           {subject}
+                          {comingSoon ? (
+                            <span className="ml-2 text-xs font-medium">Coming soon</span>
+                          ) : null}
                         </span>
                       </button>
                     );
