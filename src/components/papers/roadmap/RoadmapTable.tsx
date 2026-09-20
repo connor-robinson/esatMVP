@@ -6,6 +6,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ChevronDown, Download, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -39,6 +40,7 @@ import {
   parseAdminMockPaperName,
   type AdminEsatMockSubject,
 } from "@/lib/papers/adminEsatMocks";
+import { PAST_PAPERS_ESAT_MOCKS_PATH } from "@/lib/papers/pastPapersUiPreference";
 import { RoadmapInfoPopover } from "./RoadmapInfoPopover";
 import {
   getStageCommentary,
@@ -446,6 +448,7 @@ export function RoadmapTable({
   const handledStartDeepLink = useRef<string | null>(null);
   const [mockSubjectTab, setMockSubjectTab] =
     useState<MockSubjectTab>("Full");
+  const isSubjectMockTab = isEsatMocksPage && mockSubjectTab !== "Full";
 
   const grouped = useMemo(() => {
     const map: Record<ExamTab, RoadmapStage[]> = {
@@ -586,6 +589,14 @@ export function RoadmapTable({
                   </span>
                 ) : null}
               </div>
+              {!isEsatMocksPage ? (
+                <Link
+                  href={PAST_PAPERS_ESAT_MOCKS_PATH}
+                  className="inline-flex items-center rounded-full bg-surface-neutral px-3.5 py-1.5 text-sm font-medium text-text transition-colors hover:bg-surface-mid"
+                >
+                  ESAT Mocks
+                </Link>
+              ) : null}
               {!isEsatMocksPage && subjectSuggestion ? (
                 <RoadmapInfoPopover
                   title="Paper suggestions"
@@ -632,7 +643,10 @@ export function RoadmapTable({
             <button
               key={tab}
               type="button"
-              onClick={() => setMockSubjectTab(tab)}
+              onClick={() => {
+                setMockSubjectTab(tab);
+                setExpandedId(null);
+              }}
               className={cn(
                 "relative rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
                 mockSubjectTab === tab
@@ -705,14 +719,19 @@ export function RoadmapTable({
                 data?.total ??
                 groupRoadmapPartsForDisplay(stage.parts).length;
               const isMockStage = isEsatCampMockRoadmapStage(stage);
-              // Mocks always show subject rows with per-part Start now.
-              const isOpen = isMockStage || expandedId === stage.id;
+              // Full mocks: collapsed by default, expandable for subject sections.
+              // Subject tabs: one row only (no nested duplicate section row).
+              // Official papers: expandable as before.
+              const canExpandSections = !isSubjectMockTab;
+              const isOpen =
+                canExpandSections && expandedId === stage.id;
               const yourScore = stageScores.get(stage.id);
               const avgScore = averageScoreForStage(stage, averageMaps);
               const commentary = commentaryForStage(stage, stages);
               const currentStatus = statusValue(completed, total);
               const paperUrls = getRoadmapStageAllPaperUrls(stage);
               const answersUrls = getRoadmapStageAllAnswersUrls(stage);
+              const startableParts = filterStartablePastPaperParts(stage.parts);
 
               return (
                 <div
@@ -787,7 +806,16 @@ export function RoadmapTable({
                       <CompactBtn
                         tone="exam"
                         examName={stage.examName}
-                        onClick={() => setStartStage(stage)}
+                        disabled={startableParts.length === 0}
+                        onClick={() => {
+                          if (isSubjectMockTab && startableParts.length > 0) {
+                            onStartSession(stage, startableParts, {
+                              newQuestionsOnly: false,
+                            });
+                            return;
+                          }
+                          setStartStage(stage);
+                        }}
                         className={ACTION_BTN}
                       >
                         Start now
@@ -796,9 +824,7 @@ export function RoadmapTable({
                           aria-hidden
                         />
                       </CompactBtn>
-                      {isMockStage ? (
-                        <span className={CHEVRON_SPACER} aria-hidden />
-                      ) : (
+                      {canExpandSections ? (
                         <CompactBtn
                           tone="ghost"
                           aria-expanded={isOpen}
@@ -818,25 +844,29 @@ export function RoadmapTable({
                             aria-hidden
                           />
                         </CompactBtn>
+                      ) : (
+                        <span className={CHEVRON_SPACER} aria-hidden />
                       )}
                     </div>
                   </div>
 
-                  <div
-                    className={cn(
-                      "grid transition-[grid-template-rows] duration-300 ease-out",
-                      isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
-                    )}
-                  >
-                    <div className="overflow-hidden">
-                      <SectionsExpandRows
-                        stage={stage}
-                        partCompletion={data?.parts ?? new Map()}
-                        newQuestionsOnly={newQuestionsOnly}
-                        onStartSession={onStartSession}
-                      />
+                  {canExpandSections ? (
+                    <div
+                      className={cn(
+                        "grid transition-[grid-template-rows] duration-300 ease-out",
+                        isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+                      )}
+                    >
+                      <div className="overflow-hidden">
+                        <SectionsExpandRows
+                          stage={stage}
+                          partCompletion={data?.parts ?? new Map()}
+                          newQuestionsOnly={newQuestionsOnly}
+                          onStartSession={onStartSession}
+                        />
+                      </div>
                     </div>
-                  </div>
+                  ) : null}
                 </div>
               );
             })}
