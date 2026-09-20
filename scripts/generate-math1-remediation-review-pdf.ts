@@ -39,11 +39,17 @@ const REVIEW: Array<{
   reason: string;
 }> = [
   {
-    letter: "E",
-    position: 25,
+    letter: "C",
+    position: 21,
     action: "REPLACE AGAIN",
     reason:
-      "prior replacement used f^n composition/iteration (Maths 2 / MM); still out of Math 1 spec",
+      "prior pick reduced to rational non-negativity; beyond M1 linear inequalities (M4.17)",
+  },
+  {
+    letter: "D",
+    position: 22,
+    action: "REPLACE AGAIN",
+    reason: "explicit rational polynomial inequality; out of Math 1 spec",
   },
 ];
 
@@ -63,7 +69,8 @@ const REVIEW_ALL: typeof REVIEW = [
     letter: "C",
     position: 21,
     action: "REPLACE AGAIN",
-    reason: "tank/pipe/flow/rate overrepresented across A–E",
+    reason:
+      "prior pick reduced to rational non-negativity; beyond M1 linear inequalities (M4.17)",
   },
   {
     letter: "D",
@@ -76,7 +83,7 @@ const REVIEW_ALL: typeof REVIEW = [
     letter: "D",
     position: 22,
     action: "REPLACE AGAIN",
-    reason: "density overrepresented in Mock D",
+    reason: "explicit rational polynomial inequality; out of Math 1 spec",
   },
   { letter: "E", position: 6, action: "REWRITE", reason: "clarify single-piece cutting" },
   {
@@ -92,7 +99,7 @@ const REVIEW_ALL: typeof REVIEW = [
 const ACTIVE_REVIEW = process.argv.includes("--all") ? REVIEW_ALL : REVIEW;
 const OUT_STEM = process.argv.includes("--all")
   ? "ESAT CAMP Math 1 Spec Remediation Review"
-  : "ESAT CAMP Math 1 E25 Re-replace Review";
+  : "ESAT CAMP Math 1 C21 D22 Re-replace Review";
 
 const OPTION_ORDER = ["A", "B", "C", "D", "E", "F", "G", "H"] as const;
 
@@ -302,10 +309,10 @@ function questionHtml(q: ReviewQ): string {
 function buildQuestionsHtml(questions: ReviewQ[], font500: string, font700: string): string {
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"/>
-<title>Math 1 E25 Re-replace Review</title>
+<title>Math 1 C21 D22 Re-replace Review</title>
 <style>${reviewCss(font500, font700)}</style></head><body>
-<h1>Math 1 · E25 re-replace review</h1>
-<p class="subtitle">Only E25 after ejecting the f^n composition replacement. For checking - not a full paper.</p>
+<h1>Math 1 · C21 / D22 re-replace review</h1>
+<p class="subtitle">Only C21 and D22 after ejecting rational-inequality stems. For checking - not a full paper.</p>
 ${questions.map(questionHtml).join("\n")}
 </body></html>`;
 }
@@ -319,9 +326,9 @@ function buildKeyHtml(questions: ReviewQ[], font500: string, font700: string): s
     .join("");
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"/>
-<title>Math 1 E25 Re-replace Review Answer Key</title>
+<title>Math 1 C21 D22 Re-replace Review Answer Key</title>
 <style>${reviewCss(font500, font700)}</style></head><body>
-<h1>Math 1 · E25 re-replace answer key</h1>
+<h1>Math 1 · C21 / D22 re-replace answer key</h1>
 <table class="key-table">
   <thead><tr><th>Slot</th><th>Action</th><th>Key</th></tr></thead>
   <tbody>${rows}</tbody>
