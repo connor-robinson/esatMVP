@@ -41,7 +41,7 @@ export interface NavSectionConfig {
   section: NavSectionId;
   /** Extra horizontal padding on the trigger label for visual balance. */
   triggerPadding?: string;
-  /** Small tag shown above the nav trigger label (e.g. NEW). */
+  /** Small tag shown at the top-right of the nav trigger label (e.g. NEW). */
   badge?: string;
   items?: NavDropdownItem[];
   /** When set, renders labelled sections inside the dropdown. */
@@ -341,14 +341,6 @@ export function NavSectionDropdown({
       onMouseLeave={handleMouseLeave}
     >
       <div className='relative inline-flex items-center px-2 py-1'>
-        {config.badge ? (
-          <span
-            className='pointer-events-none absolute left-2 top-0 -translate-y-[55%] text-[9px] font-bold uppercase leading-none tracking-[0.1em] text-error'
-            aria-hidden
-          >
-            {config.badge}
-          </span>
-        ) : null}
         <Link
           href={config.href}
           prefetch
@@ -362,6 +354,7 @@ export function NavSectionDropdown({
             }
           }}
           className={cn(
+            'relative',
             sectionLabelClass,
             config.triggerPadding,
             isActive
@@ -370,6 +363,14 @@ export function NavSectionDropdown({
           )}
         >
           {config.label}
+          {config.badge ? (
+            <span
+              className='pointer-events-none absolute -right-0.5 top-0 translate-x-full -translate-y-[70%] text-[9px] font-bold uppercase leading-none tracking-[0.1em] text-error'
+              aria-hidden
+            >
+              {config.badge}
+            </span>
+          ) : null}
         </Link>
         <button
           type='button'

@@ -55,6 +55,7 @@ import {
   Target,
   Trophy,
   ClipboardList,
+  FileText,
   X,
   Zap,
 } from 'lucide-react';
@@ -118,6 +119,7 @@ const navSections: NavSectionConfig[] = [
     label: 'Past Papers',
     href: PAST_PAPERS_HOME_PATH,
     section: 'papers',
+    badge: 'NEW',
     items: [
       {
         href: PAST_PAPERS_HOME_PATH,
@@ -128,9 +130,14 @@ const navSections: NavSectionConfig[] = [
       {
         href: PAST_PAPERS_ESAT_MOCKS_PATH,
         label: 'ESAT Mocks',
-        description: 'ESAT Camp mock papers',
+        description: 'Timed ESAT Camp mocks in the past papers hub',
         icon: Sparkles,
-        badge: 'NEW',
+      },
+      {
+        href: '/esat-mock-tests',
+        label: 'Free Mock Tests',
+        description: 'Download papers, mark schemes, and HTML solutions',
+        icon: FileText,
       },
       {
         href: '/past-papers/analytics',
@@ -143,7 +150,6 @@ const navSections: NavSectionConfig[] = [
         label: 'Mistakes',
         description: 'Drill questions you got wrong',
         icon: ClipboardList,
-        badge: 'PRO',
       },
     ],
   },
@@ -221,7 +227,12 @@ function resolveSection(pathname: string): NavSectionId | 'home' | 'dashboard' {
     return 'dashboard';
   }
   if (pathname.startsWith('/mental-maths')) return 'skills';
-  if (pathname.startsWith('/past-papers')) return 'papers';
+  if (
+    pathname.startsWith('/past-papers') ||
+    pathname.startsWith('/esat-mock-tests')
+  ) {
+    return 'papers';
+  }
   if (pathname.startsWith('/questions')) return 'questions';
   if (pathname.startsWith('/tools') || pathname.startsWith('/exam-tools')) return 'tools';
   return 'home';
@@ -620,15 +631,15 @@ export function Navbar() {
                             : 'text-text-muted',
                         )}
                       >
+                        {section.label}
                         {section.badge ? (
                           <span
-                            className='pointer-events-none absolute left-0 top-0 -translate-y-[70%] text-[9px] font-bold uppercase leading-none tracking-[0.1em] text-error'
+                            className='pointer-events-none absolute -right-0.5 top-0 translate-x-full -translate-y-[70%] text-[9px] font-bold uppercase leading-none tracking-[0.1em] text-error'
                             aria-hidden
                           >
                             {section.badge}
                           </span>
                         ) : null}
-                        {section.label}
                       </Link>
                       <div className={navDropdownMobileListClass}>
                         <NavDropdownItemList
