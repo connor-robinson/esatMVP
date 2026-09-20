@@ -78,6 +78,13 @@ describe("repairJsonEscapeCorruptedLatex", () => {
     expect(html).toContain("katex");
     expect(html).not.toContain("katex-error");
   });
+
+  it("repairs tab corruption in inline math (\\text -> ext)", () => {
+    const corrupted = `$64 ${"\t"}ext{ W}$`;
+    const repaired = repairJsonEscapeCorruptedLatex(corrupted);
+    expect(repaired).toBe("$64 \\text{ W}$");
+    expect(repaired).not.toContain("\t");
+  });
 });
 
 describe("prepareQuestionBankMathText", () => {

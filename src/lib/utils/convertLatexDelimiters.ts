@@ -169,6 +169,8 @@ export function convertProseLatexLineBreaks(text: string): string {
 
 function repairCorruptedLatexCommands(span: string): string {
   return span
+    // JSON `\t` escape consumed by `\text` → TAB + `ext`.
+    .replace(/\u0009ext/g, "\\text")
     // JSON `\f` / `\b` escapes consumed by `\frac`, `\binom`, etc.
     .replace(/\frac/g, "\\frac")
     .replace(/\fbox/g, "\\fbox")
