@@ -169,6 +169,18 @@ const nextConfig = {
           { key: "Service-Worker-Allowed", value: "/" },
         ],
       },
+      {
+        // ESAT CAMP mock PDFs stay downloadable, but HTML mock pages are the
+        // indexable/canonical resource. Do not Disallow these in robots.txt:
+        // crawlers must fetch the PDF to see X-Robots-Tag.
+        source: "/downloads/mocks/:path*",
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "noindex",
+          },
+        ],
+      },
     ];
   },
 
