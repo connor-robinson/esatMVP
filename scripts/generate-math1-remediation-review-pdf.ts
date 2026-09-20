@@ -39,28 +39,11 @@ const REVIEW: Array<{
   reason: string;
 }> = [
   {
-    letter: "B",
-    position: 19,
+    letter: "E",
+    position: 25,
     action: "REPLACE AGAIN",
-    reason: "was repeating B3 dice→quadratic real-roots template",
-  },
-  {
-    letter: "C",
-    position: 21,
-    action: "REPLACE AGAIN",
-    reason: "tank/pipe/flow/rate overrepresented across A–E",
-  },
-  {
-    letter: "D",
-    position: 13,
-    action: "REPLACE AGAIN",
-    reason: "another three-dice probability; Mock D already probability-heavy",
-  },
-  {
-    letter: "D",
-    position: 22,
-    action: "REPLACE AGAIN",
-    reason: "density overrepresented in Mock D",
+    reason:
+      "prior replacement used f^n composition/iteration (Maths 2 / MM); still out of Math 1 spec",
   },
 ];
 
@@ -96,14 +79,20 @@ const REVIEW_ALL: typeof REVIEW = [
     reason: "density overrepresented in Mock D",
   },
   { letter: "E", position: 6, action: "REWRITE", reason: "clarify single-piece cutting" },
-  { letter: "E", position: 25, action: "REPLACE", reason: "radians / sector (MM4.2)" },
+  {
+    letter: "E",
+    position: 25,
+    action: "REPLACE AGAIN",
+    reason:
+      "prior replacement used f^n composition/iteration (Maths 2 / MM); still out of Math 1 spec",
+  },
   { letter: "E", position: 26, action: "REPLACE", reason: "modulus inequality (Math 2)" },
 ];
 
 const ACTIVE_REVIEW = process.argv.includes("--all") ? REVIEW_ALL : REVIEW;
 const OUT_STEM = process.argv.includes("--all")
   ? "ESAT CAMP Math 1 Spec Remediation Review"
-  : "ESAT CAMP Math 1 Repetition Re-replace Review";
+  : "ESAT CAMP Math 1 E25 Re-replace Review";
 
 const OPTION_ORDER = ["A", "B", "C", "D", "E", "F", "G", "H"] as const;
 
@@ -313,10 +302,10 @@ function questionHtml(q: ReviewQ): string {
 function buildQuestionsHtml(questions: ReviewQ[], font500: string, font700: string): string {
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"/>
-<title>Math 1 Repetition Re-replace Review</title>
+<title>Math 1 E25 Re-replace Review</title>
 <style>${reviewCss(font500, font700)}</style></head><body>
-<h1>Math 1 · Repetition re-replace review</h1>
-<p class="subtitle">Only B19, C21, D13, D22 after the second replacement pass. For checking — not a full paper.</p>
+<h1>Math 1 · E25 re-replace review</h1>
+<p class="subtitle">Only E25 after ejecting the f^n composition replacement. For checking - not a full paper.</p>
 ${questions.map(questionHtml).join("\n")}
 </body></html>`;
 }
@@ -330,9 +319,9 @@ function buildKeyHtml(questions: ReviewQ[], font500: string, font700: string): s
     .join("");
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"/>
-<title>Math 1 Repetition Re-replace Review Answer Key</title>
+<title>Math 1 E25 Re-replace Review Answer Key</title>
 <style>${reviewCss(font500, font700)}</style></head><body>
-<h1>Math 1 · Repetition re-replace answer key</h1>
+<h1>Math 1 · E25 re-replace answer key</h1>
 <table class="key-table">
   <thead><tr><th>Slot</th><th>Action</th><th>Key</th></tr></thead>
   <tbody>${rows}</tbody>
