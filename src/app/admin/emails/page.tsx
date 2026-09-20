@@ -65,6 +65,7 @@ export default function AdminEmailsPage() {
   const [forbidden, setForbidden] = useState(false);
   const [loading, setLoading] = useState(true);
   const [configured, setConfigured] = useState(false);
+  const [testAddress, setTestAddress] = useState("ansonchanw@gmail.com");
   const [stats, setStats] = useState<Stats | null>(null);
   const [engagement, setEngagement] = useState<Engagement | null>(null);
   const [recipients, setRecipients] = useState<Recipient[]>([]);
@@ -103,6 +104,9 @@ export default function AdminEmailsPage() {
     setCampaigns((json.campaigns ?? []) as Campaign[]);
     setTemplates((json.templates ?? []) as TemplateOption[]);
     setConfigured(Boolean(json.configured));
+    if (typeof json.testAddress === "string" && json.testAddress.trim()) {
+      setTestAddress(json.testAddress.trim());
+    }
     setLoading(false);
   }, []);
 
@@ -139,7 +143,9 @@ export default function AdminEmailsPage() {
     });
   };
 
-  const send = async (dryRun: boolean) => {
+  const send = async (opts: { dryRun?: boolean; testSend?: boolean }) => {
+    const dryRun = Boolean(opts.dryRun);
+    const testSend = Boolean(opts.testSend);
     setActionError(null);
     setActionOk(null);
     setBusy(true);
@@ -152,9 +158,12 @@ export default function AdminEmailsPage() {
           body,
           templateId,
           dryRun,
-          confirmed: dryRun ? true : confirmed,
+          testSend,
+          confirmed: dryRun || testSend ? true : confirmed,
           recipientIds:
-            mode === "selected" ? Array.from(selected) : undefined,
+            mode === "selected" && !testSend
+              ? Array.from(selected)
+              : undefined,
         }),
       });
       const json = await res.json().catch(() => ({}));
@@ -168,6 +177,8 @@ export default function AdminEmailsPage() {
         setActionOk(
           `Dry run: would send to ${json.recipientCount ?? 0} opted-in users.`,
         );
+      } else if (testSend) {
+        setActionOk(`Test sent to ${testAddress}.`);
       } else {
         setActionOk(
           `Sent ${json.sentCount ?? 0} of ${json.recipientCount ?? 0}` +
@@ -361,7 +372,8 @@ export default function AdminEmailsPage() {
 
               <p className="mt-2 text-xs text-text-subtle">
                 Every send includes open tracking and click-tracked links, plus
-                manage-preferences and unsubscribe footer links.
+                manage-preferences and unsubscribe footer links. Test sends
+                always go only to {testAddress}.
               </p>
 
               <label className="mt-4 flex items-start gap-2 text-sm text-text-muted">
@@ -394,10 +406,18 @@ export default function AdminEmailsPage() {
                 <button
                   type="button"
                   disabled={busy || !subject.trim() || !body.trim()}
-                  onClick={() => void send(true)}
+                  onClick={() => void send({ dryRun: true })}
                   className="rounded-organic-md bg-surface-mid px-3 py-1.5 text-sm font-semibold text-text disabled:opacity-50"
                 >
                   Dry run
+                </button>
+                <button
+                  type="button"
+                  disabled={busy || !subject.trim() || !body.trim()}
+                  onClick={() => void send({ testSend: true })}
+                  className="rounded-organic-md bg-surface-mid px-3 py-1.5 text-sm font-semibold text-text disabled:opacity-50"
+                >
+                  {busy ? "Sending…" : `Send test to ${testAddress}`}
                 </button>
                 <button
                   type="button"
@@ -408,7 +428,7 @@ export default function AdminEmailsPage() {
                     !confirmed ||
                     (mode === "selected" && selected.size === 0)
                   }
-                  onClick={() => void send(false)}
+                  onClick={() => void send({})}
                   className="rounded-organic-md bg-secondary/25 px-3 py-1.5 text-sm font-semibold text-text disabled:opacity-50"
                 >
                   {busy ? "Sending…" : "Send email"}

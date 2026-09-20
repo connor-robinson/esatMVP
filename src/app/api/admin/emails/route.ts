@@ -3,6 +3,7 @@ import { requireTesterAdmin } from "@/lib/tester/admin";
 import {
   getProductEmailConsentStats,
   listProductEmailRecipients,
+  PRODUCT_EMAIL_TEST_ADDRESS,
   sendProductEmailCampaign,
 } from "@/lib/email/productEmails";
 import { PRODUCT_EMAIL_TEMPLATES } from "@/lib/email/templates";
@@ -67,6 +68,7 @@ export async function GET(request: NextRequest) {
         subject: t.subject,
         text: t.text,
       })),
+      testAddress: PRODUCT_EMAIL_TEST_ADDRESS,
       configured: Boolean(process.env.RESEND_API_KEY?.trim()),
     });
   } catch (err) {
@@ -96,6 +98,7 @@ export async function POST(request: NextRequest) {
   const templateId =
     typeof body.templateId === "string" ? body.templateId.trim() : null;
   const dryRun = Boolean(body.dryRun);
+  const testSend = Boolean(body.testSend);
   const confirmed = Boolean(body.confirmed);
   const recipientIds = Array.isArray(body.recipientIds)
     ? body.recipientIds.map((id) => String(id))
@@ -108,7 +111,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (!dryRun && !confirmed) {
+  if (!dryRun && !testSend && !confirmed) {
     return NextResponse.json(
       { error: "Confirm before sending product emails" },
       { status: 400 },
@@ -123,7 +126,8 @@ export async function POST(request: NextRequest) {
       body: message,
       templateId,
       dryRun,
-      recipientIds,
+      testSend,
+      recipientIds: testSend ? undefined : recipientIds,
     });
     return NextResponse.json(result);
   } catch (err) {

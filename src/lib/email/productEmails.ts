@@ -9,6 +9,9 @@ import {
   buildTrackedProductEmailHtml,
 } from "@/lib/email/tracking";
 
+/** Only address used for product-email test sends. */
+export const PRODUCT_EMAIL_TEST_ADDRESS = "ansonchanw@gmail.com";
+
 export type ProductEmailRecipient = {
   id: string;
   email: string;
@@ -89,6 +92,35 @@ export async function listProductEmailRecipients(
     }));
 }
 
+/**
+ * Resolve the sole product-email test recipient.
+ */
+export async function resolveProductEmailTestRecipient(
+  service: SupabaseClient,
+): Promise<ProductEmailRecipient> {
+  const { data, error } = await service
+    .from("profiles")
+    .select("id, email, username, exam_preference")
+    .ilike("email", PRODUCT_EMAIL_TEST_ADDRESS)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+  if (!data?.id) {
+    throw new Error(
+      `Test email account ${PRODUCT_EMAIL_TEST_ADDRESS} was not found`,
+    );
+  }
+
+  return {
+    id: String(data.id),
+    email: PRODUCT_EMAIL_TEST_ADDRESS,
+    username: (data.username as string | null) ?? null,
+    exam_preference: (data.exam_preference as string | null) ?? null,
+  };
+}
+
 export async function sendProductEmailCampaign(params: {
   service: SupabaseClient;
   createdBy: string;
@@ -99,6 +131,8 @@ export async function sendProductEmailCampaign(params: {
   /** Optional raw HTML (used when templateId is not set) */
   html?: string | null;
   dryRun?: boolean;
+  /** Send only to PRODUCT_EMAIL_TEST_ADDRESS (ignores audience selection). */
+  testSend?: boolean;
   /** If set, only send to these profile ids (must still be opted in). */
   recipientIds?: string[];
 }): Promise<{
@@ -122,10 +156,15 @@ export async function sendProductEmailCampaign(params: {
     (typeof params.html === "string" ? params.html.trim() : "") ||
     null;
 
-  let recipients = await listProductEmailRecipients(params.service, 500);
-  if (params.recipientIds?.length) {
-    const allow = new Set(params.recipientIds);
-    recipients = recipients.filter((r) => allow.has(r.id));
+  let recipients: ProductEmailRecipient[];
+  if (params.testSend) {
+    recipients = [await resolveProductEmailTestRecipient(params.service)];
+  } else {
+    recipients = await listProductEmailRecipients(params.service, 500);
+    if (params.recipientIds?.length) {
+      const allow = new Set(params.recipientIds);
+      recipients = recipients.filter((r) => allow.has(r.id));
+    }
   }
 
   if (params.dryRun) {
