@@ -27,23 +27,36 @@ export function EsatMockTestsIntroBanner({
   className,
 }: EsatMockTestsIntroBannerProps) {
   const [expanded, setExpanded] = useState(false);
+  const [visible, setVisible] = useState(false);
   const titleId = useId();
 
   useEffect(() => {
-    if (!expanded) return;
+    if (!expanded) {
+      setVisible(false);
+      return;
+    }
 
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setExpanded(false);
-    };
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+
+    const frame = window.requestAnimationFrame(() => setVisible(true));
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closePreview();
+    };
     window.addEventListener("keydown", onKeyDown);
 
     return () => {
+      window.cancelAnimationFrame(frame);
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [expanded]);
+
+  const closePreview = () => {
+    setVisible(false);
+    window.setTimeout(() => setExpanded(false), 180);
+  };
 
   return (
     <>
@@ -79,7 +92,7 @@ export function EsatMockTestsIntroBanner({
               height={PAPER_PREVIEW.height}
               decoding="async"
               fetchPriority="high"
-              className="absolute inset-0 h-full w-full object-contain object-top"
+              className="h-full w-full object-contain"
             />
             <button
               type="button"
@@ -94,7 +107,11 @@ export function EsatMockTestsIntroBanner({
 
       {expanded ? (
         <div
-          className="fixed inset-0 z-[120] flex items-center justify-center p-3 sm:p-6"
+          className={cn(
+            "fixed inset-0 z-[120] flex items-center justify-center p-3 sm:p-5",
+            "transition-opacity duration-200 ease-out",
+            visible ? "opacity-100" : "opacity-0",
+          )}
           role="dialog"
           aria-modal="true"
           aria-labelledby={titleId}
@@ -103,10 +120,16 @@ export function EsatMockTestsIntroBanner({
             type="button"
             className="absolute inset-0 bg-black/80"
             aria-label="Close preview"
-            onClick={() => setExpanded(false)}
+            onClick={closePreview}
           />
-          <div className="relative z-[121] flex max-h-[min(96vh,1200px)] w-full max-w-[min(92vw,52rem)] flex-col">
-            <div className="mb-3 flex items-center justify-between gap-3">
+          <div
+            className={cn(
+              "relative z-[121] flex max-h-[min(96dvh,96vh)] w-auto max-w-[min(92vw,42rem)] flex-col",
+              "transition-transform duration-200 ease-out",
+              visible ? "scale-100" : "scale-[0.97]",
+            )}
+          >
+            <div className="mb-2.5 flex shrink-0 items-center justify-between gap-3">
               <p
                 id={titleId}
                 className="text-sm font-medium text-[#E2E8F0] sm:text-base"
@@ -115,21 +138,21 @@ export function EsatMockTestsIntroBanner({
               </p>
               <button
                 type="button"
-                onClick={() => setExpanded(false)}
+                onClick={closePreview}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-white/10 text-white transition-colors hover:bg-white/15"
                 aria-label="Close preview"
               >
                 <X className="h-4 w-4" aria-hidden />
               </button>
             </div>
-            <div className="min-h-0 flex-1 overflow-auto rounded-md bg-[#F8FAFC]">
+            <div className="flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-md bg-[#F8FAFC] p-2 sm:p-3">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={PAPER_PREVIEW.src}
                 alt={PAPER_PREVIEW.alt}
                 width={PAPER_PREVIEW.width}
                 height={PAPER_PREVIEW.height}
-                className="mx-auto h-auto w-full max-w-full"
+                className="max-h-[calc(min(96dvh,96vh)-4.25rem)] w-auto max-w-full object-contain"
               />
             </div>
           </div>
