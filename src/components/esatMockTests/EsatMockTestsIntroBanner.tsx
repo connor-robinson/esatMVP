@@ -1,10 +1,10 @@
 import { cn } from "@/lib/utils";
 
 const PAPER_PREVIEW = {
-  src: "/images/home/esat-camp-mock-a-math1-page7.webp",
-  alt: "Page 7 of ESAT CAMP Mock A Mathematics 1 question paper",
+  src: "/images/home/esat-camp-mock-c-physics-page11.webp",
+  alt: "Preview of ESAT CAMP Physics Mock C question paper",
   width: 720,
-  height: 1018,
+  height: 720,
 } as const;
 
 const PAGE_TITLE = "ESAT CAMP Free Mock Tests";
@@ -25,7 +25,7 @@ export function EsatMockTestsIntroBanner({
   return (
     <div
       className={cn(
-        "grid items-stretch gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(14rem,18rem)] lg:gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(15rem,20rem)] xl:gap-8",
+        "grid items-center gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(14rem,18rem)] lg:gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(15rem,20rem)] xl:gap-8",
         className,
       )}
     >
@@ -42,10 +42,10 @@ export function EsatMockTestsIntroBanner({
       </div>
 
       <aside
-        aria-label="ESAT CAMP Mock A Mathematics 1 paper preview"
-        className="relative mx-auto w-full max-w-[16rem] lg:mx-0 lg:max-w-none lg:min-h-full"
+        aria-label="ESAT CAMP Physics Mock C paper preview"
+        className="relative mx-auto w-full max-w-[16rem] lg:mx-0 lg:max-w-none"
       >
-        <div className="relative aspect-[720/1018] w-full overflow-hidden bg-[#F8FAFC] lg:absolute lg:inset-0 lg:aspect-auto">
+        <div className="group relative aspect-square w-full overflow-hidden rounded-xl bg-[#F8FAFC]">
           {/* Plain img: already-optimized webp; avoids unused next/image preloads after Start → solve. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -55,10 +55,10 @@ export function EsatMockTestsIntroBanner({
             height={PAPER_PREVIEW.height}
             decoding="async"
             fetchPriority="high"
-            className="absolute inset-0 h-full w-full object-cover object-top"
+            className="absolute inset-0 h-full w-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.12]"
           />
-          <p className="absolute bottom-0 left-0 right-0 bg-[#0A0F1D]/80 px-2.5 py-1.5 text-xs text-[#94A3B8]">
-            Mock A Math 1 · page 7
+          <p className="pointer-events-none absolute inset-x-0 bottom-0 bg-[#0A0F1D]/70 px-2.5 py-1.5 text-center text-xs text-[#E2E8F0] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            This is a preview
           </p>
         </div>
       </aside>
