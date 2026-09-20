@@ -161,9 +161,9 @@ function MockSlotRow({
               ACTION_BTN,
               "bg-[#3B82F6] text-white hover:bg-[#2563EB] disabled:opacity-45",
             )}
-            aria-label={`Start now: ${slot.displayName}`}
+            aria-label={`Open simulator: ${slot.displayName}`}
           >
-            Start now
+            Simulator
             <Play className="h-4 w-4 fill-current opacity-80" aria-hidden />
           </button>
         </div>
