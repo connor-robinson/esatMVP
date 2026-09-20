@@ -44,7 +44,7 @@ export function fingerprintHomeLaunch(
     playMode:
       questionPool === "incorrect"
         ? "instant"
-        : (payload.playMode ?? "instant"),
+        : (payload.playMode ?? "exam"),
     questionPool,
     // Guests cannot use New/incorrect filters; fingerprint must match fetch opts.
     authenticated: Boolean(opts?.authenticated),

@@ -28,7 +28,7 @@ export interface QuestionBankHomeLaunchPayload {
    * Empty / omitted = all topics for the subject(s).
    */
   topics?: string[];
-  /** Practice feedback style. Defaults to practice (`instant`) when omitted. */
+  /** Practice feedback style. Defaults to exam mode when omitted. */
   playMode?: QuestionBankPlayMode;
   /**
    * Session question source. Defaults to `new`.

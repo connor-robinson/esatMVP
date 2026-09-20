@@ -220,7 +220,7 @@ export default function QuestionBankPage() {
   const [sessionUiVariant, setSessionUiVariant] =
     useState<QuestionBankSessionUiVariant>('esat');
   const [sessionPlayMode, setSessionPlayMode] =
-    useState<QuestionBankPlayMode>('instant');
+    useState<QuestionBankPlayMode>('exam');
   const [flaggedQuestionIds, setFlaggedQuestionIds] = useState<Set<string>>(
     () => new Set(),
   );
@@ -1116,9 +1116,9 @@ export default function QuestionBankPage() {
       const playMode: QuestionBankPlayMode =
         questionPool === 'incorrect'
           ? 'instant'
-          : config.playMode === 'exam'
-            ? 'exam'
-            : 'instant';
+          : config.playMode === 'instant'
+            ? 'instant'
+            : 'exam';
       const extraTimeAlreadyApplied = Boolean(config.extraTimeApplied);
 
       const subjectsResolved: SubjectFilter[] =
@@ -1464,9 +1464,9 @@ export default function QuestionBankPage() {
           playMode:
             resolveQuestionPool(data) === 'incorrect'
               ? 'instant'
-              : data.playMode === 'exam'
-                ? 'exam'
-                : 'instant',
+              : data.playMode === 'instant'
+                ? 'instant'
+                : 'exam',
           questionPool: resolveQuestionPool(data),
           extraTimeApplied: Boolean(data.extraTimeApplied),
         },

@@ -230,7 +230,7 @@ export function QuestionBankSessionSettingsModal({
   const [difficultyMix, setDifficultyMix] =
     useState<DifficultyMixPreset>("Auto");
   const [advanced, setAdvanced] = useState(false);
-  const [playMode, setPlayMode] = useState<QuestionBankPlayMode>("instant");
+  const [playMode, setPlayMode] = useState<QuestionBankPlayMode>("exam");
   const [questionPool, setQuestionPool] =
     useState<QuestionBankQuestionPool>("new");
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
@@ -270,7 +270,7 @@ export function QuestionBankSessionSettingsModal({
     setMinutes(initialMinutes);
     setDifficultyMix(isMixed ? "Medium" : "Auto");
     setAdvanced(Boolean(isMixed));
-    setPlayMode("instant");
+    setPlayMode("exam");
     setQuestionPool("new");
     setSelectedTopics([]);
     setTopicOptions([]);
@@ -366,7 +366,7 @@ export function QuestionBankSessionSettingsModal({
       // Leaving advanced: lock back to a single subject; keep difficulty / time.
       setSubjectKeys([originTile.key as SubjectFilter]);
       setSelectedTopics([]);
-      setPlayMode("instant");
+      setPlayMode("exam");
       setQuestionPool("new");
     } else if (next && isMixed && originTile) {
       setSubjectKeys(siblingTiles.map((t) => t.key as SubjectFilter));
@@ -448,7 +448,7 @@ export function QuestionBankSessionSettingsModal({
       uiDifficulties: uiDifficultiesForMix(difficultyMix),
       difficultyMix,
       topics: topicFilterEnabled ? selectedTopics : [],
-      playMode: advanced && pool !== "incorrect" ? playMode : "instant",
+      playMode: pool === "incorrect" ? "instant" : playMode,
       questionPool: pool,
       extraTimeApplied: extraTimeOn,
     });
@@ -858,13 +858,12 @@ export function QuestionBankSessionSettingsModal({
               "bg-secondary text-background text-sm font-semibold shadow-none",
               "hover:bg-secondary/90",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
-              advanced &&
-                playMode === "exam" &&
+              playMode === "exam" &&
                 questionPool !== "incorrect" &&
                 "bg-[#6b4a72] hover:bg-[#5d3f63]",
             )}
           >
-            {advanced && playMode === "exam" && questionPool !== "incorrect"
+            {playMode === "exam" && questionPool !== "incorrect"
               ? "Start exam session"
               : questionPool === "incorrect"
                 ? "Start incorrect drill"
