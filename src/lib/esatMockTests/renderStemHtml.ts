@@ -3,7 +3,7 @@
  * Mirrors StemContent rendering without client-only useEffect.
  */
 
-import { renderMathContent } from "@/hooks/useKaTeX";
+import { renderMathContent } from "@/lib/math/renderMathContent";
 import { unwrapLatexBoxed } from "@/lib/utils/convertLatexDelimiters";
 import { normalizeStemWhitespace } from "@/lib/utils/stemWhitespace";
 import { splitStemWithSvg } from "@/lib/utils/stemSegments";
