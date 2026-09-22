@@ -50,7 +50,7 @@ import {
   Menu,
   Moon,
   Settings,
-  Sparkles,
+  FileText,
   Sun,
   Target,
   Trophy,
@@ -130,7 +130,8 @@ const navSections: NavSectionConfig[] = [
         href: PAST_PAPERS_ESAT_MOCKS_PATH,
         label: 'ESAT Mocks',
         description: 'Timed ESAT Camp mocks in the past papers hub',
-        icon: Sparkles,
+        icon: FileText,
+        badge: 'NEW',
       },
       {
         href: '/past-papers/analytics',
