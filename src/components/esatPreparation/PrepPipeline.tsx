@@ -12,30 +12,32 @@ export function PrepPipeline({ className }: { className?: string }) {
       role="list"
       aria-label="ESAT preparation order"
     >
-      <ol className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-2 sm:gap-y-3">
+      {/* Mobile: vertical stack */}
+      <ol className="flex flex-col items-stretch gap-2 sm:hidden">
         {PREP_PIPELINE_STEPS.map((step, index) => (
-          <li
-            key={step}
-            className="flex items-center gap-2 sm:gap-2"
-            role="listitem"
-          >
-            <span className="rounded-xl bg-[#3B82F6]/15 px-3 py-2 text-sm font-bold text-white sm:text-base">
+          <li key={step} className="flex flex-col items-center" role="listitem">
+            <span className="w-full rounded-xl bg-[#3B82F6]/15 px-3 py-2.5 text-center text-sm font-bold text-white">
               {step}
             </span>
             {index < PREP_PIPELINE_STEPS.length - 1 ? (
-              <span
-                aria-hidden
-                className="hidden text-[#64748B] sm:inline sm:px-0.5"
-              >
-                →
+              <span aria-hidden className="py-1 text-[#64748B]">
+                ↓
               </span>
             ) : null}
+          </li>
+        ))}
+      </ol>
+
+      {/* Desktop: horizontal flow */}
+      <ol className="hidden flex-wrap items-center gap-x-2 gap-y-3 sm:flex">
+        {PREP_PIPELINE_STEPS.map((step, index) => (
+          <li key={step} className="flex items-center gap-2" role="listitem">
+            <span className="rounded-xl bg-[#3B82F6]/15 px-3 py-2 text-base font-bold text-white">
+              {step}
+            </span>
             {index < PREP_PIPELINE_STEPS.length - 1 ? (
-              <span
-                aria-hidden
-                className="text-[#64748B] sm:hidden"
-              >
-                ↓
+              <span aria-hidden className="text-[#64748B]">
+                →
               </span>
             ) : null}
           </li>
