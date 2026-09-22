@@ -7,7 +7,7 @@
  * We expose the full worldwide window so candidates can pick their booked day.
  */
 
-export type EsatSittingId = "october" | "january";
+export type EsatSittingId = "october";
 
 export type EsatSitting = {
   id: EsatSittingId;
@@ -23,12 +23,6 @@ export const ESAT_SITTINGS: readonly EsatSitting[] = [
     label: "October 2026",
     startIso: "2026-10-12",
     endIso: "2026-10-16",
-  },
-  {
-    id: "january",
-    label: "January 2027",
-    startIso: "2027-01-04",
-    endIso: "2027-01-08",
   },
 ] as const;
 

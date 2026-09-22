@@ -78,16 +78,12 @@ export function DaysUntilEsatClient() {
           id="esat-date"
           value={dateIso}
           onChange={(e) => setDateIso(e.target.value)}
-          className="h-11 w-full cursor-pointer appearance-none rounded-2xl bg-surface-elevated py-2 pl-4 pr-10 text-center text-sm font-medium text-text outline-none transition-colors hover:bg-surface-mid focus:outline-none"
+          className="h-11 w-full cursor-pointer appearance-none rounded-none border-0 bg-surface-elevated py-2 pl-4 pr-10 text-center text-sm font-medium text-text shadow-none outline-none ring-0 transition-colors hover:bg-surface-mid focus:border-0 focus:outline-none focus:ring-0"
         >
-          {ESAT_SITTINGS.map((sitting) => (
-            <optgroup key={sitting.id} label={sitting.label}>
-              {daysInSitting(sitting).map((iso) => (
-                <option key={iso} value={iso} className="bg-surface-elevated text-text">
-                  {formatDayLabel(iso)}
-                </option>
-              ))}
-            </optgroup>
+          {daysInSitting(ESAT_SITTINGS[0]).map((iso) => (
+            <option key={iso} value={iso} className="bg-surface-elevated text-text">
+              {formatDayLabel(iso)}
+            </option>
           ))}
         </select>
         <ChevronDown
