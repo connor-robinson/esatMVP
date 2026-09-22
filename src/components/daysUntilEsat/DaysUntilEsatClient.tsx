@@ -57,31 +57,52 @@ export function DaysUntilEsatClient() {
     [nowMs],
   );
 
+  const units = [
+    {
+      value: ready ? parts.days : "·",
+      label: unitLabel(parts.days, "day", "days"),
+      primary: true,
+    },
+    {
+      value: ready ? parts.hours : 0,
+      label: unitLabel(parts.hours, "hour", "hours"),
+      primary: false,
+    },
+    {
+      value: ready ? parts.minutes : 0,
+      label: unitLabel(parts.minutes, "minute", "minutes"),
+      primary: false,
+    },
+    {
+      value: ready ? parts.seconds : 0,
+      label: unitLabel(parts.seconds, "second", "seconds"),
+      primary: false,
+    },
+  ] as const;
+
   return (
     <div className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center px-6 py-16">
       <div
-        className="flex items-center gap-3 sm:gap-4"
+        className="flex flex-wrap items-baseline justify-center gap-x-5 gap-y-2 sm:gap-x-8"
         aria-live="polite"
         aria-atomic="true"
       >
-        <p className="font-display text-[clamp(4.5rem,18vw,9rem)] font-semibold leading-none tracking-tight text-text tabular-nums">
-          {ready ? parts.days : "·"}
-        </p>
-        <div className="flex flex-col justify-center gap-0.5 text-left text-[clamp(0.7rem,2.2vw,0.95rem)] leading-snug text-text-muted tabular-nums">
-          <span>{unitLabel(parts.days, "day", "days")}</span>
-          <span>
-            {ready ? parts.hours : 0}{" "}
-            {unitLabel(parts.hours, "hour", "hours")}
-          </span>
-          <span>
-            {ready ? parts.minutes : 0}{" "}
-            {unitLabel(parts.minutes, "minute", "minutes")}
-          </span>
-          <span>
-            {ready ? parts.seconds : 0}{" "}
-            {unitLabel(parts.seconds, "second", "seconds")}
-          </span>
-        </div>
+        {units.map((unit) => (
+          <div key={unit.label} className="flex items-baseline gap-1.5">
+            <span
+              className={
+                unit.primary
+                  ? "font-display text-[clamp(3.5rem,12vw,7rem)] font-semibold leading-none tracking-tight text-text tabular-nums"
+                  : "font-display text-[clamp(1.75rem,6vw,3.25rem)] font-semibold leading-none tracking-tight text-text tabular-nums"
+              }
+            >
+              {unit.value}
+            </span>
+            <span className="text-[clamp(0.7rem,1.8vw,0.95rem)] leading-none text-text-muted">
+              {unit.label}
+            </span>
+          </div>
+        ))}
       </div>
 
       <div className="relative mt-14 w-full max-w-[16rem]">
