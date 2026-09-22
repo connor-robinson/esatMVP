@@ -269,7 +269,8 @@ export function QuestionBankSessionSettingsModal({
     baseMinutesRef.current = initialMinutes;
     setMinutes(initialMinutes);
     setDifficultyMix(isMixed ? "Medium" : "Auto");
-    setAdvanced(Boolean(isMixed));
+    // Open Advanced by default so Topics are visible without an extra toggle.
+    setAdvanced(true);
     setPlayMode("exam");
     setQuestionPool("new");
     setSelectedTopics([]);

@@ -212,6 +212,9 @@ export function QuestionBankHomeScreen() {
   const [blockedSubject, setBlockedSubject] = useState<FreeTierPreviewSubject | null>(
     null,
   );
+  const [blockedReason, setBlockedReason] = useState<"exhausted" | "topics" | "subject" | null>(
+    null,
+  );
   const [modalTile, setModalTile] = useState<SubjectTileConfig | null>(null);
   const [aggregate, setAggregate] = useState<{ attempted: number; total: number } | null>(
     null,
@@ -378,16 +381,19 @@ export function QuestionBankHomeScreen() {
     const stats = subjectStatus(subject);
     if (!stats) {
       setBlockedSubject(null);
+      setBlockedReason("subject");
       setShowFreeTierBlocked(true);
       return;
     }
     if (stats.isExhausted || stats.remaining <= 0) {
       setBlockedSubject(subject);
+      setBlockedReason("exhausted");
       setShowFreeTierBlocked(true);
       return;
     }
     setShowFreeTierBlocked(false);
     setBlockedSubject(null);
+    setBlockedReason(null);
     try {
       writeFreeTierLaunch(subject);
     } catch {
@@ -403,17 +409,10 @@ export function QuestionBankHomeScreen() {
   const openSessionModal = (tile: SubjectTileConfig) => {
     if (tile.comingSoon) return;
     if (accessPending || sessionPending) return;
-    // Free / unpaid / logged-out: skip settings and start the subject preview.
-    if (!showFullAccess) {
-      if (freeTierPending) return;
-      if (isFreeTierPreviewSubject(tile.key)) {
-        launchFreeTierPreview(tile.key);
-        return;
-      }
-      setBlockedSubject(null);
-      setShowFreeTierBlocked(true);
-      return;
-    }
+    // Always open settings (incl. logged-out / free tier) so Topics and
+    // Advanced options can be reached. Starting a paid session still requires
+    // full access in handleSessionConfirm.
+    if (!showFullAccess && freeTierPending) return;
     setModalTile(tile);
     setSessionModalOpen(true);
   };
@@ -428,17 +427,29 @@ export function QuestionBankHomeScreen() {
     const startSubject = params.get("startSubject");
     if (!startSubject || !isFreeTierPreviewSubject(startSubject)) return;
     calibrationLaunchHandled.current = true;
-    if (showFullAccess) {
-      const tile = SUBJECT_TILES.find((t) => t.key === startSubject);
-      if (tile) openSessionModal(tile);
-    } else {
-      launchFreeTierPreview(startSubject);
-    }
+    const tile = SUBJECT_TILES.find((t) => t.key === startSubject);
+    if (tile) openSessionModal(tile);
     router.replace("/questions", { scroll: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- deep-link once ready
   }, [accessPending, freeTierPending, sessionPending, showFullAccess]);
 
   const handleSessionConfirm = (payload: QuestionBankHomeLaunchPayload) => {
+    if (!showFullAccess) {
+      const primary = payload.subjects[0];
+      const wantsTopics = (payload.topics?.length ?? 0) > 0;
+      const wantsMultiSubject = payload.subjects.length > 1;
+      if (wantsTopics || wantsMultiSubject || !isFreeTierPreviewSubject(primary)) {
+        setBlockedSubject(
+          isFreeTierPreviewSubject(primary) ? primary : null,
+        );
+        setBlockedReason(wantsTopics ? "topics" : "subject");
+        setShowFreeTierBlocked(true);
+        return;
+      }
+      launchFreeTierPreview(primary);
+      return;
+    }
+
     try {
       sessionStorage.setItem(
         QUESTION_BANK_HOME_LAUNCH_KEY,
@@ -457,17 +468,23 @@ export function QuestionBankHomeScreen() {
     router.push("/questions/questionbank");
   };
 
-  const freeTierBlockedHeadline = blockedSubject
-    ? `You've used your ${FREE_TIER_LIMIT_PER_SUBJECT} free ${blockedSubject} questions`
-    : anyPreviewAvailable === false
-      ? "Free preview unavailable"
-      : "Upgrade to unlock this subject";
+  const freeTierBlockedHeadline =
+    blockedReason === "topics"
+      ? "Topic practice needs full access"
+      : blockedSubject
+        ? `You've used your ${FREE_TIER_LIMIT_PER_SUBJECT} free ${blockedSubject} questions`
+        : anyPreviewAvailable === false
+          ? "Free preview unavailable"
+          : "Upgrade to unlock this subject";
 
-  const freeTierBlockedSubtext = blockedSubject
-    ? `Upgrade for unlimited ${blockedSubject} practice and every other subject.`
-    : anyPreviewAvailable === false
-      ? "Preview questions are not available right now. Try again shortly or upgrade for full access."
-      : 'Upgrade for unlimited practice sessions across every subject and difficulty.';
+  const freeTierBlockedSubtext =
+    blockedReason === "topics"
+      ? "Upgrade to filter by topic and practice the areas you need most."
+      : blockedSubject
+        ? `Upgrade for unlimited ${blockedSubject} practice and every other subject.`
+        : anyPreviewAvailable === false
+          ? "Preview questions are not available right now. Try again shortly or upgrade for full access."
+          : "Upgrade for unlimited practice sessions across every subject and difficulty.";
 
   const freeTierPromoBanner =
     showFreeTierBlocked ? (
@@ -708,6 +725,7 @@ export function QuestionBankHomeScreen() {
           setModalTile(null);
         }}
         onConfirm={handleSessionConfirm}
+        previewOnly={!showFullAccess}
       />
     </div>
   );

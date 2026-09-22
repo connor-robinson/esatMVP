@@ -77,10 +77,14 @@ export function writeCachedHasFullAccess(value: boolean) {
 export function useSubscription(): SubscriptionStatus {
   const [state, setState] = useState<SubscriptionStatus>(() => {
     const cachedAccess = readCachedHasFullAccess();
+    // Only trust a positive cache for instant paid paint. A stale `false`
+    // (e.g. before partner redeem) must not unlock free-tier shortcuts until
+    // /api/subscription/status confirms access.
+    const trustedPaid = cachedAccess === true;
     return {
       tier: "free",
-      hasFullAccess: cachedAccess ?? false,
-      isLoading: cachedAccess === undefined,
+      hasFullAccess: trustedPaid,
+      isLoading: !trustedPaid,
     };
   });
 
@@ -114,8 +118,13 @@ export function useSubscription(): SubscriptionStatus {
         });
       } catch {
         if (mounted) {
-          setState({ tier: "free", hasFullAccess: false, isLoading: false });
-          writeCachedHasFullAccess(false);
+          // Keep any trusted paid cache; never persist a false negative.
+          setState((prev) => ({
+            ...prev,
+            isLoading: false,
+            hasFullAccess: prev.hasFullAccess,
+            tier: prev.hasFullAccess ? prev.tier : "free",
+          }));
         }
       }
     }
