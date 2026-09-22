@@ -83,12 +83,33 @@ export function isValidEsatDate(dateIso: string): boolean {
   return allEsatDateIsos().includes(dateIso);
 }
 
+export type CountdownParts = {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+};
+
+/** Remaining time until local midnight on the target date (zeros when passed). */
+export function countdownUntilIso(
+  dateIso: string,
+  now = new Date(),
+): CountdownParts {
+  const target = localDateFromIso(dateIso);
+  if (!target) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+
+  const ms = Math.max(0, target.getTime() - now.getTime());
+  const totalSeconds = Math.floor(ms / 1000);
+  const days = Math.floor(totalSeconds / 86_400);
+  const hours = Math.floor((totalSeconds % 86_400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return { days, hours, minutes, seconds };
+}
+
 /** Whole local calendar days from today to target (0 on the day). */
 export function daysUntilIso(dateIso: string, now = new Date()): number {
-  const target = localDateFromIso(dateIso);
-  if (!target) return 0;
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  return Math.round((target.getTime() - today.getTime()) / 86_400_000);
+  return countdownUntilIso(dateIso, now).days;
 }
 
 export function formatDayLabel(dateIso: string): string {
