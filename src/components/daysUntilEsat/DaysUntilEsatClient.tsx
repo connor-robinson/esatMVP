@@ -1,48 +1,34 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import {
-  DEFAULT_SITTING_ID,
+  DEFAULT_ESAT_DATE_ISO,
   ESAT_SITTINGS,
   daysInSitting,
   daysUntilIso,
-  defaultDateForSitting,
   formatDayLabel,
-  getSitting,
   loadStoredEsatDate,
   saveStoredEsatDate,
-  type EsatSittingId,
 } from "@/lib/esat/sittingDates";
 
 export function DaysUntilEsatClient() {
-  const [sittingId, setSittingId] = useState<EsatSittingId>(DEFAULT_SITTING_ID);
-  const [dateIso, setDateIso] = useState(defaultDateForSitting(DEFAULT_SITTING_ID));
+  const [dateIso, setDateIso] = useState(DEFAULT_ESAT_DATE_ISO);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const stored = loadStoredEsatDate();
-    if (stored) {
-      setSittingId(stored.sittingId);
-      setDateIso(stored.dateIso);
-    }
+    if (stored) setDateIso(stored);
     setReady(true);
   }, []);
 
   useEffect(() => {
     if (!ready) return;
-    saveStoredEsatDate({ sittingId, dateIso });
-  }, [ready, sittingId, dateIso]);
-
-  const sitting = getSitting(sittingId);
-  const dayOptions = useMemo(() => daysInSitting(sitting), [sitting]);
+    saveStoredEsatDate(dateIso);
+  }, [ready, dateIso]);
 
   const days = Math.max(0, daysUntilIso(dateIso));
   const dayWord = days === 1 ? "day" : "days";
-
-  function onSittingChange(next: EsatSittingId) {
-    setSittingId(next);
-    setDateIso(defaultDateForSitting(next));
-  }
 
   return (
     <div className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center px-6 py-16">
@@ -54,48 +40,30 @@ export function DaysUntilEsatClient() {
       </p>
       <p className="mt-2 text-lg text-text-muted sm:text-xl">{dayWord}</p>
 
-      <div className="mt-14 flex flex-col items-center gap-8">
-        <div
-          className="flex items-center gap-5 text-sm"
-          role="tablist"
-          aria-label="ESAT sitting"
-        >
-          {ESAT_SITTINGS.map((option) => {
-            const active = option.id === sittingId;
-            return (
-              <button
-                key={option.id}
-                type="button"
-                role="tab"
-                aria-selected={active}
-                onClick={() => onSittingChange(option.id)}
-                className={
-                  active
-                    ? "text-text"
-                    : "text-text-muted hover:text-text"
-                }
-              >
-                {option.id === "october" ? "October" : "January"}
-              </button>
-            );
-          })}
-        </div>
-
-        <label className="text-sm text-text-muted">
-          <span className="sr-only">Your ESAT date</span>
-          <select
-            value={dateIso}
-            onChange={(e) => setDateIso(e.target.value)}
-            className="cursor-pointer appearance-none bg-transparent text-center text-base text-text outline-none"
-            aria-label="Your ESAT date"
-          >
-            {dayOptions.map((iso) => (
-              <option key={iso} value={iso}>
-                {formatDayLabel(iso)}
-              </option>
-            ))}
-          </select>
+      <div className="relative mt-14 w-full max-w-[16rem]">
+        <label htmlFor="esat-date" className="sr-only">
+          Your ESAT date
         </label>
+        <select
+          id="esat-date"
+          value={dateIso}
+          onChange={(e) => setDateIso(e.target.value)}
+          className="h-11 w-full cursor-pointer appearance-none rounded-2xl bg-surface-elevated py-2 pl-4 pr-10 text-center text-sm font-medium text-text outline-none transition-colors hover:bg-surface-mid focus:outline-none"
+        >
+          {ESAT_SITTINGS.map((sitting) => (
+            <optgroup key={sitting.id} label={sitting.label}>
+              {daysInSitting(sitting).map((iso) => (
+                <option key={iso} value={iso} className="bg-surface-elevated text-text">
+                  {formatDayLabel(iso)}
+                </option>
+              ))}
+            </optgroup>
+          ))}
+        </select>
+        <ChevronDown
+          className="pointer-events-none absolute top-1/2 right-3.5 h-4 w-4 -translate-y-1/2 text-text-muted"
+          aria-hidden
+        />
       </div>
     </div>
   );

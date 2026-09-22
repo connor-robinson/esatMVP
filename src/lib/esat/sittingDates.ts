@@ -12,7 +12,7 @@ export type EsatSittingId = "october" | "january";
 export type EsatSitting = {
   id: EsatSittingId;
   label: string;
-  /** Inclusive YYYY-MM-DD range (UTC calendar dates). */
+  /** Inclusive YYYY-MM-DD range. */
   startIso: string;
   endIso: string;
 };
@@ -32,15 +32,9 @@ export const ESAT_SITTINGS: readonly EsatSitting[] = [
   },
 ] as const;
 
-export const DEFAULT_SITTING_ID: EsatSittingId = "october";
+export const DEFAULT_ESAT_DATE_ISO = ESAT_SITTINGS[0].startIso;
 
 const STORAGE_KEY = "esat-days-until-date";
-
-export type StoredEsatDate = {
-  sittingId: EsatSittingId;
-  /** YYYY-MM-DD within the sitting window */
-  dateIso: string;
-};
 
 function parseIsoDate(iso: string): { y: number; m: number; d: number } | null {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
@@ -66,12 +60,6 @@ export function formatIso(date: Date): string {
   return `${y}-${m}-${d}`;
 }
 
-export function getSitting(id: EsatSittingId): EsatSitting {
-  const found = ESAT_SITTINGS.find((s) => s.id === id);
-  if (!found) return ESAT_SITTINGS[0];
-  return found;
-}
-
 /** All calendar days in a sitting, inclusive. */
 export function daysInSitting(sitting: EsatSitting): string[] {
   const start = localDateFromIso(sitting.startIso);
@@ -86,12 +74,13 @@ export function daysInSitting(sitting: EsatSitting): string[] {
   return out;
 }
 
-export function isDateInSitting(sitting: EsatSitting, dateIso: string): boolean {
-  return daysInSitting(sitting).includes(dateIso);
+/** Every bookable day across published sittings, in order. */
+export function allEsatDateIsos(): string[] {
+  return ESAT_SITTINGS.flatMap((sitting) => daysInSitting(sitting));
 }
 
-export function defaultDateForSitting(sittingId: EsatSittingId): string {
-  return getSitting(sittingId).startIso;
+export function isValidEsatDate(dateIso: string): boolean {
+  return allEsatDateIsos().includes(dateIso);
 }
 
 /** Whole local calendar days from today to target (0 on the day). */
@@ -109,31 +98,28 @@ export function formatDayLabel(dateIso: string): string {
     weekday: "short",
     day: "numeric",
     month: "short",
+    year: "numeric",
   });
 }
 
-export function loadStoredEsatDate(): StoredEsatDate | null {
+export function loadStoredEsatDate(): string | null {
   if (typeof window === "undefined") return null;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as Partial<StoredEsatDate>;
-    if (parsed.sittingId !== "october" && parsed.sittingId !== "january") {
-      return null;
-    }
+    const parsed = JSON.parse(raw) as { dateIso?: unknown };
     if (typeof parsed.dateIso !== "string") return null;
-    const sitting = getSitting(parsed.sittingId);
-    if (!isDateInSitting(sitting, parsed.dateIso)) return null;
-    return { sittingId: parsed.sittingId, dateIso: parsed.dateIso };
+    if (!isValidEsatDate(parsed.dateIso)) return null;
+    return parsed.dateIso;
   } catch {
     return null;
   }
 }
 
-export function saveStoredEsatDate(value: StoredEsatDate): void {
+export function saveStoredEsatDate(dateIso: string): void {
   if (typeof window === "undefined") return;
   try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ dateIso }));
   } catch {
     // ignore quota / private mode
   }
