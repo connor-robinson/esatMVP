@@ -31,27 +31,48 @@ export async function GET(request: NextRequest) {
     ? Math.min(Math.max(Math.floor(limitRaw), 1), 100)
     : 50;
 
-  const [broadcastRes, personalRes, readsRes] = await Promise.all([
-    service
-      .from("inbox_messages")
-      .select(MESSAGE_SELECT)
-      .eq("audience", "broadcast")
-      .eq("direction", "outbound")
-      .is("parent_id", null)
-      .order("created_at", { ascending: false })
-      .limit(limit),
-    service
-      .from("inbox_message_recipients")
-      .select(`message_id, inbox_messages(${MESSAGE_SELECT})`)
-      .eq("user_id", user.id)
-      .limit(limit * 2),
-    service
-      .from("inbox_message_reads")
-      .select("message_id, read_at")
-      .eq("user_id", user.id),
-  ]);
+  // List pool can be larger than `limit` so unreadOnly still finds older unread
+  // rows. Counts use unbounded id queries so the nav badge stays accurate.
+  const listPool = Math.max(limit * 4, unreadOnly ? 100 : limit);
 
-  if (broadcastRes.error || personalRes.error || readsRes.error) {
+  const [broadcastRes, personalRes, readsRes, broadcastIdsRes, personalIdsRes] =
+    await Promise.all([
+      service
+        .from("inbox_messages")
+        .select(MESSAGE_SELECT)
+        .eq("audience", "broadcast")
+        .eq("direction", "outbound")
+        .is("parent_id", null)
+        .order("created_at", { ascending: false })
+        .limit(listPool),
+      service
+        .from("inbox_message_recipients")
+        .select(`message_id, inbox_messages(${MESSAGE_SELECT})`)
+        .eq("user_id", user.id)
+        .limit(listPool * 2),
+      service
+        .from("inbox_message_reads")
+        .select("message_id, read_at")
+        .eq("user_id", user.id),
+      service
+        .from("inbox_messages")
+        .select("id")
+        .eq("audience", "broadcast")
+        .eq("direction", "outbound")
+        .is("parent_id", null),
+      service
+        .from("inbox_message_recipients")
+        .select("message_id, inbox_messages(id, parent_id, direction)")
+        .eq("user_id", user.id),
+    ]);
+
+  if (
+    broadcastRes.error ||
+    personalRes.error ||
+    readsRes.error ||
+    broadcastIdsRes.error ||
+    personalIdsRes.error
+  ) {
     return NextResponse.json(
       { error: "Failed to load inbox" },
       { status: 500 },
@@ -169,12 +190,22 @@ export async function GET(request: NextRequest) {
 
   messages = messages.slice(0, limit);
 
-  const allRoots = Array.from(byId.values());
-  const unreadPersonalCount = allRoots.filter(
-    (m) => !m.read_at && m.audience === "personal",
+  const personalRootIds: string[] = [];
+  for (const row of personalIdsRes.data ?? []) {
+    const msg = row.inbox_messages as
+      | { id: string; parent_id: string | null; direction: string }
+      | null
+      | Array<{ id: string; parent_id: string | null; direction: string }>;
+    const m = Array.isArray(msg) ? msg[0] : msg;
+    if (!m?.id || m.parent_id || m.direction === "inbound") continue;
+    personalRootIds.push(m.id);
+  }
+
+  const unreadPersonalCount = personalRootIds.filter(
+    (id) => !readMap.has(id),
   ).length;
-  const hasUnreadBroadcast = allRoots.some(
-    (m) => !m.read_at && m.audience === "broadcast",
+  const hasUnreadBroadcast = (broadcastIdsRes.data ?? []).some(
+    (row) => !readMap.has(row.id),
   );
   // Number badge = direct messages only. Broadcast / general notices use a red
   // dot and do not inflate that count.

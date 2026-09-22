@@ -9,3 +9,8 @@ export type {
 } from "./types";
 export { validateInboxCompose } from "./validation";
 export { sendPersonalInboxMessage } from "./send";
+export {
+  INBOX_READ_EVENT,
+  notifyInboxRead,
+  type InboxReadEventDetail,
+} from "./events";

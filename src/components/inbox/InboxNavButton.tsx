@@ -17,7 +17,12 @@ import {
   InboxThreadBubbles,
 } from "@/components/inbox/InboxMessageParts";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
-import type { InboxMessageListItem, InboxThreadReply } from "@/lib/inbox";
+import {
+  INBOX_READ_EVENT,
+  type InboxMessageListItem,
+  type InboxReadEventDetail,
+  type InboxThreadReply,
+} from "@/lib/inbox";
 import { cn } from "@/lib/utils";
 
 const NAV_ICON_PX = 20;
@@ -27,6 +32,12 @@ const COLLAPSED_BODY_CHARS = 72;
 
 type Props = {
   className?: string;
+};
+
+type InboxFetchResult = {
+  messages: InboxMessageListItem[];
+  unreadPersonal: number;
+  hasUnreadBroadcast: boolean;
 };
 
 function previewBody(body: string): { text: string; truncated: boolean } {
@@ -40,6 +51,13 @@ function previewBody(body: string): { text: string; truncated: boolean } {
   };
 }
 
+function sortInboxMessages(items: InboxMessageListItem[]) {
+  return [...items].sort(
+    (a, b) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+  );
+}
+
 /**
  * Navbar inbox: leftmost account icon; opens a compact notification popup.
  */
@@ -48,6 +66,9 @@ export function InboxNavButton({ className }: Props) {
   const pathname = usePathname();
   const panelId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
+  const openRef = useRef(false);
+  /** Optimistic reads that may not yet be reflected by a concurrent refresh. */
+  const pendingReadIdsRef = useRef<Set<string>>(new Set());
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<InboxMessageListItem[]>([]);
   const [unreadPersonal, setUnreadPersonal] = useState(0);
@@ -60,12 +81,57 @@ export function InboxNavButton({ className }: Props) {
     {},
   );
 
-  const refresh = useCallback(async () => {
+  const applyLocalReads = useCallback((ids: string[]) => {
+    if (ids.length === 0) return;
+    const idSet = new Set(ids);
+    for (const id of ids) pendingReadIdsRef.current.add(id);
+
+    setMessages((prev) => {
+      let personalDelta = 0;
+      let hadBroadcast = false;
+      const next = prev.map((m) => {
+        if (!idSet.has(m.id) || m.read_at) return m;
+        if (m.audience === "personal") personalDelta += 1;
+        else hadBroadcast = true;
+        return { ...m, read_at: new Date().toISOString() };
+      });
+      if (personalDelta > 0) {
+        setUnreadPersonal((n) => Math.max(0, n - personalDelta));
+      }
+      if (hadBroadcast) {
+        const stillUnreadBroadcast = next.some(
+          (m) => !m.read_at && m.audience === "broadcast",
+        );
+        if (!stillUnreadBroadcast) {
+          setHasUnreadBroadcast(false);
+        }
+      }
+      return next;
+    });
+  }, []);
+
+  const persistReads = useCallback(async (messageIds: string[]) => {
+    if (messageIds.length === 0) return false;
+    try {
+      const res = await fetch("/api/inbox", {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messageIds }),
+      });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  }, []);
+
+  const refresh = useCallback(async (): Promise<InboxFetchResult | null> => {
     if (!session?.user) {
       setMessages([]);
       setUnreadPersonal(0);
       setHasUnreadBroadcast(false);
-      return;
+      pendingReadIdsRef.current.clear();
+      return null;
     }
     try {
       const res = await fetch(
@@ -75,50 +141,153 @@ export function InboxNavButton({ className }: Props) {
           cache: "no-store",
         },
       );
-      if (!res.ok) return;
+      if (!res.ok) return null;
       const data = (await res.json()) as {
         messages?: InboxMessageListItem[];
         unreadCount?: number;
         unreadPersonalCount?: number;
         hasUnreadBroadcast?: boolean;
       };
-      const nextMessages = data.messages ?? [];
-      setMessages(nextMessages);
-      const personal =
+
+      const pending = pendingReadIdsRef.current;
+      const incoming = (data.messages ?? []).map((m) =>
+        pending.has(m.id)
+          ? { ...m, read_at: m.read_at ?? new Date().toISOString() }
+          : m,
+      );
+
+      // Clear pending once the server no longer returns them as unread.
+      const incomingUnreadIds = new Set(
+        (data.messages ?? []).filter((m) => !m.read_at).map((m) => m.id),
+      );
+      for (const id of [...pending]) {
+        if (!incomingUnreadIds.has(id)) pending.delete(id);
+      }
+
+      let personal =
         typeof data.unreadPersonalCount === "number"
           ? data.unreadPersonalCount
           : typeof data.unreadCount === "number"
             ? data.unreadCount
-            : nextMessages.filter(
-                (m) => !m.read_at && m.audience === "personal",
-              ).length;
-      setUnreadPersonal(personal);
-      setHasUnreadBroadcast(
+            : incoming.filter((m) => !m.read_at && m.audience === "personal")
+                .length;
+      let broadcast =
         typeof data.hasUnreadBroadcast === "boolean"
           ? data.hasUnreadBroadcast
-          : nextMessages.some(
-              (m) => !m.read_at && m.audience === "broadcast",
-            ),
-      );
+          : incoming.some((m) => !m.read_at && m.audience === "broadcast");
+
+      // Keep optimistic badge clears ahead of a slow PATCH.
+      if (pending.size > 0) {
+        personal = Math.max(
+          0,
+          personal -
+            incoming.filter(
+              (m) =>
+                pending.has(m.id) &&
+                m.audience === "personal" &&
+                !m.read_at,
+            ).length,
+        );
+        const unreadBroadcasts = incoming.filter(
+          (m) => !m.read_at && m.audience === "broadcast",
+        );
+        if (
+          unreadBroadcasts.length > 0 &&
+          unreadBroadcasts.every((m) => pending.has(m.id))
+        ) {
+          // Every unread broadcast in this payload is pending-read. Hold the
+          // badge clear; a post-PATCH refresh reconciles any remaining unread.
+          broadcast = false;
+        }
+      }
+
+      setMessages((prev) => {
+        if (!openRef.current) {
+          return sortInboxMessages(incoming);
+        }
+        // Panel open: keep already-shown rows (including just-read) so the
+        // list does not vanish under the user when we mark-on-open.
+        const byId = new Map(prev.map((m) => [m.id, m]));
+        for (const m of incoming) {
+          const existing = byId.get(m.id);
+          byId.set(
+            m.id,
+            existing?.read_at && !m.read_at
+              ? { ...m, read_at: existing.read_at }
+              : m,
+          );
+        }
+        for (const id of pending) {
+          const row = byId.get(id);
+          if (row && !row.read_at) {
+            byId.set(id, {
+              ...row,
+              read_at: new Date().toISOString(),
+            });
+          }
+        }
+        return sortInboxMessages(Array.from(byId.values()));
+      });
+      setUnreadPersonal(personal);
+      setHasUnreadBroadcast(broadcast);
+      return {
+        messages: incoming,
+        unreadPersonal: personal,
+        hasUnreadBroadcast: broadcast,
+      };
     } catch {
-      /* ignore */
+      return null;
     }
   }, [session?.user]);
+
+  const markReadIds = useCallback(
+    async (messageIds: string[]) => {
+      const unique = [...new Set(messageIds.filter(Boolean))];
+      if (unique.length === 0) return;
+      applyLocalReads(unique);
+      const ok = await persistReads(unique);
+      // Reconcile badge with server counts (other unread outside the preview).
+      if (ok) void refresh();
+    },
+    [applyLocalReads, persistReads, refresh],
+  );
 
   useEffect(() => {
     void refresh();
     if (!session?.user) return;
     const id = window.setInterval(() => void refresh(), 60_000);
     const onFocus = () => void refresh();
+    const onInboxRead = (event: Event) => {
+      const detail = (event as CustomEvent<InboxReadEventDetail>).detail;
+      if (detail?.all) {
+        pendingReadIdsRef.current.clear();
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.read_at ? m : { ...m, read_at: new Date().toISOString() },
+          ),
+        );
+        setUnreadPersonal(0);
+        setHasUnreadBroadcast(false);
+        return;
+      }
+      if (detail?.messageIds?.length) {
+        applyLocalReads(detail.messageIds);
+      }
+      // Reconcile badge counts with the server after another view marks read.
+      void refresh();
+    };
     window.addEventListener("focus", onFocus);
+    window.addEventListener(INBOX_READ_EVENT, onInboxRead);
     return () => {
       window.clearInterval(id);
       window.removeEventListener("focus", onFocus);
+      window.removeEventListener(INBOX_READ_EVENT, onInboxRead);
     };
-  }, [session?.user, refresh, pathname]);
+  }, [session?.user, refresh, pathname, applyLocalReads]);
 
   useEffect(() => {
     setOpen(false);
+    openRef.current = false;
   }, [pathname]);
 
   useEffect(() => {
@@ -126,10 +295,16 @@ export function InboxNavButton({ className }: Props) {
     const onPointer = (event: MouseEvent) => {
       if (!rootRef.current?.contains(event.target as Node)) {
         setOpen(false);
+        openRef.current = false;
+        setMessages((prev) => prev.filter((m) => !m.read_at));
       }
     };
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === "Escape") {
+        setOpen(false);
+        openRef.current = false;
+        setMessages((prev) => prev.filter((m) => !m.read_at));
+      }
     };
     document.addEventListener("mousedown", onPointer);
     document.addEventListener("keydown", onKey);
@@ -141,51 +316,25 @@ export function InboxNavButton({ className }: Props) {
 
   const openPanel = async () => {
     const next = !open;
+    openRef.current = next;
     setOpen(next);
     if (!next) {
       setExpandedId(null);
+      setMessages((prev) => prev.filter((m) => !m.read_at));
       return;
     }
     setLoading(true);
     setReplyErrorById({});
     setExpandedId(null);
-    await refresh();
+    const result = await refresh();
     setLoading(false);
-  };
-
-  const markRead = async (messageId: string) => {
-    const target = messages.find((m) => m.id === messageId);
-    if (!target || target.read_at) return;
-
-    setMessages((prev) =>
-      prev.map((m) =>
-        m.id === messageId
-          ? { ...m, read_at: new Date().toISOString() }
-          : m,
-      ),
-    );
-    if (target.audience === "personal") {
-      setUnreadPersonal((n) => Math.max(0, n - 1));
-    } else {
-      setHasUnreadBroadcast(
-        messages.some(
-          (m) =>
-            m.id !== messageId &&
-            !m.read_at &&
-            m.audience === "broadcast",
-        ),
-      );
-    }
-
-    try {
-      await fetch("/api/inbox", {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messageIds: [messageId] }),
-      });
-    } catch {
-      /* optimistic */
+    // Opening the preview counts as viewing: clear the badge for loaded
+    // messages while keeping them visible until the panel closes.
+    const unreadIds = (result?.messages ?? [])
+      .filter((m) => !m.read_at)
+      .map((m) => m.id);
+    if (unreadIds.length > 0) {
+      void markReadIds(unreadIds);
     }
   };
 
@@ -201,16 +350,14 @@ export function InboxNavButton({ className }: Props) {
       return next;
     });
 
-    // One-line messages: mark read and drop from the popup immediately.
     if (!needsExpand) {
       setExpandedId((prev) => (prev === id ? null : prev));
-      void markRead(id);
+      void markReadIds([id]);
       return;
     }
 
-    // Multi-line: expand to read; collapse removes it once marked read.
     setExpandedId((prev) => (prev === id ? null : id));
-    void markRead(id);
+    void markReadIds([id]);
   };
 
   const sendReply = async (parentId: string) => {
@@ -250,6 +397,7 @@ export function InboxNavButton({ className }: Props) {
       }
       setReplyById((prev) => ({ ...prev, [parentId]: "" }));
       setExpandedId(parentId);
+      void markReadIds([parentId]);
     } catch {
       setReplyErrorById((prev) => ({
         ...prev,
@@ -262,10 +410,11 @@ export function InboxNavButton({ className }: Props) {
 
   if (!session?.user) return null;
 
-  // Popup is unread-only. Keep a just-read message visible while it is expanded.
-  const visibleMessages = messages.filter(
-    (m) => !m.read_at || expandedId === m.id,
-  );
+  // While the panel is open, keep just-read messages visible so previewing
+  // does not empty the list under the user.
+  const visibleMessages = open
+    ? messages
+    : messages.filter((m) => !m.read_at || expandedId === m.id);
 
   const showNumberBadge = unreadPersonal > 0;
   const showDotBadge = !showNumberBadge && hasUnreadBroadcast;
@@ -321,7 +470,10 @@ export function InboxNavButton({ className }: Props) {
             <p className="text-[12px] font-semibold text-text">Inbox</p>
             <Link
               href="/inbox"
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                openRef.current = false;
+                setOpen(false);
+              }}
               className="text-[11px] font-medium text-text-muted underline-offset-2 hover:text-text hover:underline"
             >
               Open full inbox
@@ -338,7 +490,10 @@ export function InboxNavButton({ className }: Props) {
                 </p>
                 <Link
                   href="/inbox"
-                  onClick={() => setOpen(false)}
+                  onClick={() => {
+                    openRef.current = false;
+                    setOpen(false);
+                  }}
                   className="mt-2 inline-block text-[11px] font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400"
                 >
                   Open full inbox

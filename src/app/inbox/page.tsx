@@ -10,7 +10,11 @@ import {
   InboxThreadBubbles,
 } from "@/components/inbox/InboxMessageParts";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
-import type { InboxMessageListItem, InboxThreadReply } from "@/lib/inbox";
+import {
+  notifyInboxRead,
+  type InboxMessageListItem,
+  type InboxThreadReply,
+} from "@/lib/inbox";
 import { cn } from "@/lib/utils";
 
 export default function InboxPage() {
@@ -88,12 +92,15 @@ export default function InboxPage() {
     );
 
     try {
-      await fetch("/api/inbox", {
+      const res = await fetch("/api/inbox", {
         method: "PATCH",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messageIds: [messageId] }),
       });
+      if (res.ok) {
+        notifyInboxRead({ messageIds: [messageId] });
+      }
     } catch {
       /* optimistic */
     }
@@ -106,12 +113,15 @@ export default function InboxPage() {
       ),
     );
     try {
-      await fetch("/api/inbox", {
+      const res = await fetch("/api/inbox", {
         method: "PATCH",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ all: true }),
       });
+      if (res.ok) {
+        notifyInboxRead({ messageIds: [], all: true });
+      }
     } catch {
       void load();
     }
