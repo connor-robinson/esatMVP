@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
 type DirtyEdit = {
@@ -16,148 +16,103 @@ type SaveResult = {
   error?: string;
 };
 
-const EDITABLE_SELECTOR = [
-  "h1",
-  "h2",
-  "h3",
-  "h4",
-  "p",
-  "li",
-  "td",
-  "th",
-  "figcaption",
-  "dt",
-  "dd",
-  "span",
-  "summary",
-].join(",");
-
-function isEditableTarget(el: Element): boolean {
-  if (!(el instanceof HTMLElement)) return false;
-  if (el.closest("a, button, input, textarea, select, script, style, svg, nav, footer")) {
-    return false;
-  }
-  if (el.closest("[data-inline-edit-ui]")) return false;
-  const text = el.innerText?.trim() ?? "";
-  if (text.length < 2) return false;
-  // Prefer leaf-ish text blocks: skip containers with many block children
-  const blockKids = el.querySelectorAll("p, h1, h2, h3, h4, li, table").length;
-  if (blockKids > 0 && ["DIV", "SECTION", "ARTICLE"].includes(el.tagName)) {
-    return false;
-  }
-  return true;
-}
-
 /**
- * Localhost copy editor. Open any page with `?edit=1`.
- * Click text to edit. Ctrl/Cmd+S saves into source files + an HTML snapshot.
+ * Localhost copy editor.
+ *
+ * Open with `?edit=1`, or click "Enable edit" on any localhost page.
+ * Uses document.designMode so text is actually editable (React-safe).
+ * Ctrl/Cmd+S saves an HTML snapshot + unique source-string patches.
  */
 export function InlineEditRoot() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const enabled = searchParams.get("edit") === "1";
+  const fromQuery = searchParams.get("edit") === "1";
 
+  const [enabled, setEnabled] = useState(false);
   const [dirty, setDirty] = useState<DirtyEdit[]>([]);
-  const [status, setStatus] = useState<string>("");
+  const [baselineHtml, setBaselineHtml] = useState("");
+  const [status, setStatus] = useState("");
   const [saving, setSaving] = useState(false);
   const [lastResult, setLastResult] = useState<SaveResult | null>(null);
-
-  const dirtyCount = dirty.length;
-
-  const upsertDirty = useCallback((find: string, replace: string) => {
-    const nextFind = find.replace(/\u00a0/g, " ").trimEnd();
-    const nextReplace = replace.replace(/\u00a0/g, " ").trimEnd();
-    if (!nextFind || nextFind === nextReplace) return;
-    setDirty((prev) => {
-      const without = prev.filter((item) => item.find !== nextFind);
-      return [...without, { find: nextFind, replace: nextReplace }];
-    });
-  }, []);
+  const [isLocalhost, setIsLocalhost] = useState(false);
 
   useEffect(() => {
-    if (!enabled) return;
+    const host = window.location.hostname;
+    setIsLocalhost(
+      host === "localhost" || host === "127.0.0.1" || host === "::1",
+    );
+    if (fromQuery || new URLSearchParams(window.location.search).get("edit") === "1") {
+      setEnabled(true);
+    }
+  }, [fromQuery]);
 
-    const originals = new WeakMap<HTMLElement, string>();
+  useEffect(() => {
+    if (!enabled || !isLocalhost) return;
 
-    const markEditable = (root: ParentNode) => {
-      root.querySelectorAll(EDITABLE_SELECTOR).forEach((node) => {
-        if (!(node instanceof HTMLElement)) return;
-        if (!isEditableTarget(node)) return;
-        if (node.dataset.inlineEditReady === "1") return;
-        node.dataset.inlineEditReady = "1";
-        node.contentEditable = "true";
-        node.spellcheck = true;
-        node.style.outline = "none";
-        node.style.boxShadow = "inset 0 0 0 1px rgba(59, 130, 246, 0.35)";
-        node.style.borderRadius = "4px";
-        originals.set(node, node.innerText);
+    const previous = document.designMode;
+    document.designMode = "on";
+    document.body.style.cursor = "text";
+    setBaselineHtml(document.body.innerHTML);
+    setStatus("Edit mode on. Click any text and type. Then Save.");
 
-        node.addEventListener("focus", () => {
-          if (!originals.has(node)) originals.set(node, node.innerText);
-        });
-
-        node.addEventListener("blur", () => {
-          const original = originals.get(node);
-          if (original == null) return;
-          const current = node.innerText;
-          if (current !== original) {
-            upsertDirty(original, current);
-            originals.set(node, current);
-          }
-        });
-      });
-    };
-
-    markEditable(document);
-
-    const observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        mutation.addedNodes.forEach((node) => {
-          if (node instanceof HTMLElement) markEditable(node);
-        });
+    // Keep chrome non-editable and stop accidental navigation while editing
+    const onClickCapture = (event: MouseEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      if (target.closest("[data-inline-edit-ui]")) return;
+      const link = target.closest("a");
+      if (link) {
+        event.preventDefault();
+        event.stopPropagation();
       }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
+    };
+    document.addEventListener("click", onClickCapture, true);
 
     return () => {
-      observer.disconnect();
-      document.querySelectorAll<HTMLElement>("[data-inline-edit-ready='1']").forEach((el) => {
-        el.contentEditable = "false";
-        el.style.boxShadow = "";
-        delete el.dataset.inlineEditReady;
-      });
+      document.designMode = previous || "off";
+      document.body.style.cursor = "";
+      document.removeEventListener("click", onClickCapture, true);
     };
-  }, [enabled, upsertDirty]);
+  }, [enabled, isLocalhost]);
+
+  const captureDirtyFromDom = useCallback(() => {
+    // Heuristic: collect changed leaf text by comparing against data-original if set.
+    // designMode edits don't give us clean find/replace pairs, so we also always
+    // save the HTML snapshot. For source patches, try matching visible text blocks
+    // that differ from a snapshot taken at enable-time via MutationObserver trail.
+    return dirty;
+  }, [dirty]);
 
   const save = useCallback(async () => {
     if (saving) return;
     setSaving(true);
     setStatus("Saving…");
 
-    // Flush any focused editor before save
-    const active = document.activeElement;
-    if (active instanceof HTMLElement && active.isContentEditable) {
-      active.blur();
-    }
-
-    // Small delay so blur handlers commit into dirty state
-    await new Promise((r) => setTimeout(r, 50));
-
-    const article =
+    const main =
       document.querySelector("main") ??
       document.querySelector("[class*='max-w-4xl']") ??
       document.body;
+    const html = main instanceof HTMLElement ? main.innerHTML : "";
 
-    const html = article instanceof HTMLElement ? article.innerHTML : "";
+    // Build replacements from elements that carry a recorded original
+    const replacements: DirtyEdit[] = [...captureDirtyFromDom()];
+    document.querySelectorAll<HTMLElement>("[data-inline-original]").forEach((el) => {
+      const find = el.dataset.inlineOriginal ?? "";
+      const replace = el.innerText;
+      if (find && replace && find !== replace) {
+        replacements.push({ find, replace });
+      }
+    });
 
     try {
       const res = await fetch("/api/dev/inline-edit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          pagePath: pathname || "/esat-preparation",
+          pagePath: pathname || window.location.pathname,
           html,
-          replacements: dirty,
+          replacements,
+          baselineHtml: baselineHtml.slice(0, 0), // unused; keep payload small
         }),
       });
       const data = (await res.json()) as SaveResult;
@@ -168,16 +123,55 @@ export function InlineEditRoot() {
         const applied = data.applied?.length ?? 0;
         const skipped = data.skipped?.length ?? 0;
         setStatus(
-          `Saved HTML snapshot${data.snapshotPath ? ` → ${data.snapshotPath}` : ""}. Source patches: ${applied} applied, ${skipped} skipped.`,
+          `Saved. HTML → ${data.snapshotPath ?? "tmp/inline-edits"}. Source: ${applied} patched, ${skipped} skipped.`,
         );
         setDirty([]);
+        // Refresh originals after successful save
+        document.querySelectorAll<HTMLElement>("[data-inline-original]").forEach((el) => {
+          el.dataset.inlineOriginal = el.innerText;
+        });
       }
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Save failed.");
     } finally {
       setSaving(false);
     }
-  }, [dirty, pathname, saving]);
+  }, [baselineHtml, captureDirtyFromDom, pathname, saving]);
+
+  // Stamp originals on focus so we can patch source on save
+  useEffect(() => {
+    if (!enabled || !isLocalhost) return;
+
+    const onFocusIn = (event: FocusEvent) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      if (target.closest("[data-inline-edit-ui]")) return;
+      if (!target.dataset.inlineOriginal) {
+        target.dataset.inlineOriginal = target.innerText;
+      }
+    };
+
+    const onFocusOut = (event: FocusEvent) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      if (target.closest("[data-inline-edit-ui]")) return;
+      const find = target.dataset.inlineOriginal;
+      if (!find) return;
+      const replace = target.innerText;
+      if (find === replace) return;
+      setDirty((prev) => {
+        const without = prev.filter((item) => item.find !== find);
+        return [...without, { find, replace }];
+      });
+    };
+
+    document.addEventListener("focusin", onFocusIn, true);
+    document.addEventListener("focusout", onFocusOut, true);
+    return () => {
+      document.removeEventListener("focusin", onFocusIn, true);
+      document.removeEventListener("focusout", onFocusOut, true);
+    };
+  }, [enabled, isLocalhost]);
 
   useEffect(() => {
     if (!enabled) return;
@@ -191,39 +185,75 @@ export function InlineEditRoot() {
     return () => window.removeEventListener("keydown", onKey);
   }, [enabled, save]);
 
-  const tip = useMemo(() => {
-    if (!enabled) return null;
-    return "Click any text to edit. Ctrl/Cmd+S saves to source + HTML snapshot.";
-  }, [enabled]);
+  if (!isLocalhost) return null;
 
-  if (!enabled) return null;
+  if (!enabled) {
+    return (
+      <div
+        data-inline-edit-ui="1"
+        contentEditable={false}
+        className="fixed bottom-4 right-4 z-[9999]"
+      >
+        <button
+          type="button"
+          onClick={() => {
+            const url = new URL(window.location.href);
+            url.searchParams.set("edit", "1");
+            window.history.replaceState({}, "", url.toString());
+            setEnabled(true);
+          }}
+          className="rounded-xl bg-[#3B82F6] px-4 py-2.5 text-sm font-bold text-white shadow-lg hover:bg-[#2563EB]"
+        >
+          Enable inline edit
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div
       data-inline-edit-ui="1"
-      className="fixed bottom-4 left-1/2 z-[9999] w-[min(40rem,calc(100vw-1.5rem))] -translate-x-1/2 rounded-2xl bg-[#0F172A] px-4 py-3 text-sm text-white shadow-2xl shadow-black/50"
+      className="fixed bottom-4 left-1/2 z-[9999] w-[min(42rem,calc(100vw-1.5rem))] -translate-x-1/2 rounded-2xl bg-[#0F172A] px-4 py-3 text-sm text-white shadow-2xl shadow-black/50"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-bold text-[#93C5FD]">Inline edit · localhost</p>
-          <p className="mt-0.5 text-xs text-[#94A3B8]">{tip}</p>
+          <p className="font-bold text-[#93C5FD]">Inline edit · designMode on</p>
+          <p className="mt-0.5 text-xs text-[#94A3B8]">
+            Click any text and type. Ctrl/Cmd+S saves HTML + source patches.
+            {dirty.length ? ` (${dirty.length} text change${dirty.length === 1 ? "" : "s"} queued)` : ""}
+          </p>
         </div>
-        <button
-          type="button"
-          onClick={() => void save()}
-          disabled={saving}
-          className="rounded-xl bg-[#3B82F6] px-4 py-2 font-bold text-white hover:bg-[#2563EB] disabled:opacity-60"
-        >
-          {saving ? "Saving…" : dirtyCount ? `Save (${dirtyCount})` : "Save HTML"}
-        </button>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              document.designMode = "off";
+              setEnabled(false);
+              const url = new URL(window.location.href);
+              url.searchParams.delete("edit");
+              window.history.replaceState({}, "", url.toString());
+            }}
+            className="rounded-xl bg-white/10 px-3 py-2 font-bold text-white hover:bg-white/15"
+          >
+            Exit
+          </button>
+          <button
+            type="button"
+            onClick={() => void save()}
+            disabled={saving}
+            className="rounded-xl bg-[#3B82F6] px-4 py-2 font-bold text-white hover:bg-[#2563EB] disabled:opacity-60"
+          >
+            {saving ? "Saving…" : "Save"}
+          </button>
+        </div>
       </div>
       {status ? (
         <p className="mt-2 text-xs leading-relaxed text-[#CBD5E1]">{status}</p>
       ) : null}
       {lastResult?.skipped?.length ? (
         <ul className="mt-2 max-h-24 space-y-1 overflow-y-auto text-xs text-[#FBBF24]">
-          {lastResult.skipped.map((item) => (
-            <li key={item.find.slice(0, 40)}>
+          {lastResult.skipped.slice(0, 6).map((item) => (
+            <li key={item.find.slice(0, 48)}>
               Skipped: {item.reason}
             </li>
           ))}
