@@ -55,7 +55,6 @@ import {
   Target,
   Trophy,
   ClipboardList,
-  FileText,
   X,
   Zap,
 } from 'lucide-react';
@@ -132,12 +131,6 @@ const navSections: NavSectionConfig[] = [
         label: 'ESAT Mocks',
         description: 'Timed ESAT Camp mocks in the past papers hub',
         icon: Sparkles,
-      },
-      {
-        href: '/esat-mock-tests',
-        label: 'Free Mock Tests',
-        description: 'Download papers, mark schemes, and HTML solutions',
-        icon: FileText,
       },
       {
         href: '/past-papers/analytics',
