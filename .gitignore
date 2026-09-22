@@ -80,6 +80,9 @@ files_to_restore.txt
 # Local official PDF mirror (source downloads live outside the repo)
 question-generation/past_paper_converter/_cache/official_pdfs/
 
+# Dev inline-edit HTML snapshots
+/tmp/inline-edits/
+
 # Visual engine local review + eval artefacts
 question-generation/esat_question_generator/visual_engine/review_data/
 question-generation/esat_question_generator/visual_engine/eval/output/

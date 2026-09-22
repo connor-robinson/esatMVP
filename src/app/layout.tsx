@@ -34,6 +34,7 @@ import {
 } from "@/components/ga";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SupportProvider } from "@/components/support/SupportProvider";
+import { InlineEditRoot } from "@/components/dev/InlineEditRoot";
 import "@/styles/globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -231,6 +232,11 @@ export default function RootLayout({
                             <PageViewTracker />
                           </Suspense>
                         </DeferredMount>
+                        {process.env.NODE_ENV !== "production" ? (
+                          <Suspense fallback={null}>
+                            <InlineEditRoot />
+                          </Suspense>
+                        ) : null}
                       </SupportProvider>
                     </TesterProgrammeProvider>
                   </QuicklinkProvider>
