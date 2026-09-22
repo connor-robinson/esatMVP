@@ -1,15 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import {
-  DEFAULT_ESAT_DATE_ISO,
-  ESAT_SITTINGS,
   countdownUntilIso,
-  daysInSitting,
   formatDayLabel,
   loadStoredEsatDate,
+  resolveEsatDate,
   saveStoredEsatDate,
+  selectableDateIsos,
   type CountdownParts,
 } from "@/lib/esat/sittingDates";
 
@@ -20,13 +19,13 @@ function unitLabel(value: number, singular: string, plural: string) {
 }
 
 export function DaysUntilEsatClient() {
-  const [dateIso, setDateIso] = useState(DEFAULT_ESAT_DATE_ISO);
+  const [dateIso, setDateIso] = useState(() => resolveEsatDate(null));
   const [ready, setReady] = useState(false);
   const [parts, setParts] = useState<CountdownParts>(ZERO);
+  const [nowMs, setNowMs] = useState(() => Date.now());
 
   useEffect(() => {
-    const stored = loadStoredEsatDate();
-    if (stored) setDateIso(stored);
+    setDateIso(resolveEsatDate(loadStoredEsatDate()));
     setReady(true);
   }, []);
 
@@ -37,11 +36,26 @@ export function DaysUntilEsatClient() {
 
   useEffect(() => {
     if (!ready) return;
-    const tick = () => setParts(countdownUntilIso(dateIso));
+    const tick = () => {
+      const now = new Date();
+      setNowMs(now.getTime());
+      const next = resolveEsatDate(dateIso, now);
+      if (next !== dateIso) {
+        setDateIso(next);
+        setParts(countdownUntilIso(next, now));
+        return;
+      }
+      setParts(countdownUntilIso(dateIso, now));
+    };
     tick();
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
   }, [ready, dateIso]);
+
+  const dayOptions = useMemo(
+    () => selectableDateIsos(new Date(nowMs)),
+    [nowMs],
+  );
 
   return (
     <div className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center px-6 py-16">
@@ -80,7 +94,7 @@ export function DaysUntilEsatClient() {
           onChange={(e) => setDateIso(e.target.value)}
           className="h-11 w-full cursor-pointer appearance-none rounded-none border-0 bg-surface-elevated py-2 pl-4 pr-10 text-center text-sm font-medium text-text shadow-none outline-none ring-0 transition-colors hover:bg-surface-mid focus:border-0 focus:outline-none focus:ring-0"
         >
-          {daysInSitting(ESAT_SITTINGS[0]).map((iso) => (
+          {dayOptions.map((iso) => (
             <option key={iso} value={iso} className="bg-surface-elevated text-text">
               {formatDayLabel(iso)}
             </option>

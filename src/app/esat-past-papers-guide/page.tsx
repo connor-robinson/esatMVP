@@ -129,7 +129,15 @@ export default function EsatPastPapersGuidePage() {
               </p>
               <p>
                 This guide maps each exam&apos;s structure over time, then shows
-                what to do, what to skip and why.
+                what to do, what to skip and why. For a broader 3-week ESAT
+                preparation plan, see the{" "}
+                <a
+                  href={SEO_ROUTES.preparation}
+                  className="text-white underline decoration-white/25 underline-offset-4 transition-colors hover:decoration-[#3B82F6]"
+                >
+                  how to prepare for the ESAT
+                </a>{" "}
+                guide.
               </p>
             </div>
             <HeroPaperStack />
@@ -222,7 +230,7 @@ export default function EsatPastPapersGuidePage() {
             We compared the official 2016–2023 NSAA and ENGAA Section 1 PDFs
             question by question. Duplicate labels are based on the paper text,
             answer options and diagrams where available. A missing label means
-            "not confirmed", not necessarily "unique".
+            &ldquo;not confirmed&rdquo;, not necessarily &ldquo;unique&rdquo;.
           </p>
           <ul className="mt-6 space-y-4">
             {PAST_PAPERS_GUIDE_SOURCES.map((source) => (

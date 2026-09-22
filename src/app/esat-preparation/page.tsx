@@ -5,27 +5,47 @@ import {
   SOURCES,
   articleSchema,
   buildSeoMetadata,
-  type FaqItem,
 } from "@/lib/seo/config";
 import { seoLinks } from "@/lib/seo/links";
+import { ESAT_MOCKS_PER_MODULE } from "@/lib/esatMockTests/catalog";
+import {
+  CALIBRATION_AGGREGATES,
+  OVERALL_FIRST_ATTEMPT_ACCURACY,
+  PACING_AGGREGATES,
+} from "@/content/esatPreparation";
 import { SeoPageLayout } from "@/components/seo/SeoPageLayout";
 import { SeoCta, SeoCtaRow } from "@/components/seo/SeoCta";
 import {
-  InfoCardGrid,
-  NumberedSteps,
+  HighlightBox,
   ResponsiveTable,
+  SeoList,
   SeoProse,
   SeoSection,
+  SeoSubheading,
   SeoTextLink,
-  TimelineSection,
 } from "@/components/seo/SeoSections";
+import { AccuracyByTimeChart } from "@/components/esatPreparation/AccuracyByTimeChart";
+import { AnkiCardCompare } from "@/components/esatPreparation/AnkiCardCompare";
+import { CalibrationScoreChart } from "@/components/esatPreparation/CalibrationScoreChart";
+import { CondensedPastPaperRoadmap } from "@/components/esatPreparation/CondensedPastPaperRoadmap";
+import { DataMethodologyNote } from "@/components/esatPreparation/DataMethodologyNote";
+import { DuplicateRulesTeaser } from "@/components/esatPreparation/DuplicateRulesTeaser";
+import { PrepPipeline } from "@/components/esatPreparation/PrepPipeline";
+import {
+  PrepResourceDirectory,
+  type PrepResourceRow,
+} from "@/components/esatPreparation/PrepResourceDirectory";
+import { PrepToolCards } from "@/components/esatPreparation/PrepToolCards";
+import { TopicAccuracyChart } from "@/components/esatPreparation/TopicAccuracyChart";
+import { TwentyOneDayTimeline } from "@/components/esatPreparation/TwentyOneDayTimeline";
 
 const PATH = SEO_ROUTES.preparation;
 
 const TITLE =
-  "How to Prepare for the ESAT | 2026/27 Study Plan | ESAT CAMP";
+  "ESAT Preparation: How to Prepare for the ESAT in 3 Weeks | ESAT CAMP";
 const DESCRIPTION =
-  "Learn how to prepare for the ESAT with a practical study plan covering diagnostics, no-calculator practice, past papers, timed questions and mock tests.";
+  "Three weeks until the ESAT? Follow a practical preparation plan using past papers, free mocks, calibration data, timed practice and targeted revision.";
+const HEADLINE = "ESAT Preparation: How to Prepare for the ESAT in 3 Weeks";
 
 export const metadata: Metadata = buildSeoMetadata({
   title: TITLE,
@@ -35,30 +55,76 @@ export const metadata: Metadata = buildSeoMetadata({
     "ESAT preparation",
     "how to prepare for ESAT",
     "ESAT revision",
-    "ESAT practice",
     "ESAT study plan",
-    "ESAT no calculator",
-    "ESAT Maths 1",
-    "ESAT Maths 2",
-    "ESAT Physics",
+    "ESAT 3 week plan",
+    "ESAT past papers",
+    "ESAT mock tests",
   ],
 });
 
-const FAQ: readonly FaqItem[] = [
+const RESOURCES: readonly PrepResourceRow[] = [
   {
-    question: "Is ESAT preparation just past papers?",
-    answer:
-      "No. Past papers are useful, but ESAT also rewards no-calculator fluency, timing, method selection and careful review. Use past papers after you know which skills need work.",
+    id: "spec",
+    title: "Official ESAT specification",
+    body: "Know exactly what can be tested.",
+    href: SOURCES.contentSpec.url,
+    placement: "resource_spec",
+    external: true,
   },
   {
-    question: "How early should I start preparing for ESAT?",
-    answer:
-      "Three to six months is comfortable. One to two months can work if practice is focused and consistent. If the test is close, prioritise calibration, weak skills and timed mixed sets.",
+    id: "calibration",
+    title: "Free calibration",
+    body: "Estimate your current level and find obvious weaknesses.",
+    href: APP_ROUTES.calibration,
+    placement: "resource_calibration",
+    feature: "calibration",
   },
   {
-    question: "Should I do full mocks immediately?",
-    answer:
-      "Not usually. Full mocks are useful, but early preparation should often focus on weak skills and short timed sets. Save some full sittings for later so you can measure progress properly.",
+    id: "simulator",
+    title: "Free past-paper simulator",
+    body: "Complete relevant NSAA and ENGAA material under timed conditions.",
+    href: APP_ROUTES.pastPapers,
+    placement: "resource_simulator",
+    feature: "past_papers",
+  },
+  {
+    id: "converter",
+    title: "Free score converter",
+    body: "Turn raw legacy-paper marks into a useful benchmark.",
+    href: APP_ROUTES.scoreConverter,
+    placement: "resource_converter",
+    feature: "score_converter",
+  },
+  {
+    id: "roadmap",
+    title: "Free past-paper roadmap",
+    body: "See what to do and which duplicated questions to avoid.",
+    href: SEO_ROUTES.pastPapersGuide,
+    placement: "resource_roadmap",
+  },
+  {
+    id: "mocks",
+    title: "Five free ESAT mocks",
+    body: "Move onto unseen ESAT-format practice.",
+    href: SEO_ROUTES.mockTests,
+    placement: "resource_mocks",
+    feature: "mocks",
+  },
+  {
+    id: "mental-maths",
+    title: "Mental maths",
+    body: "Train no-calculator speed where it is actually costing you time.",
+    href: APP_ROUTES.noCalcPractice,
+    placement: "resource_mental_maths",
+    feature: "mental_maths",
+  },
+  {
+    id: "question-bank",
+    title: "Question bank",
+    body: "Target individual topics and practise fresh questions.",
+    href: APP_ROUTES.questionBank,
+    placement: "resource_question_bank",
+    feature: "question_bank",
   },
 ];
 
@@ -66,236 +132,552 @@ export default function EsatPreparationPage() {
   return (
     <SeoPageLayout
       path={PATH}
-      eyebrow="Preparation hub"
-      title="How to Prepare for the ESAT"
+      eyebrow="21-day plan"
+      title={HEADLINE}
       intro={[
-        "Preparing for the ESAT means more than revising content. You need to apply maths and science quickly, without a calculator, across separately timed modules.",
-        "This guide explains the most effective preparation order, from checking the specification and diagnosing weaknesses to targeted practice, past papers and full mock tests.",
+        "There are three weeks until the October ESAT.",
+        "If you have been preparing for months, you should now be moving away from learning content and towards timed papers, mocks and fixing whatever still goes wrong.",
+        "If you haven't, this is not the point at which we tell you that you really should have started in June. That would be both true and spectacularly unhelpful.",
+        "Three weeks is still enough time to improve quite a lot.",
+        "The important thing is the order.",
       ]}
-      primaryCta={{ href: APP_ROUTES.calibration, label: "Start free calibration" }}
-      secondaryCta={{
-        href: APP_ROUTES.noCalcPractice,
-        label: "Try no-calculator practice",
-      }}
-      faq={FAQ}
+      introFullWidth
       finalCta={{
-        heading: "Find the part of ESAT prep you should fix first",
-        body: "The fastest improvement usually comes from identifying the exact bottleneck: speed, accuracy, topic knowledge, or method selection. Start with calibration, then practise the skill that is actually costing marks.",
-        primary: { href: APP_ROUTES.calibration, label: "Start free calibration" },
-        secondary: { href: SEO_ROUTES.pastPapers, label: "View the past-paper guide" },
+        heading: "Start with what is actually wrong",
+        body: "You do not need to pay for a preparation course to prepare properly for the ESAT. Use whatever combination of resources works for you. The important bit is to start doing the right work now.",
+        primary: {
+          href: APP_ROUTES.calibration,
+          label: "Take the free calibration",
+        },
+        secondary: {
+          href: "#twenty-one-day-roadmap",
+          label: "See the 3-week roadmap",
+        },
       }}
       related={seoLinks(
-        "maths1",
-        "maths2",
-        "physics",
-        "pastPapers",
+        "pastPapersGuide",
         "mockTests",
-        "testDates",
-        "universityRequirements",
         "calibration",
+        "scoreConverter",
+        "drill",
+        "questionBank",
+        "pastPapers",
+        "testDates",
       )}
-      sources={[SOURCES.esatTest, SOURCES.prepare, SOURCES.contentSpec]}
+      sources={[
+        SOURCES.esatTest,
+        SOURCES.prepare,
+        SOURCES.contentSpec,
+        SOURCES.esatPrepMaterials,
+      ]}
+      showDisclaimer
       schema={articleSchema({
-        headline: "How to Prepare for the ESAT",
+        headline: HEADLINE,
         description: DESCRIPTION,
         path: PATH,
       })}
     >
-      <p className="text-sm leading-relaxed text-[#94A3B8]">
-        For interactive questions, timed drills and mock tools, explore the complete{" "}
-        <SeoTextLink href="/">ESAT Camp preparation platform</SeoTextLink>.
+      <PrepPipeline />
+
+      <p className="text-sm font-semibold text-[#93C5FD]">
+        Almost everything on this page can be done for free.
       </p>
 
-      <SeoSection
-        heading="What makes the ESAT different"
-        lead="Five structural facts shape almost every sensible preparation decision."
-      >
-        <InfoCardGrid
-          columns={3}
-          cards={[
-            {
-              title: "No calculator",
-              body: "Arithmetic, fractions, ratios and formula rearrangement all have to be fast on paper.",
-            },
-            {
-              title: "Tight timing",
-              body: "Each module gives 40 minutes for 27 questions, roughly 90 seconds each.",
-            },
-            {
-              title: "Mixed reasoning",
-              body: "Many questions test school knowledge in less familiar contexts rather than new content.",
-            },
-            {
-              title: "Separate modules",
-              body: "Unused time in one module does not carry over to the next.",
-            },
-            {
-              title: "No negative marking",
-              body: "Unanswered questions are usually worse than intelligent guesses.",
-            },
-            {
-              title: "Computer-based",
-              body: "You work on screen with a whiteboard for rough working, not on the paper itself.",
-            },
+      <SeoCtaRow>
+        <SeoCta
+          href={APP_ROUTES.calibration}
+          placement="hero"
+          feature="calibration"
+        >
+          Start with the free calibration
+        </SeoCta>
+        <SeoCta
+          href={APP_ROUTES.pastPapers}
+          variant="quiet"
+          placement="hero_secondary"
+          feature="past_papers"
+        >
+          Open free past papers
+        </SeoCta>
+      </SeoCtaRow>
+
+      <SeoSection heading="First: work out what is actually wrong">
+        <SeoProse
+          paragraphs={[
+            "Before doing another 200 questions, spend 20 minutes finding out what you are bad at.",
+            "This sounds obvious. Students remain remarkably committed to avoiding it.",
           ]}
         />
-        <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
-          More detail on each of these:{" "}
-          <SeoTextLink href={SEO_ROUTES.calculatorRules}>
-            calculator rules
-          </SeoTextLink>
-          , <SeoTextLink href={SEO_ROUTES.testDay}>test-day timing</SeoTextLink>,{" "}
-          <SeoTextLink href={SEO_ROUTES.maths1}>Maths 1</SeoTextLink> and{" "}
-          <SeoTextLink href={SEO_ROUTES.maths2}>Maths 2</SeoTextLink>.
+
+        <p className="mt-6 leading-relaxed text-[#94A3B8]">
+          Lost marks come from different causes. Treating them all as &ldquo;need
+          more practice&rdquo; wastes the three weeks you have.
         </p>
+
+        {/* Mobile stacked diagnosis table */}
+        <ul className="mt-6 space-y-3 sm:hidden">
+          {[
+            [
+              "You know the method but run out of time",
+              "Calculation speed or question selection",
+            ],
+            [
+              "You finish comfortably but lose marks",
+              "Accuracy and reading",
+            ],
+            ["The same topic keeps going wrong", "Content gap"],
+            ["You spend several minutes stuck", "Question selection"],
+            ["Your score varies wildly", "Inconsistent pacing or method"],
+          ].map(([what, problem]) => (
+            <li key={what} className="rounded-2xl bg-[#161D2F] px-4 py-4">
+              <p className="font-semibold text-white">{what}</p>
+              <p className="mt-2 text-sm text-[#94A3B8]">{problem}</p>
+            </li>
+          ))}
+        </ul>
+
+        <ResponsiveTable
+          className="mt-6 hidden sm:block"
+          columns={["What happens", "Likely problem"]}
+          rows={[
+            [
+              "You know the method but run out of time",
+              "Calculation speed or question selection",
+            ],
+            [
+              "You finish comfortably but lose marks",
+              "Accuracy and reading",
+            ],
+            ["The same topic keeps going wrong", "Content gap"],
+            ["You spend several minutes stuck", "Question selection"],
+            ["Your score varies wildly", "Inconsistent pacing or method"],
+          ]}
+        />
+
+        <p className="mt-6 leading-relaxed text-[#94A3B8]">
+          Our free Mathematics 1 calibration contains 15 questions and estimates
+          your current ESAT level.
+        </p>
+
+        <div className="mt-6 grid gap-6 rounded-2xl bg-white/[0.04] p-5 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] sm:p-6">
+          <dl className="space-y-4">
+            <div>
+              <dt className="text-xs font-bold uppercase tracking-[0.16em] text-[#64748B]">
+                Mean calibration score
+              </dt>
+              <dd className="mt-1 text-2xl font-display font-bold text-white">
+                {CALIBRATION_AGGREGATES.meanScoreLabel}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-xs font-bold uppercase tracking-[0.16em] text-[#64748B]">
+                Median estimated ESAT score
+              </dt>
+              <dd className="mt-1 text-2xl font-display font-bold text-white">
+                {CALIBRATION_AGGREGATES.medianEstimatedEsat}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-xs font-bold uppercase tracking-[0.16em] text-[#64748B]">
+                Median projected module raw score
+              </dt>
+              <dd className="mt-1 text-2xl font-display font-bold text-white">
+                {CALIBRATION_AGGREGATES.medianProjectedRaw}
+              </dd>
+            </div>
+          </dl>
+          <CalibrationScoreChart />
+        </div>
+
+        <SeoCtaRow className="mt-7">
+          <SeoCta
+            href={APP_ROUTES.calibration}
+            placement="calibration"
+            feature="calibration"
+          >
+            Take the free calibration
+          </SeoCta>
+        </SeoCtaRow>
       </SeoSection>
 
-      <SeoSection heading="The preparation order most students should follow">
-        <NumberedSteps
-          steps={[
-            "Check your required modules on the course pages you are applying to.",
-            "Read the relevant specification or ESAT guide.",
-            "Take a calibration test.",
-            "Train no-calculator speed daily in short sessions.",
-            "Practise module-specific ESAT-style questions.",
-            "Use ENGAA and NSAA papers selectively.",
-            "Save full mocks for later.",
-            "Review mistakes by skill: method, arithmetic, concept, timing.",
+      <SeoSection heading="Week 1: finish the useful past papers">
+        <SeoProse
+          paragraphs={[
+            "If you have already worked through most of the NSAA and ENGAA material: good. You can move quickly to the next section.",
+            "If you haven't, start here.",
+            "Official material should still form the foundation of your preparation.",
+          ]}
+        />
+
+        <p className="mt-6 leading-relaxed text-[#94A3B8]">
+          There is, however, a mildly annoying problem.
+        </p>
+        <p className="mt-3 text-lg font-semibold leading-snug text-white">
+          ENGAA and NSAA repeat a lot of questions.
+        </p>
+        <p className="mt-3 leading-relaxed text-[#94A3B8]">
+          Doing both blindly can make you feel extremely productive while
+          occasionally doing the same question twice.
+        </p>
+
+        <div className="mt-8">
+          <CondensedPastPaperRoadmap />
+        </div>
+
+        <div className="mt-10">
+          <SeoSubheading>A short duplicate warning</SeoSubheading>
+        </div>
+        <div className="mt-4">
+          <DuplicateRulesTeaser />
+        </div>
+
+        <div className="mt-10">
+          <SeoSubheading>Don&apos;t waste the paper afterwards</SeoSubheading>
+        </div>
+        <SeoProse
+          className="mt-4"
+          paragraphs={[
+            "We have put the papers into a free simulator so you can practise them on screen rather than treating a PDF like a worksheet.",
+            "Once you finish, put the raw mark into the free score converter.",
+            "The score is useful. The mistakes are more useful.",
+          ]}
+        />
+        <PrepToolCards
+          className="mt-6"
+          simulatorHref={APP_ROUTES.pastPapers}
+          converterHref={APP_ROUTES.scoreConverter}
+        />
+      </SeoSection>
+
+      <SeoSection heading="Then move on to proper ESAT mocks">
+        <SeoProse
+          paragraphs={[
+            "Past papers eventually have a problem: none of them are actually the current ESAT.",
+            "NSAA and ENGAA remain very useful because the style and underlying skills are close. Their structures are not identical, though, and some older material no longer matches the specification.",
+            "Once you have used the highest-value legacy material, start doing full ESAT-format mocks.",
+          ]}
+        />
+
+        <HighlightBox className="mt-6" tone="accent">
+          <p>
+            We currently have{" "}
+            <span className="font-bold text-white">
+              {ESAT_MOCKS_PER_MODULE} full ESAT mocks available free
+            </span>{" "}
+            for each module.
+          </p>
+        </HighlightBox>
+
+        <SeoCtaRow className="mt-6">
+          <SeoCta
+            href={SEO_ROUTES.mockTests}
+            placement="mocks"
+            feature="mocks"
+          >
+            Try the free ESAT mocks
+          </SeoCta>
+        </SeoCtaRow>
+
+        <SeoProse
+          className="mt-8"
+          paragraphs={[
+            "Do them properly.",
+            "No calculator.",
+            "40 minutes.",
+            "No pausing because somebody has messaged you.",
+            "Write down which questions took too long, which ones you guessed, and which mistakes you could have prevented.",
+          ]}
+        />
+      </SeoSection>
+
+      <SeoSection heading="The 90-second problem">
+        <SeoProse
+          paragraphs={[
+            "The ESAT gives you roughly 89 seconds per question.",
+            "This does not mean every question deserves 89 seconds.",
+          ]}
+        />
+
+        <dl className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div className="rounded-2xl bg-white/[0.04] p-5">
+            <dt className="text-xs font-bold uppercase tracking-[0.16em] text-[#64748B]">
+              Median first-attempt question time
+            </dt>
+            <dd className="mt-2 text-2xl font-display font-bold text-white">
+              {PACING_AGGREGATES.medianFirstAttemptSeconds} seconds
+            </dd>
+          </div>
+          <div className="rounded-2xl bg-white/[0.04] p-5">
+            <dt className="text-xs font-bold uppercase tracking-[0.16em] text-[#64748B]">
+              Accuracy peak
+            </dt>
+            <dd className="mt-2 text-2xl font-display font-bold text-white">
+              {PACING_AGGREGATES.peakAccuracyPercent}%
+            </dd>
+            <p className="mt-1 text-sm text-[#94A3B8]">
+              for questions answered within about{" "}
+              {PACING_AGGREGATES.peakBucketLabel}
+            </p>
+          </div>
+        </dl>
+
+        <p className="mt-5 leading-relaxed text-[#94A3B8]">
+          Answers made very quickly or after very long attempts both sit around
+          the mid-40% accuracy range.
+        </p>
+
+        <div className="mt-8 rounded-2xl bg-[#161D2F] p-5 sm:p-6">
+          <AccuracyByTimeChart />
+        </div>
+
+        <SeoProse
+          className="mt-8"
+          paragraphs={[
+            "This does not make 73 seconds some magical optimum.",
+            "It suggests a much duller rule:",
+          ]}
+        />
+        <p className="mt-3 text-lg font-semibold leading-snug text-white">
+          Don&apos;t rush questions you can solve, and don&apos;t marry questions
+          you cannot.
+        </p>
+        <SeoProse
+          className="mt-6"
+          paragraphs={[
+            "If you have spent roughly 90 seconds making no meaningful progress, moving on becomes increasingly attractive.",
+            "You can come back.",
+          ]}
+        />
+      </SeoSection>
+
+      <SeoSection heading="What students are actually getting wrong">
+        <SeoProse
+          paragraphs={[
+            "We looked at anonymised first attempts across the ESAT Camp question bank.",
+          ]}
+        />
+
+        <p className="mt-6 text-lg font-semibold text-white">
+          Overall first-attempt accuracy: {OVERALL_FIRST_ATTEMPT_ACCURACY}%
+        </p>
+
+        <div className="mt-6 rounded-2xl bg-[#161D2F] p-5 sm:p-6">
+          <TopicAccuracyChart />
+        </div>
+
+        <p className="mt-6 text-sm leading-relaxed text-[#94A3B8]">
+          These are students using ESAT Camp, rather than a random sample of
+          every ESAT candidate. Treat the figures as useful practice data, not a
+          prediction of the real exam.
+        </p>
+
+        <div className="mt-10">
+          <SeoSubheading>A few traps appear repeatedly</SeoSubheading>
+        </div>
+        <SeoList
+          className="mt-4"
+          items={[
+            "Transformers involving power and cable resistance",
+            "Stopping distance when velocity changes",
+            "Histogram interpolation",
+            "Moving plane mirrors",
+            "Litres ↔ cubic metres / rate questions",
           ]}
         />
         <SeoProse
           className="mt-6"
           paragraphs={[
-            "Past papers are useful, but they are not a complete plan. If a student keeps missing ratio questions because their fraction manipulation is slow, doing another full paper will not fix the cause quickly.",
+            "The exact questions are not particularly important.",
+            "The mistakes are.",
+            "Students scale braking distance linearly when it depends on speed squared. They miss a litre conversion. They use the wrong relative velocity. They understand most of the physics and still lose the mark.",
+            "These are excellent things to discover three weeks before the exam rather than three minutes after it.",
           ]}
         />
-        <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
-          When past papers are no longer unseen, move on to{" "}
-          <SeoTextLink href={SEO_ROUTES.mockTests}>
-            free full-length ESAT mock tests
-          </SeoTextLink>{" "}
-          under the current 27-question, 40-minute format.
-        </p>
       </SeoSection>
 
-      <SeoSection heading="Preparation timeline">
-        <TimelineSection
+      <SeoSection heading="Week 2: stop practising everything equally">
+        <SeoProse
+          paragraphs={[
+            "Once you have enough evidence, your revision should become unfair.",
+            "Give more time to the things costing you marks.",
+            "If your fractions are slow, do fractions.",
+            "If every mechanics question takes two minutes, do mechanics.",
+            "If your only errors are misreads, doing another mechanics chapter probably will not save you.",
+          ]}
+        />
+
+        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          <div className="rounded-2xl bg-white/[0.04] p-5">
+            <h3 className="font-bold text-white">Mental maths</h3>
+            <p className="mt-2 text-sm leading-relaxed text-[#94A3B8]">
+              Use for fractions, powers, rearranging expressions, arithmetic
+              speed and estimation.
+            </p>
+            <p className="mt-4 text-sm">
+              <SeoTextLink href={APP_ROUTES.noCalcPractice}>
+                Open mental maths
+              </SeoTextLink>
+            </p>
+          </div>
+          <div className="rounded-2xl bg-white/[0.04] p-5">
+            <h3 className="font-bold text-white">Question bank</h3>
+            <p className="mt-2 text-sm leading-relaxed text-[#94A3B8]">
+              Use for weak subjects, weak syllabus topics, fresh ESAT-style
+              questions and timed sets.
+            </p>
+            <p className="mt-4 text-sm">
+              <SeoTextLink href={APP_ROUTES.questionBank}>
+                Open the question bank
+              </SeoTextLink>
+            </p>
+          </div>
+          <div className="rounded-2xl bg-white/[0.04] p-5">
+            <h3 className="font-bold text-white">Review</h3>
+            <p className="mt-2 text-sm leading-relaxed text-[#94A3B8]">
+              Use your previous mistakes rather than constantly finding new
+              questions.
+            </p>
+          </div>
+        </div>
+
+        <SeoProse
+          className="mt-8"
+          paragraphs={[
+            "ESAT Camp has tools for both mental maths and topic practice, but textbooks, school material and official questions can do the same job.",
+            "The resource matters less than whether you are fixing the correct problem.",
+          ]}
+        />
+      </SeoSection>
+
+      <SeoSection heading="Yes, we suggest making Anki cards">
+        <SeoProse
+          paragraphs={[
+            "This is one piece of advice that has nothing particularly sophisticated behind it.",
+            "When you make a mistake that you could plausibly make again, save it.",
+            "Not the entire question.",
+            "Save the lesson.",
+          ]}
+        />
+        <AnkiCardCompare className="mt-6" />
+        <SeoProse
+          className="mt-8"
+          paragraphs={[
+            "Your deck should slowly become a collection of your own recurring stupidity.",
+            "This is useful.",
+            "Five or ten minutes a day is enough. The point is to stop paying twice for the same mistake.",
+          ]}
+        />
+      </SeoSection>
+
+      <SeoSection heading="Week 3: simulate the test">
+        <SeoProse
+          paragraphs={[
+            "By the final week, preparation should look increasingly like the real thing.",
+            "A student taking three modules is doing roughly two hours of testing without a calculator.",
+            "Concentration therefore becomes part of the test.",
+          ]}
+        />
+        <SeoList
+          className="mt-6"
           items={[
-            {
-              when: "3–6 months out",
-              what: "Build speed and identify weak topics. Short daily no-calculator work beats occasional long sessions.",
-            },
-            {
-              when: "1–2 months out",
-              what: "Timed mixed sets and past-paper sections, chosen by topic rather than by whole paper.",
-            },
-            {
-              when: "Final 2 weeks",
-              what: "Full sittings, mistake review and a pacing strategy you can actually follow under pressure.",
-            },
-            {
-              when: "Final 3 days",
-              what: "Light review, interface familiarity, sleep and test-centre logistics.",
-            },
+            "Complete modules under exact time",
+            "Occasionally do the full sequence of modules",
+            "Use consistent rough-working habits",
+            "Practise moving on when stuck",
+            "Return to flagged questions",
+            "Review repeated errors afterwards",
+          ]}
+        />
+        <SeoProse
+          className="mt-8"
+          paragraphs={[
+            "Do not spend the final week collecting increasingly obscure content because somebody on Reddit announced that they have revised the coefficient of restitution in seven dimensions.",
+            "The specification is finite.",
+            "Use it.",
+          ]}
+        />
+      </SeoSection>
+
+      <SeoSection
+        id="twenty-one-day-roadmap"
+        heading="The 21-day timeline"
+      >
+        <TwentyOneDayTimeline />
+      </SeoSection>
+
+      <SeoSection heading="If you haven't done the past papers yet">
+        <SeoProse
+          paragraphs={[
+            "You are behind the ideal schedule.",
+            "You are not doomed.",
+            "Do not respond by attempting every NSAA, ENGAA and TMUA paper ever printed over the next six days.",
+            "Use the roadmap.",
+            "Start with the material closest to the ESAT. Skip known duplicates. Review what goes wrong.",
+            "Doing fewer papers properly is considerably better than speed-running a decade of admissions tests and reviewing none of them.",
+          ]}
+        />
+        <SeoCtaRow className="mt-6">
+          <SeoCta
+            href={SEO_ROUTES.pastPapersGuide}
+            placement="behind_past_papers"
+          >
+            See which past papers to prioritise
+          </SeoCta>
+        </SeoCtaRow>
+      </SeoSection>
+
+      <SeoSection heading="If you have finished everything">
+        <SeoProse
+          paragraphs={[
+            "Good.",
+            "Now the problem changes.",
+            "Past papers tell you less once you remember the answers.",
+            "Use unseen mocks. Increase the amount you do under strict timing. Find fresh questions in your weakest areas. Practise full sittings rather than isolated questions.",
+            "Keep reviewing mistakes.",
+            "The glamorous answer to ESAT preparation would involve some clever secret technique.",
+            "Unfortunately, quite a lot of it is noticing that you keep making the same mistake and then arranging not to make it again.",
+          ]}
+        />
+        <SeoCtaRow className="mt-6">
+          <SeoCta
+            href={SEO_ROUTES.mockTests}
+            placement="finished_everything"
+            feature="mocks"
+          >
+            Try an unseen mock
+          </SeoCta>
+        </SeoCtaRow>
+      </SeoSection>
+
+      <SeoSection heading="Everything you need to start">
+        <PrepResourceDirectory resources={RESOURCES} />
+        <SeoProse
+          className="mt-8"
+          paragraphs={[
+            "You do not need to pay for a preparation course to prepare properly for the ESAT.",
+            "Use whatever combination of resources works for you.",
+            "The important bit is to start doing the right work now.",
           ]}
         />
         <SeoCtaRow className="mt-7">
-          <SeoCta href={APP_ROUTES.calibration} placement="timeline">
-            Build my starting plan
-          </SeoCta>
-        </SeoCtaRow>
-      </SeoSection>
-
-      <SeoSection
-        heading="What to practise first"
-        lead="Match the practice to the actual problem instead of working through everything evenly."
-      >
-        <ResponsiveTable
-          columns={["If your problem is…", "Practise this first"]}
-          rows={[
-            ["Slow but accurate", "Short timed drills on fractions, ratio and algebra"],
-            ["Fast but careless", "Accuracy drills, answer checking, a slower first pass"],
-            [
-              "Weak Physics",
-              "Formula choice, units, proportional reasoning, graph interpretation",
-            ],
-            [
-              "Weak Maths 2",
-              "Algebraic manipulation, functions, logs, trig and calculus-style reasoning",
-            ],
-            ["No clear weakness", "Take calibration before choosing practice"],
-          ]}
-        />
-      </SeoSection>
-
-      <SeoSection heading="Past papers and official resources">
-        <SeoProse
-          paragraphs={[
-            "Official UAT-UK materials should be the starting point. Historic ENGAA and NSAA papers are useful because they contain questions of the type found in ESAT, but they need filtering: some questions are outside the current ESAT specification, and some ENGAA and NSAA questions overlap with each other.",
-          ]}
-        />
-        <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
-          For a side-by-side look at paid and free options:{" "}
-          <SeoTextLink href={SEO_ROUTES.bestEsatResources}>
-            Compare ESAT preparation resources
-          </SeoTextLink>
-          .
-        </p>
-        <SeoCtaRow className="mt-6">
           <SeoCta
-            href={SEO_ROUTES.pastPapers}
-            variant="quiet"
-            placement="past_papers"
+            href={APP_ROUTES.calibration}
+            placement="directory_calibration"
+            feature="calibration"
           >
-            View the past-paper guide
+            Take the free calibration
+          </SeoCta>
+          <SeoCta
+            href="#twenty-one-day-roadmap"
+            variant="quiet"
+            placement="directory_roadmap"
+          >
+            See the 3-week roadmap
           </SeoCta>
         </SeoCtaRow>
       </SeoSection>
 
-      <SeoSection
-        id="common-esat-mistakes"
-        heading="Common ESAT mistakes"
-        lead="These are the preparation habits we see most often in calibration results and review sessions. They are fixable once you know which one is yours."
-      >
-        <InfoCardGrid
-          columns={2}
-          cards={[
-            {
-              title: "Practising without diagnosing",
-              body: "Calibration separates speed from accuracy and tags errors by type. Random practice hides whether the bottleneck is arithmetic, method choice or content.",
-            },
-            {
-              title: "Ignoring calculation speed",
-              body: "Slow fraction or ratio work costs time in Maths 1 and in science modules that depend on the same arithmetic mid-question.",
-            },
-            {
-              title: "Reviewing only the final mark",
-              body: "A wrong answer can come from a concept gap, wrong method, arithmetic slip or misread. Marking it wrong records none of that pattern.",
-            },
-            {
-              title: "Skipping timed module practice",
-              body: "Each module is 27 questions in 40 minutes, timed separately. Untimed sets never rehearse when to abandon a question and move on.",
-            },
-            {
-              title: "Burning clean past papers too early",
-              body: "Full mocks are useful later. Early ones often repeat what you already know and use up unseen material, including duplicate ENGAA and NSAA questions from the same year.",
-            },
-          ]}
-        />
-        <p className="mt-5 text-sm leading-relaxed text-[#94A3B8]">
-          Check duplicate ENGAA and NSAA questions before treating a second paper
-          from the same year as fresh evidence:{" "}
-          <SeoTextLink href={SEO_ROUTES.engaaNsaaPapers}>
-            ENGAA and NSAA papers for ESAT
-          </SeoTextLink>
-          .
-        </p>
-        <SeoCtaRow className="mt-6">
-          <SeoCta href={APP_ROUTES.calibration} placement="common_mistakes">
-            Find my weakest ESAT skill
-          </SeoCta>
-        </SeoCtaRow>
-      </SeoSection>
+      <DataMethodologyNote />
     </SeoPageLayout>
   );
 }

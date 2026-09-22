@@ -42,6 +42,7 @@ export const metadata: Metadata = buildSeoMetadata({
 });
 
 const RESOURCE_LINKS = seoLinks(
+  "preparation",
   "pastPapers",
   "pastPapersGuide",
   "scoreConverter",

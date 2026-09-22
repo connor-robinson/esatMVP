@@ -79,6 +79,7 @@ export default function EsatQuestionBankPage() {
         secondary: { href: SEO_ROUTES.pastPapers, label: "Browse past papers" },
       }}
       related={seoLinks(
+        "preparation",
         "questionBankGuide",
         "maths1",
         "physics",
@@ -185,7 +186,14 @@ export default function EsatQuestionBankPage() {
           items={[
             "Try the free questions first to understand the question style and difficulty.",
             "Identify weak topics using the progress tracker.",
-            "Use topic practice alongside past papers for complete preparation.",
+            <>
+              Use topic practice alongside past papers for complete preparation.
+              For the order of work, see the{" "}
+              <SeoTextLink href={SEO_ROUTES.preparation}>
+                3-week ESAT preparation plan
+              </SeoTextLink>
+              .
+            </>,
             "Review wrong answers before moving to new topics.",
           ]}
         />

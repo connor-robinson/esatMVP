@@ -1,71 +1,18 @@
 import { ArrowRight } from "lucide-react";
 import { ON_SOLID_SUBJECT_TEXT } from "@/config/colors";
 import { UniqueEngaaPartBTable } from "@/components/pastPapersGuide/UniqueEngaaPartBTable";
+import {
+  PAST_PAPER_OVERLAPS_2016_2019,
+  PAST_PAPER_OVERLAPS_2020_2023,
+  type OverlapActionKind,
+  type PastPaperOverlapRow,
+} from "@/content/pastPaperOverlaps";
 import { cn } from "@/lib/utils";
 
 const BODY = "text-[15px] leading-relaxed text-[#CBD5E1] sm:text-base";
 
-type ActionKind = "skip" | "unique" | "complete" | "optional";
-
-type OverlapRow = {
-  engaa: string;
-  relationship: string;
-  nsaa: string;
-  action: ActionKind;
-  support: string;
-};
-
-const ROWS_2016_2019: readonly OverlapRow[] = [
-  {
-    engaa: "ENGAA Section 1 Part A",
-    relationship: "Same questions",
-    nsaa: "Section 1 Maths and Physics",
-    action: "skip",
-    support:
-      "Skip this if you have completed the same year's NSAA Maths and Physics.",
-  },
-  {
-    engaa: "ENGAA Section 1 Part B",
-    relationship: "Mostly overlaps",
-    nsaa: "Section 1 Part E",
-    action: "unique",
-    support: "Complete only the fresh ENGAA questions listed below.",
-  },
-  {
-    engaa: "ENGAA Section 2",
-    relationship: "Unique to ENGAA",
-    nsaa: "No direct duplicate",
-    action: "optional",
-    support: "Extra harder Physics practice, but less similar to the ESAT.",
-  },
-];
-
-const ROWS_2020_2023: readonly OverlapRow[] = [
-  {
-    engaa: "ENGAA Section 1 Part A",
-    relationship: "Same questions",
-    nsaa: "Section 1 Maths and Physics",
-    action: "skip",
-    support: "Skip this if you have completed the same year's NSAA.",
-  },
-  {
-    engaa: "ENGAA Section 1 Part B",
-    relationship: "Unique to ENGAA",
-    nsaa: "No NSAA Part E",
-    action: "complete",
-    support: "Do all relevant questions for Maths 2 and extra Physics.",
-  },
-  {
-    engaa: "ENGAA Section 2",
-    relationship: "Same Physics set",
-    nsaa: "Section 2 Part X",
-    action: "skip",
-    support: "Complete either the ENGAA or NSAA copy, not both.",
-  },
-];
-
-function ActionPill({ action }: { action: ActionKind }) {
-  const styles: Record<ActionKind, { label: string; className: string }> = {
+function ActionPill({ action }: { action: OverlapActionKind }) {
+  const styles: Record<OverlapActionKind, { label: string; className: string }> = {
     skip: {
       label: "Skip",
       className: `bg-error ${ON_SOLID_SUBJECT_TEXT}`,
@@ -96,7 +43,7 @@ function ActionPill({ action }: { action: ActionKind }) {
   );
 }
 
-function RelationshipRow({ row }: { row: OverlapRow }) {
+function RelationshipRow({ row }: { row: PastPaperOverlapRow }) {
   return (
     <article className="relative rounded-xl bg-white/[0.07] px-4 py-4 pr-28 sm:px-5 sm:py-5 sm:pr-36">
       <div className="absolute right-3 top-3 z-10 sm:right-4 sm:top-4">
@@ -132,7 +79,7 @@ function EraBlock({
   rows,
 }: {
   years: string;
-  rows: readonly OverlapRow[];
+  rows: readonly PastPaperOverlapRow[];
 }) {
   return (
     <section className="space-y-3">
@@ -161,7 +108,7 @@ export function OverlapExplorerSection() {
         </p>
       </div>
 
-      <EraBlock years="2016-2019" rows={ROWS_2016_2019} />
+      <EraBlock years="2016-2019" rows={PAST_PAPER_OVERLAPS_2016_2019} />
 
       <div className="w-full rounded-2xl bg-white/[0.05] px-4 py-5 sm:px-6 sm:py-6">
         <p className="text-sm font-bold uppercase tracking-widest text-accent sm:text-base">
@@ -174,7 +121,7 @@ export function OverlapExplorerSection() {
         </p>
       </div>
 
-      <EraBlock years="2020-2023" rows={ROWS_2020_2023} />
+      <EraBlock years="2020-2023" rows={PAST_PAPER_OVERLAPS_2020_2023} />
 
       <div className="pt-6">
         <UniqueEngaaPartBTable />

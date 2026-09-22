@@ -5,9 +5,11 @@
  * Worldwide (except China / Hong Kong / Macau): every day in the window.
  * China / Hong Kong / Macau: ESAT only on 12–13 Oct or 6 Jan.
  * We expose the full worldwide window so candidates can pick their booked day.
+ *
+ * UI shows October until the last October day has passed, then January.
  */
 
-export type EsatSittingId = "october";
+export type EsatSittingId = "october" | "january";
 
 export type EsatSitting = {
   id: EsatSittingId;
@@ -24,9 +26,18 @@ export const ESAT_SITTINGS: readonly EsatSitting[] = [
     startIso: "2026-10-12",
     endIso: "2026-10-16",
   },
+  {
+    id: "january",
+    label: "January 2027",
+    startIso: "2027-01-04",
+    endIso: "2027-01-08",
+  },
 ] as const;
 
-export const DEFAULT_ESAT_DATE_ISO = ESAT_SITTINGS[0].startIso;
+const OCTOBER = ESAT_SITTINGS[0];
+const JANUARY = ESAT_SITTINGS[1];
+
+export const DEFAULT_ESAT_DATE_ISO = OCTOBER.startIso;
 
 const STORAGE_KEY = "esat-days-until-date";
 
@@ -54,6 +65,16 @@ export function formatIso(date: Date): string {
   return `${y}-${m}-${d}`;
 }
 
+function todayIso(now = new Date()): string {
+  return formatIso(new Date(now.getFullYear(), now.getMonth(), now.getDate()));
+}
+
+/** October until its last day ends; then January. */
+export function getActiveSitting(now = new Date()): EsatSitting {
+  if (todayIso(now) > OCTOBER.endIso) return JANUARY;
+  return OCTOBER;
+}
+
 /** All calendar days in a sitting, inclusive. */
 export function daysInSitting(sitting: EsatSitting): string[] {
   const start = localDateFromIso(sitting.startIso);
@@ -68,13 +89,22 @@ export function daysInSitting(sitting: EsatSitting): string[] {
   return out;
 }
 
-/** Every bookable day across published sittings, in order. */
-export function allEsatDateIsos(): string[] {
-  return ESAT_SITTINGS.flatMap((sitting) => daysInSitting(sitting));
+export function selectableDateIsos(now = new Date()): string[] {
+  return daysInSitting(getActiveSitting(now));
 }
 
-export function isValidEsatDate(dateIso: string): boolean {
-  return allEsatDateIsos().includes(dateIso);
+/** Prefer a stored date if it is still in the active sitting; else earliest active day. */
+export function resolveEsatDate(
+  preferred: string | null | undefined,
+  now = new Date(),
+): string {
+  const options = selectableDateIsos(now);
+  if (preferred && options.includes(preferred)) return preferred;
+  return getActiveSitting(now).startIso;
+}
+
+export function isValidEsatDate(dateIso: string, now = new Date()): boolean {
+  return selectableDateIsos(now).includes(dateIso);
 }
 
 export type CountdownParts = {
@@ -124,7 +154,6 @@ export function loadStoredEsatDate(): string | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw) as { dateIso?: unknown };
     if (typeof parsed.dateIso !== "string") return null;
-    if (!isValidEsatDate(parsed.dateIso)) return null;
     return parsed.dateIso;
   } catch {
     return null;

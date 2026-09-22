@@ -16,7 +16,7 @@ export const SEO_LINKS = {
   preparation: {
     href: SEO_ROUTES.preparation,
     label: "ESAT preparation guide",
-    blurb: "The full plan: order of work, timeline and what to practise first.",
+    blurb: "A practical 3-week plan: calibration, past papers, mocks and targeted revision.",
   },
   testDates: {
     href: SEO_ROUTES.testDates,
