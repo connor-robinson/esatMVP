@@ -91,7 +91,7 @@ export function DaysUntilEsatClient() {
         <div className="mt-4 flex flex-wrap items-baseline justify-center gap-x-5 gap-y-2 sm:gap-x-7">
           {timeUnits.map((unit) => (
             <div key={unit.label} className="flex items-baseline gap-1.5">
-              <span className="font-display text-[clamp(1.75rem,6vw,3.25rem)] font-semibold leading-none tracking-tight text-text tabular-nums">
+              <span className="font-display text-[clamp(1rem,3.5vw,1.5rem)] font-normal leading-none tracking-tight text-text tabular-nums">
                 {unit.value}
               </span>
               <span className="text-[clamp(0.7rem,1.8vw,0.95rem)] leading-none text-text-muted">
