@@ -22,6 +22,7 @@ import {
   VARIANT_CONFIGS, 
   EXPRESS_DEAL_PRICE_GBP,
   EXPRESS_DEAL_ORIGINAL_PRICE_GBP,
+  getDaysUntilEsat,
   type PricingVariant 
 } from "@/lib/pricing/abTest";
 import { getOrAssignVariant } from "@/lib/pricing/abTestClient";
@@ -114,12 +115,15 @@ function LocalhostVariantPreview({
                     <div className="mt-3 space-y-1.5 text-xs text-text-muted">
                       <p>
                         <strong>Monthly:</strong> £14.99/month with 4-day free trial
+                        {!config.showExpressDeal && (
+                          <span className="text-primary ml-1">(Best Value)</span>
+                        )}
                       </p>
                       {config.showExpressDeal ? (
                         <p>
-                          <strong>Express Deal:</strong> £9.49/month instant buy 
+                          <strong>ESAT Rush:</strong> £9.49/month instant buy 
                           <span className="text-primary ml-1">
-                            (highlighted)
+                            (Best Value, {getDaysUntilEsat()} days until ESAT)
                           </span>
                         </p>
                       ) : (
@@ -246,6 +250,7 @@ export default function PricingPageClient() {
     friendCodeStatus.reason === "own_code";
   const ownReferralBlocked = isOwnReferralCode;
   const daysUntilExam = daysUntilEsat();
+  const daysUntilEsatExam = getDaysUntilEsat(); // For ESAT Rush plan
   
   // Check if Express Deal should be shown
   const showExpressDeal = pricingVariant === 'express_deal';
@@ -354,13 +359,14 @@ export default function PricingPageClient() {
     },
     ...(showExpressDeal ? [{
       id: "express_deal" as const,
-      name: "Express Deal",
+      name: "ESAT Rush",
       price: formatGbpPrice(EXPRESS_DEAL_PRICE_GBP),
       compareAtPrice: formatGbpPrice(EXPRESS_DEAL_ORIGINAL_PRICE_GBP),
       caption: "per month",
-      priceNote: `${daysUntilExam} days until ESAT. Access starts immediately`,
+      priceNote: `${daysUntilEsatExam} days until ESAT (16 Oct). Instant access`,
       features: FEATURES.paid,
       highlighted: true,
+      featured: true,
       ctaLabel: paidCta("express_deal", "Get instant access"),
     }] : [{
       id: "weekly" as const,
@@ -388,6 +394,7 @@ export default function PricingPageClient() {
             : "4-day free trial. Cancel anytime",
       features: FEATURES.paid,
       highlighted: !showExpressDeal,
+      featured: !showExpressDeal,
       ctaLabel: paidCta(
         "monthly",
         hasFriendCode ? "Upgrade" : "Start free trial",
@@ -407,7 +414,6 @@ export default function PricingPageClient() {
             ? "Available after your current plan ends"
             : `One payment. Access until ${SEASON_PASS_ACCESS_UNTIL_LABEL}`,
       features: FEATURES.paid,
-      featured: true,
       ctaLabel: paidCta("season_pass", "Upgrade"),
     },
   ];

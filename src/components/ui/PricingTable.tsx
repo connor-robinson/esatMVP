@@ -2,7 +2,7 @@
 
 import { ReactNode, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { Check } from "lucide-react";
+import { Check, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { OWN_REFERRAL_CODE_MESSAGE } from "@/lib/feedbackReferral/codes";
 
@@ -80,7 +80,25 @@ export function PricingTable({
                   : "z-0 scale-100 bg-surface-elevated",
               )}
             >
-              {/* Featured badge removed per user request for more trustworthy design */}
+              {tier.featured ? (
+                <div className="absolute right-4 top-0 z-20 -translate-y-1/2">
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-2 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] shadow-md transition-colors duration-300",
+                      isActive
+                        ? "bg-[#A9B167] text-black"
+                        : "bg-primary text-black",
+                    )}
+                  >
+                    <Crown
+                      className="h-3.5 w-3.5 shrink-0"
+                      strokeWidth={2.25}
+                      aria-hidden
+                    />
+                    Best value
+                  </span>
+                </div>
+              ) : null}
 
               <div className="mb-5 space-y-2">
                 <h3

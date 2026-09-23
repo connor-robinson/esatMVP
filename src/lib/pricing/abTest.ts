@@ -1,7 +1,7 @@
 /**
  * Pricing A/B test variants and configuration.
  * Monthly plan (£14.99, 4-day trial) is always shown as control.
- * Express Deal (£9.49, instant buy) replaces weekly and is highlighted.
+ * ESAT Rush (£9.49, instant buy) replaces weekly and is highlighted.
  */
 
 import { MONTHLY_PRICE_GBP } from "@/lib/stripe/best-value";
@@ -12,7 +12,7 @@ export type PricingVariant =
 
 export interface VariantConfig {
   id: PricingVariant;
-  /** Whether to show the Express Deal plan */
+  /** Whether to show the ESAT Rush plan */
   showExpressDeal: boolean;
   displayName: string;
   description: string;
@@ -28,13 +28,16 @@ export const VARIANT_CONFIGS: Record<PricingVariant, VariantConfig> = {
   'express_deal': {
     id: 'express_deal',
     showExpressDeal: true,
-    displayName: 'Express Deal',
-    description: 'Monthly at £14.99 with 4-day trial, Express Deal at £9.49 instant buy'
+    displayName: 'ESAT Rush Deal',
+    description: 'Monthly at £14.99 with 4-day trial, ESAT Rush at £9.49 instant buy'
   }
 };
 
 export const PRICING_VARIANT_COOKIE = 'pricing_variant';
 export const PRICING_ANON_ID_COOKIE = 'pricing_anon_id';
+
+/** ESAT date for countdown */
+export const ESAT_DATE = new Date("2026-10-16T23:59:59.000Z");
 
 /**
  * Generate a random anon_id for cookie tracking
@@ -68,6 +71,14 @@ export function getVariantConfig(variant: PricingVariant): VariantConfig {
   return VARIANT_CONFIGS[variant];
 }
 
-/** Express Deal constants */
+/** ESAT Rush deal constants */
 export const EXPRESS_DEAL_PRICE_GBP = 9.49;
 export const EXPRESS_DEAL_ORIGINAL_PRICE_GBP = MONTHLY_PRICE_GBP;
+
+/**
+ * Get days until ESAT (October 16th 2026)
+ */
+export function getDaysUntilEsat(): number {
+  const diff = ESAT_DATE.getTime() - Date.now();
+  return Math.max(0, Math.ceil(diff / 86_400_000));
+}
