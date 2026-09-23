@@ -615,6 +615,15 @@ function GeneralView({
     (s, k) => s + num(feat.get(k)?.paper_sessions),
     0,
   );
+  const cal = segments.reduce((s, k) => s + num(feat.get(k)?.cal_attempts), 0);
+  const bugReports = segments.reduce((s, k) => s + num(feat.get(k)?.bug_reports), 0);
+  const supportRequests = segments.reduce((s, k) => s + num(feat.get(k)?.support_requests), 0);
+  const fermiSessions = segments.reduce((s, k) => s + num(feat.get(k)?.fermi_sessions), 0);
+  
+  const qbUsers = segments.reduce((s, k) => s + num(feat.get(k)?.qb_users), 0);
+  const drillUsers = segments.reduce((s, k) => s + num(feat.get(k)?.drill_users), 0);
+  const paperUsers = segments.reduce((s, k) => s + num(feat.get(k)?.paper_users), 0);
+  const calUsers = segments.reduce((s, k) => s + num(feat.get(k)?.cal_users), 0);
 
   const volume = segments.map((k) => ({
     segment: SEGMENT_LABELS[k],
@@ -622,6 +631,12 @@ function GeneralView({
     "Mental maths": num(feat.get(k)?.drill_sessions),
     Papers: num(feat.get(k)?.paper_sessions),
   }));
+  
+  const pie = [
+    { name: "Question bank", value: qb },
+    { name: "Mental maths", value: drills },
+    { name: "Past papers", value: papersN },
+  ].filter((d) => d.value > 0);
 
   const mmAll = new Map<string, { sessions: number; users: number; questions: number }>();
   for (const row of mm) {
@@ -657,38 +672,78 @@ function GeneralView({
           label="Partner seats"
           value={seats.reduce((s, r) => s + num(r.entitled), 0)}
         />
-        <Stat label="Active in window" value={totalActive} />
+        <Stat label="Active in window" value={`${totalActive} (${pct(totalActive, totalUsers)})`} />
         <Stat label="QB attempts" value={qb} />
         <Stat label="Mental maths" value={drills} />
         <Stat label="Past papers" value={papersN} />
+        <Stat label="Calibration" value={cal} />
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <ChartCard title="Most used by cohort">
+      <div className="grid gap-4 lg:grid-cols-3">
+        <ChartCard title="QB vs mental maths vs papers">
+          {pie.length === 0 ? (
+            <p className="text-sm text-text-muted">No usage in window.</p>
+          ) : (
+            <div className="h-56">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={pie}
+                    dataKey="value"
+                    nameKey="name"
+                    innerRadius={50}
+                    outerRadius={80}
+                    paddingAngle={2}
+                  >
+                    {pie.map((_, i) => (
+                      <Cell key={i} fill={FEATURE_COLORS[i % FEATURE_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </ChartCard>
+        
+        <ChartCard title="Unique users by feature">
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={[
-                    { name: "Question bank", value: qb },
-                    { name: "Mental maths", value: drills },
-                    { name: "Past papers", value: papersN },
-                  ].filter((d) => d.value > 0)}
-                  dataKey="value"
-                  nameKey="name"
-                  innerRadius={50}
-                  outerRadius={80}
-                >
-                  {FEATURE_COLORS.map((c, i) => (
-                    <Cell key={i} fill={c} />
-                  ))}
-                </Pie>
+              <BarChart
+                layout="vertical"
+                data={[
+                  { feature: "QB", users: qbUsers },
+                  { feature: "Mental maths", users: drillUsers },
+                  { feature: "Past papers", users: paperUsers },
+                  { feature: "Calibration", users: calUsers },
+                ]}
+                margin={{ left: 8, right: 16 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                <XAxis type="number" allowDecimals={false} />
+                <YAxis type="category" dataKey="feature" width={90} tick={{ fontSize: 12 }} />
                 <Tooltip />
-                <Legend />
-              </PieChart>
+                <Bar dataKey="users" fill="#2E79B5" radius={[0, 4, 4, 0]} />
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </ChartCard>
+        
+        <ChartCard title="Reports / engagement">
+          <div className="grid grid-cols-2 gap-3">
+            <Stat label="Bug reports" value={bugReports} />
+            <Stat label="Support" value={supportRequests} />
+            <Stat label="Fermi" value={fermiSessions} />
+            <Stat 
+              label="Total seats" 
+              value={seats.reduce((s, r) => s + num(r.cohort_cap), 0)} 
+            />
+          </div>
+        </ChartCard>
+      </div>
+      
+      <div className="grid gap-4 lg:grid-cols-2">
         <ChartCard title="Volume by segment">
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
@@ -701,6 +756,25 @@ function GeneralView({
                 <Bar dataKey="QB" fill="#2E79B5" />
                 <Bar dataKey="Mental maths" fill="#1F8A65" />
                 <Bar dataKey="Papers" fill="#F0A040" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </ChartCard>
+        
+        <ChartCard title="Subjects practised (QB)">
+          <div className="h-56">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={[...practAll.entries()].map(([subject, attempts]) => ({
+                  subject,
+                  attempts,
+                }))}
+              >
+                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                <XAxis dataKey="subject" tick={{ fontSize: 11 }} />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Bar dataKey="attempts" fill="#F0A040" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -730,23 +804,37 @@ function GeneralView({
             </ResponsiveContainer>
           </div>
         </ChartCard>
-        <ChartCard title="Subjects practised / papers">
-          <div className="h-40">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={[...practAll.entries()].map(([subject, attempts]) => ({
-                  subject,
-                  attempts,
-                }))}
-              >
-                <XAxis dataKey="subject" tick={{ fontSize: 11 }} />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Bar dataKey="attempts" fill="#F0A040" />
-              </BarChart>
-            </ResponsiveContainer>
+        <ChartCard title="Section detail">
+          <div className="max-h-80 overflow-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="text-xs uppercase tracking-wide text-text-muted">
+                <tr>
+                  <th className="py-1 pr-2 font-medium">Section</th>
+                  <th className="py-1 pr-2 font-medium">Sess</th>
+                  <th className="py-1 pr-2 font-medium">Users</th>
+                  <th className="py-1 font-medium">Qs</th>
+                </tr>
+              </thead>
+              <tbody>
+                {mmRows.map((r) => (
+                  <tr key={r.section} className="border-t border-border-subtle">
+                    <td className="py-1.5 pr-2 text-text">{r.section}</td>
+                    <td className="py-1.5 pr-2 tabular-nums">{r.sessions}</td>
+                    <td className="py-1.5 pr-2 tabular-nums">{r.users}</td>
+                    <td className="py-1.5 tabular-nums">{r.questions}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <div className="mt-3 h-40">
+        </ChartCard>
+      </div>
+      
+      <ChartCard title="Past papers popularity">
+        <div className="h-64">
+          {[...paperAll.entries()].length === 0 ? (
+            <p className="text-sm text-text-muted">No past papers.</p>
+          ) : (
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -756,7 +844,7 @@ function GeneralView({
                   }))}
                   dataKey="value"
                   nameKey="name"
-                  outerRadius={60}
+                  outerRadius={90}
                 >
                   {[...paperAll.keys()].map((_, i) => (
                     <Cell key={i} fill={FEATURE_COLORS[i % FEATURE_COLORS.length]} />
@@ -766,9 +854,9 @@ function GeneralView({
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
-          </div>
-        </ChartCard>
-      </div>
+          )}
+        </div>
+      </ChartCard>
     </div>
   );
 }

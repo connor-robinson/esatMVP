@@ -94,6 +94,12 @@ const CARDS: Array<{
     body: "ESAT mock sittings, PDF downloads, scores, predicted marks, and hardest questions.",
     key: null,
   },
+  {
+    href: "/admin/conversion-analytics",
+    title: "Conversion Analytics",
+    body: "A/B test performance, attribution sources, ad conversion rates, and pricing funnel.",
+    key: null,
+  },
 ];
 
 export default function AdminOverviewPage() {

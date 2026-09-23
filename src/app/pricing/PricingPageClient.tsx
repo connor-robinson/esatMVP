@@ -9,15 +9,15 @@ import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { useSubscription } from "@/hooks/useSubscription";
 import {
   formatGbpPrice,
-  getMonthlyDiscountPercent,
-  getMonthlyPricePerWeek,
   getSeasonPassPrice,
   getWeeksUntilExam,
   MONTHLY_LIST_PRICE_GBP,
   MONTHLY_PRICE_GBP,
+  SEASON_PASS_ACCESS_UNTIL,
   SEASON_PASS_ACCESS_UNTIL_LABEL,
   type PlanId,
 } from "@/lib/stripe/best-value";
+import { VARIANT_CONFIGS, type PricingVariant } from "@/lib/pricing/abTest";
 import {
   buildCheckoutSignupUrl,
   isPaidPlanId,
@@ -36,20 +36,89 @@ import { OWN_REFERRAL_CODE_MESSAGE } from "@/lib/feedbackReferral/codes";
 
 const FEATURES = {
   free: [
-    "Mental maths: Addition module only",
-    "Past papers: sit any paper (scores & accuracy)",
-    "Question Bank: 10 free questions per subject",
-    "No solutions, mistake review, or detailed stats",
-    "No drills / flashcard mode",
+    "5 free mocks",
+    "Addition mental maths",
+    "Sit any past paper",
+    "10 questions per subject",
   ],
   paid: [
-    "Full mental maths access",
-    "Full past-paper marking & analytics",
-    "Unlimited Question Bank",
-    "Solutions, mistake review & stats",
-    "Drills & flashcard mode",
+    "In-depth mock analysis",
+    "Full mental maths",
+    "Unlimited question bank",
+    "Solutions, review, and stats",
+    "Drills and flashcards",
   ],
 };
+
+const LOCAL_VARIANTS: PricingVariant[] = [
+  "3day_original",
+  "3day_discounted",
+  "nodeal_original",
+  "nodeal_discounted",
+];
+
+function daysUntilEsat(): number {
+  const diff = SEASON_PASS_ACCESS_UNTIL.getTime() - Date.now();
+  return Math.max(0, Math.ceil(diff / 86_400_000));
+}
+
+function LocalPricingVariants() {
+  const days = daysUntilEsat();
+
+  return (
+    <section className="mb-8">
+      <p className="text-center text-xs font-semibold uppercase tracking-[0.14em] text-text-muted">
+        Localhost preview
+      </p>
+      <h2 className="mt-2 text-center font-heading text-xl font-semibold text-text">
+        {days} days until the ESAT
+      </h2>
+      <p className="mx-auto mt-2 max-w-lg text-center text-sm text-text-muted">
+        Four monthly offers, shown only while you are on localhost.
+      </p>
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {LOCAL_VARIANTS.map((id) => {
+          const config = VARIANT_CONFIGS[id];
+          const discounted = config.monthlyPriceGbp < MONTHLY_PRICE_GBP;
+          return (
+            <article
+              key={id}
+              className="rounded-organic-xl bg-surface-elevated px-5 py-5"
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">
+                {config.trialDays > 0
+                  ? `${config.trialDays}-day free trial`
+                  : "Pay today"}
+              </p>
+              <p className="mt-3 text-sm font-medium text-text">
+                {days} days until the ESAT
+              </p>
+              <div className="mt-3 flex flex-wrap items-baseline gap-x-2">
+                {discounted ? (
+                  <span className="text-base font-semibold text-text-subtle line-through">
+                    {formatGbpPrice(MONTHLY_PRICE_GBP)}
+                  </span>
+                ) : null}
+                <span className="text-3xl font-bold tracking-tight text-text">
+                  {formatGbpPrice(config.monthlyPriceGbp)}
+                </span>
+                <span className="text-sm text-text-muted">/month</span>
+              </div>
+              <p className="mt-3 text-sm leading-snug text-text-muted">
+                {discounted
+                  ? "Reduced while you prepare for the ESAT."
+                  : "Standard monthly price."}
+                {config.trialDays > 0
+                  ? " Card required. Cancel anytime."
+                  : " Access starts straight away."}
+              </p>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
 
 const PAID_RECURRING = new Set(["weekly", "monthly"]);
 
@@ -116,6 +185,7 @@ export default function PricingPageClient() {
     source,
   } = useSubscription();
   const [loading, setLoading] = useState<string | null>(null);
+  const showVariantPreview = process.env.NODE_ENV === "development";
   const [banner, setBanner] = useState<string | null>(null);
   const [manualCodeInput, setManualCodeInput] = useState("");
   const [friendCodeStatus, setFriendCodeStatus] = useState<FriendCodeStatus>({
@@ -127,8 +197,6 @@ export default function PricingPageClient() {
   const perWeekSeason = seasonPrice / getWeeksUntilExam();
   const monthlyPriceLabel = formatGbpPrice(MONTHLY_PRICE_GBP);
   const monthlyListPriceLabel = formatGbpPrice(MONTHLY_LIST_PRICE_GBP);
-  const monthlyPerWeekLabel = formatGbpPrice(getMonthlyPricePerWeek());
-  const monthlyDiscountLabel = `${getMonthlyDiscountPercent()}% off`;
   const periodEndLabel = formatPeriodEnd(currentPeriodEnd);
   const isRecurringPaid = PAID_RECURRING.has(tier);
   const isSeasonPass = tier === "season_pass";
@@ -234,9 +302,10 @@ export default function PricingPageClient() {
       name: "Weekly",
       price: "£8",
       caption: "per week",
-      priceNote: isRecurringPaid && tier !== "weekly"
-        ? "Switch at next billing date. No charge today"
-        : undefined,
+      priceNote:
+        isRecurringPaid && tier !== "weekly"
+          ? "Switches on your next bill"
+          : undefined,
       features: FEATURES.paid,
       ctaLabel: paidCta("weekly", "Upgrade"),
     },
@@ -245,13 +314,13 @@ export default function PricingPageClient() {
       name: "Monthly",
       price: monthlyPriceLabel,
       compareAtPrice: monthlyListPriceLabel,
-      discountLabel: monthlyDiscountLabel,
-      caption: `${monthlyPerWeekLabel}/week`,
-      priceNote: isRecurringPaid && tier !== "monthly"
-        ? "Switch at next billing date. No charge today"
-        : hasFriendCode
-          ? `50% friend discount. Pay today, then ${monthlyPriceLabel}/month. Cancel anytime`
-          : `4-day free trial. Card required. Then ${monthlyPriceLabel}/month. Cancel anytime`,
+      caption: "per month",
+      priceNote:
+        isRecurringPaid && tier !== "monthly"
+          ? "Switches on your next bill"
+          : hasFriendCode
+            ? "Friend discount applied at checkout"
+            : "4-day free trial. Cancel anytime",
       features: FEATURES.paid,
       highlighted: true,
       ctaLabel: paidCta(
@@ -267,11 +336,11 @@ export default function PricingPageClient() {
       priceNote:
         isRecurringPaid && cancelAtPeriodEnd && pendingPlan === "season_pass"
           ? periodEndLabel
-            ? `Current plan ends ${periodEndLabel}, then buy Season Pass`
-            : "Current plan ending, then buy Season Pass"
+            ? `Current plan ends ${periodEndLabel}`
+            : "Current plan ending soon"
           : isRecurringPaid
-            ? "Finish your current plan first. No overlap charge"
-            : `One-time payment. Access until ${SEASON_PASS_ACCESS_UNTIL_LABEL}`,
+            ? "Available after your current plan ends"
+            : `One payment. Access until ${SEASON_PASS_ACCESS_UNTIL_LABEL}`,
       features: FEATURES.paid,
       featured: true,
       ctaLabel: paidCta("season_pass", "Upgrade"),
@@ -553,6 +622,8 @@ export default function PricingPageClient() {
             </button>
           </form>
         ) : null}
+
+        {showVariantPreview ? <LocalPricingVariants /> : null}
 
         <PricingTable
           tiers={tiers}
