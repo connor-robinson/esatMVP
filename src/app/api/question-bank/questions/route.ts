@@ -14,6 +14,7 @@ import {
   normalizeQuestionOptions,
 } from '@/lib/questionBank/normalizeOptions';
 import { shouldExcludeReservedMockQuestions } from '@/lib/mockBuilder/practiceExclusionCache';
+import { getQuestionIdsWithOpenReports } from '@/lib/questionBank/excludeReported';
 
 export const dynamic = 'force-dynamic';
 
@@ -276,10 +277,24 @@ export async function GET(request: NextRequest) {
       '[Question Bank API] Stage 1: Building base query (approved only)',
     );
     const excludeReserved = await shouldExcludeReservedMockQuestions(supabase);
+    
+    // Get questions with open reports to exclude them from the bank
+    const reportedQuestionIds = await getQuestionIdsWithOpenReports(supabase);
+    
     let query = applyPublishedQuestionBankFilter(
       supabase.from('ai_generated_questions').select('*'),
       { excludeReservedMockQuestions: excludeReserved },
     );
+
+    // Exclude questions with open reports
+    if (reportedQuestionIds.size > 0) {
+      const reportedIds = Array.from(reportedQuestionIds);
+      query = query.not('id', 'in', `(${reportedIds.map(id => `"${id}"`).join(',')})`);
+      debug(
+        '[Question Bank API] Stage 1: Excluding questions with open reports:',
+        reportedIds.length,
+      );
+    }
 
     // Get total count of all questions (any status) for stage count only in verbose mode
     let totalAnyStatusCount: number | null = null;

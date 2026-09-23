@@ -2,71 +2,27 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import {
-  Cell,
-  Legend,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-} from "recharts";
 import { Container } from "@/components/layout/Container";
 import type {
   QuestionReportStatusFilter,
-  QuestionReportSummary,
   ReportedQuestionItem,
 } from "@/lib/admin/reportedQuestions";
 import { cn } from "@/lib/utils";
 
-const PIE_COLORS = [
-  "#2E79B5",
-  "#1F8A65",
-  "#F0A040",
-  "#C45C5C",
-  "#7B6BB5",
-  "#4A90A4",
-  "#D4A017",
-  "#5B7C99",
+const FILTERS: { id: QuestionReportStatusFilter; label: string; description: string }[] = [
+  { id: "open", label: "Not Checked", description: "Reports waiting for admin review" },
+  { id: "resolved", label: "Reviewed", description: "Reports that have been checked and resolved" },
+  { id: "all", label: "All Reports", description: "Every report regardless of status" },
 ];
-
-const FILTERS: { id: QuestionReportStatusFilter; label: string }[] = [
-  { id: "open", label: "Open" },
-  { id: "resolved", label: "Resolved" },
-  { id: "all", label: "All" },
-];
-
-function Stat({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="rounded-organic-lg bg-surface-elevated px-4 py-3">
-      <p className="text-xs text-text-muted">{label}</p>
-      <p className="mt-1 text-xl font-semibold tabular-nums text-text">{value}</p>
-    </div>
-  );
-}
-
-function ChartCard({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-organic-xl bg-surface-elevated p-4">
-      <h3 className="mb-3 text-sm font-semibold text-text">{title}</h3>
-      {children}
-    </div>
-  );
-}
 
 function reporterLabel(meta: ReportedQuestionItem["meta"]): string {
   if (meta.username && meta.email) return `${meta.username} (${meta.email})`;
   return meta.username || meta.email || "Unknown user";
 }
 
-function ticketTone(status: string): string {
+function statusBadge(status: string): string {
   if (status === "open" || status === "in_progress") {
-    return "bg-amber-500/15 text-amber-900 dark:text-amber-200";
+    return "bg-amber-500/20 text-amber-900 dark:text-amber-200";
   }
   if (status === "resolved" || status === "closed") {
     return "bg-secondary/20 text-text";
@@ -80,7 +36,6 @@ export default function AdminQuestionReportsDashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<QuestionReportStatusFilter>("open");
   const [items, setItems] = useState<ReportedQuestionItem[]>([]);
-  const [summary, setSummary] = useState<QuestionReportSummary | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -101,7 +56,6 @@ export default function AdminQuestionReportsDashboardPage() {
       return;
     }
     setItems((json.items ?? []) as ReportedQuestionItem[]);
-    setSummary((json.summary ?? null) as QuestionReportSummary | null);
     setLoading(false);
   }, [status]);
 
@@ -110,9 +64,10 @@ export default function AdminQuestionReportsDashboardPage() {
   }, [load]);
 
   const openCount = useMemo(() => {
-    if (!summary) return 0;
-    return summary.open + summary.inProgress;
-  }, [summary]);
+    return items.filter(item => 
+      item.meta.ticketStatus === "open" || item.meta.ticketStatus === "in_progress"
+    ).length;
+  }, [items]);
 
   if (forbidden) {
     return (
@@ -122,52 +77,55 @@ export default function AdminQuestionReportsDashboardPage() {
     );
   }
 
+  const currentFilter = FILTERS.find(f => f.id === status) || FILTERS[0];
+
   return (
-    <Container size="lg" className="py-12">
+    <Container size="xl" className="py-12">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-text">Question reports</h1>
+          <h1 className="text-2xl font-bold text-text">Question Reports</h1>
           <p className="mt-2 text-sm text-text-muted">
-            All question-bank content reports, with status filters and where
-            issues cluster.
+            {currentFilter.description}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Link
             href={`/admin/question-reports/review?status=${encodeURIComponent(status)}`}
-            className="rounded-organic-md bg-secondary/25 px-3 py-2 text-sm font-semibold text-text"
+            className="bg-primary/25 px-4 py-2 text-sm font-semibold text-text"
           >
-            Open reviewer
+            Open Reviewer
           </Link>
           <button
             type="button"
             onClick={() => void load()}
-            className="rounded-organic-md bg-surface-mid px-3 py-2 text-sm font-medium text-text"
+            className="bg-surface-mid px-4 py-2 text-sm font-medium text-text"
           >
             Refresh
           </button>
         </div>
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div className="mt-6 flex flex-wrap gap-3">
         {FILTERS.map((filter) => (
           <button
             key={filter.id}
             type="button"
             onClick={() => setStatus(filter.id)}
             className={cn(
-              "rounded-organic-md px-3 py-1.5 text-sm font-medium transition-colors",
+              "px-4 py-2.5 text-sm font-medium transition-colors",
               status === filter.id
-                ? "bg-secondary/25 text-text"
+                ? "bg-primary/25 text-text"
                 : "bg-surface-mid text-text-muted hover:text-text",
             )}
           >
-            {filter.label}
-            {filter.id === "open" && openCount > 0 ? (
-              <span className="ml-1.5 tabular-nums text-text-subtle">
-                ({openCount})
-              </span>
-            ) : null}
+            <div className="flex items-center gap-2">
+              <span>{filter.label}</span>
+              {filter.id === "open" && openCount > 0 ? (
+                <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 bg-amber-500/30 text-amber-900 dark:text-amber-200 text-xs font-bold tabular-nums">
+                  {openCount}
+                </span>
+              ) : null}
+            </div>
           </button>
         ))}
       </div>
@@ -176,224 +134,114 @@ export default function AdminQuestionReportsDashboardPage() {
         <p className="mt-4 text-sm text-red-600 dark:text-red-400">{error}</p>
       ) : null}
 
-      {loading && !summary ? (
-        <p className="mt-8 text-sm text-text-muted">Loading…</p>
-      ) : summary ? (
-        <div className="mt-8 space-y-10">
-          <section>
-            <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-text-muted">
-              Overview
-            </h2>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-              <Stat label="In this filter" value={summary.total} />
-              <Stat label="Open" value={summary.open} />
-              <Stat label="In progress" value={summary.inProgress} />
-              <Stat label="Resolved" value={summary.resolved} />
-              <Stat label="With question" value={summary.withQuestion} />
-            </div>
-          </section>
-
-          <section className="grid gap-4 lg:grid-cols-3">
-            <ChartCard title="By report reason">
-              {summary.byReason.length === 0 ? (
-                <p className="text-sm text-text-muted">No data</p>
-              ) : (
-                <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={summary.byReason}
-                        dataKey="value"
-                        nameKey="name"
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={80}
-                        label={({ name, percent }) =>
-                          `${name} (${Math.round((percent ?? 0) * 100)}%)`
-                        }
-                      >
-                        {summary.byReason.map((entry, i) => (
-                          <Cell
-                            key={entry.name}
-                            fill={PIE_COLORS[i % PIE_COLORS.length]}
-                          />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              )}
-            </ChartCard>
-
-            <ChartCard title="By subject">
-              {summary.bySubject.length === 0 ? (
-                <p className="text-sm text-text-muted">No data</p>
-              ) : (
-                <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={summary.bySubject}
-                        dataKey="value"
-                        nameKey="name"
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={80}
-                        label={({ name, percent }) =>
-                          `${name} (${Math.round((percent ?? 0) * 100)}%)`
-                        }
-                      >
-                        {summary.bySubject.map((entry, i) => (
-                          <Cell
-                            key={entry.name}
-                            fill={PIE_COLORS[i % PIE_COLORS.length]}
-                          />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              )}
-            </ChartCard>
-
-            <ChartCard title="By primary tag">
-              {summary.byPrimaryTag.length === 0 ? (
-                <p className="text-sm text-text-muted">No data</p>
-              ) : (
-                <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={summary.byPrimaryTag}
-                        dataKey="value"
-                        nameKey="name"
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={80}
-                        label={({ name, percent }) =>
-                          `${String(name).slice(0, 18)} (${Math.round((percent ?? 0) * 100)}%)`
-                        }
-                      >
-                        {summary.byPrimaryTag.map((entry, i) => (
-                          <Cell
-                            key={entry.name}
-                            fill={PIE_COLORS[i % PIE_COLORS.length]}
-                          />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              )}
-            </ChartCard>
-          </section>
-
-          <section>
-            <div className="flex flex-wrap items-end justify-between gap-3">
-              <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-text-muted">
-                Reports
-              </h2>
-              <p className="text-xs text-text-subtle">
-                {items.length} reviewable
-                {loading ? " · refreshing…" : ""}
-              </p>
-            </div>
-
-            {items.length === 0 ? (
-              <p className="mt-4 text-sm text-text-muted">
-                No reports in this filter.
-              </p>
-            ) : (
-              <div className="mt-3 overflow-x-auto rounded-organic-xl border border-border-subtle">
-                <table className="min-w-full text-left text-sm">
-                  <thead className="bg-surface-mid/60 text-xs uppercase tracking-[0.08em] text-text-muted">
-                    <tr>
-                      <th className="px-3 py-2 font-semibold">Reported</th>
-                      <th className="px-3 py-2 font-semibold">Reporter</th>
-                      <th className="px-3 py-2 font-semibold">Reason</th>
-                      <th className="px-3 py-2 font-semibold">Subject</th>
-                      <th className="px-3 py-2 font-semibold">Ticket</th>
-                      <th className="px-3 py-2 font-semibold">Thank-you</th>
-                      <th className="px-3 py-2 font-semibold">Question</th>
-                      <th className="px-3 py-2 font-semibold" />
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {items.map((item) => (
-                      <tr
-                        key={item.meta.ticketId}
-                        className="border-t border-border-subtle"
-                      >
-                        <td className="px-3 py-2.5 text-text-muted whitespace-nowrap">
-                          {item.meta.reportedAt}
-                        </td>
-                        <td className="px-3 py-2.5 text-text">
-                          {reporterLabel(item.meta)}
-                        </td>
-                        <td className="px-3 py-2.5 text-text">
-                          {item.meta.reason}
-                        </td>
-                        <td className="px-3 py-2.5 text-text-muted">
-                          {item.meta.db.subjects}
-                          <span className="block text-xs text-text-subtle">
-                            {item.meta.topicLabel}
-                          </span>
-                        </td>
-                        <td className="px-3 py-2.5">
-                          <span
-                            className={cn(
-                              "inline-flex rounded-organic-md px-2 py-0.5 text-xs font-medium capitalize",
-                              ticketTone(item.meta.ticketStatus),
-                            )}
-                          >
-                            {item.meta.ticketStatus.replace("_", " ")}
-                          </span>
-                        </td>
-                        <td className="px-3 py-2.5">
-                          {item.meta.thankYouSent ? (
-                            <span className="inline-flex rounded-organic-md bg-[#2E79B5]/20 px-2 py-0.5 text-xs font-semibold text-text">
-                              Sent
-                            </span>
-                          ) : (
-                            <span className="text-xs text-text-subtle">-</span>
-                          )}
-                        </td>
-                        <td className="px-3 py-2.5 text-text-muted">
-                          <span className="capitalize">
-                            {item.meta.db.status}
-                          </span>
-                        </td>
-                        <td className="px-3 py-2.5 text-right">
-                          <div className="flex items-center justify-end gap-3">
-                            <button
-                              type="button"
-                              className="text-sm font-semibold text-text"
-                            >
-                              Resolve
-                            </button>
-                            <Link
-                              href={`/admin/question-reports/review?status=${encodeURIComponent(status)}&ticket=${encodeURIComponent(item.meta.ticketId)}`}
-                              className="text-sm font-semibold text-text underline-offset-2 hover:underline"
-                            >
-                              Review
-                            </Link>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </section>
+      {loading && items.length === 0 ? (
+        <div className="mt-8 text-center">
+          <p className="text-sm text-text-muted">Loading reports…</p>
         </div>
-      ) : null}
+      ) : items.length === 0 ? (
+        <div className="mt-8 border border-border-subtle bg-surface-elevated px-6 py-12 text-center">
+          <p className="text-lg font-semibold text-text">
+            {status === "open" ? "All clear!" : "No reports found"}
+          </p>
+          <p className="mt-2 text-sm text-text-muted">
+            {status === "open" 
+              ? "There are no question reports waiting for review."
+              : "No reports match the current filter."}
+          </p>
+        </div>
+      ) : (
+        <div className="mt-6 space-y-3">
+          {items.map((item) => (
+            <div
+              key={item.meta.ticketId}
+              className="border border-border-subtle bg-surface-elevated px-5 py-4"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <span
+                      className={cn(
+                        "inline-flex items-center px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide",
+                        statusBadge(item.meta.ticketStatus),
+                      )}
+                    >
+                      {item.meta.ticketStatus.replace("_", " ")}
+                    </span>
+                    <span className="text-xs text-text-subtle">
+                      {item.meta.reportedAt}
+                    </span>
+                    {item.meta.thankYouSent ? (
+                      <span className="inline-flex items-center bg-secondary/20 px-2 py-0.5 text-xs font-semibold text-text">
+                        Thank-you sent
+                      </span>
+                    ) : null}
+                  </div>
+                  
+                  <h3 className="mt-3 text-base font-semibold text-text">
+                    {item.meta.reason}
+                  </h3>
+                  
+                  <div className="mt-2 grid gap-2 sm:grid-cols-2 text-sm">
+                    <div>
+                      <span className="text-text-muted">Reporter: </span>
+                      <span className="text-text font-medium">
+                        {reporterLabel(item.meta)}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-text-muted">Subject: </span>
+                      <span className="text-text font-medium">
+                        {item.meta.db.subjects}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-text-muted">Topic: </span>
+                      <span className="text-text">
+                        {item.meta.topicLabel}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-text-muted">Question status: </span>
+                      <span className="text-text capitalize">
+                        {item.meta.db.status}
+                      </span>
+                    </div>
+                  </div>
+
+                  {item.meta.reporters.length > 1 ? (
+                    <p className="mt-2 text-xs text-primary font-medium">
+                      {item.meta.reporters.length} reports for this question
+                    </p>
+                  ) : null}
+                </div>
+                
+                <Link
+                  href={`/admin/question-reports/review?status=${encodeURIComponent(status)}&ticket=${encodeURIComponent(item.meta.ticketId)}`}
+                  className="shrink-0 bg-primary/25 px-4 py-2 text-sm font-semibold text-text hover:bg-primary/30"
+                >
+                  Review
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {items.length > 0 && (
+        <div className="mt-6 border-t border-border-subtle pt-6">
+          <p className="text-sm text-text-muted">
+            Showing {items.length} report{items.length === 1 ? "" : "s"}
+            {status === "open" && openCount > 0 ? (
+              <span className="ml-2 text-primary font-medium">
+                ({openCount} waiting for review)
+              </span>
+            ) : null}
+          </p>
+          <p className="mt-2 text-xs text-text-subtle">
+            💡 Reported questions are automatically hidden from the question bank until reviewed
+          </p>
+        </div>
+      )}
     </Container>
   );
 }
