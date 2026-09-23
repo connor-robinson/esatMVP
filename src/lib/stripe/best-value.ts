@@ -1,6 +1,6 @@
 /**
  * Best value calculation for pricing plans
- * Season Pass access covers the October 2026 ESAT window (12–16 Oct).
+ * Season Pass provides access until 8 Jan 2027 for £35.
  */
 
 import {
@@ -73,19 +73,10 @@ function getScheduledSeasonPassPrice(): number {
 
 /**
  * One-time Exam Season Pass price.
- * Uses the lower of the early-bird schedule and weeks × £7
- * so the deal is always better than paying Weekly (£8/week).
+ * Fixed at £35 until January 8th 2027.
  */
 export function getSeasonPassPrice(): number {
-  const weeks = getWeeksUntilExam();
-  const competitive = weeks * SEASON_PASS_TARGET_RATE;
-  const scheduled = getScheduledSeasonPassPrice();
-  // Round down to nearest £5 for a cleaner checkout amount
-  const roundedCompetitive = Math.max(
-    SEASON_PASS_TARGET_RATE,
-    Math.floor(competitive / 5) * 5
-  );
-  return Math.min(scheduled, roundedCompetitive);
+  return 35;
 }
 
 export function getPlanComparisons(weeksUntilExam?: number): PlanComparison[] {

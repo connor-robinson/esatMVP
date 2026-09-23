@@ -7,6 +7,7 @@ import { Container } from "@/components/layout/Container";
 import { PricingTable, type PricingTier } from "@/components/ui";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { useSubscription } from "@/hooks/useSubscription";
+import { cn } from "@/lib/utils";
 import {
   formatGbpPrice,
   getSeasonPassPrice,
@@ -59,6 +60,93 @@ const FEATURES = {
 function daysUntilEsat(): number {
   const diff = SEASON_PASS_ACCESS_UNTIL.getTime() - Date.now();
   return Math.max(0, Math.ceil(diff / 86_400_000));
+}
+
+function LocalhostVariantPreview({
+  currentVariant,
+  onSwitchVariant,
+}: {
+  currentVariant: PricingVariant;
+  onSwitchVariant: (variant: PricingVariant) => void;
+}) {
+  const daysUntilExam = daysUntilEsat();
+  
+  return (
+    <div className="mb-8 border-t border-b border-border-subtle bg-surface-elevated/50 px-4 py-6">
+      <div className="mx-auto max-w-4xl">
+        <div className="text-center mb-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-text-muted">
+            Localhost Testing
+          </p>
+          <h2 className="mt-2 text-lg font-semibold text-text">
+            A/B Test Variants
+          </h2>
+          <p className="mt-1 text-sm text-text-muted">
+            Switch between pricing variants to test both experiences
+          </p>
+        </div>
+        
+        <div className="grid gap-4 sm:grid-cols-2">
+          {(['control', 'express_deal'] as PricingVariant[]).map((variant) => {
+            const config = VARIANT_CONFIGS[variant];
+            const isActive = currentVariant === variant;
+            
+            return (
+              <button
+                key={variant}
+                onClick={() => onSwitchVariant(variant)}
+                className={cn(
+                  "border px-4 py-4 text-left transition-all",
+                  isActive
+                    ? "border-primary bg-primary/10"
+                    : "border-border-subtle bg-surface-elevated hover:border-primary/50"
+                )}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-text">
+                      {config.displayName}
+                    </p>
+                    <p className="mt-1 text-xs text-text-muted">
+                      {config.description}
+                    </p>
+                    
+                    <div className="mt-3 space-y-1.5 text-xs text-text-muted">
+                      <p>
+                        <strong>Monthly:</strong> £14.99/month with 4-day free trial
+                      </p>
+                      {config.showExpressDeal ? (
+                        <p>
+                          <strong>Express Deal:</strong> £9.49/month instant buy 
+                          <span className="text-primary ml-1">
+                            (highlighted)
+                          </span>
+                        </p>
+                      ) : (
+                        <p>
+                          <strong>Weekly:</strong> £8/week
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {isActive && (
+                    <span className="shrink-0 inline-flex items-center bg-primary/25 px-2 py-1 text-xs font-bold text-text">
+                      ACTIVE
+                    </span>
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+        
+        <p className="mt-4 text-center text-xs text-text-subtle">
+          Variant changes apply immediately. Your current variant cookie will be updated.
+        </p>
+      </div>
+    </div>
+  );
 }
 
 const PAID_RECURRING = new Set(["weekly", "monthly"]);
@@ -161,6 +249,19 @@ export default function PricingPageClient() {
   
   // Check if Express Deal should be shown
   const showExpressDeal = pricingVariant === 'express_deal';
+  
+  // Show localhost variant preview in development
+  const showLocalhostPreview = process.env.NODE_ENV === "development";
+  
+  const handleSwitchVariant = (newVariant: PricingVariant) => {
+    setPricingVariant(newVariant);
+    // Update cookie
+    if (typeof document !== "undefined") {
+      const expires = new Date();
+      expires.setDate(expires.getDate() + 90);
+      document.cookie = `pricing_variant=${encodeURIComponent(newVariant)};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+    }
+  };
 
   useEffect(() => {
     const sourcePage = readGaSourcePage() ?? currentGaPath() ?? "/pricing";
@@ -515,7 +616,7 @@ export default function PricingPageClient() {
                 background:
                   friendCodeStatus.state === "invalid"
                     ? "radial-gradient(circle at top right, rgba(248, 113, 113, 0.22) 0%, transparent 55%)"
-                    : "radial-gradient(circle at top right, rgba(169, 177, 103, 0.28) 0%, transparent 55%)",
+                    : "radial-gradient(circle at top right, rgba(169, 177, 103, 0.18) 0%, transparent 55%)",
               }}
             />
             <div className="relative z-10">
@@ -538,60 +639,79 @@ export default function PricingPageClient() {
                 </>
               ) : friendCodeStatus.state === "checking" ? (
                 <>
-                  <p className="text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-primary">
-                    Checking friend code
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">
+                    Verifying code
                   </p>
                   <p className="mt-1 text-sm leading-snug text-text">
-                    Verifying{" "}
-                    <span className="font-mono font-semibold text-primary">
+                    Checking{" "}
+                    <span className="font-mono font-semibold text-text">
                       {codeFromUrl}
                     </span>
                     …
                   </p>
                 </>
               ) : friendCodeStatus.state === "valid" ? (
-                <p className="text-sm leading-snug text-text">
-                  Friend code{" "}
-                  <span className="font-mono font-semibold text-primary">
-                    {friendCodeStatus.code}
-                  </span>{" "}
-                  will be applied automatically at checkout.
-                </p>
+                <>
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary">
+                    Code verified
+                  </p>
+                  <p className="mt-1.5 text-sm leading-snug text-text">
+                    Referral code{" "}
+                    <span className="font-mono font-semibold text-primary">
+                      {friendCodeStatus.code}
+                    </span>{" "}
+                    will be applied at checkout for your discount.
+                  </p>
+                </>
               ) : null}
             </div>
           </div>
         ) : !codeFromUrl ? (
-          <form
-            className="mx-auto mb-5 flex max-w-md flex-col items-stretch gap-3 sm:mb-6 sm:flex-row sm:items-center"
-            onSubmit={(event) => {
-              event.preventDefault();
-              const next = manualCodeInput.trim().toUpperCase();
-              if (!next) return;
-              const params = new URLSearchParams(searchParams.toString());
-              params.set("code", next);
-              params.delete("checkout");
-              router.push(`/pricing?${params.toString()}`);
-            }}
-          >
-            <label className="sr-only" htmlFor="friend-code-input">
-              Friend code
-            </label>
-            <input
-              id="friend-code-input"
-              value={manualCodeInput}
-              onChange={(event) => setManualCodeInput(event.target.value)}
-              placeholder="Have a friend code? Enter it here"
-              autoComplete="off"
-              spellCheck={false}
-              className="min-w-0 flex-1 rounded-organic-lg border border-border bg-surface-elevated px-4 py-2.5 text-sm text-text placeholder:text-text-muted focus-visible:outline-none focus-visible:shadow-glow-focus"
-            />
-            <button
-              type="submit"
-              className="shrink-0 rounded-organic-lg bg-primary px-4 py-2.5 text-sm font-semibold text-black transition-opacity hover:opacity-90"
+          <div className="mx-auto mb-5 max-w-md sm:mb-6">
+            <form
+              className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center"
+              onSubmit={(event) => {
+                event.preventDefault();
+                const next = manualCodeInput.trim().toUpperCase();
+                if (!next) return;
+                const params = new URLSearchParams(searchParams.toString());
+                params.set("code", next);
+                params.delete("checkout");
+                router.push(`/pricing?${params.toString()}`);
+              }}
             >
-              Apply code
-            </button>
-          </form>
+              <div className="flex-1">
+                <label htmlFor="friend-code-input" className="block text-xs font-medium text-text-muted mb-1.5">
+                  Referral code
+                </label>
+                <input
+                  id="friend-code-input"
+                  value={manualCodeInput}
+                  onChange={(event) => setManualCodeInput(event.target.value)}
+                  placeholder="Enter your code"
+                  autoComplete="off"
+                  spellCheck={false}
+                  className="w-full border border-border-subtle bg-surface-elevated px-4 py-2.5 text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50"
+                />
+              </div>
+              <button
+                type="submit"
+                className="shrink-0 bg-primary px-6 py-2.5 text-sm font-semibold text-black hover:bg-primary/90 sm:mt-5"
+              >
+                Apply
+              </button>
+            </form>
+            <p className="mt-2 text-xs text-center text-text-subtle">
+              Have a referral code from a friend? Enter it above to get your discount.
+            </p>
+          </div>
+        ) : null}
+
+        {showLocalhostPreview && pricingVariant ? (
+          <LocalhostVariantPreview
+            currentVariant={pricingVariant}
+            onSwitchVariant={handleSwitchVariant}
+          />
         ) : null}
 
         <PricingTable
