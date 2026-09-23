@@ -1,0 +1,29 @@
+{
+  "questionId": 3433,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 44,
+  "stemBlocks": [
+    "A research team has designed a cell-free miniature digestive system. The diagram outlines the system the scientists designed. A sample is introduced, and it is mixed with artificial digestive juices as it flows through the digestive system. The digested material, or chyme, flows out of the system.\nThe research team prepared a series of control experiments using artificial digestive juices. They adjusted the pH of buffers for the mouth, stomach, and intestines. Next, they added the enzymes to the saliva, gastric juice and mixture of duodenal juice and bile. Before introducing their artificial juices, they warmed them to $37^{\\circ}\\text{C}$.\nPepsin and trypsin are both proteases.\nWhich row shows the correct combination of enzyme(s) and pH that will produce chyme that is most like chyme produced during healthy human digestion?",
+    "|  | saliva | gastric juice | mixture of duodenal juice and bile |\n| --- | --- | --- | --- |\n| A | amylase + pepsin\\npH 4.3 | pepsin\\npH 2.7 | trypsin + lipase + amylase\\npH 10.3 |\n| B | amylase\\npH 5.5 | pepsin\\npH 6 | trypsin + lipase only\\npH 6.5 |\n| C | amylase\\npH 6.8 | pepsin\\npH 1.3 | trypsin + lipase + amylase\\npH 8.2 |\n| D | amylase + pepsin\\npH 8.5 | pepsin\\npH 2.5 | trypsin + amylase only\\npH 7.5 |\n| E | amylase\\npH 4.3 | pepsin\\npH 5.5 | trypsin + lipase + amylase\\npH 8.1 |\n| F | amylase\\npH 7.2 | pepsin\\npH 14 | trypsin + lipase only\\npH 6.5 |\n| G | amylase\\npH 6.9 | pepsin\\npH 13 | trypsin + lipase + amylase\\npH 8.2 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.129479+00:00",
+  "sourceImageHash": "8223ad5d47d250be8d2aad05fbeb48d14012eb1e7ec22ab410ee97af3505e6e2",
+  "status": "ok"
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 2098,
+  "examName": "ENGAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 23,
+  "stemBlocks": [
+    "The diagram shows a semicircle of radius 5 units and a triangle. The triangle has vertices at $(0,0)$, $(10,0)$ and $(x,y)$. $(x,y)$ is a point on the arc of the semicircle.",
+    "Which of the following is an expression in terms of $x$ for the area of this triangle?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:34:34.986485+00:00",
+  "sourceImageHash": "0829bf1200bacc180c1d864538b9ed064e121cf8986860972c988e30dd07dfbc",
+  "status": "ok"
+}

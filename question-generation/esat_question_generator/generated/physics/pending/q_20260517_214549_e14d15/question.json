@@ -1,0 +1,256 @@
+{
+  "id": "P_8ffbc902-Medium-cae1091e11",
+  "schema_id": "P_8ffbc902",
+  "difficulty": "Medium",
+  "idea_plan": {
+    "schema_id": "P_8ffbc902",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Medium",
+    "idea_summary": "Compare the maximum compression of a vertical spring when a mass is dropped onto it from its unstretched end, versus when the same mass is placed gently on it and allowed to settle to equilibrium.",
+    "schema_invariant": {
+      "core_move": "Applying conservation of mechanical energy (GPE, EPE) to a spring-mass system and contrasting it with a static force-balance situation.",
+      "what_must_not_change": [
+        "The system must involve a trade-off between Gravitational Potential Energy and Elastic Potential Energy.",
+        "The solution must require the application of the principle of conservation of energy.",
+        "The question must implicitly or explicitly contrast a dynamic process with a static equilibrium."
+      ],
+      "what_can_change": [
+        "The specific scenario (e.g., dropping a mass vs. launching a mass).",
+        "The quantity being asked for (e.g., a ratio of compressions, a maximum height, a speed).",
+        "The orientation of the spring (vertical, horizontal on an incline).",
+        "The initial conditions (e.g., dropped from rest, fired with initial velocity)."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "tempting_wrong_model",
+      "reasoning_hinge": "Recognising that the static equilibrium case is governed by force balance (mg = kx_eq), while the dynamic dropping case is governed by energy conservation (change in GPE = gain in EPE), and that these two conditions are not the same.",
+      "why_top_students_win": "They will immediately distinguish the two scenarios, correctly applying F=ma for the static case and energy conservation for the dynamic one. They will see that at maximum dynamic compression, velocity is zero but acceleration is non-zero, so forces are not balanced.",
+      "why_mid_students_miss": "They will incorrectly assume that at the point of maximum compression in the dynamic case, the spring force must be equal to the weight of the mass (F_spring = mg). This leads them to incorrectly conclude the compression is the same as the static equilibrium compression."
+    },
+    "minimum_reasoning_depth": {
+      "steps": 2,
+      "must_include": [
+        "model_selection",
+        "non_obvious_inference",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "This problem uses the same core physics as a standard vertical spring-mass problem but reframes it as a comparison of two distinct processes (static vs. dynamic). This shifts the focus from a single calculation to conceptual understanding, which is characteristic of ESAT-style questions. The difficulty is comparable, requiring one key insight to avoid a plausible trap.",
+    "task_signature": "compare_scenarios",
+    "tool_footprint": [
+      "energy_conservation",
+      "force_balance",
+      "static_vs_dynamic",
+      "proportional_reasoning"
+    ],
+    "primary_tag": "1",
+    "secondary_tags": [
+      "Energy",
+      "Forces",
+      "Springs"
+    ],
+    "visual_need": "concept_image_only",
+    "visual_role": "supportive",
+    "visual_brief": "A side-by-side pair of simple diagrams. Left: A mass is shown just touching the top of an uncompressed vertical spring, with a label indicating it is dropped. Right: The same mass is shown resting on the spring, which is compressed to its equilibrium position. The compressions in the two cases, x_dynamic and x_static, could be labelled for clarity in the solution.",
+    "surface_twist": "",
+    "why_still_on_spec": "The problem is grounded in fundamental A-level/ESAT syllabus topics: forces (Newton's laws, specifically F=mg), springs (Hooke's Law), and energy (Conservation of Mechanical Energy, GPE, EPE). The reasoning hinge is about correctly choosing which principle applies, a core physics skill.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Assuming that at maximum compression during the drop, the forces are balanced (kx = mg).",
+        "distractor_role": "This leads to the conclusion that the dynamic compression is equal to the static compression, giving a ratio of 1. This is the most compelling distractor."
+      },
+      {
+        "mistake": "An algebraic error in the energy conservation equation, such as cancelling x instead of x^2, leading to mg = 1/2 k.",
+        "distractor_role": "This path is confused but could lead to an answer that seems numerically plausible but is physically meaningless."
+      },
+      {
+        "mistake": "A sign error in the energy conservation equation or getting the ratio the wrong way up.",
+        "distractor_role": "This could produce a ratio of 1/2 instead of 2."
+      },
+      {
+        "mistake": "Confusing energy and length dependencies, perhaps involving a square root.",
+        "distractor_role": "Could produce a distractor like sqrt(2), which often appears in energy-related problems."
+      }
+    ],
+    "difficulty_rationale": "This is a Medium difficulty question. The physical setup is very simple to describe, but the solution requires navigating a very common and tempting misconception. It cleanly separates students who can differentiate between static and dynamic situations from those who apply formulas based on surface features (e.g., 'at the bottom, v=0, so forces balance'). The solution, once the insight is gained, is very fast.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "The candidate must first identify that two different physical models are needed for the two scenarios (force balance vs. energy conservation). Simply plugging numbers into a single formula like F=kx or E=1/2kx^2 without this contextual understanding will lead to the wrong answer."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The question naturally yields a simple numerical ratio (2). This allows for a clear correct answer and plausible distractors based on common errors: 1 (the main misconception), 1/2 (inversion error), and sqrt(2) (mixing up energy/displacement relations)."
+    }
+  },
+  "question_package": {
+    "metadata": {
+      "schema_id": "P_8ffbc902",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Medium",
+      "task_signature": "compare_scenarios",
+      "primary_tag": "1",
+      "secondary_tags": [
+        "Energy",
+        "Forces",
+        "Springs"
+      ]
+    },
+    "question": {
+      "stem": "A light spring is stood vertically on a surface.\n\nCase 1: A mass is gently placed on top of the uncompressed spring. The spring compresses by a distance $x_1$ to reach its equilibrium position.\n\nCase 2: The same mass is dropped from rest from a height where it just touches the top of the uncompressed spring. The spring compresses by a maximum distance $x_2$.\n\nWhat is the value of the ratio $x_2 / x_1$?",
+      "options": {
+        "A": "$\\frac{1}{2}$",
+        "B": "$1$",
+        "C": "$\\sqrt{2}$",
+        "D": "$2$",
+        "E": "$4$",
+        "F": "It depends on the mass and spring constant."
+      },
+      "correct_option": "D"
+    },
+    "visual_requirements": {
+      "visual_need": "concept_image_only",
+      "visual_role": "supportive",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": "A side-by-side pair of simple diagrams. Left: A mass is shown just touching the top of an uncompressed vertical spring, with a label indicating it is dropped (Case 2). Right: The same mass is shown resting on the spring, which is compressed to its equilibrium position (Case 1). The compressions in the two cases, x2 and x1, could be labelled for clarity in the solution."
+    },
+    "solution": {
+      "key_insight": "The static equilibrium case is governed by a balance of forces, while the dynamic dropping case is governed by conservation of energy. At the point of maximum dynamic compression, the net force is not zero.",
+      "reasoning": "Let the mass be $m$ and the spring constant be $k$.\n\nIn Case 1 (static equilibrium), the system is at rest, so the net force is zero. The upward spring force, $F_s = kx_1$, must balance the downward gravitational force (weight), $F_g = mg$.\n$$kx_1 = mg$$ \n$$x_1 = \\frac{mg}{k}$$ \n\nIn Case 2 (dynamic compression), we consider the conservation of mechanical energy from the point of release to the point of maximum compression. The mass starts at rest and ends momentarily at rest. The loss in gravitational potential energy (GPE) is converted into a gain in elastic potential energy (EPE).\n\nThe mass falls a vertical distance of $x_2$. The loss in GPE is $mgx_2$. The gain in EPE is $\\frac{1}{2}kx_2^2$.\n\n$$mgx_2 = \\frac{1}{2}kx_2^2$$ \nSince $x_2 > 0$, we can divide both sides by $x_2$: \n$$mg = \\frac{1}{2}kx_2$$ \n$$x_2 = \\frac{2mg}{k}$$ \n\nNow we can find the ratio $x_2 / x_1$: \n$$\\frac{x_2}{x_1} = \\frac{2mg/k}{mg/k} = 2$$"
+    },
+    "distractor_map": {
+      "A": "This is the inverse of the correct ratio, $x_1/x_2$. This error occurs from inverting the final fraction.",
+      "B": "This is the most common incorrect answer. It arises from the misconception that at the point of maximum dynamic compression, the forces are balanced ($kx_2 = mg$), just as they are in the static equilibrium case. This would incorrectly imply $x_2 = x_1$.",
+      "C": "This distractor, $\\sqrt{2}$, often appears in energy-related problems (e.g., relating speed and height) and can be chosen by students who are confused about the relationship between energy and displacement for a spring.",
+      "D": "Correct. This is derived by correctly applying force balance for the static case ($kx_1 = mg$) and energy conservation for the dynamic case ($mgx_2 = \\frac{1}{2}kx_2^2$), which shows that $x_2 = 2x_1$.",
+      "E": "This may arise from incorrectly reasoning that because elastic potential energy is proportional to $x^2$, and the displacement doubles, the ratio should be squared ($2^2=4$).",
+      "F": "This is incorrect. As shown in the derivation, the mass $m$ and spring constant $k$ cancel out when the ratio is calculated, resulting in a constant value."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "The solution requires distinguishing between a static force-balance model and a dynamic energy-conservation model for two different scenarios involving the same components.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true
+    }
+  },
+  "verifier_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "D",
+    "independent_solution": {
+      "main_law_or_principle": "Hooke's Law (force balance) for static equilibrium, Conservation of Mechanical Energy for dynamic compression.",
+      "calculation_or_logic": "Let the mass be $m$ and the spring constant be $k$.\n\n**Case 1: Static Equilibrium**\nWhen the mass is gently placed, it settles at an equilibrium position where the upward spring force balances the downward gravitational force.\n$F_{spring} = F_{gravity}$\n$kx_1 = mg$\n$x_1 = \\frac{mg}{k}$\n\n**Case 2: Dynamic Compression**\nWhen the mass is dropped from rest, the system conserves mechanical energy. The initial state is the mass at rest just touching the uncompressed spring. The final state is the mass momentarily at rest at maximum compression $x_2$.\nLoss in Gravitational Potential Energy (GPE) = Gain in Elastic Potential Energy (EPE)\nThe mass falls a total distance $x_2$.\n$mgx_2 = \\frac{1}{2}kx_2^2$\nSince $x_2 \\neq 0$ (there is compression), we can divide both sides by $x_2$:\n$mg = \\frac{1}{2}kx_2$\n$x_2 = \\frac{2mg}{k}$\n\n**Ratio $x_2 / x_1$**\n$\\frac{x_2}{x_1} = \\frac{2mg/k}{mg/k} = 2$",
+      "verified_answer_value": "2",
+      "claimed_answer_value": "2",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Apply Hooke's Law for static equilibrium (F=kx)",
+        "Apply Newton's Second Law (F_net=0) for static equilibrium",
+        "Apply Conservation of Mechanical Energy (GPE to EPE conversion)",
+        "Algebraic manipulation to solve for displacements and ratios"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a"
+    },
+    "notes": [
+      "The question correctly distinguishes between static equilibrium and dynamic energy conservation scenarios.",
+      "The solution is straightforward and requires standard ESAT-level physics principles.",
+      "Calculations are simple and suitable for a no-calculator environment.",
+      "Distractors are well-designed, targeting common misconceptions."
+    ]
+  },
+  "style_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 35,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "shorter",
+      "notes": "The question is a classic test of a fundamental misconception, making it suitable for a Medium difficulty ESAT question. It's concise and requires a clear conceptual understanding rather than complex calculations."
+    },
+    "selectivity_audit": {
+      "main_trap": "The primary trap is assuming that at the point of maximum compression in the dynamic case (Case 2), the forces are balanced (i.e., the spring force equals the weight of the mass, $kx_2 = mg$). This leads to the incorrect conclusion that $x_2 = x_1$, resulting in a ratio of 1 (Option B).",
+      "why_not_plug_and_chug": "This is not a plug-and-chug question because it requires the candidate to identify and apply two different physical models for the two scenarios: force balance for static equilibrium (Case 1) and conservation of mechanical energy for the dynamic process (Case 2). Simply substituting values into a single formula would lead to an incorrect answer.",
+      "expected_mid_student_error": "A mid-level student is highly likely to fall for the trap of equating the spring force to the weight at maximum compression in the dynamic case, leading them to choose 1.",
+      "verdict": "selective"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "The question is highly authentic to the ESAT style: short, clear, school-physics based, no-calculator, and focuses on a single dominant idea with a significant misconception trap.",
+      "The reasoning hinge is excellent, requiring students to differentiate between static force equilibrium and dynamic energy conservation.",
+      "All distractors are well-crafted and target specific, common errors, enhancing the question's selectivity."
+    ]
+  },
+  "models": {
+    "designer": "gemini-2.5-pro",
+    "implementer": "gemini-2.5-pro",
+    "verifier": "gemini-2.5-flash",
+    "style_judge": "gemini-2.5-flash"
+  },
+  "attempts": 1,
+  "created_at": "2026-05-17T21:49:54.016460",
+  "token_usage": {
+    "prompt_tokens": 31004,
+    "candidates_tokens": 6677,
+    "total_tokens": 51366
+  },
+  "schema_block_snapshot": "## **P_8ffbc902. Conservation of Energy in Spring-Mass Systems**\n\n**Core move:** Apply the principle of conservation of mechanical energy to determine kinematic variables or system properties in systems involving elastic potential energy, gravitational potential energy, and kinetic energy.\n\n**Seen in / context:**\n- Analyzing vertical or horizontal spring-mass oscillations\nCalculating speeds or displacements in systems with springs and gravity\nProblems where resistive forces are negligible, allowing for mechanical energy conservation\n\n**Possible wrong paths:**\n- Incorrectly defining the spring extension (x) versus the total length of the spring.\nForgetting to include all forms of energy (kinetic, gravitational potential, elastic potential) in the conservation equation.\nChoosing an inconsistent reference point for gravitational potential energy.\nAssuming the spring is at equilibrium when it is only momentarily passing through it.\nMistakes in algebraic manipulation or unit conversions.\n\n**Notes for generation:**\n- Clearly define the initial and final states of the system, including all relevant variables (height, extension, speed).\nEstablish a consistent datum (zero potential energy level) for gravitational potential energy.\nRemember that spring potential energy depends on the *extension* (ΔL) from the unstretched length, not the total length.\nEnsure all forces are conservative or that non-conservative work is accounted for if present.\n\n**Exemplar questions:**\n- `NSAA_2020_Section1_Q40_NSAA_Sec`: Initial exemplar for new schema.",
+  "pipeline": "v4",
+  "has_visual": false,
+  "visual_type": "concept_image_prompt",
+  "answer_depends_on_visual": false,
+  "visual_assets": [
+    {
+      "kind": "concept_image",
+      "spec_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260517_214549_e14d15\\concept_image_prompt.json",
+      "image_paths": [],
+      "renderer": "spec_only",
+      "qc_status": "pass",
+      "qc_source": "concept_image_verifier.json",
+      "answer_bearing": false,
+      "checksum": null
+    }
+  ]
+}

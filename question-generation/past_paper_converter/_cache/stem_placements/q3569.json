@@ -1,0 +1,28 @@
+{
+  "questionId": 3569,
+  "examName": "TMUA",
+  "examYear": 2023,
+  "paperName": "Paper 1",
+  "questionNumber": 20,
+  "stemBlocks": [
+    "The diagram shows the graph of $y = f(x)$.\nThe function $f$ attains its maximum value of 2 at $x = 1$, and its minimum value of $-2$ at $x = -1$.\nFind the difference between the maximum and minimum values of $(f(x))^2 - f(x)$"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:21.989871+00:00",
+  "sourceImageHash": "13d029f481d560a8770a641b6a9dd648502adf0c8cb115add86963e167018ebd",
+  "status": "ok"
+}

@@ -1,0 +1,28 @@
+{
+  "questionId": 2322,
+  "examName": "NSAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 23,
+  "stemBlocks": [
+    "A uranium-235 nucleus can undergo fission to produce two smaller nuclei.\nWhich of the diagrams, if any, could represent this process?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram 1: $^1_0 p \\rightarrow ^{235}_{92} U \\rightarrow ^{144}_{56} Ba + ^{89}_{36} Kr + ^1_0 n + ^1_0 n$\ndiagram 2: $^1_0 n \\rightarrow ^{235}_{92} U \\rightarrow ^{137}_{54} Xe + ^{96}_{38} Sr + ^1_0 n + ^1_0 n$\ndiagram 3: $^1_0 n \\rightarrow ^{235}_{92} U \\rightarrow ^{87}_{35} Br + ^{145}_{57} La + ^1_0 n + ^1_0 n + ^1_0 n$",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:25:34.667049+00:00",
+  "sourceImageHash": "8f8fa0d845f2cb977b2aaec220f4f55f0a0b87388f771154e19a83edbe14c523",
+  "status": "ok"
+}

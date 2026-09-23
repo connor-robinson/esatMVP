@@ -1,0 +1,29 @@
+{
+  "questionId": 2659,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 90,
+  "stemBlocks": [
+    "The velocity-time graph is for an 80 kg person in a lift that is moving vertically upwards.",
+    "What is the magnitude of the contact force between the person and the lift floor at the time corresponding to X? (gravitational field strength = $10\\text{ N kg}^{-1}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:19.066738+00:00",
+  "sourceImageHash": "d6df3a1ffe025e3df418e2d8cb8a7297f85e18832e252c1cfb6822f607101ac8",
+  "status": "ok"
+}

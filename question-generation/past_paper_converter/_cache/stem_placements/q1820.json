@@ -1,0 +1,28 @@
+{
+  "questionId": 1820,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 27,
+  "stemBlocks": [
+    "In the diagram below, $PQRS$ is part of a regular polygon.\nThe polygon has $n$ sides.\nThe side $PQ$ is extended to $T$ such that $PQT$ is a straight line.\nThe length of $RQ$ is the same as the length of $RT$.\nFind an equation for $n$ in terms of $x$, where $x$ is the size of angle $\\angle QRT$ in degrees."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "[diagram not to scale]",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:23:52.625428+00:00",
+  "sourceImageHash": "dfe99a9ef531d98d6c20147f463924cf0613d503d2dda548b85ef87ef37f7d25",
+  "status": "ok"
+}

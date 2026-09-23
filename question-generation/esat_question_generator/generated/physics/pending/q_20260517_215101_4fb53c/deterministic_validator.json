@@ -1,0 +1,29 @@
+{
+  "stage": "deterministic_validator",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "ok": true,
+    "errors": [],
+    "warnings": [
+      {
+        "field": "question.options",
+        "kind": "non_default_count",
+        "message": "Expected 6 options (A-F); got 5."
+      }
+    ],
+    "option_keys": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "summary": "ok"
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": null,
+  "attempts": 2
+}

@@ -1,0 +1,30 @@
+{
+  "questionId": 2884,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 65,
+  "stemBlocks": [
+    "The graph shows the cumulative frequency for the heights of a group of 15-year-old students.",
+    "Which of the following statements is/are correct?",
+    "1 The difference between the mean heights of male and female students can be found by reading the difference in heights at a cumulative frequency of 12.5.\n2 The difference in height between different males is explained by environmental factors alone.\n3 The difference in the cumulative frequency graphs for males and females could be explained by a gene on the Y chromosome."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.392245+00:00",
+  "sourceImageHash": "3912a6c2e4fa9434d12941a89bf3ee1642859cc08eb69befcbe485bc5a6e2955",
+  "status": "ok"
+}

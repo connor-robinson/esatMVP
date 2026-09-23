@@ -1,0 +1,94 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_30453dc9",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Medium",
+    "idea_summary": "Two identical spheres, one matt black and one polished silver, are kept at the same constant high temperature by internal electric heaters. The question is to compare the electrical power required by the heaters.",
+    "schema_invariant": {
+      "core_move": "Comparing rates of thermal energy transfer for objects with different surface properties (emissivity).",
+      "what_must_not_change": [
+        "The core physical principle is comparing heat transfer rates based on surface characteristics.",
+        "The dominant transfer mechanisms to compare are radiation and convection.",
+        "The question must be solvable by qualitative comparison, not calculation."
+      ],
+      "what_can_change": [
+        "The scenario is changed from passive cooling to maintaining a constant temperature (active heating).",
+        "The quantity being compared is electrical power input, not rate of temperature change.",
+        "The reasoning direction is from a desired state (constant T) to the required input, rather than from an initial state to a future outcome."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "hidden_invariant",
+      "reasoning_hinge": "The candidate must realise that 'constant temperature' implies a steady state where the electrical power supplied must exactly balance the rate of thermal energy loss to the surroundings (P_in = P_out).",
+      "why_top_students_win": "They immediately model the situation as a thermal equilibrium: Power_electrical = Rate of heat loss (convection + radiation). They know a black surface has higher emissivity, loses heat faster, and therefore requires more input power to compensate.",
+      "why_mid_students_miss": "They may fail to make the connection between electrical power and heat loss. They might incorrectly believe the power required is the same because the temperature is the same, ignoring the different rates of loss. They could also confuse the roles of absorption and emission."
+    },
+    "minimum_reasoning_depth": {
+      "steps": 3,
+      "must_include": [
+        "model_selection",
+        "non_obvious_inference",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "This problem has the same core physics as comparing the cooling rates of two flasks, but the framing is inverted. Instead of observing an effect (cooling) and inferring the cause (radiation), the candidate must determine the required cause (power) to maintain a constant effect (temperature). The reasoning depth is equivalent.",
+    "task_signature": "compare_scenarios",
+    "tool_footprint": [
+      "thermal equilibrium",
+      "energy conservation",
+      "emissivity",
+      "power"
+    ],
+    "primary_tag": "4",
+    "secondary_tags": [
+      "5"
+    ],
+    "visual_need": "concept_image_only",
+    "visual_role": "supportive",
+    "visual_brief": "A simple diagram showing two identical spheres in a room. One is labelled 'Matt Black', the other 'Polished Silver'. Each has a heater symbol inside. Arrows pointing away from the spheres indicate heat loss, with more/thicker arrows for the black sphere.",
+    "surface_twist": "",
+    "why_still_on_spec": "The core of the question lies in ESAT Physics tag 4 (Matter and Thermal Physics), specifically understanding heat transfer mechanisms (radiation, convection) and how surface properties (emissivity) affect them. The link to electrical power (tag 5, Electricity) is through the principle of conservation of energy (Power = Energy/time), a fundamental concept, and does not require any detailed circuit analysis.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Believing the required power is the same because the final temperature and object size are the same, ignoring the different rates of heat loss.",
+        "distractor_role": "An option stating the power is the same for both spheres."
+      },
+      {
+        "mistake": "Incorrectly recalling the properties of surfaces, e.g., thinking a shiny surface radiates more heat.",
+        "distractor_role": "An option stating the silver sphere requires more power."
+      },
+      {
+        "mistake": "Confusing emission with absorption. A student might argue that since the room is cooler, the black sphere absorbs more 'coldness' and thus needs more power, which is nonsensical but based on a confused version of the right idea.",
+        "distractor_role": "A distractor that gives the right answer (black needs more power) but for a clearly wrong reason related to absorption."
+      },
+      {
+        "mistake": "Ignoring radiation as a heat loss mechanism and assuming only convection, which would be approximately the same for both, leading to the conclusion the power is the same.",
+        "distractor_role": "This reinforces the 'power is the same' distractor."
+      }
+    ],
+    "difficulty_rationale": "This is Medium difficulty because it requires a reasoning step beyond simple recall. The candidate cannot just recite 'black objects cool faster'. They must apply the principle of energy conservation to a steady-state system (Power in = Power out) and then apply their knowledge of thermal radiation. This hinge is selective but the path to the solution is short once it is made.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "There is no single formula to substitute into. The Stefan-Boltzmann law is conceptually relevant but not required for a calculation. The crucial step is setting up the energy balance equation P_electrical = P_thermal_loss, which is a conceptual modeling step, not a formula application."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "It's easy to generate clear, distinct options. The question can be about which sphere requires more/less/same power, and the reasons can form the basis of the options, targeting specific misconceptions about thermal properties."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-pro",
+  "attempts": 1
+}

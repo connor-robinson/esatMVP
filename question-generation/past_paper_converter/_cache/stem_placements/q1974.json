@@ -1,0 +1,30 @@
+{
+  "questionId": 1974,
+  "examName": "ENGAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 19,
+  "stemBlocks": [
+    "A solid pyramid has a square base of side length $12$ cm and a vertical height of $h$ cm.\nThe volume of the pyramid, in cm$^3$, is equal to the total surface area of the pyramid, in cm$^2$.",
+    "What is the value of $h$?",
+    "(volume of pyramid $= \\frac{1}{3} \\times$ area of base $\\times$ vertical height)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:42.178936+00:00",
+  "sourceImageHash": "cfb05182448c78ef057972ff2616d6b8748d408ffd58ba2366eec0633a1ad8af",
+  "status": "ok"
+}

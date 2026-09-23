@@ -1,0 +1,28 @@
+{
+  "questionId": 2473,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 84,
+  "stemBlocks": [
+    "A stone is fired vertically upwards at a speed of $13 \\text{ ms}^{-1}$ on a still day from the top of a $6.0 \\text{ m}$ high cliff. It then falls down and lands at the bottom of the cliff.\nFrom when the stone passes the top of the cliff on the way down, how long does it take to reach the ground at the bottom of the cliff?\n(air resistance can be ignored; gravitational field strength = $10 \\text{ N kg}^{-1}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:49:16.387395+00:00",
+  "sourceImageHash": "7b81e19fb0c4ce1373e31f952dfe0521076fb0fc973c82e7ca28a6a4196629e6",
+  "status": "ok"
+}

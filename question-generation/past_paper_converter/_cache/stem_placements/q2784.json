@@ -1,0 +1,29 @@
+{
+  "questionId": 2784,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 45,
+  "stemBlocks": [
+    "1.0 mol\\,dm$^{-3}$ hydrochloric acid was slowly added from a burette into an insulated flask containing 50 cm$^{3}$ of aqueous sodium hydroxide. The flask was gently swirled and the temperature of the resulting solution measured continuously. The two solutions had the same initial temperature and a graph was drawn of the temperature of the resulting solution against the volume of hydrochloric acid added.",
+    "Which of the following statements explains the shape of the graph?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 1.0
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.374390+00:00",
+  "sourceImageHash": "8e64dda68fa79c5040fe5703aaf2675b9110d03e4444192bb8c189bdb21e2b1c",
+  "status": "ok"
+}

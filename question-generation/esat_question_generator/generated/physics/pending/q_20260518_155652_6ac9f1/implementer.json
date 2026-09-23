@@ -1,0 +1,69 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_ae6afb3b",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Hard",
+      "task_signature": "calculation_exact_value",
+      "primary_tag": "3",
+      "secondary_tags": [
+        "2"
+      ]
+    },
+    "question": {
+      "stem": "Two liquids, X and Y, are heated separately by identical electrical heaters.\n\nHeating $1.0\\text{ kg}$ of liquid X by $10\\,^\\circ\\text{C}$ takes $2.0\\text{ minutes}$.\nHeating $1.0\\text{ kg}$ of liquid Y by $10\\,^\\circ\\text{C}$ takes $4.0\\text{ minutes}$.\n\nAssume no thermal energy is lost to the surroundings and no phase changes occur.\n\nA $1.0\\text{ kg}$ sample of liquid X at $90\\,^\\circ\\text{C}$ is mixed with a $1.0\\text{ kg}$ sample of liquid Y at $30\\,^\\circ\\text{C}$.\n\nWhat is the final equilibrium temperature of the mixture?",
+      "options": {
+        "A": "$40\\,^\\circ\\text{C}$",
+        "B": "$42\\,^\\circ\\text{C}$",
+        "C": "$50\\,^\\circ\\text{C}$",
+        "D": "$60\\,^\\circ\\text{C}$",
+        "E": "$70\\,^\\circ\\text{C}$",
+        "F": "$78\\,^\\circ\\text{C}$"
+      },
+      "correct_option": "C"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "The specific heat capacity of a material is proportional to the time taken to heat it by a given temperature using a constant power source. Liquid Y takes twice as long, so it has twice the specific heat capacity.",
+      "reasoning": "First, link energy, power, and specific heat capacity: $E = Pt = mc\\Delta\\theta$. Since $m$, $P$, and $\\Delta\\theta$ are identical for both liquids during the heating phase, $c \\propto t$. Liquid Y takes $4.0$ minutes compared to liquid X's $2.0$ minutes, so $c_Y = 2c_X$.\n\nWhen mixing, the thermal energy lost by X equals the thermal energy gained by Y:\n$m_X c_X (T_X - T) = m_Y c_Y (T - T_Y)$\n\nSince $m_X = m_Y = 1.0\\text{ kg}$:\n$c_X (90 - T) = 2c_X (T - 30)$\n\nDivide both sides by $c_X$:\n$90 - T = 2(T - 30)$\n$90 - T = 2T - 60$\n$150 = 3T$\n$T = 50\\,^\\circ\\text{C}$."
+    },
+    "distractor_map": {
+      "A": "Algebraic error: forgets to distribute the 2 to the 30, solving $90 - T = 2T - 30$ to get $T = 40\\,^\\circ\\text{C}$.",
+      "B": "Incorrectly squares the time ratio, assuming $c_Y = 4c_X$, leading to $90 - T = 4(T - 30) \\Rightarrow 5T = 210 \\Rightarrow T = 42\\,^\\circ\\text{C}$.",
+      "C": "Correct option.",
+      "D": "Assumes the specific heat capacities are equal because the masses are equal, simply averaging the temperatures: $(90 + 30) / 2 = 60\\,^\\circ\\text{C}$.",
+      "E": "Inverts the specific heat capacity ratio, assuming $c_X = 2c_Y$, leading to $2(90 - T) = T - 30 \\Rightarrow 3T = 210 \\Rightarrow T = 70\\,^\\circ\\text{C}$.",
+      "F": "Inverts and squares the ratio, assuming $c_X = 4c_Y$, leading to $4(90 - T) = T - 30 \\Rightarrow 5T = 390 \\Rightarrow T = 78\\,^\\circ\\text{C}$."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Extracting the ratio of specific heat capacities from heating times.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 2,
+        "estimated_solution_steps": 3,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

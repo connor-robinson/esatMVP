@@ -1,0 +1,30 @@
+{
+  "questionId": 3408,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 19,
+  "stemBlocks": [
+    "A battery with an emf of $8.0\\text{ V}$ and internal resistance $R$ and another battery with an emf of $4.0\\text{ V}$ and internal resistance $2.0\\ \\Omega$ are connected to a cell with an emf of $2.0\\text{ V}$ and internal resistance $4.0\\ \\Omega$ in the circuit shown.",
+    "The current in the $2.0\\text{ V}$ cell is $0.50\\text{ A}$ in the direction shown in the diagram.",
+    "What is the resistance $R$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.077835+00:00",
+  "sourceImageHash": "43afc65924c9e0bb5a958bd1c11105eed7167c2a03e1282166585d6f54eaa50c",
+  "status": "ok"
+}

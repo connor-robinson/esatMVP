@@ -1,0 +1,29 @@
+{
+  "questionId": 2020,
+  "examName": "ENGAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 25,
+  "stemBlocks": [
+    "The graph shows how the displacement due to a wave in air varies with time.\nThe speed of the wave in air is $300 \\text{ m s}^{-1}$.\nThe wave now travels into water.\n$\\frac{\\text{wave speed in air}}{\\text{wave speed in water}} = 0.2$",
+    "What is the wavelength of the wave in water?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:25.592866+00:00",
+  "sourceImageHash": "657657deb13e04c641718c0c42c89ff2b99b96558e5da70355cba47fc91b1df6",
+  "status": "ok"
+}

@@ -1,0 +1,69 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_a9a3eea7",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Medium",
+      "task_signature": "compare_scenarios",
+      "primary_tag": "3",
+      "secondary_tags": [
+        "4"
+      ]
+    },
+    "question": {
+      "stem": "An object falls from rest through a fluid until it reaches terminal velocity. The drag force on the object is given by $F = kv$, where $v$ is the velocity and $k$ is a constant that is the same for all fluids.\n\nWhen the object falls through a fluid of density $\\rho$, its terminal velocity is $5v_0$.\n\nWhen the same object falls through a different fluid of density $3\\rho$, its terminal velocity is $v_0$.\n\nWhat is the density of the object?",
+      "options": {
+        "A": "$\\frac{1}{2}\\rho$",
+        "B": "$\\frac{5}{2}\\rho$",
+        "C": "$3\\rho$",
+        "D": "$\\frac{7}{2}\\rho$",
+        "E": "$4\\rho$",
+        "F": "$5\\rho$"
+      },
+      "correct_option": "D"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "At terminal velocity, the drag force balances the net downward force (weight minus upthrust). By taking the ratio of this force balance in both fluids, the unknown object volume and drag constant cancel out.",
+      "reasoning": "1. The force balance at terminal velocity is $kv = W - U = V\\rho_x g - V\\rho_{\\text{fluid}}g = Vg(\\rho_x - \\rho_{\\text{fluid}})$.\n2. For the first fluid: $k(5v_0) = Vg(\\rho_x - \\rho)$.\n3. For the second fluid: $k(v_0) = Vg(\\rho_x - 3\\rho)$.\n4. Dividing the first equation by the second gives: $5 = \\frac{\\rho_x - \\rho}{\\rho_x - 3\\rho}$.\n5. Solving for $\\rho_x$:\n   $5(\\rho_x - 3\\rho) = \\rho_x - \\rho$\n   $5\\rho_x - 15\\rho = \\rho_x - \\rho$\n   $4\\rho_x = 14\\rho \\implies \\rho_x = \\frac{14}{4}\\rho = \\frac{7}{2}\\rho$."
+    },
+    "distractor_map": {
+      "A": "Results from inverting the velocity ratio or mixing up the fluids in the equation: $1/5 = (\\rho_x - \\rho) / (\\rho_x - 3\\rho)$.",
+      "B": "Results from an algebraic error where the right-hand side upthrust term is multiplied by 5: $5\\rho_x - 15\\rho = \\rho_x - 5\\rho$.",
+      "C": "Results from incorrectly assuming a $v^2$ drag force, which gives $\\rho_x \\approx 3.08\\rho$, or guessing based on the second fluid's density.",
+      "D": "Correct. At terminal velocity, Drag = Weight - Upthrust. Setting up the ratio eliminates unknowns and yields $\\rho_x = 3.5\\rho$.",
+      "E": "Results from a sign error where upthrust is added instead of subtracted for the first fluid: $5 = (\\rho_x + \\rho) / (\\rho_x - 3\\rho)$.",
+      "F": "Results from incorrectly assuming the density scales directly with the velocity multiplier ($5v_0 \\rightarrow 5\\rho$)."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Setting up the force balance for both fluid scenarios and taking the ratio of the two equations to eliminate the unknown drag constant and object volume.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 2,
+        "estimated_solution_steps": 3,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

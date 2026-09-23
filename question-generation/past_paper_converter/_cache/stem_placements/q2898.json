@@ -1,0 +1,30 @@
+{
+  "questionId": 2898,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 79,
+  "stemBlocks": [
+    "The graph shows the effect of increasing light intensity on the net rate at which a plant releases oxygen into the atmosphere.",
+    "Which of the following could explain why the net rate of oxygen release at point X is zero?",
+    "1 The light intensity is too low to produce oxygen through photosynthesis.\n2 All of the stomata will be closed at this light intensity, preventing the release of oxygen.\n3 The rate of oxygen release from photosynthesis is equal to the rate of oxygen use in respiration."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.416631+00:00",
+  "sourceImageHash": "93981f64ca38e7d8197100b8939b4d13428be79f9172b97938feb22a22994787",
+  "status": "ok"
+}

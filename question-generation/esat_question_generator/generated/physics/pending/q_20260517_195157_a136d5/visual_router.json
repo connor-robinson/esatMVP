@@ -1,0 +1,19 @@
+{
+  "stage": "visual_router",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "visual_route": "concept_image_prompt",
+    "answer_depends_on_visual": false,
+    "required_files": [],
+    "reason": "The question explicitly states that the visual is for conceptual illustration only, is supportive, and the answer does not depend on it. The description asks for a simple diagram of a wave entering a medium, with no exact values or scale, which aligns with the 'concept_image_prompt' category.",
+    "next_prompt_file": "Physics Concept_Image_Prompt.md",
+    "style_target_if_image": "tmua_engaa_exam_diagram",
+    "blocking_issue": null
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

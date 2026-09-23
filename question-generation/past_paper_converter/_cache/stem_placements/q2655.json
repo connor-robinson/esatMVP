@@ -1,0 +1,29 @@
+{
+  "questionId": 2655,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 86,
+  "stemBlocks": [
+    "A student has one $300 \\ \\Omega$ resistor and another resistor of resistance $R$. The student plots a graph of current $I$ against potential difference $V$ for the $300 \\ \\Omega$ resistor and then for both resistors connected in parallel.",
+    "What is the resistance $R$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:19.066738+00:00",
+  "sourceImageHash": "eebba6678d17b8ed5fbcc7a84ae085fb01248cdc683eece75d57848cb6bc7963",
+  "status": "ok"
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 3096,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 2",
+  "questionNumber": 5,
+  "stemBlocks": [
+    "A stone is suspended from a newtonmeter and the meter reads $3\\text{ N}$. A beaker of water is placed on a top pan balance and the top pan balance reads $400\\text{ g}$. The stone is lowered into the water so that it is at rest and fully submerged, but not touching the bottom of the beaker. The reading on the newtonmeter is now $2\\text{ N}$ and the top pan balance reads $X\\text{g}$. The stone is detached from the newtonmeter and allowed to rest under water on the base of the beaker. The top pan balance now reads $Y\\text{g}$. What are the values of $X$ and $Y$? (gravitational field strength $= 10\\text{ N kg}^{-1}$)",
+    "|  | X | Y |\n| --- | --- | --- |\n| A | 400 | 500 |\n| B | 400 | 600 |\n| C | 400 | 700 |\n| D | 500 | 500 |\n| E | 500 | 600 |\n| F | 500 | 700 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram 1",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:40:49.318158+00:00",
+  "sourceImageHash": "3046959d1422c9044989115a3c2cb606446faba88f3ceede1bed1b4f1b38eb0d",
+  "status": "ok"
+}

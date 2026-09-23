@@ -1,0 +1,1200 @@
+ASSESSMENT PACK
+ESAT Mathematics 1
+Two complete original practice modules
+54 questions | 27 per module | 40 minutes per module | No calculator
+For the October 2026 and January 2027 content specification
+Candidate papers, answer keys, full author notes and validation tables
+Original independent practice material. Not produced, approved or endorsed by UAT-UK, Pearson, Cambridge or Imperial.
+
+1. Official sources researched
+The current UAT-UK specification is the authority for content. The Pearson specimen and sample tests were used for current interface, pacing and wording. Official NSAA and ENGAA papers and answer keys were used only to calibrate style and difficulty. No archive question has been copied or changed only numerically.
+Source: UAT-UK ESAT Content Specification for October 2026 and January 2027
+Source: UAT-UK preparation guidance
+Source: Pearson VUE official ESAT specimen and sample tests
+Source: UAT-UK ESAT guide and past-paper archive
+Source: NSAA 2023 Section 1 question paper
+Source: NSAA 2023 Section 1 answer key
+Source: NSAA 2022 Section 1 question paper
+Source: NSAA 2022 Section 1 answer key
+Source: ENGAA 2018 Section 1 question paper
+Source: ENGAA 2018 Section 1 answer key
+Reference convention: Part A question numbers refer to the Mathematics part of the named historical Section 1 paper. Where there is no close individual archive question, the note cites the broader verified official specimen style and says so explicitly.
+2. Syllabus and difficulty plan
+Both modules cover all seven official Mathematics 1 topic families. Algebra and geometry receive the largest share, while the underlying mechanisms differ between modules.
+Difficulty blueprint
+Planned solution-time total: 31 min 45 s for Module 1 and 31 min 50 s for Module 2. This leaves about 8 minutes in each module for harder items, checking and navigation.
+
+3. Module 1 candidate paper
+MODULE 1
+ESAT Mathematics 1
+Candidate paper
+Instructions
+Choose one answer for each question.
+Each correct answer scores one mark. There is no penalty for an incorrect answer.
+Diagrams marked 'not to scale' must not be measured.
+The strong-question labels appear only in the author notes so the timed paper remains blind.
+Begin when ready.
+
+1  A pump transfers 0.72 m³ of water in 8 minutes at a constant rate. What is the rate in litres per second?
+A  0.0015 L/s
+B  0.09 L/s
+C  0.15 L/s
+D  1.5 L/s
+E  9 L/s
+F  90 L/s
+
+2  Which fraction is equal to 0.2777...?
+A  1/4
+B  5/18
+C  7/25
+D  7/27
+E  25/99
+F  7/20
+
+3  Two warning lights flash together at 12:00:00. One flashes every 18 seconds and the other every 24 seconds. From 12:00:00 up to and including 12:06:00, how many times do they flash together?
+A  1
+B  2
+C  3
+D  4
+E  5
+F  6
+
+4  What is the value of 27^(2/3) × 9^(-1/2)?
+A  3
+B  1/3
+C  1
+D  9
+E  √3
+
+5  The length and width of a rectangle are measured as 7.2 cm and 3.0 cm, each to the nearest 0.1 cm. What is the upper bound for its area?
+A  21.6 cm²
+B  21.0925 cm²
+C  21.75 cm²
+D  21.96 cm²
+E  22.1125 cm²
+F  22.5 cm²
+
+6  A drink contains syrup and water in the ratio 2:7. After 6 litres of water are added, the ratio is 1:5. What was the original volume of the drink?
+A  4 litres
+B  14 litres
+C  18 litres
+D  20 litres
+E  16 litres
+F  24 litres
+
+7  A price is reduced by 20%. By what percentage must the reduced price be increased to return to the original price?
+A  16%
+B  20%
+C  22.5%
+D  24%
+E  40%
+F  80%
+G  25%
+
+8  The positive variable y is inversely proportional to the square root of x. When x = 4, y = 12. What is y when x = 9?
+A  4
+B  6
+C  8
+D  9
+E  18
+F  27
+
+9  Two bottles are mathematically similar. Their heights are in the ratio 3:5. The smaller bottle has volume 162 cm³. What is the volume of the larger bottle?
+A  750 cm³
+B  450 cm³
+C  270 cm³
+D  486 cm³
+E  1250 cm³
+F  1620 cm³
+
+10  The variables satisfy p = (3x - q)/(x + r). Which expression makes x the subject?
+A  (q - pr)/(3 - p)
+B  (q + pr)/(p - 3)
+C  (q - pr)/(p - 3)
+D  (p - q + r)/3
+E  (q + r)/(3 - p)
+F  (q + pr)/(3 - p)
+
+11  For x ≠ -3 and x ≠ 2, which expression is equal to (x² - 9)/(x² + x - 6)?
+A  (x + 3)/(x - 2)
+B  (x - 3)/(x - 2)
+C  (x - 3)/(x + 3)
+D  (x + 3)/(x + 2)
+E  1
+F  x - 3
+
+12  Three adult tickets and two child tickets cost £42. Two adult tickets and five child tickets cost £50. What is the price of one adult ticket?
+A  £6
+B  £8
+C  £9
+D  £12
+E  £10
+F  £14
+
+13  A positive number x satisfies x + 6/x = 5. What is the greater possible value of x?
+A  1
+B  2
+C  5/2
+D  3
+E  5
+F  6
+
+14  What is the complete set of values of x satisfying 3 - 2(4 - x) ≥ 5x + 1?
+A  x ≥ -2
+B  x < -2
+C  x > -2
+D  x ≤ 2
+E  x ≥ 2
+F  x < 2
+G  x ≤ -2
+
+15  The first four terms of a quadratic sequence are 2, 7, 14, 23. What is the 10th term?
+A  99
+B  119
+C  120
+D  121
+E  143
+F  209
+
+16  What is the minimum value of x² - 6x + 13?
+A  -5
+B  -4
+C  0
+D  3
+E  13
+F  4
+
+17  A cuboid has length 12 cm, depth 4 cm and height 6 cm. M is the midpoint of the vertical edge opposite A. What is AM?
+
+Diagram not to scale
+A  5 cm
+B  4√10 cm
+C  13 cm
+D  14 cm
+E  √185 cm
+F  19 cm
+
+18  The line through A is tangent to the circle with centre O. The angle between the tangent and chord AB is 38°. What is angle AOB?
+
+Diagram not to scale
+A  76°
+B  38°
+C  52°
+D  90°
+E  104°
+F  142°
+
+19  An annular sector has angle 120°, outer radius 6 cm and inner radius 3 cm. What is its area?
+
+Diagram not to scale
+A  3π cm²
+B  6π cm²
+C  12π cm²
+D  27π cm²
+E  9π cm²
+F  36π cm²
+
+20  In triangle ABC, DE is parallel to BC. The area of triangle ADE is 36 cm² and the area of trapezium DBCE is 64 cm². If AD = 6 cm, what is AB?
+
+Diagram not to scale
+A  7.5 cm
+B  8 cm
+C  9 cm
+D  10 cm
+E  12 cm
+F  50/3 cm
+
+21  In a right-angled triangle, the side opposite a 60° angle has length x + 2 and the adjacent non-hypotenuse side has length x. What is x?
+A  √3 - 1
+B  1
+C  √3
+D  2
+E  2√3
+F  3
+G  1 + √3
+
+22  Eight students have a mean score of 12. A further twelve students have a mean score of 20. What is the mean score of all twenty students?
+A  16.8
+B  16
+C  17
+D  20
+E  13.2
+F  17.5
+
+23  A two-digit number is formed by choosing two different digits from 1, 2, 3 and 4. Each ordered choice is equally likely. What is the probability that the number is divisible by 3?
+A  1/6
+B  1/4
+C  2/9
+D  1/3
+E  1/2
+F  2/3
+
+24  The histogram shows journey times for 36 people. In which class interval does the median lie?
+
+A  0 ≤ t < 4
+B  0 ≤ t < 10
+C  4 ≤ t < 10
+D  4 ≤ t < 20
+E  10 ≤ t < 20
+F  It cannot be determined
+
+25  A bag contains 3 red and 2 blue counters. Two counters are taken at random without replacement. What is the probability that exactly one is red?
+A  1/5
+B  3/10
+C  2/5
+D  1/2
+E  7/10
+F  3/5
+
+26  A metal block has mass 1.26 kg and volume 150 cm³. What is its density in g/cm³?
+A  0.0084
+B  8.4
+C  84
+D  0.84
+E  840
+F  18.9
+
+27  The graph shows the speed of an object over 12 seconds. What is its average speed during the 12 seconds?
+
+A  8.0 m/s
+B  8.5 m/s
+C  9.0 m/s
+D  9.125 m/s
+E  9.25 m/s
+F  10.0 m/s
+
+
+4. Module 1 answer key and author notes
+Strong-question labels are shown here, not in the candidate paper. Each calibration note identifies a verified mechanism or states when only the broader official specimen style is close.
+Answer key
+Question 1
+Profile: Medium | M1.2 Units | 60 seconds
+Correct answer: D
+Solution: 0.72 m³ = 720 litres and 8 minutes = 480 seconds. The rate is 720 / 480 = 1.5 L/s.
+Tip: Convert both units before dividing.
+Distractor map
+A: Finds 0.0015 m³/s but leaves the numerical value unchanged when relabelling it in litres.
+B: Calculates 0.72 / 8 and labels the result L/s.
+C: Uses 72 litres instead of 720 litres.
+E: Uses 80 seconds for 8 minutes.
+F: Divides 720 litres by 8 but forgets that the time is in minutes.
+Calibration: NSAA 2023, Part A, Q11: short multi-stage rate calculation.
+Question 2
+Profile: Medium | M2.9 Number | 75 seconds
+Correct answer: B
+Solution: Let x = 0.2777.... Then 10x = 2.7777.... Subtracting gives 9x = 2.5, so x = 2.5 / 9 = 5/18.
+Tip: Shift until the recurring parts line up, then subtract.
+Distractor map
+A: Rounds the decimal to a familiar quarter.
+C: Rounds 0.2777... to 0.28 before converting.
+D: Places the recurring digit over 27 without accounting for the non-recurring 2.
+E: Treats both displayed digits as a two-digit recurring block.
+F: Uses an incorrect denominator after multiplying by 10.
+Calibration: NSAA 2023, Part A, Q2: rapid testing of numerical equivalence.
+Question 3
+Profile: Medium | M2.3 Number | 60 seconds
+Correct answer: F
+Solution: The lowest common multiple of 18 and 24 is 72 seconds. In 360 seconds the common flashes occur at 0, 72, 144, 216, 288 and 360 seconds, giving 6 flashes.
+Tip: Check whether the starting and ending instants are included.
+Distractor map
+A: Counts only the initial flash.
+B: Uses a common interval that is too large.
+C: Uses 120 seconds as the common interval.
+D: Counts only the flashes strictly between the endpoints.
+E: Finds five 72-second intervals but forgets the initial flash.
+Calibration: Official ESAT Mathematics 1 specimen: broader verified short number-structure style; no close archive item.
+Question 4
+Profile: Easy | M2.7 Number | 45 seconds
+Correct answer: A
+Solution: 27^(2/3) = (cube root of 27)² = 9, while 9^(-1/2) = 1/3. Their product is 3.
+Tip: Interpret a fractional power as a root and a negative power as a reciprocal.
+Distractor map
+B: Applies the reciprocal to the whole product.
+C: Cancels the two bases as if they were equal.
+D: Treats 9^(-1/2) as 1.
+E: Takes only one of the required roots.
+Calibration: NSAA 2022, Part A, Q1: fractional-index simplification.
+Question 5
+★ Strong question
+Profile: Hard | M2.12 Number | 90 seconds
+Correct answer: E
+Solution: The upper bounds are 7.25 cm and 3.05 cm. Their product is 7.25 × 3.05 = 22.1125 cm².
+Tip: For a positive product, use both upper bounds.
+Distractor map
+A: Multiplies the stated measurements rather than their bounds.
+B: Uses both lower bounds: 7.15 × 2.95.
+C: Uses the upper length but the stated width.
+D: Uses the stated length but the upper width.
+F: Treats rounding to 0.1 cm as allowing an extra 0.5 cm.
+Calibration: Official ESAT Mathematics 1 specimen: broader verified numerical-accuracy style; no close archive item.
+Question 6
+★ Strong question
+Profile: Medium | M3.5 Ratio and proportion | 75 seconds
+Correct answer: C
+Solution: Write the original amounts as 2k and 7k. Then 2k:(7k + 6) = 1:5, so 10k = 7k + 6 and k = 2. The original volume is 9k = 18 litres.
+Tip: Keep the unchanged amount, syrup, fixed in both ratios.
+Distractor map
+A: Gives the original amount of syrup only.
+B: Gives the original amount of water only.
+D: Gives the final volume after the extra water is added.
+E: Subtracts the added water from the original total.
+F: Uses the final ratio parts with the original scale factor.
+Calibration: NSAA 2023, Part A, Q14: linked proportional relationships with a hidden scale factor.
+Question 7
+Profile: Easy | M3.8 Ratio and proportion | 45 seconds
+Correct answer: G
+Solution: After the reduction, the price is 80% of the original. Returning from 80 to 100 is an increase of 20/80 = 25%.
+Tip: Percentage changes use the current value as the base.
+Distractor map
+A: Takes 20% of the reduced value and mistakes that amount for the required percentage.
+B: Assumes equal percentage decreases and increases cancel.
+C: Uses 20/90 rather than 20/80.
+D: Uses an approximate adjustment instead of the exact ratio.
+E: Divides the remaining 80% by the lost 20%.
+F: Reports the remaining percentage rather than the required increase.
+Calibration: ENGAA 2018, Part A, Q17: successive percentage multipliers.
+Question 8
+Profile: Medium | M3.9 Ratio and proportion | 70 seconds
+Correct answer: C
+Solution: Since y = k/√x, 12 = k/2 and k = 24. When x = 9, y = 24/3 = 8.
+Tip: Translate the words into a formula before substituting.
+Distractor map
+A: Treats y as inversely proportional to x².
+B: Uses the ratio 4:9 directly.
+D: Confuses the new x-value with y.
+E: Uses direct proportion to √x.
+F: Uses direct proportion to x.
+Calibration: NSAA 2022, Part A, Q10: inverse-square proportional reasoning.
+Question 9
+★ Strong question
+Profile: Hard | M3.10 Ratio and proportion | 85 seconds
+Correct answer: A
+Solution: Volumes scale with the cube of the length scale factor. The larger volume is 162 × (5/3)³ = 162 × 125/27 = 750 cm³.
+Tip: Length, area and volume use powers 1, 2 and 3 respectively.
+Distractor map
+B: Uses the square of the scale factor, which is for area.
+C: Uses the length scale factor only.
+D: Multiplies the volume by 3.
+E: Applies an extra factor after cubing the scale factor.
+F: Multiplies by 10 rather than using a scale factor.
+Calibration: ENGAA 2018, Part A, Q9: similar containers and cubic scaling.
+Question 10
+Profile: Medium | M4.7 Algebra | 80 seconds
+Correct answer: F
+Solution: Multiply by x + r: px + pr = 3x - q. Hence x(p - 3) = -(q + pr), so x = (q + pr)/(3 - p).
+Tip: Collect every x-term on one side before dividing.
+Distractor map
+A: Changes the sign of pr but not q.
+B: Keeps the numerator positive without reversing the denominator sign.
+C: Makes inconsistent sign changes when collecting terms.
+D: Divides each visible term by 3 before clearing the fraction.
+E: Fails to multiply r by p.
+Calibration: NSAA 2023, Part A, Q3: rearrangement with the target variable inside a fraction.
+Question 11
+★ Strong question
+Profile: Hard | M4.6 Algebra | 90 seconds
+Correct answer: B
+Solution: Factorise: x² - 9 = (x - 3)(x + 3) and x² + x - 6 = (x + 3)(x - 2). Cancelling x + 3 gives (x - 3)/(x - 2).
+Tip: Factorise both numerator and denominator fully before cancelling.
+Distractor map
+A: Cancels x - 3 instead of the common factor x + 3.
+C: Cancels the wrong denominator factor.
+D: Factorises x² + x - 6 incorrectly as (x + 3)(x + 2).
+E: Cancels every term across addition and subtraction.
+F: Cancels the entire denominator rather than only a common factor.
+Calibration: NSAA 2022, Part A, Q7: factorisation followed by rational-expression cancellation.
+Question 12
+Profile: Easy | M4.15 Algebra | 60 seconds
+Correct answer: E
+Solution: Let the adult and child prices be a and c. The equations are 3a + 2c = 42 and 2a + 5c = 50. Eliminating c gives 11a = 110, so a = 10.
+Tip: Scale the equations so one variable has matching coefficients.
+Distractor map
+A: Finds the child price and reports it as the adult price.
+B: Averages the ticket prices without weighting the ticket counts correctly.
+C: Uses the difference in totals but ignores the changed numbers of both ticket types.
+D: Divides £42 by a rounded total of ticket types.
+F: Divides the first total by the number of adult tickets only.
+Calibration: ENGAA 2018, Part A, Q20: compact contextual modelling with two unknown quantities.
+Question 13
+Profile: Easy | M4.16 Algebra | 55 seconds
+Correct answer: D
+Solution: Multiplying by x gives x² - 5x + 6 = 0, so (x - 2)(x - 3) = 0. The greater solution is 3.
+Tip: Turn the reciprocal equation into a quadratic.
+Distractor map
+A: Uses the constant term as a solution.
+B: Chooses the smaller valid solution.
+C: Uses the midpoint of the two roots.
+E: Uses the coefficient sum rather than solving the quadratic.
+F: Uses the numerator of the reciprocal term as the answer.
+Calibration: NSAA 2023, Part A, Q8: extracting a required expression from quadratic roots.
+Question 14
+Profile: Medium | M4.17 Algebra | 70 seconds
+Correct answer: G
+Solution: Expanding gives -5 + 2x ≥ 5x + 1. Therefore -6 ≥ 3x, so x ≤ -2.
+Tip: When dividing an inequality by a negative number, reverse its direction.
+Distractor map
+A: Does not reverse the inequality after effectively dividing by -3.
+B: Finds the correct boundary but excludes equality.
+C: Both reverses the direction incorrectly and excludes equality.
+D: Loses the negative sign on the boundary.
+E: Loses the negative sign and reverses the direction.
+F: Loses the negative sign and excludes equality.
+Calibration: NSAA 2022, Part A, Q3: multi-step linear inequality with a direction trap.
+Question 15
+★ Strong question
+Profile: Hard | M4.19 Algebra | 85 seconds
+Correct answer: B
+Solution: The first differences are 5, 7, 9, so the constant second difference is 2 and the n² coefficient is 1. The rule is n² + 2n - 1, giving 100 + 20 - 1 = 119.
+Tip: A second difference of 2 means the n² coefficient is 1.
+Distractor map
+A: Uses n² - 1 and ignores the linear part.
+C: Uses n² + 2n but forgets the constant -1.
+D: Recognises a square-like pattern and chooses 11².
+E: Continues the first differences with an incorrect step size.
+F: Adds all later differences incorrectly instead of finding the nth-term rule.
+Calibration: ENGAA 2018, Part A, Q25: identifying and using a quadratic sequence rule.
+Question 16
+Profile: Medium | M4.11 Algebra | 55 seconds
+Correct answer: F
+Solution: Complete the square: x² - 6x + 13 = (x - 3)² + 4. The square is smallest at 0, so the minimum value is 4.
+Tip: Complete the square to expose the minimum directly.
+Distractor map
+A: Substitutes x = 3 but mishandles the signs.
+B: Reports the negative of the correct constant.
+C: Assumes any square-based expression can reach zero.
+D: Reports the x-coordinate of the turning point.
+E: Uses the constant term without considering the x-terms.
+Calibration: NSAA 2023, Part A, Q16: minimum of a quadratic expression.
+Question 17
+Profile: Medium | M5.7 Geometry | 80 seconds
+Correct answer: C
+Solution: The vertical rise from A to M is 3 cm. Using three-dimensional Pythagoras, AM² = 12² + 4² + 3² = 169, so AM = 13 cm.
+Tip: Use the midpoint height, not the full height.
+Distractor map
+A: Uses only the 3 cm by 4 cm end face.
+B: Finds the floor diagonal and ignores the vertical rise.
+D: Uses the full 6 cm height instead of the midpoint height.
+E: Uses 5 cm as the vertical component after forming a 3-4-5 triangle.
+F: Adds the three perpendicular lengths directly.
+Calibration: NSAA 2022, Part A, Q2: layered Pythagorean reasoning in a compact geometry problem.
+Question 18
+★ Strong question
+Profile: Hard | M5.9 Geometry | 90 seconds
+Correct answer: A
+Solution: OA is perpendicular to the tangent, so angle OAB = 90° - 38° = 52°. Since OA = OB, angle OBA is also 52°. Therefore angle AOB = 180° - 104° = 76°.
+Tip: A radius meets a tangent at 90°, then use the isosceles triangle.
+Distractor map
+B: Copies the given tangent-chord angle.
+C: Stops after finding angle OAB.
+D: Uses only the radius-tangent fact.
+E: Adds the two equal base angles and reports their sum.
+F: Subtracts 38° from 180° directly.
+Calibration: ENGAA 2018, Part A, Q21: circle theorem reasoning involving a tangent and radii.
+Question 19
+Profile: Easy | M5.16 Geometry | 60 seconds
+Correct answer: E
+Solution: The area is 120/360 × π(6² - 3²) = 1/3 × 27π = 9π cm².
+Tip: Subtract the two sector areas, not the radii.
+Distractor map
+A: Uses the difference of the radii only.
+B: Uses 120/360 × π × 6.
+C: Uses the difference 6² - 3² but divides by an incorrect angle factor.
+D: Finds the full annulus area and forgets the 120° fraction.
+F: Uses the full outer circle only.
+Calibration: Official ESAT Mathematics 1 specimen: broader verified circle-mensuration style; no close archive item.
+Question 20
+★ Strong question
+Profile: Medium | M5.17 Geometry | 80 seconds
+Correct answer: D
+Solution: The full triangle has area 36 + 64 = 100 cm². The linear scale factor from triangle ADE to triangle ABC is √(36/100) = 3/5. Thus 6/AB = 3/5, so AB = 10 cm.
+Tip: Convert the area ratio into a length ratio by taking a square root.
+Distractor map
+A: Uses 36:64 as a direct length ratio.
+B: Uses the trapezium area as though it were the full triangle area.
+C: Adds half the given side without using similarity.
+E: Uses the area ratio 1:2 as a length ratio.
+F: Multiplies 6 by 100/36 without taking a square root.
+Calibration: NSAA 2022, Part A, Q16: parallel-line similarity with an algebraic scale factor.
+Question 21
+★ Strong question
+Profile: Hard | M5.18 Geometry | 90 seconds
+Correct answer: G
+Solution: tan 60° = (x + 2)/x = √3. Hence x(√3 - 1) = 2, so x = 2/(√3 - 1) = 1 + √3.
+Tip: Use tan because the two named sides are opposite and adjacent.
+Distractor map
+A: Stops after rationalising with the wrong sign.
+B: Treats tan 60° as 3.
+C: Reports tan 60° itself.
+D: Ignores the trigonometric ratio and uses the added length.
+E: Multiplies 2 by √3 instead of solving the linear equation.
+F: Uses tan 60° ≈ 2.
+Calibration: NSAA 2023, Part A, Q10: exact trigonometry embedded in an algebraic length problem.
+Question 22
+Profile: Easy | M6.3 Statistics | 55 seconds
+Correct answer: A
+Solution: The total score is 8 × 12 + 12 × 20 = 336. Dividing by 20 gives 16.8.
+Tip: Multiply each mean by its group size before combining.
+Distractor map
+B: Takes the unweighted mean of 12 and 20.
+C: Rounds the exact mean to the nearest whole number.
+D: Uses the larger group mean only.
+E: Uses an incorrect total of 264 before dividing by 20.
+F: Uses an incorrect weighting between the group means.
+Calibration: NSAA 2023, Part A, Q4: linking mean and other summary information.
+Question 23
+★ Strong question
+Profile: Medium | M7.5 Probability | 70 seconds
+Correct answer: D
+Solution: There are 4 × 3 = 12 possible numbers. A number is divisible by 3 when its digit sum is divisible by 3. The favourable numbers are 12, 21, 24 and 42, so the probability is 4/12 = 1/3.
+Tip: Use the digit-sum test before listing every number.
+Distractor map
+A: Counts only one unordered favourable pair.
+B: Counts three favourable outcomes instead of four.
+C: Uses 9 as the size of the sample space.
+E: Counts all numbers containing 3 as favourable.
+F: Counts favourable digits rather than ordered two-digit outcomes.
+Calibration: NSAA 2022, Part A, Q17: systematic selection from a small finite set.
+Question 24
+Profile: Medium | M6.2 Statistics | 70 seconds
+Correct answer: C
+Solution: The class frequencies are 4 × 2 = 8, 6 × 3 = 18 and 10 × 1 = 10. The 18th and 19th values are both in the second class, 4 ≤ t < 10.
+Tip: In a histogram, frequency is bar area, not bar height.
+Distractor map
+A: Uses the tallest value on the vertical scale as the median position.
+B: Combines the first two classes instead of identifying the containing class.
+D: Uses a cumulative interval rather than one class.
+E: Treats the widest bar as containing the median.
+F: Assumes grouped data cannot locate a median class.
+Calibration: Official ESAT Mathematics 1 specimen: broader verified grouped-data interpretation style; no close archive item.
+Question 25
+Profile: Medium | M7.7 Probability | 70 seconds
+Correct answer: F
+Solution: Exactly one red can occur as red then blue or blue then red. The probability is (3/5 × 2/4) + (2/5 × 3/4) = 12/20 = 3/5.
+Tip: Include both possible orders.
+Distractor map
+A: Multiplies the counts rather than the probabilities.
+B: Counts only red then blue.
+C: Treats the second draw as if the first counter were replaced.
+D: Assumes the two colours make the event equally likely.
+E: Subtracts the probability of two reds only from 1.
+Calibration: ENGAA 2018, Part A, Q27: dependent draws without replacement.
+Question 26
+Profile: Easy | M1.2 Units | 55 seconds
+Correct answer: B
+Solution: 1.26 kg = 1260 g. Density = mass/volume = 1260/150 = 8.4 g/cm³.
+Tip: Match the mass unit to the required density unit before dividing.
+Distractor map
+A: Divides 1.26 kg by 150 cm³ without converting kilograms to grams.
+C: Moves the decimal one place too far after division.
+D: Converts 1.26 kg to 126 g.
+E: Divides by 1.5 rather than 150.
+F: Multiplies the mass and volume instead of dividing.
+Calibration: ENGAA 2018, Part A, Q20: density with unit-aware simultaneous quantities.
+Question 27
+★ Strong question
+Profile: Medium | M4.14 Algebra | 85 seconds
+Correct answer: E
+Solution: Distance is the area under the graph: 1/2 × 4 × 12 + 5 × 12 + 1/2 × (12 + 6) × 3 = 24 + 60 + 27 = 111 m. Average speed = 111/12 = 9.25 m/s.
+Tip: Find total area first, then divide by total time.
+Distractor map
+A: Averages selected labelled speeds without weighting by time.
+B: Finds the final trapezium area incorrectly.
+C: Rounds the total distance before division.
+D: Uses 109.5 m as the total area.
+F: Uses the mean of the maximum and final speeds.
+Calibration: NSAA 2022, Part A, Q12: average speed from unequal journey stages.
+
+5. Module 2 candidate paper
+MODULE 2
+ESAT Mathematics 1
+Candidate paper
+Instructions
+Choose one answer for each question.
+Each correct answer scores one mark. There is no penalty for an incorrect answer.
+Diagrams marked 'not to scale' must not be measured.
+The strong-question labels appear only in the author notes so the timed paper remains blind.
+Begin when ready.
+
+1  A 3D printer uses 18 g of filament every 30 minutes at a constant rate. How many kilograms of filament does it use in 25 hours?
+A  0.09 kg
+B  0.9 kg
+C  9 kg
+D  18 kg
+E  36 kg
+F  900 kg
+
+2  Water flows at 7200 cm³ per minute. What is this rate in litres per second?
+A  0.002 L/s
+B  0.012 L/s
+C  0.072 L/s
+D  1.2 L/s
+E  0.12 L/s
+F  7.2 L/s
+
+3  Which expression is equal to 4/(√5 - 1)?
+A  √5 - 1
+B  (√5 + 1)/4
+C  √5 + 1
+D  5 + √5
+E  4/(√5 + 1)
+F  2 + √5
+
+4  What is (6 × 10^7)(4 × 10^(-3))/(8 × 10²) in standard form?
+A  3 × 10^(-2)
+B  3 × 10^(-1)
+C  3
+D  3 × 10
+E  7.5 × 10
+F  2.4 × 10²
+G  3 × 10²
+
+5  A positive number x rounds to 3.7 to the nearest 0.1. Which interval contains every possible value of x?
+A  3.65 ≤ x < 3.75
+B  3.65 < x ≤ 3.75
+C  3.6 ≤ x < 3.8
+D  3.69 ≤ x < 3.71
+E  3.7 ≤ x < 3.8
+
+6  A four-digit code uses each of the digits 1, 2, 3 and 4 exactly once. How many of the possible codes are even?
+A  4
+B  6
+C  8
+D  12
+E  16
+F  24
+
+7  A map has scale 1:25 000. A lake has area 6 cm² on the map. What is its actual area in hectares?
+A  0.0375 ha
+B  0.375 ha
+C  3.75 ha
+D  15 ha
+E  25 ha
+F  37.5 ha
+G  375 ha
+
+8  After a 12% reduction, a jacket costs £176. What was its original price?
+A  £200
+B  £197.12
+C  £188
+D  £155
+E  £211.20
+
+9  For positive variables, t is directly proportional to d and inversely proportional to v². When d = 8 and v = 2, t = 6. What is t when d = 15 and v = 5?
+A  0.72
+B  1.2
+C  1.5
+D  1.8
+E  3.0
+F  4.5
+G  11.25
+
+10  A population of 2500 increases by 20% in one year and then decreases by 10% in the next year. What is the population after the two changes?
+A  2500
+B  2700
+C  2750
+D  2800
+E  3000
+F  2250
+
+11  For x ≠ -1 and x ≠ 1, which expression is equal to 1/(x - 1) - 1/(x + 1)?
+A  0
+B  2/(x + 1)
+C  2/(x - 1)
+D  -2/(x² - 1)
+E  2/(x² - 1)
+F  1/(x² - 1)
+
+12  A line passes through (2, 5) and is perpendicular to y = 1/2 x - 3. What is the y-intercept of the line?
+A  -9
+B  -1
+C  9
+D  1
+E  5
+F  13
+
+13  The line y = x + 2 meets the circle x² + y² = 20 at two points. What is the positive x-coordinate of an intersection?
+A  -4
+B  -2
+C  0
+D  1
+E  4
+F  6
+G  2
+
+14  The formula E = mv²/2 is used with m = 3 and v = 4. What is E?
+A  6
+B  8
+C  12
+D  16
+E  48
+F  24
+
+15  The line y = 4x + k is tangent to the parabola y = x². What is k?
+A  -16
+B  -8
+C  -4
+D  0
+E  4
+F  8
+
+16  What are the coordinates of the minimum point of y = (x - 2)² - 3?
+A  (-2, -3)
+B  (2, 3)
+C  (-2, 3)
+D  (3, -2)
+E  (2, -3)
+F  (0, 1)
+
+17  In kite ABCD, AB = AD and CB = CD. Which congruence criterion proves that triangles ABC and ADC are congruent?
+
+Diagram not to scale
+A  SSS
+B  SAS
+C  ASA
+D  RHS
+E  No standard criterion applies
+
+18  Each exterior angle of a regular polygon is 24°. How many sides does the polygon have?
+A  8
+B  10
+C  12
+D  15
+E  18
+F  24
+
+19  The plan shows stacks of identical cubes. Each number is the height of a stack. Viewed from the south, what are the visible maximum heights from left to right?
+
+A  2, 1, 4
+B  2, 3, 4
+C  1, 3, 2
+D  4, 3, 2
+E  3, 4, 2
+F  4, 1, 2
+
+20  A running track is formed from a rectangle with a semicircle at each end. Its total length is 14 m and each semicircle has radius 3 m. What is the perimeter?
+
+Diagram not to scale
+A  14 + 3π m
+B  16 + 3π m
+C  14 + 6π m
+D  22 + 3π m
+E  22 + 6π m
+F  28 + 6π m
+G  16 + 6π m
+
+21  The points A(2, 1) and B(6, 5) are joined. At what x-coordinate does the perpendicular bisector of AB cross the x-axis?
+A  -1
+B  1
+C  3
+D  4
+E  5
+F  7
+G  9
+
+22  A right square-based pyramid has base side 12 cm and vertical height TO = 6 cm. O is the centre of the base and C is a base vertex. What is the sloping edge TC?
+
+Diagram not to scale
+A  6 cm
+B  6√2 cm
+C  12 cm
+D  6√3 cm
+E  12√2 cm
+F  18 cm
+
+23  A set of seven numbers has median 8 and range 12. An eighth number, 30, is added. Which measures must increase?
+A  The mean and range only
+B  The mean only
+C  The range only
+D  The mean and median only
+E  The median and range only
+F  The mean, median and range
+
+24  The scatter graph shows practice time and score. Which statement is best supported?
+
+A  There is no correlation.
+B  There is negative correlation.
+C  Removing the isolated point would weaken the positive correlation.
+D  The graph proves that extra practice causes a higher score.
+E  There is positive correlation, and removing the isolated point would strengthen it.
+F  A line of best fit must pass through the origin.
+
+25  In a group of 60 students, 35 study Physics, 20 study Music, and 12 study both. One student is chosen at random from those who study Physics. What is the probability that the student also studies Music?
+A  1/5
+B  12/35
+C  3/5
+D  4/7
+E  23/60
+F  7/12
+
+26  A fair six-sided die is rolled twice. What is the probability that the product of the two scores is even?
+A  1/4
+B  1/2
+C  3/4
+D  5/6
+E  2/3
+
+27  A, B and C lie on a circle. The line through A is tangent to the circle. The angle between the tangent and chord AB is 42°, and angle BAC is 17°. What is angle ABC?
+
+Diagram not to scale
+A  17°
+B  42°
+C  59°
+D  79°
+E  96°
+F  121°
+G  138°
+
+
+6. Module 2 answer key and author notes
+Strong-question labels are shown here, not in the candidate paper. Each calibration note identifies a verified mechanism or states when only the broader official specimen style is close.
+Answer key
+Question 1
+Profile: Medium | M1.1 Units | 60 seconds
+Correct answer: B
+Solution: The printer uses 36 g per hour. In 25 hours it uses 36 × 25 = 900 g = 0.9 kg.
+Tip: Convert the time rate first, then convert grams to kilograms.
+Distractor map
+A: Divides by 10 once too many when converting grams to kilograms.
+C: Divides grams by 100 instead of 1000.
+D: Uses the 18 g figure as if it were kilograms.
+E: Reports the hourly rate as a mass in kilograms.
+F: Finds 900 g but relabels it as kilograms.
+Calibration: NSAA 2023, Part A, Q11: efficient conversion within a rate problem.
+Question 2
+Profile: Easy | M1.2 Units | 50 seconds
+Correct answer: E
+Solution: 7200 cm³ = 7.2 litres. Dividing by 60 gives 0.12 L/s.
+Tip: Remember that 1000 cm³ equals 1 litre.
+Distractor map
+A: Divides by both 60 and 60 again.
+B: Converts 7200 cm³ to 0.72 litres before dividing.
+C: Divides by 100 instead of 60.
+D: Moves the decimal one place too far after dividing.
+F: Converts the volume but leaves the rate per minute.
+Calibration: Official ESAT Mathematics 1 specimen: broader verified unit-conversion style; no close archive item.
+Question 3
+Profile: Medium | M2.11 Number | 70 seconds
+Correct answer: C
+Solution: Multiply top and bottom by √5 + 1. The denominator becomes 5 - 1 = 4, so the expression simplifies to √5 + 1.
+Tip: Use the conjugate of the denominator.
+Distractor map
+A: Cancels the 4 without changing the sign in the conjugate.
+B: Multiplies the denominator by the conjugate but not the numerator.
+D: Forgets to divide the expanded numerator by 4.
+E: Changes the sign in the denominator without rationalising.
+F: Treats √5 as 3 during simplification.
+Calibration: NSAA 2023, Part A, Q8: exact surd algebra within a short calculation.
+Question 4
+Profile: Medium | M2.8 Number | 75 seconds
+Correct answer: G
+Solution: The number part is 6 × 4 / 8 = 3. The power is 10^(7 - 3 - 2) = 10². Therefore the result is 3 × 10².
+Tip: Handle the number part and the powers of ten separately.
+Distractor map
+A: Subtracts all exponents without respecting the negative exponent in the numerator.
+B: Combines the powers as 10^(-1).
+C: Cancels all powers of ten.
+D: Leaves one power of ten after an exponent error.
+E: Divides 6 by 8 before multiplying by 4, but loses the power of ten.
+F: Multiplies 6 and 4 but does not divide the coefficient by 8.
+Calibration: NSAA 2022, Part A, Q10: standard form combined with proportional reasoning.
+Question 5
+Profile: Easy | M2.13 Number | 50 seconds
+Correct answer: A
+Solution: The half-unit is 0.05. Values from 3.65 up to, but not including, 3.75 round to 3.7.
+Tip: The lower endpoint is included and the upper endpoint is excluded.
+Distractor map
+B: Reverses which endpoint is included.
+C: Uses the displayed precision as the half-width.
+D: Uses 0.01 as the rounding half-width.
+E: Assumes all possible values must be at least the rounded value.
+Calibration: Official ESAT Mathematics 1 specimen: broader verified rounding-interval style; no close archive item.
+Question 6
+Profile: Medium | M2.5 Number | 70 seconds
+Correct answer: D
+Solution: The final digit must be 2 or 4, giving 2 choices. The remaining three digits can be arranged in 3! = 6 ways, so there are 2 × 6 = 12 codes.
+Tip: Choose the restricted final digit first.
+Distractor map
+A: Chooses only the final digit and one arrangement of the others.
+B: Counts arrangements after fixing one particular even final digit only.
+C: Uses 2³ for the remaining positions.
+E: Uses 4² without enforcing that all digits are used once.
+F: Counts all 4! codes without restricting the final digit.
+Calibration: NSAA 2022, Part A, Q17: systematic counting of selections from a small set.
+Question 7
+★ Strong question
+Profile: Hard | M3.1 Ratio and proportion | 90 seconds
+Correct answer: F
+Solution: One map centimetre represents 250 m, so 1 cm² represents 250² = 62 500 m². Thus 6 cm² represents 375 000 m² = 37.5 hectares.
+Tip: Square a length scale when converting area.
+Distractor map
+A: Uses the length scale and then converts square metres to hectares twice.
+B: Misses a factor of 100 in the hectare conversion.
+C: Misses a factor of 10 in the final conversion.
+D: Uses 2500 m² for each map square centimetre.
+E: Uses the map denominator as the answer in hectares.
+G: Treats 1000 m² as one hectare.
+Calibration: ENGAA 2018, Part A, Q13: scale modelling with cubic, rather than linear, conversion.
+Question 8
+Profile: Easy | M3.8 Ratio and proportion | 50 seconds
+Correct answer: A
+Solution: The reduced price is 88% of the original, so the original price is 176/0.88 = £200.
+Tip: Divide by the multiplier 0.88 rather than adding 12%.
+Distractor map
+B: Adds 12% of £176 to the reduced price.
+C: Adds £12 rather than 12%.
+D: Subtracts 12% again.
+E: Uses 176 × 1.2 instead of reversing the 12% decrease.
+Calibration: NSAA 2022, Part A, Q5: reverse successive percentage changes.
+Question 9
+★ Strong question
+Profile: Hard | M3.9 Ratio and proportion | 85 seconds
+Correct answer: D
+Solution: Write t = kd/v². From 6 = 8k/4, k = 3. Therefore t = 3 × 15/25 = 45/25 = 1.8.
+Tip: Put every proportional relationship into one formula.
+Distractor map
+A: Uses v rather than v² and then inverts the final ratio.
+B: Uses inverse proportion to v rather than v².
+C: Uses k = 2.5 from an incorrect rearrangement.
+E: Divides by v rather than v² after finding k.
+F: Uses direct proportion to v².
+G: Scales t by d and v in the same direction.
+Calibration: NSAA 2023, Part A, Q14: chained direct and inverse proportion.
+Question 10
+Profile: Medium | M3.11 Ratio and proportion | 65 seconds
+Correct answer: B
+Solution: Use successive multipliers: 2500 × 1.20 × 0.90 = 2500 × 1.08 = 2700.
+Tip: Apply percentage changes multiplicatively, in order.
+Distractor map
+A: Assumes a 20% rise and 10% fall cancel to no change.
+C: Applies a net 10% increase to the original value.
+D: Uses an incorrect combined multiplier of 1.12.
+E: Applies only the 20% increase.
+F: Applies only the 10% decrease.
+Calibration: ENGAA 2018, Part A, Q17: successive multiplicative percentage changes.
+Question 11
+★ Strong question
+Profile: Hard | M4.6 Algebra | 90 seconds
+Correct answer: E
+Solution: Using the common denominator (x - 1)(x + 1), the numerator is (x + 1) - (x - 1) = 2. Hence the result is 2/(x² - 1).
+Tip: Keep brackets around each numerator when subtracting fractions.
+Distractor map
+A: Cancels the two fractions because their numerators match.
+B: Cancels x - 1 across a subtraction.
+C: Cancels x + 1 across a subtraction.
+D: Reverses the subtraction in the combined numerator.
+F: Finds the correct denominator but loses the numerator 2.
+Calibration: NSAA 2022, Part A, Q7: rational-expression simplification with factorised denominators.
+Question 12
+Profile: Easy | M4.10 Algebra | 60 seconds
+Correct answer: C
+Solution: The perpendicular gradient is -2. Using y - 5 = -2(x - 2) gives y = -2x + 9, so the y-intercept is 9.
+Tip: Perpendicular gradients multiply to -1.
+Distractor map
+A: Uses the correct magnitude but the wrong intercept sign.
+B: Uses only the negative reciprocal as the intercept.
+D: Uses the original gradient's reciprocal without its sign.
+E: Reports the given point's y-coordinate.
+F: Adds rather than subtracts the gradient contribution at x = 2.
+Calibration: NSAA 2023, Part A, Q12: perpendicular gradients with algebraic coordinates.
+Question 13
+★ Strong question
+Profile: Medium | M4.15 Algebra | 80 seconds
+Correct answer: G
+Solution: Substitute y = x + 2: x² + (x + 2)² = 20. This gives x² + 2x - 8 = 0, so (x + 4)(x - 2) = 0. The positive x-coordinate is 2.
+Tip: Substitute the linear equation into the quadratic equation.
+Distractor map
+A: Chooses the negative intersection.
+B: Uses the negative of the line's constant term.
+C: Assumes the circle meets the line on the y-axis.
+D: Halves the positive root.
+E: Uses the magnitude of the negative root.
+F: Adds the magnitudes of the two roots.
+Calibration: NSAA 2023, Part A, Q8: a short quadratic created from another algebraic condition.
+Question 14
+Profile: Easy | M4.3 Algebra | 50 seconds
+Correct answer: F
+Solution: E = 3 × 4² / 2 = 3 × 16 / 2 = 24.
+Tip: Square v before multiplying by m.
+Distractor map
+A: Calculates mv/2 without squaring v.
+B: Calculates v²/2 and omits m.
+C: Squares v, subtracts m, then halves approximately.
+D: Reports v² only.
+E: Calculates mv² but forgets to divide by 2.
+Calibration: ENGAA 2018, Part A, Q20: direct substitution into a contextual formula.
+Question 15
+★ Strong question
+Profile: Hard | M4.16 Algebra | 90 seconds
+Correct answer: C
+Solution: At an intersection, x² = 4x + k, so x² - 4x - k = 0. Tangency means one repeated root, so the discriminant is 16 + 4k = 0. Hence k = -4.
+Tip: A tangent gives a quadratic with exactly one repeated solution.
+Distractor map
+A: Sets the discriminant to 16 rather than zero.
+B: Uses b² + 2ac instead of b² - 4ac.
+D: Assumes the standard parabola is tangent only to a line through the origin.
+E: Loses the negative sign when solving for k.
+F: Halves the wrong term in the discriminant equation.
+Calibration: NSAA 2022, Part A, Q14: using root structure to determine a quadratic parameter.
+Question 16
+Profile: Medium | M4.11 Algebra | 65 seconds
+Correct answer: E
+Solution: The square is smallest when x - 2 = 0, so x = 2. Then y = -3. The minimum point is (2, -3).
+Tip: Read the turning point directly from completed-square form.
+Distractor map
+A: Uses x = -2 instead of x = 2.
+B: Changes the sign of the vertical shift.
+C: Changes both shift signs.
+D: Swaps the coordinate values.
+F: Substitutes x = 0 and reports that point instead of the minimum.
+Calibration: NSAA 2022, Part A, Q20: interpreting the minimum point of a family of quadratics.
+Question 17
+Profile: Easy | M5.4 Geometry | 50 seconds
+Correct answer: A
+Solution: AB = AD, BC = DC, and AC is common to both triangles. All three corresponding sides are equal, so SSS applies.
+Tip: Remember to include the shared side AC.
+Distractor map
+B: Uses two side pairs but assumes an equal included angle without proving it.
+C: No pair of equal angles is given initially.
+D: There is no given right angle or hypotenuse information.
+E: Misses that AC is a common third side.
+Calibration: Official ESAT Mathematics 1 specimen: broader verified short congruence style; no close archive item.
+Question 18
+Profile: Medium | M5.2 Geometry | 70 seconds
+Correct answer: D
+Solution: The exterior angles sum to 360°, so the number of sides is 360/24 = 15.
+Tip: For a regular polygon, number of sides equals 360 divided by one exterior angle.
+Distractor map
+A: Uses 180/24 and rounds up.
+B: Subtracts the exterior angle from 180, then uses the wrong relationship.
+C: Uses 360/30 after confusing 24° with a nearby standard angle.
+E: Uses 180/10 after an interior-angle detour.
+F: Reports the angle itself as the number of sides.
+Calibration: NSAA 2022, Part A, Q18: linked interior angles of regular polygons.
+Question 19
+Profile: Medium | M5.12 Geometry | 75 seconds
+Correct answer: B
+Solution: Looking north from the south, each visible column shows the greater height in its north-south pair. The maxima are max(2,1), max(1,3), max(4,2) = 2, 3, 4.
+Tip: For each line of sight, keep only the tallest stack.
+Distractor map
+A: Reads only the north row.
+C: Reads only the south row.
+D: Finds the correct maxima but reverses their order.
+E: Takes maxima along rows instead of viewing columns.
+F: Mixes the two rows without taking maxima.
+Calibration: Official ESAT Mathematics 1 specimen: broader verified plans-and-elevations style; no close archive item.
+Question 20
+Profile: Medium | M5.15 Geometry | 75 seconds
+Correct answer: G
+Solution: The two semicircles form a full circle, contributing 6π m. The straight part has length 14 - 2(3) = 8 m, and there are two such sides. The perimeter is 16 + 6π m.
+Tip: Subtract both radii from the total length to get one straight section.
+Distractor map
+A: Uses the full 14 m twice incorrectly and only one semicircle arc.
+B: Finds the straight sections correctly but includes only one semicircle arc.
+C: Uses the full total length as the straight contribution.
+D: Adds the diameter to the straight contribution and includes only one semicircle.
+E: Uses 11 m for each straight section.
+F: Counts the total length twice without removing the rounded ends.
+Calibration: Official ESAT Mathematics 1 specimen: broader verified composite-shape mensuration style; no close archive item.
+Question 21
+Profile: Medium | M5.10 Geometry | 85 seconds
+Correct answer: F
+Solution: The midpoint is (4, 3). AB has gradient 1, so the perpendicular gradient is -1. Its equation is y - 3 = -(x - 4), or y = -x + 7. At y = 0, x = 7.
+Tip: A perpendicular bisector needs both the midpoint and the negative reciprocal gradient.
+Distractor map
+A: Uses the perpendicular gradient as the x-intercept.
+B: Uses the original gradient as the intercept.
+C: Reports the midpoint's y-coordinate.
+D: Reports the midpoint's x-coordinate.
+E: Uses the y-coordinate of B.
+G: Adds both midpoint coordinates and the gradient incorrectly.
+Calibration: ENGAA 2018, Part A, Q5 and NSAA 2023, Part A, Q12: line gradients constrained by parallel or perpendicular geometry.
+Question 22
+Profile: Medium | M5.7 Geometry | 80 seconds
+Correct answer: D
+Solution: The centre-to-vertex distance is half the square's diagonal: OC = 6√2 cm. Then TC² = TO² + OC² = 36 + 72 = 108, so TC = 6√3 cm.
+Tip: Find the half-diagonal of the square base before using Pythagoras.
+Distractor map
+A: Uses only the vertical height.
+B: Uses OC as the final answer.
+C: Uses a half-base and the height but misses the second horizontal dimension.
+E: Uses the full base diagonal instead of the half-diagonal.
+F: Adds the height and base side directly.
+Calibration: NSAA 2022, Part A, Q2: compact multi-stage Pythagorean geometry.
+Question 23
+★ Strong question
+Profile: Hard | M6.3 Statistics | 90 seconds
+Correct answer: A
+Solution: The old maximum is at most 20 because the median is 8 and the range is 12. Thus 30 is a new maximum, so the range increases. Every old value is at most 20, so the old mean is below 30 and adding 30 increases the mean. The median may stay at 8 or increase, so it is not forced to increase.
+Tip: Ask what is forced, not what is merely possible.
+Distractor map
+B: Misses that 30 must exceed the old maximum.
+C: Misses that adding a value above every old value must raise the mean.
+D: Assumes the median must increase and misses the range.
+E: Assumes the median must increase and misses the mean.
+F: Assumes the new middle pair must have an average above 8.
+Calibration: NSAA 2023, Part A, Q4: combining constraints on mean, median and mode.
+Question 24
+Profile: Medium | M6.4 Statistics | 65 seconds
+Correct answer: E
+Solution: Most points follow an upward trend, so the correlation is positive. The isolated point at high practice time and low score works against that trend, so removing it would strengthen the correlation. Correlation alone does not prove causation.
+Tip: Describe the trend, then test how the outlier affects it.
+Distractor map
+A: Ignores the clear upward pattern among most points.
+B: Lets the isolated point dominate the overall direction.
+C: Reverses the effect of the isolated point.
+D: Confuses correlation with proof of causation.
+F: Assumes a line of best fit has a compulsory intercept.
+Calibration: Official ESAT Mathematics 1 specimen: broader verified scatter-graph interpretation style; no close archive item.
+Question 25
+Profile: Medium | M7.7 Probability | 75 seconds
+Correct answer: B
+Solution: The sample space is now the 35 Physics students. Of these, 12 also study Music, so the conditional probability is 12/35.
+Tip: After 'from those who', change the denominator to that restricted group.
+Distractor map
+A: Uses 12/60, the probability from the whole group.
+C: Uses 12/20, conditioning on Music instead of Physics.
+D: Uses 20/35, treating every Music student as a Physics student.
+E: Uses the number studying Physics only over the whole group.
+F: Inverts the required conditional probability.
+Calibration: NSAA 2023, Part A, Q20: conditional probability after dependent information.
+Question 26
+Profile: Easy | M7.6 Probability | 55 seconds
+Correct answer: C
+Solution: The product is odd only if both scores are odd. That probability is 3/6 × 3/6 = 1/4. Therefore the probability of an even product is 1 - 1/4 = 3/4.
+Tip: The complement is quicker than listing all 36 outcomes.
+Distractor map
+A: Finds the probability of an odd product and forgets to take the complement.
+B: Assumes even and odd products are equally likely.
+D: Counts only outcomes containing a 1 as odd.
+E: Adds the chance of an even score on each die without handling overlap.
+Calibration: NSAA 2022, Part A, Q4: a non-standard but finite two-dice sample space.
+Question 27
+★ Strong question
+Profile: Hard | M5.9 Geometry | 90 seconds
+Correct answer: F
+Solution: By the alternate segment theorem, angle ACB equals the angle between the tangent and chord AB, so angle ACB = 42°. Therefore angle ABC = 180° - 42° - 17° = 121°.
+Tip: Use the tangent-chord angle to create an angle inside the triangle.
+Distractor map
+A: Copies angle BAC.
+B: Copies the tangent-chord angle.
+C: Adds the two known angles instead of subtracting from 180°.
+D: Subtracts 42° and 59° from 180° after double-counting 17°.
+E: Assumes the other two angles are both 42°.
+G: Subtracts only 42° from 180°.
+Calibration: ENGAA 2018, Part A, Q21: alternate-segment and circle-angle reasoning.
+
+7. Final validation
+The following tables are generated directly from the final question data.
+Topic coverage
+Difficulty distribution
+Correct-option distribution
+Validation checks
+Checked: 27 questions in each module and 54 questions in total
+Checked: All seven M1 to M7 topic families represented in each module
+Checked: Every estimated solution time is 90 seconds or less
+Checked: Exactly one keyed option for every question
+Checked: No repeated option text within a question
+Checked: Correct options balanced across A to G without a repeating sequence
+Checked: Candidate papers separated from solutions and distractor maps
+Checked: Every calibration note names a verified source style or explicitly states that no close archive item exists
+Mathematical verification notes are encoded in each concise solution. Final structural and render checks are performed when the document is built.

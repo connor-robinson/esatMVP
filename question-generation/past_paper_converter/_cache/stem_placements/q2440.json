@@ -1,0 +1,30 @@
+{
+  "questionId": 2440,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 51,
+  "stemBlocks": [
+    "Silver nitrate solution reacts with zinc powder in an exothermic reaction:\n$2AgNO_3(aq) + Zn(s) \\rightarrow 2Ag(s) + Zn(NO_3)_2(aq)$\nThe graph shows the maximum temperature rise as different masses of zinc react with separate $50.0 \\text{ cm}^3$ samples of $0.100 \\text{ mol dm}^{-3}$ silver nitrate solution.",
+    "What is the mass of zinc at the position labelled Y?",
+    "($A_r$ value: $Zn=65$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:49:16.156631+00:00",
+  "sourceImageHash": "074a26b9bef8eb26cae4fc19679dd2fe5d850011e215e1891a1943b4d31d6388",
+  "status": "ok"
+}

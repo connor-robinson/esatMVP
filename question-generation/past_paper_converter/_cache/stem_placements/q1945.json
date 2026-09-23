@@ -1,0 +1,28 @@
+{
+  "questionId": 1945,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 44,
+  "stemBlocks": [
+    "Two solid spheres X and Y have masses $m$ and $2m$ respectively. They travel in opposite directions towards each other along the same line with speeds $v$ and $2v$ respectively and collide head on.\nThe graph shows the variation of velocity with time for sphere X before, during, and after the collision.\nWhich sketch shows the variation of velocity with time for sphere Y?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "The graph shows the variation of velocity with time for sphere X before, during, and after the collision.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:28:14.912584+00:00",
+  "sourceImageHash": "1c49d5783e171c692b3a413319a9927039f3c62b24e584d4963d31229b9a4ba5",
+  "status": "ok"
+}

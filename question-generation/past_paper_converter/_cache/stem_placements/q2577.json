@@ -1,0 +1,29 @@
+{
+  "questionId": 2577,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 8,
+  "stemBlocks": [
+    "The diagram shows a right-angled triangle, with sides of length $x + 4$, $2x + 2$ and $3x$, all in cm.",
+    "What is the area, in cm$^2$, of the triangle?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:18.972209+00:00",
+  "sourceImageHash": "0818092ec3dba1c78c1c1e4a9aa5160708638269da844e2b1aeeec44cf639201",
+  "status": "ok"
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 2176,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 21,
+  "stemBlocks": [
+    "In the triangle PQR shown below:\nX lies on PR\n$\\angle QXR$ is $90^\\circ$\n$\\frac{QX}{PX} = \\frac{1}{6}$\n$\\frac{QX}{XR} = \\frac{2}{3}$\nM is the midpoint of PR.",
+    "What is $\\frac{QX}{MX}$ ?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:37:46.640966+00:00",
+  "sourceImageHash": "c0df76d43bd5aaa49f13ea76034c9df710b8505d9114f5acc372f4477a5e979d",
+  "status": "ok"
+}

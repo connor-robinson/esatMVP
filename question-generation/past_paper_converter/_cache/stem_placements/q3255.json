@@ -1,0 +1,30 @@
+{
+  "questionId": 3255,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 46,
+  "stemBlocks": [
+    "Equal-sized, rectangular blocks of a raw potato were cut and their mass measured. The blocks were then placed in equal volumes of different concentrations of sucrose solutions for the same length of time. All other variables were kept constant.\nAfter this time, the blocks were blotted on paper and then their masses were measured again. The percentage change in mass of each block was calculated and the results are shown in the graph.",
+    "Which of the following statements is/are correct?",
+    "1 In $0.10 \\text{ mol dm}^{-3}$ sucrose solution, there was some movement of sucrose molecules by osmosis across the membrane out of the potato block.\n2 If the initial mass of the block in $0.25 \\text{ mol dm}^{-3}$ sucrose solution is $1.800 \\text{ g}$ then its final mass will be $1.764 \\text{ g}$.\n3 Repeating the experiment at a temperature that was $10^{\\circ}\\text{C}$ lower should not affect the point at which the graph crosses the $x$-axis."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:13.933505+00:00",
+  "sourceImageHash": "835bb7879bb4abcf76116c224361973e0664789fe1517fdc4f486da8094baaae",
+  "status": "ok"
+}

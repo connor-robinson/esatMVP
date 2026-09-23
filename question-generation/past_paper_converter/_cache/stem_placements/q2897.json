@@ -1,0 +1,30 @@
+{
+  "questionId": 2897,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 78,
+  "stemBlocks": [
+    "The diagram shows part of the process of sperm production in a healthy human male. Only one pair of the 23 pairs of homologous chromosomes is shown.",
+    "Which of the following statements is/are correct?",
+    "1 Gametes are produced from haploid stem cells.\n2 Upon fertilisation, it is the male gamete that would determine the sex of the offspring.\n3 DNA in the primary spermatocyte is copied before the spermatids are made."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Key: chromosome, homologous pair of chromosomes. Cell types: spermatogonium (stem cell), primary spermatocyte, spermatids, sperm cells. Cells mature.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.409170+00:00",
+  "sourceImageHash": "9aac3b310d65a26ee4c34ae089e4b80af698f13306885710394179f76588f20e",
+  "status": "ok"
+}

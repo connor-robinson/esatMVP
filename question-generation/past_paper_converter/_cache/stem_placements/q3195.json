@@ -1,0 +1,29 @@
+{
+  "questionId": 3195,
+  "examName": "ENGAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 6,
+  "stemBlocks": [
+    "The variation of the acceleration with time of an object moving in a straight line is shown on the graph. At time = $0\\text{s}$ the velocity of the object is $8.0\\text{ ms}^{-1}$.",
+    "What is the maximum velocity of the object between time = $0\\text{s}$ and time = $6\\text{ s}$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:48:58.229893+00:00",
+  "sourceImageHash": "ff923028385ec63462b22b4f84693948551598c91463135d500f4acb259703a9",
+  "status": "ok"
+}

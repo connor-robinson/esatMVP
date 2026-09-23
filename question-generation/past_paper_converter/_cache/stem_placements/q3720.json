@@ -1,0 +1,28 @@
+{
+  "questionId": 3720,
+  "examName": "TMUA",
+  "examYear": 2020,
+  "paperName": "Paper 2",
+  "questionNumber": 11,
+  "stemBlocks": [
+    "A spiral line is drawn as shown. This spiral pattern continues indefinitely. Which one of the following points is not on the spiral line?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:22.010474+00:00",
+  "sourceImageHash": "1c907cadfb042a8820c6e25495c22d116443e798152e0ed5175bb7b48581a286",
+  "status": "ok"
+}

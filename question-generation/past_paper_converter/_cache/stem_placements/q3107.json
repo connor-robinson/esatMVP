@@ -1,0 +1,29 @@
+{
+  "questionId": 3107,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 2",
+  "questionNumber": 16,
+  "stemBlocks": [
+    "A power cable consists of a cylindrical copper (Cu) wire surrounded by six cylindrical aluminium (Al) wires. All the wires are of the same cross-sectional area as shown: The table gives the densities and resistivities of aluminium and copper. The cable has mass $M$ and length $L$. Which expression gives the resistance between the two ends of the cable?",
+    "| material | density | resistivity |\n| --- | --- | --- |\n| aluminium | $d$ | $3\\rho$ |\n| copper | $3d$ | $2\\rho$ |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:40:49.365783+00:00",
+  "sourceImageHash": "e6c1e51255fd5845d78dcdf22a3e9c4fde27001a16535346a3993b49ecee92b3",
+  "status": "ok"
+}

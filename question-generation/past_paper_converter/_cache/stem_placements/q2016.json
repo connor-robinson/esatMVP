@@ -1,0 +1,28 @@
+{
+  "questionId": 2016,
+  "examName": "ENGAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 21,
+  "stemBlocks": [
+    "A block of mass $m$ slides down a rough slope.\nAt position 1 the velocity of the block is $v_1$.\nAt position 2, which is a vertical distance $h$ below position 1, the velocity of the block is $v_2$.\nWhich expression gives the work done against friction by the block as it slides from position 1 to position 2?\n(gravitational field strength = $g$; assume that air resistance is negligible)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:25.574267+00:00",
+  "sourceImageHash": "89480ecb8059c85a529f7696bcd6303ecd36da74c9a7cf955f6d036762f50a83",
+  "status": "ok"
+}

@@ -1,0 +1,28 @@
+{
+  "stage": "idea_judge",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "selectivity_score": 0,
+    "checks": {
+      "schema_preserved": "pass",
+      "on_spec": "pass",
+      "reasoning_hinge_present": "pass",
+      "not_direct_substitution": "pass",
+      "wrong_paths_specific": "pass",
+      "visual_feasible": "pass",
+      "mcq_viable": "pass",
+      "difficulty_match": "pass"
+    },
+    "reasoning_hinge_summary": "Realising that the change in the light's momentum is twice as large for perfect reflection (from +p to -p, so Δp is 2p) as it is for perfect absorption (from +p to 0, so Δp is p). This doubles the impulse imparted to the object.",
+    "expected_mid_student_error": "They may assume that because the same initial pulse of light is used in both cases, the momentum transferred is the same. They fail to account for the momentum of the reflected light, effectively ignoring the vector change.",
+    "notes": []
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 2662,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 3,
+  "stemBlocks": [
+    "A fair spinner has eight equal sections. Each section has one number written on it, as shown. The spinner is spun twice, and the two numbers scored are added.",
+    "What is the probability that the sum of the two numbers is 5?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:58.166574+00:00",
+  "sourceImageHash": "9d63f32e2c3f5aaa7391700dc06d548ad6b45fb6e89c57170fa5dc48de0fcaf8",
+  "status": "ok"
+}

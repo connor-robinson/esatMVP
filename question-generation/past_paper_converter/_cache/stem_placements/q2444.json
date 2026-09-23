@@ -1,0 +1,30 @@
+{
+  "questionId": 2444,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 55,
+  "stemBlocks": [
+    "The graph shows the concentration of lactic acid in the blood of two students at rest, then carrying out the same level of exercise for 15 minutes, and then at rest again.",
+    "Which of the following statements correctly describe(s) the two students?",
+    "1 Student P's oxygen debt is repaid much quicker than student Q's.\n2 Student P has a lower oxygen debt than student Q.\n3 Student P has a higher level of fitness than student Q."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "The graph shows the concentration of lactic acid in the blood of two students at rest, then carrying out the same level of exercise for 15 minutes, and then at rest again.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:49:16.169243+00:00",
+  "sourceImageHash": "34a79e71c2310a845112d9c64af27b3b41d766657a1f253c0b16791f94e4a8c7",
+  "status": "ok"
+}

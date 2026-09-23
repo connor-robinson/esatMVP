@@ -1,0 +1,28 @@
+{
+  "questionId": 2549,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 70,
+  "stemBlocks": [
+    "The graphs represent the changes in the mass of a healthy human body cell and in the mass of the DNA of that cell over time.\nUsing the graph, which of the following statements is/are correct?\n1 Mitosis takes place at 12 and 36 hours.\n2 The graph shows two cell divisions.\n3 The next cell division should take place at 72 hours."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Key: mass of cell (solid line), mass of DNA (dashed line). Graph shows mass of a cell body / arbitrary units (left y-axis) and mass of DNA in a cell / arbitrary units (right y-axis) against time / hours (x-axis).",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.859784+00:00",
+  "sourceImageHash": "f19a76df873719cecba5133ddcaa599c31435945fbc7b7d72eebaeab65333fbd",
+  "status": "ok"
+}

@@ -1,0 +1,32 @@
+{
+  "questionId": 2629,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 60,
+  "stemBlocks": [
+    "The photomicrograph shows a section through the wall of a human bronchus, one of the tubes which carries air towards the lungs.",
+    "A student studying this structure annotated the photomicrograph by describing the cells found in two different layers in the wall of the bronchus.",
+    "The student used these observations to write some conclusions.",
+    "Which of the following conclusions is/are correct?",
+    "1 The two different layers are both tissues.\n2 The bronchus can be described as an organ.\n3 Amino acids are found in the cytoplasm of cells in each layer."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Photomicrograph of a section through the wall of a human bronchus, with student annotations.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:19.030596+00:00",
+  "sourceImageHash": "cdf4ed33fc626da01bd45dfe8581dd86c8e158aa5e0d987535d102b1e39b6b5b",
+  "status": "ok"
+}

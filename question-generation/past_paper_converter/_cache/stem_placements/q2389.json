@@ -1,0 +1,30 @@
+{
+  "questionId": 2389,
+  "examName": "NSAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 90,
+  "stemBlocks": [
+    "An object of mass 20 kg is pulled up a rough plane inclined at 30° to the horizontal by a light, inextensible cable attached via a frictionless pulley to a freely-falling 30 kg mass. The acceleration of the object along the plane is $2.5 \\text{ ms}^{-2}$.",
+    "What is the frictional force between the object and the plane?",
+    "(Air resistance and the mass of the pulley can be ignored. The gravitational field strength $g$ is $10 \\text{ N kg}^{-1}.)$"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "[diagram not to scale]",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:25:34.782735+00:00",
+  "sourceImageHash": "b4d7e0de09493ff4d8dbb11a1ff460060edff819b40d2f72b0f972f4321074d8",
+  "status": "ok"
+}

@@ -1,0 +1,661 @@
+{
+  "question_id": "q_20260517_215101_4fb53c",
+  "subject": "physics",
+  "schema_id": "P_f4c1e46f",
+  "difficulty": "Medium",
+  "status": "rejected",
+  "failure_gate": "visual_linkage",
+  "failure_reasons": [
+    "visual_need=accurate_schematic_json but stem has no <DIAGRAM id=\"...\" /> placeholder."
+  ],
+  "has_visual": false,
+  "visual_type": "none",
+  "answer_depends_on_visual": false,
+  "assets": [],
+  "model_trace": {
+    "designer": "gemini-2.5-pro",
+    "idea_judge": "gemini-2.5-flash",
+    "implementer": "gemini-2.5-pro",
+    "verifier": "gemini-2.5-flash",
+    "style_checker": "gemini-2.5-flash",
+    "implementer_regen": "gemini-2.5-pro",
+    "visual_router": "gemini-2.5-flash",
+    "schematic_spec": "gemini-2.5-flash"
+  },
+  "retry_counts": {
+    "implementer": 1
+  },
+  "stages": [
+    {
+      "stage": "designer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "schema_id": "P_f4c1e46f",
+        "module": "physics",
+        "variation_mode": "FAR",
+        "target_difficulty": "Medium",
+        "idea_summary": "A fluid dynamics problem involving a network of pipes and pumps asks for the power dissipated in a single 'load' pipe. The system is a direct analogue of a DC circuit, and the optimal solution involves finding the system's Thévenin equivalent.",
+        "schema_invariant": {
+          "core_move": "Replace a complex linear source system (a network of pumps/pipes) with its simple equivalent model (an equivalent pressure source P_Th and series resistance R_Th) to find the power dissipated in a fixed external load (a specific pipe).",
+          "what_must_not_change": [
+            "A complex linear source system connected to a single fixed load.",
+            "The goal is to calculate a property (power) of the load component only.",
+            "The most efficient solution involves simplifying the source system into an equivalent single source and single internal impedance."
+          ],
+          "what_can_change": [
+            "The physical domain (from electricity to fluid dynamics).",
+            "The specific quantities (Voltage -> Pressure, Current -> Flow Rate, Electrical Resistance -> Flow Resistance, Electrical Power -> Fluid Power).",
+            "The arrangement of components in the source network."
+          ]
+        },
+        "discrimination_mechanism": {
+          "type": "tempting_wrong_model",
+          "reasoning_hinge": "Recognising that the fluid network problem is isomorphic to a DC circuit problem and can be solved efficiently by finding the Thévenin equivalent of the source network.",
+          "why_top_students_win": "They spot the analogy to DC circuits, mentally apply the Thévenin simplification, and solve a much simpler problem very quickly.",
+          "why_mid_students_miss": "They attempt to solve the full system of simultaneous equations for pressures and flows, which is slow and error-prone. Alternatively, they spot the analogy but make a mistake calculating the equivalent resistance or pressure."
+        },
+        "minimum_reasoning_depth": {
+          "steps": 3,
+          "must_include": [
+            "model_selection",
+            "non_obvious_inference",
+            "short_calculation_or_comparison"
+          ]
+        },
+        "reference_alignment": "This idea matches the reference schema's core logic of simplifying a source to analyze a fixed load. Like a Medium ESAT question, it requires spotting a non-obvious simplification rather than just applying a formula. The 'collapse moment' ensures the solution is fast once the insight is gained.",
+        "task_signature": "compare_scenarios",
+        "tool_footprint": [
+          "analogy_reasoning",
+          "system_simplification",
+          "proportional_reasoning",
+          "power_calculation"
+        ],
+        "primary_tag": "5",
+        "secondary_tags": [
+          "4"
+        ],
+        "visual_need": "concept_image_only",
+        "visual_role": "supportive",
+        "visual_brief": "A simple schematic of the pipe network. For example, a main pipe splitting into two parallel branches, which then rejoin and connect to the 'load' pipe. Labels for pumps (as circles with arrows) and pipes (as zig-zag lines, like resistors) with symbolic resistances (e.g., R, 2R) would be helpful. No values are answer-bearing.",
+        "surface_twist": "The problem is framed in the domain of fluid dynamics (water pumps, pipes, pressure, flow rate) instead of electronics (batteries, resistors, voltage, current). This disguises its origin as a standard circuit analysis problem solvable with Thévenin's theorem.",
+        "why_still_on_spec": "The problem relies on linear relationships directly analogous to Ohm's Law (ΔP = Q * R_f) and power dissipation (P = Q² * R_f), which are given or can be inferred. The core skills tested are applying rules for series/parallel combinations and proportional reasoning, which are fundamental to ESAT Physics (Tag 5: Electricity and Magnetism). No prior knowledge of fluid dynamics is required.",
+        "constraints_used": [
+          "short condition descriptions only",
+          "no final numbers",
+          "no full equations unless the schema requires them",
+          "no exact geometric diagram dependence"
+        ],
+        "intended_wrong_paths": [
+          {
+            "mistake": "Attempts to solve the full system of simultaneous equations for pressure and flow, which is time-consuming and complex.",
+            "distractor_role": "This path is a time sink and likely leads to arithmetic errors, but a determined student might arrive at a wrong answer this way."
+          },
+          {
+            "mistake": "Correctly identifies the circuit analogy but miscalculates the Thévenin equivalent resistance (R_Th), for instance by not 'shorting' the ideal pressure source when calculating the equivalent resistance of the parallel pipes.",
+            "distractor_role": "Leads to a plausible but incorrect numerical answer based on a common procedural error in circuit analysis."
+          },
+          {
+            "mistake": "Miscalculates the Thévenin equivalent pressure (P_Th), for instance by making a mistake in the potential divider rule.",
+            "distractor_role": "Another plausible but incorrect numerical answer stemming from a common error."
+          },
+          {
+            "mistake": "Confuses power in a fixed load with the condition for maximum power transfer, and calculates the power dissipated if the load pipe's resistance were equal to R_Th.",
+            "distractor_role": "A classic misconception-based distractor that tests if the student read the question carefully (fixed load vs. variable load)."
+          }
+        ],
+        "difficulty_rationale": "This is Medium difficulty because it requires a conceptual leap (spotting the analogy) to unlock a simple solution path. It's not Easy because the surface representation is unfamiliar. It's not Hard because the analogy is direct and the subsequent calculation is simple (a single series circuit). The 'collapse moment' makes it fast for those who see the trick.",
+        "anti_plug_and_chug_check": {
+          "would_formula_substitution_alone_solve_it": false,
+          "why_not": "There is no single formula to apply. The candidate must first recognize the underlying structure of the problem is equivalent to a circuit, then decide to simplify the 'source' part of the system using Thévenin's theorem (even if they don't know the name). Only after this conceptual simplification step does a simple calculation become possible."
+        },
+        "mcq_viability": {
+          "viable": true,
+          "reason": "The correct answer is unique. Plausible distractors can be generated from common, distinct errors in the simplification process (error in R_Th, error in P_Th), applying the wrong theorem (maximum power transfer), or calculating the wrong quantity (total power)."
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-pro",
+      "attempts": 1
+    },
+    {
+      "stage": "idea_judge",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "selectivity_score": 0,
+        "checks": {
+          "schema_preserved": "pass",
+          "on_spec": "pass",
+          "reasoning_hinge_present": "pass",
+          "not_direct_substitution": "pass",
+          "wrong_paths_specific": "pass",
+          "visual_feasible": "pass",
+          "mcq_viable": "pass",
+          "difficulty_match": "pass"
+        },
+        "reasoning_hinge_summary": "The core reasoning hinge is recognizing the isomorphism between the fluid dynamics network and a DC electrical circuit, and then applying Thévenin's theorem to simplify the source network before calculating power in the fixed load.",
+        "expected_mid_student_error": "Mid-level students are likely to attempt solving the full system of equations, leading to a time-consuming and error-prone process. Alternatively, they might correctly identify the circuit analogy but make common procedural errors in calculating either the Thévenin equivalent resistance (R_Th) or pressure (P_Th), such as failing to 'short' ideal sources for R_Th or misapplying the potential divider rule for P_Th.",
+        "notes": [
+          "The 'task_signature: compare_scenarios' appears to be a misclassification; the problem asks for a single value calculation, not a comparison between scenarios. This is a minor metadata point and does not impact the quality of the physics idea.",
+          "The FAR mode (fluid dynamics analogy) is well-executed, effectively disguising the underlying circuit problem and requiring a genuine conceptual leap for efficient solution."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "implementer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "metadata": {
+          "schema_id": "P_f4c1e46f",
+          "module": "physics",
+          "variation_mode": "FAR",
+          "target_difficulty": "Medium",
+          "task_signature": "P_f4c1e46f-2",
+          "primary_tag": "5",
+          "secondary_tags": [
+            "4"
+          ]
+        },
+        "question": {
+          "stem": "A fluid system is constructed from pipes and an ideal pump. For any pipe, the pressure drop $\\Delta P$ across it is proportional to the volumetric flow rate $Q$ through it, according to $\\Delta P = Q R_f$, where $R_f$ is the pipe's flow resistance. The power dissipated by the fluid in a pipe is given by $P = Q \\Delta P$.\n\nThe system is configured as shown in the diagram, with an ideal pump providing a constant pressure increase $P_0$. Pipe A has resistance $R$, and pipes B and C both have resistance $2R$.\n\n<DIAGRAM id=\"d1\" />\n\nWhat is the power dissipated in pipe C?",
+          "options": {
+            "A": "$\\frac{1}{18} \\frac{P_0^2}{R}$",
+            "B": "$\\frac{1}{8} \\frac{P_0^2}{R}$",
+            "C": "$\\frac{1}{6} \\frac{P_0^2}{R}$",
+            "D": "$\\frac{2}{9} \\frac{P_0^2}{R}$",
+            "E": "$\\frac{9}{32} \\frac{P_0^2}{R}$",
+            "F": "$\\frac{1}{2} \\frac{P_0^2}{R}$"
+          },
+          "correct_option": "B"
+        },
+        "visual_requirements": {
+          "visual_need": "accurate_schematic_json",
+          "visual_role": "answer_bearing",
+          "answer_depends_on_visual": true,
+          "graph_request": null,
+          "schematic_request": {
+            "description": "A schematic diagram representing a fluid circuit, analogous to a DC electrical circuit. An ideal pump (pressure source) is at the top, represented by a circle with an arrow inside pointing upwards, labelled P_0. The positive terminal is at the top. From the positive terminal, a line goes down to a resistor symbol, labelled 'Pipe A, R'. This connects to a node. From this node, the path splits into two parallel branches. The left branch contains a resistor symbol labelled 'Pipe B, 2R'. The right branch contains a resistor symbol labelled 'Pipe C, 2R'. Both parallel branches connect at a bottom node. This bottom node is connected by a line back to the negative terminal of the pump at the top, completing the circuit.",
+            "style": "standard_circuit_diagram"
+          },
+          "concept_image_request": null
+        },
+        "solution": {
+          "key_insight": "The fluid network is analogous to a DC electrical circuit. The most efficient way to find the power in pipe C is to replace the rest of the circuit (the 'source') with its simpler Thévenin equivalent.",
+          "reasoning": "This problem is a direct analogue of a DC circuit problem, where pressure ($P$) is like voltage ($V$), flow rate ($Q$) is like current ($I$), and flow resistance ($R_f$) is like electrical resistance ($R$). The given laws are analogous to Ohm's law ($V=IR$) and the power law ($P=IV=I^2R$).\n\nWe want to find the power in pipe C. The rest of the circuit (pump, pipe A, pipe B) can be simplified into a Thévenin equivalent source as seen by pipe C.\n\n1.  **Find the Thévenin equivalent pressure ($P_{Th}$):** This is the pressure across the terminals of pipe C if it were removed (an 'open circuit'). Without pipe C, pipes A and B are in series. The total resistance is $R_A + R_B = R + 2R = 3R$. The total flow is $Q_{tot} = P_0 / (3R)$. The pressure across pipe B (which is where C would connect) is $P_{Th} = Q_{tot} \\times R_B = (P_0 / (3R)) \\times (2R) = \\frac{2}{3}P_0$.\n\n2.  **Find the Thévenin equivalent resistance ($R_{f,Th}$):** This is the resistance looking into the terminals for C, with the ideal pressure source $P_0$ 'shorted' (i.e., replaced by a zero-resistance wire). From the perspective of C's terminals, pipes A and B are in parallel. So, $R_{f,Th} = \\frac{R_A \\times R_B}{R_A + R_B} = \\frac{R \\times 2R}{R + 2R} = \\frac{2R^2}{3R} = \\frac{2}{3}R$.\n\n3.  **Solve the simplified circuit:** Now, pipe C (resistance $R_C = 2R$) is connected to the equivalent source, which is a pump of pressure $P_{Th} = \\frac{2}{3}P_0$ in series with an equivalent pipe of resistance $R_{f,Th} = \\frac{2}{3}R$. The total resistance of this new circuit is $R_{total} = R_{f,Th} + R_C = \\frac{2}{3}R + 2R = \\frac{8}{3}R$.\n\n4.  **Calculate flow and power in C:** The flow through pipe C is $Q_C = \\frac{P_{Th}}{R_{total}} = \\frac{2/3 P_0}{8/3 R} = \\frac{2}{8} \\frac{P_0}{R} = \\frac{1}{4} \\frac{P_0}{R}$.\nThe power dissipated in pipe C is $P_C = Q_C^2 R_C = \\left(\\frac{1}{4} \\frac{P_0}{R}\\right)^2 \\times (2R) = \\frac{1}{16} \\frac{P_0^2}{R^2} \\times 2R = \\frac{2}{16} \\frac{P_0^2}{R} = \\frac{1}{8} \\frac{P_0^2}{R}$."
+        },
+        "distractor_map": {
+          "A": "This result is obtained if the Thévenin resistance is incorrectly taken as just the resistance of the pipe in parallel, $R_{f,Th} = R_B = 2R$, while using the correct Thévenin pressure.",
+          "B": "Correct. This is found by correctly calculating the Thévenin equivalent of the source network and then finding the power in the load pipe C.",
+          "C": "This is the maximum power that could be delivered by the source network if pipe C had a resistance equal to the Thévenin resistance ($R_C = R_{f,Th} = 2R/3$). This misapplies the maximum power transfer theorem to a fixed-load problem.",
+          "D": "This is the power that would be dissipated in pipe B if pipe C were not connected at all. It ignores the presence and effect of pipe C.",
+          "E": "This result is obtained if the Thévenin pressure is incorrectly taken as the full pump pressure, $P_{Th} = P_0$, while using the correct Thévenin resistance.",
+          "F": "This result is obtained by incorrectly assuming the full pump pressure $P_0$ is applied directly across pipe C, ignoring the pressure drop across pipe A."
+        },
+        "quality_self_check": {
+          "reasoning_hinge_used": "Recognising the fluid dynamics problem is isomorphic to a DC circuit and can be simplified using a Thévenin equivalent model.",
+          "not_direct_substitution": true,
+          "exactly_one_correct": true,
+          "no_calculator_friendly": true,
+          "on_spec": true,
+          "visual_dependency_safe": true
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-pro",
+      "attempts": 1
+    },
+    {
+      "stage": "deterministic_validator",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "ok": true,
+        "errors": [],
+        "warnings": [],
+        "option_keys": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F"
+        ],
+        "summary": "ok"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": null,
+      "attempts": 1
+    },
+    {
+      "stage": "verifier",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "correct_option_verified": "B",
+        "independent_solution": {
+          "main_law_or_principle": "Fluid flow analogy to DC circuits (Ohm's Law, series/parallel resistance, power dissipation).",
+          "calculation_or_logic": "1. Identify the circuit topology: Pipe A in series with the parallel combination of Pipe B and Pipe C.\n2. Calculate the equivalent resistance of the parallel pipes B and C: $R_{BC} = \\frac{R_B \\times R_C}{R_B + R_C} = \\frac{2R \\times 2R}{2R + 2R} = R$.\n3. Calculate the total equivalent resistance of the entire circuit: $R_{total} = R_A + R_{BC} = R + R = 2R$.\n4. Calculate the total flow rate from the pump: $Q_{total} = \\frac{P_0}{R_{total}} = \\frac{P_0}{2R}$. This is the flow through Pipe A.\n5. Calculate the pressure drop across Pipe A: $\\Delta P_A = Q_{total} \\times R_A = \\frac{P_0}{2R} \\times R = \\frac{P_0}{2}$.\n6. Calculate the pressure drop across the parallel combination (Pipes B and C): $\\Delta P_{BC} = P_0 - \\Delta P_A = P_0 - \\frac{P_0}{2} = \\frac{P_0}{2}$. This is the pressure drop across Pipe C, so $\\Delta P_C = \\frac{P_0}{2}$.\n7. Calculate the flow rate through Pipe C: $Q_C = \\frac{\\Delta P_C}{R_C} = \\frac{P_0/2}{2R} = \\frac{P_0}{4R}$.\n8. Calculate the power dissipated in Pipe C: $P_C = Q_C \\Delta P_C = \\left(\\frac{P_0}{4R}\\right) \\times \\left(\\frac{P_0}{2}\\right) = \\frac{P_0^2}{8R}$.\n(Alternatively, $P_C = Q_C^2 R_C = \\left(\\frac{P_0}{4R}\\right)^2 \\times (2R) = \\frac{P_0^2}{16R^2} \\times 2R = \\frac{2P_0^2}{16R} = \\frac{P_0^2}{8R}$).",
+          "verified_answer_value": "$\\frac{1}{8} \\frac{P_0^2}{R}$",
+          "claimed_answer_value": "$\\frac{1}{8} \\frac{P_0^2}{R}$",
+          "matches_claim": true
+        },
+        "spec_audit": {
+          "required_physics_moves": [
+            "Analogy between fluid dynamics and electrical circuits (pressure-voltage, flow rate-current, flow resistance-electrical resistance)",
+            "Calculation of equivalent resistance for series components",
+            "Calculation of equivalent resistance for parallel components",
+            "Application of Ohm's Law analogue ($\\Delta P = Q R_f$)",
+            "Application of power dissipation formula ($P = Q \\Delta P$ or $P = Q^2 R_f$)"
+          ],
+          "all_explicitly_on_spec": true,
+          "borderline_or_offspec_moves": []
+        },
+        "checks": {
+          "correctness": "pass",
+          "uniqueness": "pass",
+          "syllabus": "pass",
+          "no_calc_feasibility": "pass",
+          "ambiguity": "pass",
+          "diagram_dependency": "pass",
+          "distractor_safety": "pass",
+          "katex_formatting": "pass",
+          "graph_or_visual_validation": "pass"
+        },
+        "notes": [
+          "The problem is a direct analogy to a DC circuit problem, solvable using standard series/parallel resistance rules and Ohm's law. The provided solution correctly uses Thévenin's theorem, which is an efficient method for such problems, though not strictly necessary as direct circuit analysis also works well.",
+          "Calculations are straightforward and suitable for a no-calculator environment.",
+          "The visual schematic is crucial for understanding the circuit topology and is appropriately marked as answer-bearing."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "style_checker",
+      "status": "error",
+      "verdict": null,
+      "payload": null,
+      "notes": [],
+      "error": "No parseable JSON object in model output.",
+      "raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"style_score\": {\n    \"total\": 35,\n    \"breakdown\": {\n      \"stem_tone\": 5,\n      \"physics_authenticity\": 5,\n      \"reasoning_quality\": 5,\n      \"selectivity\": 5,\n      \"no_calc_engineering\": 5,\n      \"option_realism\": 5,\n      \"distractor_plausibility\": 5\n    }\n  },\n  \"difficulty_calibration\": {\n    \"difficulty_vs_reference\": \"similar\",\n    \"length_feel_vs_reference\": \"similar\",\n    \"notes\": \"The question is well-calibrated for a Medium difficulty ESAT question. It requires a conceptual leap (the circuit analogy) and then careful, but not overly complex, application of standard circuit analysis. The calculations are straightforward and symbolic, fitting the no-calculator environment.\"\n  },\n  \"selectivity_audit\": {\n    \"main_trap\": \"The primary trap is failing to recognise the direct analogy between the fluid system and a DC electrical circuit. Students who don't make this connection will likely struggle to formulate a solvable problem. Even those who do see the analogy might make common errors in calculating equivalent resistances (series vs. parallel) or in applying Thévenin's theorem (e.g., miscalculating $P_{Th}$ or $R_{Th}$), or misinterpreting the power calculation.\",\n    \"why_not_plug_and_chug\": \"This is not a plug-and-chug question because there is no single formula to directly apply. The candidate must first model the fluid system as an equivalent electrical circuit, then apply appropriate circuit analysis techniques (like Thévenin's theorem or direct series/parallel analysis) to find the required quantities. This conceptual mapping and problem-solving strategy are the core of the reasoning hinge.\",\n    \"expected_mid_student_error\": \"A mid-level student might: 1) Fail to see the circuit analogy, making the problem intractable. 2) See the analogy but make errors in calculating equivalent resistances (e.g., treating parallel pipes as series, or vice-versa). 3) Attempt to use Thévenin's theorem but make a mistake in calculating either the equivalent pressure ($P_{Th}$) or the equivalent resistance ($R_{Th}$). 4) Miscalculate the power, perhaps confusing $P=Q\\Delta P$ with $P=Q^2R_f$ or making an algebraic error. 5) Misinterpret the question as asking for maximum power transfer rather than power in a fixed load.\",\n    \"verdict\": \"selective\"\n  },\n  \"flags\": {\n    \"too_easy\": false,\n    \"too_hard\": false,\n    \"too_wordy\": false,\n    \"too_recall_heavy\": false,\n    \"too_plug_and_chug\": false,\n    \"possible_verifier_miss\": false\n  },\n  \"notes\": [\n    \"The question perfectly embodies the ESAT style: it's concise, uses school-level physics in a slightly disguised context (fluid dynamics analogy to circuits), and requires a key insight (the analogy) to unlock a quick solution. The calculations are symbolic and simple, ideal for a no-calculator exam.\",\n    \"The distractors are well-crafted, targeting specific, common errors in circuit analysis, which enhances the question's selectivity.\",\n    \"Both the designer's Thévenin solution and the verifier's direct circuit analysis are valid and efficient for this particular circuit, demonstrating that multiple correct approaches can lead to the answer, but all require solid understanding of circuit principles.\"\n  ]\n}\n```",
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "implementer_regen",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "metadata": {
+          "schema_id": "P_f4c1e46f",
+          "module": "physics",
+          "variation_mode": "FAR",
+          "target_difficulty": "Medium",
+          "task_signature": "P_f4c1e46f-3",
+          "primary_tag": "5",
+          "secondary_tags": [
+            "4"
+          ]
+        },
+        "question": {
+          "stem": "A fluid system is constructed from pipes and ideal pumps. For any pipe, the pressure drop $\\Delta P$ across it is proportional to the volumetric flow rate $Q$ through it, according to $\\Delta P = Q R_f$, where $R_f$ is the pipe's flow resistance. The power dissipated by the fluid in a pipe is given by $P = Q^2 R_f$.\n\nThe system is configured as shown in the diagram. The source consists of two parallel branches. The top branch has an ideal pump providing a constant pressure increase $2P_0$ in series with Pipe A of resistance $R$. The bottom branch has an ideal pump providing pressure $P_0$ in series with Pipe B of resistance $2R$. This source network feeds Pipe C, which has a resistance of $\\frac{8}{3}R$.\n\n<DIAGRAM id=\"d1\" />\n\nWhat is the power dissipated in Pipe C?",
+          "options": {
+            "A": "$\\frac{1}{6} \\frac{P_0^2}{R}$",
+            "B": "$\\frac{27}{50} \\frac{P_0^2}{R}$",
+            "C": "$\\frac{2}{3} \\frac{P_0^2}{R}$",
+            "D": "$\\frac{5}{6} \\frac{P_0^2}{R}$",
+            "E": "$\\frac{25}{24} \\frac{P_0^2}{R}$"
+          },
+          "correct_option": "C"
+        },
+        "visual_requirements": {
+          "visual_need": "accurate_schematic_json",
+          "visual_role": "answer_bearing",
+          "answer_depends_on_visual": true,
+          "graph_request": null,
+          "schematic_request": {
+            "description": "A fluid circuit diagram analogous to a DC electrical circuit. On the left, a common input node splits into two parallel horizontal branches. The top branch contains an ideal pump (circle with arrow pointing right, labeled '2P_0') followed by a resistor symbol ('Pipe A, R'). The bottom branch contains an ideal pump (circle with arrow pointing right, labeled 'P_0') followed by a resistor symbol ('Pipe B, 2R'). Both branches connect at a central node. From this central node, a single line goes right to a resistor symbol ('Pipe C, 8R/3'), which then connects back to the common input node on the left, completing the circuit.",
+            "style": "standard_circuit_diagram"
+          },
+          "concept_image_request": null
+        },
+        "solution": {
+          "key_insight": "The fluid network is analogous to a DC electrical circuit with multiple sources. The most efficient way to find the power in the 'load' (Pipe C) is to replace the complex source network (the two parallel branches) with its simpler Thévenin equivalent.",
+          "reasoning": "This problem is a direct analogue of a DC circuit problem, where pressure ($P$) is like voltage ($V$), flow rate ($Q$) is like current ($I$), and flow resistance ($R_f$) is like electrical resistance ($R$). We can use circuit analysis techniques to solve it.\n\nThe source network consists of the two parallel branches containing the pumps and Pipes A and B. Pipe C is the load. We will find the Thévenin equivalent of the source network as seen from the terminals of Pipe C.\n\n1.  **Find the Thévenin equivalent pressure ($P_{Th}$):** This is the open-circuit pressure difference across the terminals where Pipe C connects. This can be found using Millman's theorem (or nodal analysis). The pressure at the central node (relative to the common input node) is:\n    $P_{Th} = \\frac{P_1/R_A + P_2/R_B}{1/R_A + 1/R_B} = \\frac{2P_0/R + P_0/(2R)}{1/R + 1/(2R)}$\n    $P_{Th} = \\frac{(4P_0 + P_0)/(2R)}{(2 + 1)/(2R)} = \\frac{5P_0/(2R)}{3/(2R)} = \\frac{5}{3}P_0$.\n\n2.  **Find the Thévenin equivalent resistance ($R_{f,Th}$):** This is the resistance looking into the source terminals with the ideal pressure sources 'shorted' (replaced by a zero-resistance wire). From the perspective of C's terminals, Pipes A and B are in parallel.\n    $R_{f,Th} = \\frac{R_A \\times R_B}{R_A + R_B} = \\frac{R \\times 2R}{R + 2R} = \\frac{2R^2}{3R} = \\frac{2}{3}R$.\n\n3.  **Solve the simplified circuit:** Now, Pipe C (resistance $R_C = \\frac{8}{3}R$) is connected to the equivalent source, which is an ideal pump of pressure $P_{Th} = \\frac{5}{3}P_0$ in series with an equivalent pipe of resistance $R_{f,Th} = \\frac{2}{3}R$.\n\n4.  **Calculate flow and power in C:** The total resistance of this new simplified circuit is $R_{total} = R_{f,Th} + R_C = \\frac{2}{3}R + \\frac{8}{3}R = \\frac{10}{3}R$.\n    The flow rate through Pipe C is $Q_C = \\frac{P_{Th}}{R_{total}} = \\frac{(5/3)P_0}{(10/3)R} = \\frac{5}{10} \\frac{P_0}{R} = \\frac{1}{2} \\frac{P_0}{R}$.\n    The power dissipated in Pipe C is $P_C = Q_C^2 R_C = \\left(\\frac{1}{2} \\frac{P_0}{R}\\right)^2 \\times \\left(\\frac{8}{3}R\\right) = \\left(\\frac{1}{4} \\frac{P_0^2}{R^2}\\right) \\left(\\frac{8}{3}R\\right) = \\frac{8}{12} \\frac{P_0^2}{R} = \\frac{2}{3} \\frac{P_0^2}{R}$.",
+          "correct_option_explanation": "By correctly calculating the Thévenin equivalent pressure ($P_{Th} = 5P_0/3$) and resistance ($R_{f,Th} = 2R/3$) of the source network, and then using these to find the flow through Pipe C in the simplified series circuit, we arrive at the correct power dissipation."
+        },
+        "distractor_map": {
+          "A": "This is the power dissipated in the internal Thévenin resistance ($P_{Th,diss} = Q_C^2 R_{f,Th}$), not the load Pipe C.",
+          "B": "This result is obtained by incorrectly calculating the Thévenin pressure, for example by taking a simple average of the pump pressures ($P_{Th} = (2P_0+P_0)/2 = 1.5P_0$) instead of the weighted average required by Millman's theorem.",
+          "C": "Correct. Found by correctly applying Thévenin's theorem to simplify the source network and then calculating the power in the load.",
+          "D": "This is the total power dissipated in the simplified circuit, i.e., the sum of the power dissipated in Pipe C and the power dissipated in the internal Thévenin resistance ($P_{total} = P_C + P_{Th,diss}$).",
+          "E": "This result is obtained if one correctly finds the Thévenin pressure ($P_{Th} = 5P_0/3$) but then forgets the Thévenin resistance and calculates the power as if $P_{Th}$ were applied directly across Pipe C ($P_C = P_{Th}^2 / R_C$)."
+        },
+        "quality_self_check": {
+          "reasoning_hinge_used": "Yes, the problem requires recognizing the circuit analogy and applying a simplification technique (Thévenin's theorem) to solve efficiently.",
+          "not_direct_substitution": true,
+          "exactly_one_correct": true,
+          "no_calculator_friendly": true,
+          "on_spec": true,
+          "visual_dependency_safe": true
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-pro",
+      "attempts": 2
+    },
+    {
+      "stage": "deterministic_validator",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          {
+            "field": "question.options",
+            "kind": "non_default_count",
+            "message": "Expected 6 options (A-F); got 5."
+          }
+        ],
+        "option_keys": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E"
+        ],
+        "summary": "ok"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": null,
+      "attempts": 2
+    },
+    {
+      "stage": "verifier",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "correct_option_verified": "C",
+        "independent_solution": {
+          "main_law_or_principle": "Circuit analogy (fluid dynamics to electrical circuits), Thévenin's Theorem, Ohm's Law analogue, Power dissipation formula.",
+          "calculation_or_logic": "1.  **Establish Analogy:** Pressure ($\\Delta P$) is analogous to voltage ($V$), volumetric flow rate ($Q$) to current ($I$), and flow resistance ($R_f$) to electrical resistance ($R$). The given formulas $\\Delta P = Q R_f$ and $P = Q^2 R_f$ are direct analogues of $V=IR$ and $P=I^2R$.\n2.  **Identify Source and Load:** The source network consists of the two parallel branches with pumps and Pipes A and B. Pipe C is the load.\n3.  **Calculate Thévenin Equivalent Resistance ($R_{f,Th}$):** 'Kill' the ideal pressure sources (replace with short circuits). Pipes A and B are then in parallel.\n    $R_{f,Th} = R_A \\|\\| R_B = \\frac{R \\times 2R}{R + 2R} = \\frac{2R^2}{3R} = \\frac{2}{3}R$.\n4.  **Calculate Thévenin Equivalent Pressure ($P_{Th}$):** This is the open-circuit pressure across the terminals where Pipe C connects. Using nodal analysis (or Millman's theorem) at the central node, assuming the common input node is at 0 pressure:\n    $\\frac{P_{Th} - 2P_0}{R} + \\frac{P_{Th} - P_0}{2R} = 0$\n    Multiply by $2R$: $2(P_{Th} - 2P_0) + (P_{Th} - P_0) = 0$\n    $2P_{Th} - 4P_0 + P_{Th} - P_0 = 0$\n    $3P_{Th} = 5P_0 \\implies P_{Th} = \\frac{5}{3}P_0$.\n5.  **Form the Thévenin Equivalent Circuit:** The source network is replaced by an ideal pump of pressure $P_{Th} = \\frac{5}{3}P_0$ in series with a resistance $R_{f,Th} = \\frac{2}{3}R$. Pipe C ($R_C = \\frac{8}{3}R$) is connected in series with this equivalent.\n6.  **Calculate Flow Rate through Pipe C ($Q_C$):**\n    Total resistance $R_{total} = R_{f,Th} + R_C = \\frac{2}{3}R + \\frac{8}{3}R = \\frac{10}{3}R$.\n    $Q_C = \\frac{P_{Th}}{R_{total}} = \\frac{(5/3)P_0}{(10/3)R} = \\frac{5P_0}{10R} = \\frac{1}{2} \\frac{P_0}{R}$.\n7.  **Calculate Power Dissipated in Pipe C ($P_C$):**\n    $P_C = Q_C^2 R_C = \\left(\\frac{1}{2} \\frac{P_0}{R}\\right)^2 \\times \\left(\\frac{8}{3}R\\right)$\n    $P_C = \\left(\\frac{1}{4} \\frac{P_0^2}{R^2}\\right) \\times \\left(\\frac{8}{3}R\\right) = \\frac{8}{12} \\frac{P_0^2}{R} = \\frac{2}{3} \\frac{P_0^2}{R}$.",
+          "verified_answer_value": "$\\frac{2}{3} \\frac{P_0^2}{R}$",
+          "claimed_answer_value": "$\\frac{2}{3} \\frac{P_0^2}{R}$",
+          "matches_claim": true
+        },
+        "spec_audit": {
+          "required_physics_moves": [
+            "Analogy mapping (fluid dynamics to electrical circuits)",
+            "Series and parallel resistance calculation",
+            "Nodal analysis or Millman's theorem (for Thévenin voltage)",
+            "Thévenin's theorem application",
+            "Ohm's Law analogue for flow rate calculation",
+            "Power dissipation calculation ($Q^2 R_f$)"
+          ],
+          "all_explicitly_on_spec": true,
+          "borderline_or_offspec_moves": []
+        },
+        "checks": {
+          "correctness": "pass",
+          "uniqueness": "pass",
+          "syllabus": "pass",
+          "no_calc_feasibility": "pass",
+          "ambiguity": "pass",
+          "diagram_dependency": "pass",
+          "distractor_safety": "pass",
+          "katex_formatting": "pass",
+          "graph_or_visual_validation": "pass"
+        },
+        "notes": [
+          "The problem correctly applies the analogy between fluid dynamics and electrical circuits, which is a common and valid approach in physics problems.",
+          "Thévenin's theorem (or equivalent circuit analysis methods like nodal analysis) is the most efficient way to solve this problem and is within the scope of advanced high school/introductory university physics, which ESAT often covers implicitly through problem-solving techniques.",
+          "All distractors are well-designed, corresponding to common errors in applying Thévenin's theorem or calculating power, confirming uniqueness of the correct option.",
+          "The `schematic_request` is sufficiently detailed to construct the circuit diagram, making the visual dependency valid assuming correct image generation."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 2
+    },
+    {
+      "stage": "style_checker",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "style_score": {
+          "total": 35,
+          "breakdown": {
+            "stem_tone": 5,
+            "physics_authenticity": 5,
+            "reasoning_quality": 5,
+            "selectivity": 5,
+            "no_calc_engineering": 5,
+            "option_realism": 5,
+            "distractor_plausibility": 5
+          }
+        },
+        "difficulty_calibration": {
+          "difficulty_vs_reference": "similar",
+          "length_feel_vs_reference": "similar",
+          "notes": "The question is well-calibrated for a Medium difficulty ESAT question. It requires a key insight (the circuit analogy and Thévenin simplification) to solve efficiently, which elevates it beyond a simple application of formulas. The calculations are manageable without a calculator, fitting the ESAT style."
+        },
+        "selectivity_audit": {
+          "main_trap": "The primary trap is failing to recognize the underlying DC circuit analogy and/or failing to apply a simplification technique like Thévenin's theorem. Students might attempt to solve the full system of simultaneous equations, which is time-consuming and prone to arithmetic errors. Even if the analogy is recognized, common errors in calculating the Thévenin equivalent pressure or resistance, or misinterpreting the power calculation, lead to plausible distractors.",
+          "why_not_plug_and_chug": "This is not a plug-and-chug question. There is no single formula to directly apply. Candidates must first model the fluid system as an electrical circuit, then choose an appropriate circuit analysis method (Thévenin's theorem is the most efficient) to simplify the source network before calculating the power in the load.",
+          "expected_mid_student_error": "A mid-level student might recognize the circuit analogy but make a mistake in calculating either the Thévenin equivalent pressure (P_Th) or resistance (R_Th). For instance, they might incorrectly average the pump pressures or fail to 'short' the ideal pressure sources when calculating R_Th. Alternatively, they might attempt a full nodal analysis, which is more complex and time-consuming, leading to errors or running out of time. Another error could be confusing the power dissipated in the load with the power dissipated in the internal equivalent resistance or the total power.",
+          "verdict": "selective"
+        },
+        "flags": {
+          "too_easy": false,
+          "too_hard": false,
+          "too_wordy": false,
+          "too_recall_heavy": false,
+          "too_plug_and_chug": false,
+          "possible_verifier_miss": false
+        },
+        "notes": [
+          "The question effectively disguises a standard circuit analysis problem within a fluid dynamics context, which is a classic ESAT technique for testing conceptual understanding and problem-solving flexibility.",
+          "The definitions for pressure drop and power dissipation are clearly provided, ensuring no prior advanced fluid dynamics knowledge is required beyond basic interpretation.",
+          "The options are well-engineered to catch specific, common errors in circuit analysis, making the question highly selective."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 2
+    },
+    {
+      "stage": "visual_router",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "visual_route": "accurate_schematic_json",
+        "answer_depends_on_visual": true,
+        "required_files": [],
+        "reason": "The question explicitly states 'The system is configured as shown in the diagram' and refers to specific components (Pipe A, Pipe B, Pipe C) and their associated symbolic values (2P_0, R, P_0, 2R, 8R/3) which are essential for setting up the problem and performing calculations. The visual is a simple circuit-like schematic, which falls under the `accurate_schematic_json` category. It is not illustrative; it is integral to defining the problem's parameters.",
+        "next_prompt_file": "Physics Accurate_Schematic_Spec.md",
+        "style_target_if_image": null,
+        "blocking_issue": null
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "schematic_spec",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "diagram_id": "d1",
+        "schematic_type": "simple_circuit",
+        "answer_depends_on_diagram": true,
+        "components": [
+          {
+            "id": "pump_top",
+            "type": "battery",
+            "label": "2P_0",
+            "position_hint": "top-left",
+            "properties": {}
+          },
+          {
+            "id": "pipeA",
+            "type": "resistor",
+            "label": "Pipe A, R",
+            "position_hint": "top-right",
+            "properties": {}
+          },
+          {
+            "id": "pump_bottom",
+            "type": "battery",
+            "label": "P_0",
+            "position_hint": "bottom-left",
+            "properties": {}
+          },
+          {
+            "id": "pipeB",
+            "type": "resistor",
+            "label": "Pipe B, 2R",
+            "position_hint": "bottom-right",
+            "properties": {}
+          },
+          {
+            "id": "pipeC",
+            "type": "resistor",
+            "label": "Pipe C, 8R/3",
+            "position_hint": "centre-bottom",
+            "properties": {}
+          }
+        ],
+        "connections": [
+          {
+            "from": "pump_top",
+            "to": "pipeA",
+            "type": "wire"
+          },
+          {
+            "from": "pump_bottom",
+            "to": "pipeB",
+            "type": "wire"
+          },
+          {
+            "from": "pipeA",
+            "to": "pipeC",
+            "type": "wire"
+          },
+          {
+            "from": "pipeB",
+            "to": "pipeC",
+            "type": "wire"
+          },
+          {
+            "from": "pipeC",
+            "to": "pump_top",
+            "type": "wire"
+          },
+          {
+            "from": "pipeC",
+            "to": "pump_bottom",
+            "type": "wire"
+          }
+        ],
+        "labels": [],
+        "style": {
+          "exam_style": true,
+          "black_and_white": true,
+          "minimal": true,
+          "not_to_scale": true
+        },
+        "render_checks": {
+          "no_exact_geometry_required": true,
+          "all_answer_bearing_info_also_in_text": true,
+          "placeholder_id_matches_stem": true
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "visual_linkage_validator",
+      "status": "fail",
+      "verdict": null,
+      "payload": {
+        "ok": false,
+        "errors": [
+          {
+            "field": "question.stem",
+            "kind": "missing_placeholder",
+            "message": "visual_need=accurate_schematic_json but stem has no <DIAGRAM id=\"...\" /> placeholder."
+          }
+        ],
+        "warnings": [
+          {
+            "field": "question.options",
+            "kind": "non_default_count",
+            "message": "Expected 6 options (A-F); got 5."
+          }
+        ],
+        "option_keys": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E"
+        ],
+        "summary": "1 error(s)"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": null,
+      "attempts": 1
+    }
+  ],
+  "pipeline": "v4",
+  "created_at": "2026-05-17T22:05:49+01:00",
+  "extra": {
+    "errors": [
+      {
+        "field": "question.stem",
+        "kind": "missing_placeholder",
+        "message": "visual_need=accurate_schematic_json but stem has no <DIAGRAM id=\"...\" /> placeholder."
+      }
+    ]
+  }
+}

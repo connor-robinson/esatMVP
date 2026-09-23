@@ -1,0 +1,519 @@
+P3|ORIGINAL PRACTICE MATERIAL
+P4|ESAT PHYSICS
+P5|MOCK MODULES A + B
+P6|Candidate Papers and Editor Key
+P7|Two complete 27-question modules calibrated to official ESAT, ENGAA and NSAA material
+P12|Version 1.0   |   August 2026
+P14|How this pack is built
+P15|This pack contains two original Physics modules. Each candidate paper has 27 multiple-choice questions for a 40-minute, no-calculator sitting. One mark is available for each correct answer and there is no penalty for a wrong answer.
+P16|Editorial calibration
+P17|The drafting benchmark was the current ESAT Physics specification and official example guidance, cross-checked against official ENGAA and NSAA Section 1 papers from 2019, 2020, 2022 and 2023. The recurring target was: short wording, one decisive conceptual step, limited arithmetic, and distractors tied to specific mistakes.
+P18|No past-paper stem has been copied. The benchmark note beside each solution identifies the older question style or syllabus feature used to calibrate pacing and difficulty.
+P19|Difficulty scale
+P20|Coverage at a glance
+P21|Editorial note: the intended average target time is about 81-83 seconds per question, leaving a small review margin within 40 minutes. Pilot performance should still be used before commercial release.
+P23|PHYSICS MODULE A
+P24|Candidate Paper
+P25|Instructions
+P26|1. Answer every question by selecting one option.
+P27|2. Each correct answer earns one mark. There is no penalty for an incorrect answer.
+P28|3. Use g = 10 N kg⁻¹ unless a different value is stated.
+P29|4. Do not use a calculator.
+P57|Module A answer grid
+P58|End of Module A
+P60|PHYSICS MODULE B
+P61|Candidate Paper
+P62|Instructions
+P63|1. Answer every question by selecting one option.
+P64|2. Each correct answer earns one mark. There is no penalty for an incorrect answer.
+P65|3. Use g = 10 N kg⁻¹ unless a different value is stated.
+P66|4. Do not use a calculator.
+P94|Module B answer grid
+P95|End of Module B
+P97|EDITOR KEY
+P98|Answers, syllabus labels, tips, concise solutions and misconception maps
+P100|Module A: answer overview
+P101|Gold-highlighted question numbers are editor picks.
+P103|Module A: worked solutions
+P132|Module B: answer overview
+P133|Gold-highlighted question numbers are editor picks.
+P135|Module B: worked solutions
+P164|Research and benchmark appendix
+P165|The following official materials were used to define scope, format and level. Archived papers were sampled across four years to avoid calibrating the pack to one paper's quirks.
+P166|Archived paper sample
+P167|Official Section 1 papers reviewed: ENGAA 2019, 2020, 2022 and 2023; NSAA 2019, 2020, 2022 and 2023. Their use was limited to level, pacing, structure and distractor design. Individual solution notes cite representative question numbers where a style pattern was especially relevant.
+P168|Editorial release checklist
+P169|Recommended next step: blind-pilot both modules with several strong students, record time per item and option-choice frequencies, then revise any question with unexpectedly low discrimination or a distractor that attracts almost nobody.
+
+===== TABLES =====
+
+--- TABLE 0 (1x1) ---
+T0R0|
+
+--- TABLE 1 (1x3) ---
+T1R0|2 / modules || 54 / questions || 40 min / per module
+
+--- TABLE 2 (1x1) ---
+T2R0|UNOFFICIAL  These modules are independently written practice material. They are not produced, approved or endorsed by UAT-UK, Pearson, Cambridge or any university.
+
+--- TABLE 3 (1x3) ---
+T3R0|Candidate paper / Questions only, with topic and difficulty labels withheld. || Editor key / Answer, topic code, difficulty, target time, tip, solution and every distractor. || Calibration / Current ESAT specification plus archived ENGAA and NSAA style benchmarks.
+
+--- TABLE 4 (5x3) ---
+T4R0|Level || Label || Editorial meaning
+T4R1|1/4 || Foundation || Direct syllabus recall or a single transparent step.
+T4R2|2/4 || Standard || Standard ESAT pace: one clear selection and short calculation.
+T4R3|3/4 || Challenging || A hidden decision, linked steps or a strong misconception trap.
+T4R4|4/4 || Very challenging || Upper-end selection: compact synthesis, scaling or non-obvious inference.
+
+--- TABLE 5 (8x4) ---
+T5R0|Code || Physics area || Module A || Module B
+T5R1|P1 || Electricity || 5 || 4
+T5R2|P2 || Magnetism || 3 || 4
+T5R3|P3 || Mechanics || 7 || 7
+T5R4|P4 || Thermal physics || 3 || 3
+T5R5|P5 || Matter || 3 || 3
+T5R6|P6 || Waves || 4 || 4
+T5R7|P7 || Radioactivity || 2 || 2
+
+--- TABLE 6 (2x3) ---
+T6R0|TIME || QUESTIONS || CALCULATOR
+T6R1|40 minutes || 27 || Not permitted
+
+--- TABLE 7 (1x2) ---
+T7R0|Name:  __________________________________ || Date:  ________________
+
+--- TABLE 8 (1x1) ---
+T8R0|1. / A tracking sensor draws a current of 0.30 A for the first 20 s of every minute. For the remaining 40 s, it draws 0.050 A. What total charge passes through the sensor in 10 minutes? / 
+
+--- TABLE 9 (1x1) ---
+T9R0|2. / A robot moves 60 m east in 20 s, then 20 m west in 5 s. It remains stationary for the next 5 s. Which row gives its average speed and its average velocity over the full 30 s? / 
+
+--- TABLE 10 (1x1) ---
+T10R0|3. / A 0.20 kg aluminium block is heated by a 60 W heater for 90 s. Its temperature rises by 25 °C. How much energy is transferred from the block to the surroundings during the heating? (specific heat capacity of aluminium = 900 J kg⁻¹ °C⁻¹) / 
+
+--- TABLE 11 (1x1) ---
+T11R0|4. / A small float oscillates vertically as water waves pass. The waves have amplitude 4.0 cm, frequency 2.5 Hz and wavelength 0.80 m. What is the average speed of the float over many complete oscillations? / 
+
+--- TABLE 12 (1x1) ---
+T12R0|5. / A nucleus X has mass number 226 and atomic number 88. It decays by emitting four alpha particles and three beta-minus particles. What are the mass number and atomic number of the final nucleus? / 
+
+--- TABLE 13 (1x1) ---
+T13R0|6. / A diver seals a syringe containing ideal gas at the bottom of a lake. The gas volume is 60 cm³. At the surface, its volume is 240 cm³. The piston moves freely and the gas temperature is constant. What is the gas volume when the syringe is halfway from the surface to the bottom? / 
+
+--- TABLE 14 (1x1) ---
+T14R0|7. / A metal rod of mass 0.060 kg lies on horizontal rails. A 0.15 m section carries a current of 2.5 A upwards through a uniform magnetic field of 0.80 T directed into the page. A constant resistive force of 0.10 N opposes the motion. What is the rod's initial acceleration and direction? /  / 
+
+--- TABLE 15 (1x1) ---
+T15R0|8. / Blocks P and Q, of masses 2.0 kg and 3.0 kg, are in contact on a horizontal surface. A 20 N force pushes P to the right. Friction on P is 2.0 N and friction on Q is 3.0 N. What force does P exert on Q? /  / 
+
+--- TABLE 16 (1x1) ---
+T16R0|9. / A 200 Ω fixed resistor and an NTC thermistor are connected in series across a 12 V battery. A voltmeter is connected across the fixed resistor. The thermistor resistance is 400 Ω at 20 °C and 100 Ω at 80 °C. What are the voltmeter readings at these temperatures? /  / 
+
+--- TABLE 17 (1x1) ---
+T17R0|10. / A motor takes an electrical input power of 5.0 kW and is 72% efficient. It lifts a 240 kg load vertically at constant speed. What is the speed of the load? (g = 10 N kg⁻¹) / 
+
+--- TABLE 18 (1x1) ---
+T18R0|11. / An ultrasound probe sends a short pulse into a metal block. Reflections return from a crack after 0.12 ms and from the far surface after 0.20 ms. The speed of ultrasound in the metal is 4800 m s⁻¹. What is the distance between the crack and the far surface? /  / 
+
+--- TABLE 19 (1x1) ---
+T19R0|12. / Three cylindrical rods are made from the same material and connect the same hot and cold reservoirs. Rod A has length L and cross-sectional area S. Rod B has length 2L and area 3S. Rod C has length L/2 and area S/2. Which ordering gives their conduction rates from lowest to highest? / 
+
+--- TABLE 20 (1x1) ---
+T20R0|13. / Two branches are connected in parallel across a 12 V battery. One branch contains a 6.0 Ω resistor and an ideal diode that is forward biased. The other contains a 3.0 Ω resistor and an ideal diode that is reverse biased. What is the total current supplied by the battery? /  / 
+
+--- TABLE 21 (1x1) ---
+T21R0|14. / A sealed hollow metal object has an external volume of 100 cm³ and a mass of 540 g. It is fully submerged in water of density 1000 kg m⁻³. What is the downward resultant force on it? (g = 10 N kg⁻¹) / 
+
+--- TABLE 22 (1x1) ---
+T22R0|15. / A 0.20 kg ball is moving vertically downward at 6.0 m s⁻¹ just before it strikes a bat. It leaves the bat moving vertically upward at 4.0 m s⁻¹. Contact lasts 0.10 s. What is the average upward contact force exerted by the bat? (g = 10 N kg⁻¹) / 
+
+--- TABLE 23 (1x1) ---
+T23R0|16. / An ideal transformer has 1200 turns on its 240 V primary coil and 60 turns on its secondary coil. Three identical lamps are connected in parallel across the secondary. Each lamp takes a current of 1.5 A. What current is drawn from the primary supply? / 
+
+--- TABLE 24 (1x1) ---
+T24R0|17. / Straight water waves pass from region X into region Y. Their wavelength changes from 6.0 cm in X to 4.0 cm in Y. The frequency is 5.0 Hz. Which row correctly gives the wave speeds and the change in direction for a ray that is not normal to the boundary? /  / 
+
+--- TABLE 25 (1x1) ---
+T25R0|18. / Two springs with spring constants 100 N m⁻¹ and 300 N m⁻¹ are joined in series. Their combined extension is 0.40 m and both remain within their limits of proportionality. What is the total elastic energy stored? / 
+
+--- TABLE 26 (1x1) ---
+T26R0|19. / Four identical hot metal plates are placed in identical sealed containers. Which plate loses thermal energy at the greatest initial rate? / 
+
+--- TABLE 27 (1x1) ---
+T27R0|20. / The graph shows the current-voltage characteristic of a filament lamp. The lamp is connected in series with a 5.0 Ω resistor across a 10 V supply. What current flows? /  / 
+
+--- TABLE 28 (1x1) ---
+T28R0|21. / A 0.20 kg block of ice at 0 °C is placed in 0.60 kg of water at 30 °C. No energy is transferred to the surroundings. What is the final temperature? (specific heat capacity of water = 4200 J kg⁻¹ °C⁻¹; specific latent heat of fusion of ice = 3.3 × 10^5 J kg⁻¹) / 
+
+--- TABLE 29 (1x1) ---
+T29R0|22. / Two solid spheres are made from the same material and fall through the same liquid. Sphere B has twice the radius of sphere A. At speed v, the drag is D = kr²v², where r is radius and k is constant. Upthrust may be ignored. What is the ratio of their terminal speeds vB/vA? / 
+
+--- TABLE 30 (1x1) ---
+T30R0|23. / A bar magnet moves from X towards the centre of a coil at constant speed v, stops there, then returns from the centre to X at speed 2v. The first motion produces an induced pulse of peak magnitude E lasting time t. Which description fits the return pulse? /  / 
+
+--- TABLE 31 (1x1) ---
+T31R0|24. / Radio wave P has wavelength 3.0 m. X-ray Q has frequency 1.0 × 10^18 Hz. Both travel through a vacuum. Which row gives speed(Q)/speed(P) and frequency(Q)/frequency(P)? (speed of light = 3.0 × 10^8 m s⁻¹) / 
+
+--- TABLE 32 (1x1) ---
+T32R0|25. / The velocity-time graph shows the motion of a 500 kg vehicle. Its velocity rises uniformly from 0 to 12 m s⁻¹ in 4 s, then falls uniformly to 4 m s⁻¹ at 8 s. Which row gives the total distance travelled and the average resultant force over the full 8 s? /  / 
+
+--- TABLE 33 (1x1) ---
+T33R0|26. / A 12 V battery is connected to a 6.0 Ω resistor P in series with a branch containing a 6.0 Ω resistor Q. Closing a switch adds another 6.0 Ω resistor R in parallel with Q. With the switch closed, what is the total power supplied by the battery and the current in Q? /  / 
+
+--- TABLE 34 (1x1) ---
+T34R0|27. / A detector records 620 counts per minute from a radioactive source and background radiation. Two half-lives later it records 170 counts per minute. What is the background count rate, and what reading is expected after a further three half-lives? / 
+
+--- TABLE 35 (10x6) ---
+T35R0|Q || Answer || Q || Answer || Q || Answer
+T35R1|1 ||  || 10 ||  || 19 || 
+T35R2|2 ||  || 11 ||  || 20 || 
+T35R3|3 ||  || 12 ||  || 21 || 
+T35R4|4 ||  || 13 ||  || 22 || 
+T35R5|5 ||  || 14 ||  || 23 || 
+T35R6|6 ||  || 15 ||  || 24 || 
+T35R7|7 ||  || 16 ||  || 25 || 
+T35R8|8 ||  || 17 ||  || 26 || 
+T35R9|9 ||  || 18 ||  || 27 || 
+
+--- TABLE 36 (2x3) ---
+T36R0|TIME || QUESTIONS || CALCULATOR
+T36R1|40 minutes || 27 || Not permitted
+
+--- TABLE 37 (1x2) ---
+T37R0|Name:  __________________________________ || Date:  ________________
+
+--- TABLE 38 (1x1) ---
+T38R0|1. / A solid cuboid has side lengths x, 2x and 4x and density 2500 kg m⁻³. It rests on its largest face and produces a pressure of 5000 Pa. What pressure does it produce when resting on its smallest face? (g = 10 N kg⁻¹) / 
+
+--- TABLE 39 (1x1) ---
+T39R0|2. / A rechargeable battery stores 54 kJ of energy. It is charged from a 9.0 V supply that provides a current of 2.0 A. Only 75% of the electrical energy supplied is stored. How long does charging take? / 
+
+--- TABLE 40 (1x1) ---
+T40R0|3. / A 300 kg cart starts from rest. Its distance-time graph curves smoothly to the point (4 s, 24 m), then becomes a straight line ending at (10 s, 60 m). What is the average resultant force on the cart during the first 4 s? /  / 
+
+--- TABLE 41 (1x1) ---
+T41R0|4. / A cyclist rides directly towards a wall at 10 m s⁻¹. When 175 m from the wall, the cyclist sounds a horn. The speed of sound is 350 m s⁻¹. How long after sounding the horn does the cyclist hear the echo? /  / 
+
+--- TABLE 42 (1x1) ---
+T42R0|5. / Two long parallel wires carry currents upwards. The current in the right-hand wire is twice the current in the left-hand wire. Point M is halfway between them. What is the direction of the resultant magnetic field at M? /  / 
+
+--- TABLE 43 (1x1) ---
+T43R0|6. / A 0.30 kg metal block at 140 °C is placed in 0.20 kg of water at 20 °C. The final temperature is reached with no energy loss. What is the final temperature? (cmetal = 500 J kg⁻¹ °C⁻¹; cwater = 4200 J kg⁻¹ °C⁻¹) / 
+
+--- TABLE 44 (1x1) ---
+T44R0|7. / A neutral atom Q has 8 protons and 9 neutrons. Which option represents a positive ion of a different isotope of the same element? / 
+
+--- TABLE 45 (1x1) ---
+T45R0|8. / A 3.0 kg trolley moves right at 6.0 m s⁻¹ and collides with a 1.0 kg trolley moving left at 2.0 m s⁻¹. They stick together. How much kinetic energy is transferred to other forms? / 
+
+--- TABLE 46 (1x1) ---
+T46R0|9. / Two identical resistors are connected in parallel across a 6.0 V battery and dissipate a total power of 12 W. One resistor is then connected alone across a 9.0 V battery for 20 s. What charge passes through it? / 
+
+--- TABLE 47 (1x1) ---
+T47R0|10. / Air at pressure 1.00 × 10^5 Pa and density 1.20 kg m⁻³ is trapped beneath a freely moving piston. The piston has mass 40 kg and area 0.010 m². It settles slowly and the air remains at constant temperature. What is the final air density? (g = 10 N kg⁻¹) / 
+
+--- TABLE 48 (1x1) ---
+T48R0|11. / A transverse wave travels to the right at 200 m s⁻¹. Its wavelength is 4.0 m. At t = 0, point P is at equilibrium on a section of the wave that rises as position increases. What is P's displacement 5.0 ms later if the amplitude is A? /  / 
+
+--- TABLE 49 (1x1) ---
+T49R0|12. / A power station supplies 1.2 MW at 12 kV to the primary of an ideal step-up transformer. The secondary has five times as many turns as the primary and feeds transmission cables of total resistance 5.0 Ω. What power is dissipated in the cables? / 
+
+--- TABLE 50 (1x1) ---
+T50R0|13. / A 500 kg rollercoaster car starts from rest 20 m above the bottom of a track. It reaches the bottom at 16 m s⁻¹ after travelling 60 m along the track. What is the average resistive force during the descent? (g = 10 N kg⁻¹) / 
+
+--- TABLE 51 (1x1) ---
+T51R0|14. / A radiator is below a window in a closed room. Which description gives the main convection current in the room? /  / 
+
+--- TABLE 52 (1x1) ---
+T52R0|15. / Five identical resistors form two parallel branches across a battery. The top branch contains two resistors in series; the bottom branch contains three in series. A voltmeter across one top resistor reads 3.0 V. What is the battery voltage? /  / 
+
+--- TABLE 53 (1x1) ---
+T53R0|16. / For a spring obeying Hooke's law, a graph of stored energy E against extension squared x² passes through E = 0.040 J when x² = 16 cm². What force stretches the spring to this point? /  / 
+
+--- TABLE 54 (1x1) ---
+T54R0|17. / A rider moves rapidly towards a rigid wall while sounding a horn. The rider hears the reflected sound. Compared with the sound emitted at the horn, how do the amplitude and frequency of the echo heard by the rider compare? / 
+
+--- TABLE 55 (1x1) ---
+T55R0|18. / A simple ac generator produces a sinusoidal output with peak voltage 6.0 V and period 20 ms. The coil's rotation speed is doubled while the magnetic field strength is halved. What are the new peak voltage and period? /  / 
+
+--- TABLE 56 (1x1) ---
+T56R0|19. / A 2.0 kW heater boils water for 5.0 minutes. During this time, 80% of the electrical energy reaches the water. What mass of water is vaporised? (specific latent heat of vaporisation = 2.4 × 10⁶ J kg⁻¹) / 
+
+--- TABLE 57 (1x1) ---
+T57R0|20. / A cart is pulled by a constant horizontal resultant force while ballast leaks out at a constant mass per second. Each piece of ballast leaves with the cart's horizontal velocity, so it gives no extra horizontal push. How does the cart's acceleration change as time passes? / 
+
+--- TABLE 58 (1x1) ---
+T58R0|21. / A negatively charged rod is brought close to the left side of a neutral metal sphere on an insulating stand. While the rod remains, the right side of the sphere is briefly earthed. The earth connection is removed before the rod is taken away. What is the sphere's final charge, and which way did electrons move during earthing? /  / 
+
+--- TABLE 59 (1x1) ---
+T59R0|22. / A person stands 2.0 m in front of a plane mirror. The person walks 0.75 m towards the mirror while the mirror moves 0.25 m towards the person. What is the final distance between the person and their image? /  / 
+
+--- TABLE 60 (1x1) ---
+T60R0|23. / A 0.050 kg bar can slide without friction on horizontal rails in a 0.40 T magnetic field. A 0.20 m section is perpendicular to the field. A current of 1.0 A drives it to the right for 2.0 s. The current is then reversed and reduced to 0.50 A for 4.0 s. Starting from rest, what are its final speed and total distance travelled? /  / 
+
+--- TABLE 61 (1x1) ---
+T61R0|24. / A parachutist is falling at terminal velocity. Immediately after the parachute opens, the drag force is greater than the parachutist's weight. Which statement describes the motion immediately after opening and later at the new terminal velocity? / 
+
+--- TABLE 62 (1x1) ---
+T62R0|25. / A composite conductor has two sections in series, made from the same material. Section X has length L and area 2A. Section Y has length 2L and area A. Its hot end is at 80 °C and cold end at 30 °C. At steady state, what is the temperature at the boundary between X and Y? (conduction rate is proportional to area × temperature difference / length) /  / 
+
+--- TABLE 63 (1x1) ---
+T63R0|26. / The graph shows the amount of stable isotope Y in a sample as radioactive isotope X decays to Y. Initially the sample contains 60 units of X and 20 units of Y. After 6 minutes it contains 65 units of Y. What is the half-life of X? /  / 
+
+--- TABLE 64 (1x1) ---
+T64R0|27. / A slider of mass 0.30 kg is launched up a frictionless slope by a spring compressed 4.0 cm and reaches vertical height h. The same spring is then compressed 6.0 cm to launch a 0.20 kg slider. What maximum vertical height does the second slider reach? / 
+
+--- TABLE 65 (10x6) ---
+T65R0|Q || Answer || Q || Answer || Q || Answer
+T65R1|1 ||  || 10 ||  || 19 || 
+T65R2|2 ||  || 11 ||  || 20 || 
+T65R3|3 ||  || 12 ||  || 21 || 
+T65R4|4 ||  || 13 ||  || 22 || 
+T65R5|5 ||  || 14 ||  || 23 || 
+T65R6|6 ||  || 15 ||  || 24 || 
+T65R7|7 ||  || 16 ||  || 25 || 
+T65R8|8 ||  || 17 ||  || 26 || 
+T65R9|9 ||  || 18 ||  || 27 || 
+
+--- TABLE 66 (1x1) ---
+T66R0|★ Editor pick marks a question with an especially strong ESAT-style decision, a high-value misconception trap, or an elegant synthesis of syllabus ideas. It does not mean the question is necessarily the hardest.
+
+--- TABLE 67 (28x5) ---
+T67R0|Question || Answer || Topic || Difficulty || Target
+T67R1|A1 || E || P1.2 Electric circuits || 2/4 || 70 s
+T67R2|A2 || B || P3.1 Kinematics || 2/4 || 75 s
+T67R3|A3 || F || P4.4 Heat capacity || 2/4 || 70 s
+T67R4|A4 || C || P6.1 Wave properties || 3/4 || 80 s
+T67R5|A5 || A || P7.2 Radioactive decay || 2/4 || 70 s
+T67R6|A6 || D || P5.2 Ideal gases || 4/4 || 100 s
+T67R7|A7 || E || P2.3 The motor effect || 3/4 || 85 s
+T67R8|A8 || C || P3.4 Newton's laws || 3/4 || 85 s
+T67R9|A9 || B || P1.2 Electric circuits || 3/4 || 80 s
+T67R10|A10 || F || P3.7 Energy || 2/4 || 70 s
+T67R11|A11 || A || P6.4 Sound waves || 3/4 || 85 s
+T67R12|A12 || D || P4.1 Conduction || 3/4 || 80 s
+T67R13|A13 || F || P1.2 Electric circuits || 2/4 || 65 s
+T67R14|A14 || C || P5.4 Density || 3/4 || 85 s
+T67R15|A15 || E || P3.6 Momentum || 3/4 || 85 s
+T67R16|A16 || B || P2.5 Transformers || 3/4 || 85 s
+T67R17|A17 || A || P6.2 Wave behaviour || 3/4 || 80 s
+T67R18|A18 || D || P3.3 Force and extension || 4/4 || 95 s
+T67R19|A19 || C || P4.3 Thermal radiation || 1/4 || 55 s
+T67R20|A20 || F || P1.2 Electric circuits || 4/4 || 100 s
+T67R21|A21 || B || P5.3 State changes || 4/4 || 105 s
+T67R22|A22 || E || P3.5 Mass and weight || 4/4 || 95 s
+T67R23|A23 || A || P2.4 Electromagnetic induction || 3/4 || 80 s
+T67R24|A24 || D || P6.5 Electromagnetic spectrum || 2/4 || 70 s
+T67R25|A25 || B || P3.1 Kinematics || 3/4 || 90 s
+T67R26|A26 || F || P1.2 Electric circuits || 4/4 || 100 s
+T67R27|A27 || C || P7.4 Half-life || 4/4 || 100 s
+
+--- TABLE 68 (1x1) ---
+T68R0| / Answer  E  80 C / Tip  Find the charge used in one complete minute before multiplying by 10. / Solution  In one minute, Q = It = (0.30 × 20) + (0.050 × 40) = 6 + 2 = 8 C. In 10 minutes, the charge is 10 × 8 = 80 C. / Difficulty: Standard   |   Suggested target: 70 seconds / Distractor map /  / Benchmark note  NSAA 2022 Q21: short multi-unit current calculation.
+
+--- TABLE 69 (1x1) ---
+T69R0| / Answer  B  speed 2.7 m s⁻¹; velocity 1.3 m s⁻¹ east / Tip  Average speed uses distance. Average velocity uses displacement. / Solution  The robot travels 80 m, so average speed = 80/30 = 2.7 m s⁻¹. Its displacement is 40 m east, so average velocity = 40/30 = 1.3 m s⁻¹ east. / Difficulty: Standard   |   Suggested target: 75 seconds / Distractor map /  / Benchmark note  ENGAA and NSAA kinematics style: distinguish scalar and vector quantities.
+
+--- TABLE 70 (1x1) ---
+T70R0| / Answer  F  900 J / Tip  Compare the heater's total input with the increase in the block's thermal energy. / Solution  The heater supplies Pt = 60 × 90 = 5400 J. The block gains mc ΔT = 0.20 × 900 × 25 = 4500 J. The remaining 900 J is transferred to the surroundings. / Difficulty: Standard   |   Suggested target: 70 seconds / Distractor map /  / Benchmark note  NSAA 2020 Q21: heater input compared with thermal energy gained.
+
+--- TABLE 71 (1x1) ---
+T71R0| / Answer  C  0.40 m s⁻¹ / Tip  In one cycle, the float travels four times the amplitude. / Solution  The float travels 4A = 16 cm = 0.16 m in each cycle. It completes 2.5 cycles per second, so its average speed is 0.16 × 2.5 = 0.40 m s⁻¹. / Difficulty: Challenging   |   Suggested target: 80 seconds / Distractor map /  / Benchmark note  ENGAA 2023 Q16: distinguish wave speed from the motion of a particle in the medium.
+
+--- TABLE 72 (1x1) ---
+T72R0| / Answer  A  mass 210; atomic number 83 / Tip  Each alpha changes A by -4 and Z by -2. Each beta-minus changes Z by +1 only. / Solution  Four alpha decays give A = 226 - 16 = 210 and Z = 88 - 8 = 80. Three beta-minus decays then give Z = 80 + 3 = 83. / Difficulty: Standard   |   Suggested target: 70 seconds / Distractor map /  / Benchmark note  ENGAA 2019 Q12 and NSAA 2020 Q25: multi-step alpha and beta decay bookkeeping.
+
+--- TABLE 73 (1x1) ---
+T73R0| / Answer  D  96 cm³ / Tip  Hydrostatic pressure halves with depth, but atmospheric pressure does not. / Solution  At the surface the pressure is P and PV = P × 240. At the bottom, the volume is one quarter as large, so total pressure is 4P. The water contributes 3P. Halfway down it contributes 1.5P, giving total pressure 2.5P. Hence V = 240/2.5 = 96 cm³. / Difficulty: Very challenging   |   Suggested target: 100 seconds / Distractor map /  / Benchmark note  ENGAA 2023 Q20 and ENGAA 2019 Q6: ideal gas under atmospheric plus hydrostatic pressure.
+
+--- TABLE 74 (1x1) ---
+T74R0| / Answer  E  3.3 m s⁻² to the left / Tip  Use F = BIL, then subtract the resistive force before using F = ma. / Solution  The magnetic force is 0.80 × 2.5 × 0.15 = 0.30 N. The left-hand rule gives a force to the left. The resultant is 0.30 - 0.10 = 0.20 N, so a = 0.20/0.060 = 3.3 m s⁻² to the left. / Difficulty: Challenging   |   Suggested target: 85 seconds / Distractor map /  / Benchmark note  NSAA 2020 Q30 and NSAA 2022 Q21: combine F = BIL with mechanics and direction.
+
+--- TABLE 75 (1x1) ---
+T75R0| / Answer  C  12 N / Tip  Find the acceleration of both blocks, then consider Q by itself. / Solution  The total resultant force is 20 - 2 - 3 = 15 N on 5.0 kg, so a = 3.0 m s⁻². For Q, the contact force must provide ma plus its 3 N friction: F = 3.0 × 3.0 + 3.0 = 12 N. / Difficulty: Challenging   |   Suggested target: 85 seconds / Distractor map /  / Benchmark note  ENGAA 2023 Q32: contact force inside an accelerating multi-block system.
+
+--- TABLE 76 (1x1) ---
+T76R0| / Answer  B  4 V at 20 °C; 8 V at 80 °C / Tip  The fixed resistor's voltage is its fraction of the total series resistance. / Solution  At 20 °C, V = 12 × 200/(200 + 400) = 4 V. At 80 °C, V = 12 × 200/(200 + 100) = 8 V. / Difficulty: Challenging   |   Suggested target: 80 seconds / Distractor map /  / Benchmark note  NSAA 2020 Q29: thermistor characteristic embedded in a series circuit.
+
+--- TABLE 77 (1x1) ---
+T77R0| / Answer  F  1.5 m s⁻¹ / Tip  Useful power is mgv. / Solution  Useful power = 0.72 × 5000 = 3600 W. Since P = mgv, v = 3600/(240 × 10) = 1.5 m s⁻¹. / Difficulty: Standard   |   Suggested target: 70 seconds / Distractor map /  / Benchmark note  ENGAA 2019 Q22 and ENGAA 2023 Q26: power, efficiency and motion in one short chain.
+
+--- TABLE 78 (1x1) ---
+T78R0| / Answer  A  0.192 m / Tip  The time difference still represents a return journey. / Solution  The extra return time from crack to far surface is 0.20 - 0.12 = 0.08 ms. The one-way separation is vt/2 = 4800 × 0.000080 / 2 = 0.192 m. / Difficulty: Challenging   |   Suggested target: 85 seconds / Distractor map /  / Benchmark note  NSAA 2022 Q27 and ENGAA 2021 echo questions: infer an internal distance from reflected pulses.
+
+--- TABLE 79 (1x1) ---
+T79R0| / Answer  D  A = C < B / Tip  For the same material and temperature difference, rate is proportional to area/length. / Solution  The relative rates are A: S/L = 1; B: 3S/(2L) = 1.5; C: (S/2)/(L/2) = 1. Therefore A and C are equal, and B is faster. / Difficulty: Challenging   |   Suggested target: 80 seconds / Distractor map /  / Benchmark note  ENGAA 2019 Q10 and NSAA 2022 Q23: compare conduction using length, area and temperature difference.
+
+--- TABLE 80 (1x1) ---
+T80R0| / Answer  F  2 A / Tip  An ideal reverse-biased diode blocks its entire branch. / Solution  Only the 6.0 Ω branch conducts. Its current is I = V/R = 12/6.0 = 2 A. / Difficulty: Standard   |   Suggested target: 65 seconds / Distractor map /  / Benchmark note  ENGAA 2019 Q2: diode behaviour combined with a short circuit calculation.
+
+--- TABLE 81 (1x1) ---
+T81R0| / Answer  C  4.4 N / Tip  Use the external volume for displaced water, not the volume of metal present. / Solution  The weight is 0.540 × 10 = 5.4 N. The displaced water has mass 1000 × 100 × 10^-6 = 0.10 kg, so upthrust is 1.0 N. The downward resultant is 5.4 - 1.0 = 4.4 N. / Difficulty: Challenging   |   Suggested target: 85 seconds / Distractor map /  / Benchmark note  ENGAA 2023 Q8 and NSAA density/pressure questions: use geometry and density before a force balance.
+
+--- TABLE 82 (1x1) ---
+T82R0| / Answer  E  22 N / Tip  Momentum gives the resultant force. The bat's contact force must also overcome weight. / Solution  Taking upward as positive, delta p = 0.20[4 - (-6)] = 2.0 N s. The average resultant force is 2.0/0.10 = 20 N upward. Since weight is 2 N downward, the contact force is 22 N upward. / Difficulty: Challenging   |   Suggested target: 85 seconds / Distractor map /  / Benchmark note  NSAA 2022 Q31: rebound momentum with weight acting during a finite contact time.
+
+--- TABLE 83 (1x1) ---
+T83R0| / Answer  B  0.225 A / Tip  First find the secondary voltage and total secondary current, then conserve power. / Solution  The secondary voltage is 240 × 60/1200 = 12 V. Its total current is 3 × 1.5 = 4.5 A, so output power is 54 W. For an ideal transformer, primary current = 54/240 = 0.225 A. / Difficulty: Challenging   |   Suggested target: 85 seconds / Distractor map /  / Benchmark note  NSAA 2020 Q27 and ENGAA 2023 Q14: ideal-transformer power across a multi-load circuit.
+
+--- TABLE 84 (1x1) ---
+T84R0| / Answer  A  X: 0.30 m s⁻¹; Y: 0.20 m s⁻¹; towards the normal / Tip  Frequency stays constant at the boundary. A slower wave bends towards the normal. / Solution  Using v = f λ, vX = 5.0 × 0.060 = 0.30 m s⁻¹ and vY = 5.0 × 0.040 = 0.20 m s⁻¹. The wave slows, so its direction bends towards the normal. / Difficulty: Challenging   |   Suggested target: 80 seconds / Distractor map /  / Benchmark note  NSAA 2020 Q24: connect wavefront spacing, speed and refraction direction.
+
+--- TABLE 85 (1x1) ---
+T85R0| / Answer  D  6 J / Tip  In series, both springs carry the same force, but their extensions are different. / Solution  For springs in series, 1/k = 1/100 + 1/300, so the effective spring constant is 75 N m⁻¹. The energy is 1/2 kx² = 0.5 × 75 × 0.40² = 6 J. / Difficulty: Very challenging   |   Suggested target: 95 seconds / Distractor map /  / Benchmark note  ENGAA 2023 Q40 and the 2026 ESAT Physics Guide P3.3: springs in combination and stored energy.
+
+--- TABLE 86 (1x1) ---
+T86R0| / Answer  C  A matt black plate in air / Tip  Compare both radiation from the surface and energy transfer through the gas. / Solution  A matt black surface is the best emitter of thermal radiation, while air also allows conduction and convection. The matt black plate in air therefore loses energy fastest. / Difficulty: Foundation   |   Suggested target: 55 seconds / Distractor map /  / Benchmark note  NSAA 2020 Q26: combine surface finish with conduction, convection and radiation.
+
+--- TABLE 87 (1x1) ---
+T87R0| / Answer  F  0.80 A / Tip  For any trial current, the lamp voltage plus the resistor voltage must equal 10 V. / Solution  From the graph, at 0.80 A the lamp voltage is about 6.0 V. The resistor then has V = IR = 0.80 × 5.0 = 4.0 V. These add to the 10 V supply, so the current is 0.80 A. / Difficulty: Very challenging   |   Suggested target: 100 seconds / Distractor map /  / Benchmark note  ENGAA 2019 Q2 and NSAA 2022 Q30: use a non-Ωic graph inside a circuit constraint.
+
+--- TABLE 88 (1x1) ---
+T88R0| / Answer  B  2.9 °C / Tip  First check whether the warm water can melt all the ice. / Solution  Cooling the water to 0 °C releases 0.60 × 4200 × 30 = 75,600 J. Melting the ice needs 0.20 × 3.3 × 10^5 = 66,000 J, leaving 9600 J. This warms 0.80 kg of water by 9600/(0.80 × 4200) = 2.9 °C. / Difficulty: Very challenging   |   Suggested target: 105 seconds / Distractor map /  / Benchmark note  NSAA 2022 Q35 and ESAT Guide P5.3: two-stage energy balance with a state change.
+
+--- TABLE 89 (1x1) ---
+T89R0| / Answer  E  sqrt(2) / Tip  At terminal speed, drag equals weight. Remember how mass scales with radius. / Solution  Weight is proportional to volume, so it scales as r³. At terminal speed, kr²v² is proportional to r³, giving v² proportional to r. Doubling r therefore multiplies terminal speed by sqrt(2). / Difficulty: Very challenging   |   Suggested target: 95 seconds / Distractor map /  / Benchmark note  NSAA 2020 Q37: derive a terminal-speed scaling from a supplied drag model.
+
+--- TABLE 90 (1x1) ---
+T90R0| / Answer  A  opposite polarity, peak 2E, duration t/2 / Tip  Reverse the motion for polarity. Double the speed for rate and time. / Solution  Moving away reverses the change in magnetic field, so the pulse polarity reverses. At twice the speed, the field changes twice as quickly, giving peak 2E, and the journey takes half as long, giving duration t/2. / Difficulty: Challenging   |   Suggested target: 80 seconds / Distractor map /  / Benchmark note  NSAA 2022 Q36: link magnet velocity, pulse polarity, magnitude and duration.
+
+--- TABLE 91 (1x1) ---
+T91R0| / Answer  D  1; 10^10 / Tip  All electromagnetic waves have the same vacuum speed. Find P's frequency from c/λ. / Solution  Both speed ratios equal 1. For P, f = 3.0 × 10^8 / 3.0 = 1.0 × 10^8 Hz. Therefore fQ/fP = 10^18/10^8 = 10^10. / Difficulty: Standard   |   Suggested target: 70 seconds / Distractor map /  / Benchmark note  ENGAA 2019 Q4: electromagnetic-wave speed and frequency ratios across the spectrum.
+
+--- TABLE 92 (1x1) ---
+T92R0| / Answer  B  56 m; 250 N / Tip  Distance is area under the graph. Average force over the whole interval uses total momentum change. / Solution  Distance = 1/2 × 4 × 12 + 1/2(12 + 4) × 4 = 24 + 32 = 56 m. Average force = delta p/delta t = 500(4 - 0)/8 = 250 N. / Difficulty: Challenging   |   Suggested target: 90 seconds / Distractor map /  / Benchmark note  NSAA 2020 Q33: extract motion and average force from a graph.
+
+--- TABLE 93 (1x1) ---
+T93R0| / Answer  F  16 W; 0.67 A / Tip  The parallel pair has equal branch currents, but P carries their sum. / Solution  Q and R in parallel have equivalent resistance 3.0 Ω. Total resistance is 9.0 Ω, so battery current is 12/9 = 4/3 A and total power is 12 × 4/3 = 16 W. The parallel current splits equally, so IQ = 2/3 A = 0.67 A. / Difficulty: Very challenging   |   Suggested target: 100 seconds / Distractor map /  / Benchmark note  ENGAA 2023 Q4 and Q28: a switch changes a network's current and power.
+
+--- TABLE 94 (1x1) ---
+T94R0| / Answer  C  20 cpm; 39 cpm / Tip  Background does not halve. Subtract the two readings to isolate the source change. / Solution  Let the initial source count be S and background be B. S + B = 620 and S/4 + B = 170, so 3S/4 = 450 and S = 600. Thus B = 20. After five half-lives in total, the reading is 600/32 + 20 = 38.75, about 39 cpm. / Difficulty: Very challenging   |   Suggested target: 100 seconds / Distractor map /  / Benchmark note  NSAA 2020 Q36: extract background count and predict a later reading.
+
+--- TABLE 95 (28x5) ---
+T95R0|Question || Answer || Topic || Difficulty || Target
+T95R1|B1 || B || P5.5 Pressure || 3/4 || 85 s
+T95R2|B2 || F || P1.2 Electric circuits || 3/4 || 85 s
+T95R3|B3 || C || P3.1 Kinematics || 3/4 || 85 s
+T95R4|B4 || E || P6.4 Sound waves || 4/4 || 100 s
+T95R5|B5 || A || P2.2 Magnetic field due to a current || 2/4 || 70 s
+T95R6|B6 || D || P4.4 Heat capacity || 3/4 || 90 s
+T95R7|B7 || E || P7.1 Atomic structure || 2/4 || 65 s
+T95R8|B8 || B || P3.6 Momentum || 3/4 || 85 s
+T95R9|B9 || F || P1.2 Electric circuits || 3/4 || 80 s
+T95R10|B10 || C || P5.2 Ideal gases || 3/4 || 85 s
+T95R11|B11 || A || P6.1 Wave properties || 4/4 || 95 s
+T95R12|B12 || D || P2.5 Transformers || 3/4 || 90 s
+T95R13|B13 || F || P3.7 Energy || 3/4 || 80 s
+T95R14|B14 || E || P4.2 Convection || 1/4 || 55 s
+T95R15|B15 || B || P1.2 Electric circuits || 3/4 || 85 s
+T95R16|B16 || A || P3.3 Force and extension || 3/4 || 80 s
+T95R17|B17 || C || P6.2 Wave behaviour || 2/4 || 65 s
+T95R18|B18 || D || P2.4 Electromagnetic induction || 3/4 || 85 s
+T95R19|B19 || B || P5.3 State changes || 2/4 || 70 s
+T95R20|B20 || E || P3.4 Newton's laws || 4/4 || 85 s
+T95R21|B21 || A || P1.1 Electrostatics || 2/4 || 65 s
+T95R22|B22 || F || P6.3 Optics || 2/4 || 65 s
+T95R23|B23 || C || P2.3 The motor effect || 4/4 || 105 s
+T95R24|B24 || D || P3.5 Mass and weight || 1/4 || 55 s
+T95R25|B25 || B || P4.1 Conduction || 4/4 || 100 s
+T95R26|B26 || E || P7.4 Half-life || 3/4 || 80 s
+T95R27|B27 || C || P3.7 Energy || 4/4 || 95 s
+
+--- TABLE 96 (1x1) ---
+T96R0| / Answer  B  20,000 Pa / Tip  The weight is unchanged. Compare the largest and smallest face areas. / Solution  The largest face has area 8x² and the smallest has area 2x². The smallest area is one quarter as large, so the pressure is four times greater: 4 × 5000 = 20,000 Pa. / Difficulty: Challenging   |   Suggested target: 85 seconds / Distractor map /  / Benchmark note  NSAA 2022 Q40 and ENGAA 2023 Q8: connect cuboid geometry with pressure.
+
+--- TABLE 97 (1x1) ---
+T97R0| / Answer  F  67 min / Tip  The stored energy is the useful output, not the electrical input. / Solution  Input power is VI = 9.0 × 2.0 = 18 W. The required input energy is 54,000/0.75 = 72,000 J. Time = 72,000/18 = 4000 s = 66.7 min, about 67 min. / Difficulty: Challenging   |   Suggested target: 85 seconds / Distractor map /  / Benchmark note  ESAT Physics Guide P1.2 and NSAA circuit-energy style: link E = VIt with efficiency.
+
+--- TABLE 98 (1x1) ---
+T98R0| / Answer  C  450 N / Tip  The gradient of the straight section gives the speed reached at 4 s. / Solution  From 4 s to 10 s, the speed is the graph gradient: (60 - 24)/(10 - 4) = 6 m s⁻¹. The cart reaches this speed at 4 s. Average force = m delta v/delta t = 300 × 6/4 = 450 N. / Difficulty: Challenging   |   Suggested target: 85 seconds / Distractor map /  / Benchmark note  NSAA 2020 Q33: infer final speed from a distance-time graph before finding average force.
+
+--- TABLE 99 (1x1) ---
+T99R0| / Answer  E  0.97 s / Tip  Treat the outward and return journeys separately because the cyclist moves. / Solution  The sound reaches the wall in 175/350 = 0.50 s. The cyclist has then moved 5 m, leaving 170 m. On return, sound and cyclist approach at 350 + 10 = 360 m s⁻¹, so this takes 170/360 = 0.472 s. Total time is 0.972 s, about 0.97 s. / Difficulty: Very challenging   |   Suggested target: 100 seconds / Distractor map /  / Benchmark note  NSAA 2022 Q22 and ESAT-style kinematics: an echo with a moving listener.
+
+--- TABLE 100 (1x1) ---
+T100R0| / Answer  A  out of the page / Tip  Use the right-hand grip rule for each wire separately. / Solution  At M, the left wire produces a field into the page. The right wire produces a field out of the page. The distances are equal, but the right-hand current is twice as large, so its out-of-page field wins. / Difficulty: Standard   |   Suggested target: 70 seconds / Distractor map /  / Benchmark note  ESAT Physics Guide P2.2 and historic ENGAA field-pattern questions.
+
+--- TABLE 101 (1x1) ---
+T101R0| / Answer  D  38 °C / Tip  Energy lost by the metal equals energy gained by the water. / Solution  Let the final temperature be T. Then 0.30 × 500(140 - T) = 0.20 × 4200(T - 20). This gives 21,000 - 150T = 840T - 16,800, so T = 38.2 °C, closest to 38 °C. / Difficulty: Challenging   |   Suggested target: 90 seconds / Distractor map /  / Benchmark note  NSAA 2022 Q35: calorimetry with unequal masses and specific heat capacities.
+
+--- TABLE 102 (1x1) ---
+T102R0| / Answer  E  8 protons, 10 neutrons, 7 electrons / Tip  Same element means same protons. Different isotope means different neutrons. Positive means fewer electrons than protons. / Solution  Option B has 8 protons, so it is the same element; 10 neutrons, so it is a different isotope; and 7 electrons, so its charge is +1. / Difficulty: Standard   |   Suggested target: 65 seconds / Distractor map /  / Benchmark note  NSAA 2020 Q22 and NSAA 2022 Q33: combine isotope identity with ionic charge.
+
+--- TABLE 103 (1x1) ---
+T103R0| / Answer  B  24 J / Tip  Use momentum to find the shared final speed before comparing kinetic energies. / Solution  Taking right as positive, total momentum is 3 × 6 - 1 × 2 = 16 kg m s⁻¹, so final speed is 16/4 = 4 m s⁻¹. Initial kinetic energy is 54 + 2 = 56 J; final kinetic energy is 1/2 × 4 × 4² = 32 J. The loss is 24 J. / Difficulty: Challenging   |   Suggested target: 85 seconds / Distractor map /  / Benchmark note  NSAA 2020 Q32: inelastic collision followed by an energy comparison.
+
+--- TABLE 104 (1x1) ---
+T104R0| / Answer  F  30 C / Tip  The original total power is shared equally between identical parallel resistors. / Solution  Each resistor dissipates 6 W at 6 V, so R = V²/P = 36/6 = 6 Ω. At 9 V, I = 9/6 = 1.5 A. Thus Q = It = 1.5 × 20 = 30 C. / Difficulty: Challenging   |   Suggested target: 80 seconds / Distractor map /  / Benchmark note  NSAA 2022 Q24: infer resistance from a parallel-power condition, then find charge.
+
+--- TABLE 105 (1x1) ---
+T105R0| / Answer  C  1.68 kg m⁻³ / Tip  The final gas pressure includes atmospheric pressure as well as the piston's pressure. / Solution  The piston adds mg/A = 40 × 10/0.010 = 4.0 × 10⁴ Pa. Final pressure is 1.40 × 10^5 Pa. At constant temperature, density is proportional to pressure, so rho = 1.20 × 1.40 = 1.68 kg m⁻³. / Difficulty: Challenging   |   Suggested target: 85 seconds / Distractor map /  / Benchmark note  NSAA 2022 Q38: piston equilibrium, Boyle's law and density scaling.
+
+--- TABLE 106 (1x1) ---
+T106R0| / Answer  A  -A / Tip  A right-moving wave shifts its existing shape to the right. Track what lies just to the left of P. / Solution  The period is T = λ/v = 4.0/200 = 0.020 s. Five milliseconds is T/4. Because the wave rises with position at P and travels right, P initially moves downward. After a quarter-cycle it reaches -A. / Difficulty: Very challenging   |   Suggested target: 95 seconds / Distractor map /  / Benchmark note  NSAA 2022 Q32: combine the spatial wave profile, propagation direction and elapsed time.
+
+--- TABLE 107 (1x1) ---
+T107R0| / Answer  D  2.0 kW / Tip  Step up the voltage, use P = VI for cable current, then I²R for loss. / Solution  The transmission voltage is 5 × 12 kV = 60 kV. Current is 1.2 MW/60 kV = 20 A. Cable loss is I²R = 20² × 5.0 = 2000 W = 2.0 kW. / Difficulty: Challenging   |   Suggested target: 90 seconds / Distractor map /  / Benchmark note  ENGAA 2019 Q8 and ENGAA 2023 Q14: transformer ratio followed by transmission loss.
+
+--- TABLE 108 (1x1) ---
+T108R0| / Answer  F  600 N / Tip  The energy not appearing as kinetic energy is work done against resistance. / Solution  The car loses mgh = 500 × 10 × 20 = 100,000 J of gravitational energy. It gains 1/2 mv² = 64,000 J of kinetic energy, so 36,000 J is dissipated. Average resistance = 36,000/60 = 600 N. / Difficulty: Challenging   |   Suggested target: 80 seconds / Distractor map /  / Benchmark note  NSAA 2020 Q38 and ENGAA 2023 Q26: infer work against resistance from an energy shortfall.
+
+--- TABLE 109 (1x1) ---
+T109R0| / Answer  E  Air rises at the radiator, crosses the ceiling, sinks at the window and returns along the floor / Tip  Heating reduces air density; cooling increases it. / Solution  Air heated by the radiator expands, becomes less dense and rises. It moves across the ceiling, cools near the window, becomes denser and sinks, then returns along the floor. / Difficulty: Foundation   |   Suggested target: 55 seconds / Distractor map /  / Benchmark note  ESAT Physics Guide P4.2: explain convection through temperature-dependent density.
+
+--- TABLE 110 (1x1) ---
+T110R0| / Answer  B  6.0 V / Tip  Each parallel branch has the full battery voltage. / Solution  The two identical top resistors share that branch's voltage equally. One has 3.0 V, so the complete top branch, and therefore the battery, has 6.0 V. / Difficulty: Challenging   |   Suggested target: 85 seconds / Distractor map /  / Benchmark note  ENGAA 2019 Q16 and ENGAA 2023 Q28: identical-resistor networks solved by symmetry and voltage rules.
+
+--- TABLE 111 (1x1) ---
+T111R0| / Answer  A  2.0 N / Tip  Convert × from centimetres before using E = 1/2 kx², then use F = kx. / Solution  Here × = 4.0 cm = 0.040 m. From 0.040 = 1/2 k(0.040)², k = 50 N m⁻¹. Hence F = kx = 50 × 0.040 = 2.0 N. / Difficulty: Challenging   |   Suggested target: 80 seconds / Distractor map /  / Benchmark note  ENGAA 2023 Q6: read an energy-versus-extension-squared graph and recover force.
+
+--- TABLE 112 (1x1) ---
+T112R0| / Answer  C  lower amplitude; higher frequency / Tip  Reflection weakens the wave. Motion towards the wall compresses the arriving wavefronts. / Solution  Some energy is lost or spreads before the echo returns, so its amplitude is lower. The rider and wall approach one another during emission and the rider then moves towards the reflected wave, so the heard frequency is higher. / Difficulty: Standard   |   Suggested target: 65 seconds / Distractor map /  / Benchmark note  NSAA 2022 Q22: combine reflection loss with the qualitative Doppler effect.
+
+--- TABLE 113 (1x1) ---
+T113R0| / Answer  D  6.0 V; 10 ms / Tip  Peak voltage depends on both field strength and rotation speed. Period depends only on rotation speed here. / Solution  Doubling speed doubles the induced peak voltage, while halving field strength halves it, so the effects cancel and the peak remains 6.0 V. Doubling rotation frequency halves the period to 10 ms. / Difficulty: Challenging   |   Suggested target: 85 seconds / Distractor map /  / Benchmark note  NSAA 2022 Q36 and ESAT Guide P2.4: interpret how generator changes affect amplitude and period.
+
+--- TABLE 114 (1x1) ---
+T114R0| / Answer  B  0.20 kg / Tip  Convert minutes to seconds and use only the useful fraction of the heater energy. / Solution  Useful energy = 0.80 × 2000 × 300 = 480,000 J. Thus m = E/L = 480,000/(2.4 × 10⁶) = 0.20 kg. / Difficulty: Standard   |   Suggested target: 70 seconds / Distractor map /  / Benchmark note  NSAA 2022 Q28 and ESAT Guide P5.3: electrical input, efficiency and latent heat.
+
+--- TABLE 115 (1x1) ---
+T115R0| / Answer  E  It increases at an increasing rate / Tip  The force is constant but a = F/m, and equal mass losses matter more when little mass remains. / Solution  As ballast leaks, the mass decreases, so F/m increases. Removing the same mass from a smaller remaining mass produces a larger fractional change than before, so the acceleration increases at an increasing rate. / Difficulty: Very challenging   |   Suggested target: 85 seconds / Distractor map /  / Benchmark note  NSAA 2020 Q40: constant force acting on a steadily decreasing mass, spun into a cart context.
+
+--- TABLE 116 (1x1) ---
+T116R0| / Answer  A  positive; from sphere to Earth / Tip  The negative rod repels mobile electrons away from the near side of the sphere. / Solution  The rod pushes electrons towards the earthed side, so some leave the sphere for Earth. Removing the earth first traps an electron deficit. Once the rod is removed, the sphere remains positively charged. / Difficulty: Standard   |   Suggested target: 65 seconds / Distractor map /  / Benchmark note  ESAT Physics Guide P1.1: charging a conductor by induction and earthing.
+
+--- TABLE 117 (1x1) ---
+T117R0| / Answer  F  2.0 m / Tip  The image is as far behind the mirror as the person is in front. / Solution  The person-mirror separation falls by 0.75 + 0.25 = 1.0 m, from 2.0 m to 1.0 m. The image is 1.0 m behind the mirror, so the person-image distance is 2.0 m. / Difficulty: Standard   |   Suggested target: 65 seconds / Distractor map /  / Benchmark note  ESAT Physics Guide P6.3: plane-mirror geometry with a changing object-mirror separation.
+
+--- TABLE 118 (1x1) ---
+T118R0| / Answer  C  0 m s⁻¹; 9.6 m / Tip  Find each magnetic acceleration, then treat the two constant-acceleration stages separately. / Solution  First, F = BIL = 0.40 × 1.0 × 0.20 = 0.080 N, so a = 1.6 m s⁻². After 2.0 s, v = 3.2 m s⁻¹ and distance is 3.2 m. Reversing a 0.50 A current gives acceleration 0.80 m s⁻² left for 4.0 s, exactly bringing the bar to rest. Its average speed in this stage is 1.6 m s⁻¹, so it travels 6.4 m. Total distance is 9.6 m. / Difficulty: Very challenging   |   Suggested target: 105 seconds / Distractor map /  / Benchmark note  NSAA 2020 Q30: motor force combined with a two-stage motion problem.
+
+--- TABLE 119 (1x1) ---
+T119R0| / Answer  D  Initially accelerates upward and slows; later drag equals weight / Tip  Acceleration follows resultant force, not necessarily velocity. / Solution  The parachutist is still moving downward, but the resultant force is upward, so the downward speed decreases. At the new lower terminal velocity, acceleration is zero and drag again equals weight. / Difficulty: Foundation   |   Suggested target: 55 seconds / Distractor map /  / Benchmark note  ESAT Physics Guide P3.5: force balance and acceleration during a terminal-speed transition.
+
+--- TABLE 120 (1x1) ---
+T120R0| / Answer  B  70 °C / Tip  The same rate passes through both sections, so compare their length/area values. / Solution  For the same rate, temperature drop is proportional to L/A. X has relative thermal resistance L/(2A) = 0.5, while Y has 2L/A = 2, a ratio 1:4. The total 50-degree drop therefore splits 10 degrees across X and 40 degrees across Y. The boundary is 80 - 10 = 70 °C. / Difficulty: Very challenging   |   Suggested target: 100 seconds / Distractor map /  / Benchmark note  ENGAA 2023 Q12: infer a temperature profile across materials with different conduction resistance.
+
+--- TABLE 121 (1x1) ---
+T121R0| / Answer  E  3.0 min / Tip  Use the increase in Y to find how much X remains. / Solution  Y has increased by 45 units, so X has fallen from 60 to 15 units. This is one quarter of the original amount, corresponding to two half-lives. Two half-lives take 6 minutes, so one half-life is 3.0 minutes. / Difficulty: Challenging   |   Suggested target: 80 seconds / Distractor map /  / Benchmark note  NSAA 2022 Q34 and ENGAA 2019 Q20: infer half-life from growth of a stable daughter product.
+
+--- TABLE 122 (1x1) ---
+T122R0| / Answer  C  27h/8 / Tip  Spring energy scales with compression squared, while gravitational energy scales with mass and height. / Solution  Since 1/2 kx² = mgh, height is proportional to x²/m. The ratio is (6/4)² × (0.30/0.20) = 9/4 × 3/2 = 27/8. The new height is 27h/8. / Difficulty: Very challenging   |   Suggested target: 95 seconds / Distractor map /  / Benchmark note  NSAA 2022 Q37: scale a spring launch using energy, mass and compression.
+
+--- TABLE 123 (6x2) ---
+T123R0|Official source || How it was used
+T123R1|ESAT test format || Official current module structure, timing and calculator policy.
+T123R2|ESAT Content Specification || Current examinable Physics content and topic codes.
+T123R3|ESAT Physics Guide, June 2026 || Topic interpretation and official example-question calibration.
+T123R4|Official ESAT preparation materials || Official preparation hub and access point for legacy admissions-test papers.
+T123R5|Pearson VUE UAT sample tests || Official computer-based sample-test environment.
+
+--- TABLE 124 (7x2) ---
+T124R0|✓ || 54 questions total, numbered 1-27 in each module.
+T124R1|✓ || Every question is mapped to a current P1-P7 syllabus code.
+T124R2|✓ || Every incorrect option has a one-sentence misconception map.
+T124R3|✓ || All diagrams are original, simple and question-bearing rather than decorative.
+T124R4|✓ || Answer letters are deliberately balanced across A-F.
+T124R5|✓ || The two modules have no materially duplicated stems.
+T124R6|✓ || A strong-student target time is supplied for every question.

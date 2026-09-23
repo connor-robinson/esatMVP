@@ -1,0 +1,9 @@
+{
+  "apply": true,
+  "oldQuestionId": "495bda7b-6421-46e4-b46f-6a145f8ab5f3",
+  "newQuestionId": "79c08867-ddd7-4531-beda-517d107a1186",
+  "answer": "D",
+  "topic": "M4",
+  "difficulty": 5,
+  "preview": "The graph of a quadratic polynomial $y = P(x)$ is translated by the vector $\\begin{pmatrix} 3 \\\\\\\\ -2 \\end{pmatrix}$ to give the graph of $y = Q(x)$. The polynomial $Q(x)$ has roots at $x = 2$ and $x = 6$. Given that the"
+}

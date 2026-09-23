@@ -1,0 +1,30 @@
+{
+  "questionId": 3127,
+  "examName": "ENGAA",
+  "examYear": 2019,
+  "paperName": "Section 2",
+  "questionNumber": 18,
+  "stemBlocks": [
+    "A drawbridge system consists of a uniform ramp, of weight $W$, that is smoothly hinged at its lower end. The upper end is connected by a light, inextensible cable to a winch that is fixed to the wall in the position shown in the diagram.\nThe ramp is lowered slowly, at constant speed, from its closed (vertical) position ($\\theta = 0^\\circ$) to its open (horizontal) position ($\\theta = 90^\\circ$).",
+    "What is the maximum tension in the cable during this process?",
+    "(double-angle identities: $\\sin 2\\theta = 2\\sin \\theta \\cos \\theta$; $\\cos 2\\theta = \\cos^2 \\theta - \\sin^2 \\theta$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A diagram showing a drawbridge system. A ramp is hinged at its lower end. A cable connects the upper end of the ramp to a winch fixed on a wall. The angle between the ramp and the vertical wall is labeled $\\theta$. The ramp is shown in an intermediate position, with dashed lines indicating its vertical (closed) and horizontal (open) positions.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:42:12.054654+00:00",
+  "sourceImageHash": "319639002efb733ab1396886cdf66448d2e3a29edf08c58018906a51f2ce263e",
+  "status": "ok"
+}

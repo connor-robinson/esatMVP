@@ -1,0 +1,30 @@
+{
+  "questionId": 2368,
+  "examName": "NSAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 69,
+  "stemBlocks": [
+    "The sex of species Q is controlled by two chromosomes X and Y. The sex of females of species Q is controlled by inheriting the same combination of sex chromosomes as healthy male humans. The sex of males in species Q is inherited in the same way as healthy female humans. The family tree for one population of species Q is shown.",
+    "What is the ratio in its simplest form of males to females and the total number of Y chromosomes in this family tree?",
+    "|  | ratio | total number of Y chromosomes |\n| --- | --- | --- |\n| A | 1:0.5 | 9 |\n| B | 1.8:1 | 9 |\n| C | 5:9 | 5 |\n| D | 5:9 | 9 |\n| E | 9:5 | 9 |\n| F | 9:5 | 19 |\n| G | 1:2 | 19 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Key: female (circle), male (square)",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:25:34.736215+00:00",
+  "sourceImageHash": "a75e2ddb99cdfa15f7aed0a7ca5186158a87db587e437cc9c1e0a12223f1fc04",
+  "status": "ok"
+}

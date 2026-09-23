@@ -1,0 +1,213 @@
+﻿
+==== B7 id=30c2cdba-0c80-47f0-95f7-43ba0ff742a2 D=3 tag=M4 ans=E ====
+Let $x$ and $y$ be positive real numbers such that:
+$$u = \log_2 \left( \frac{x^3 y^2}{32} \right)$$
+and
+$$v = \log_2 \left( \frac{x y^2}{8} \right)$$
+Given that $u - v = 4$, what is the value of $x$?
+--- options ---
+{
+  "A": "$\\frac{1}{2}$",
+  "B": "$2$",
+  "C": "$3$",
+  "D": "$4$",
+  "E": "$8$"
+}
+
+==== B18 id=cd21ee99-1a65-4e51-9c99-6bde3ccd165d D=5 tag=M2 ans=D ====
+An exam paper is formatted in sections. For any integer $k \ge 1$, Section $k$ contains exactly $k$ pages.
+
+The paper is printed such that every section must begin on an odd-numbered page. To achieve this, if a section ends on an odd-numbered page, a single blank page is inserted immediately after it. Section 1 begins on page 1.
+
+What is the page number on which Section 51 begins?
+--- options ---
+{
+  "A": "$1275$",
+  "B": "$1276$",
+  "C": "$1300$",
+  "D": "$1301$",
+  "E": "$1302$",
+  "F": "$1326$"
+}
+
+==== B19 id=378be343-cf50-4398-8e35-2441d78fbcaf D=2 tag=M5 ans=A ====
+A region in the $xy$ -plane is defined by the following inequalities:
+
+$$
+0 \le x \le a
+$$
+
+$$
+0 \le y \le a
+$$
+
+$$
+x^2 + y^2 \ge a^2
+$$
+
+where $a$ is a positive constant.
+
+What is the area of this region?
+--- options ---
+{
+  "A": "$a^2(1 - \\frac{\\pi}{4})$",
+  "B": "$\\frac{\\pi a^2}{4}$",
+  "C": "$a^2$",
+  "D": "$a^2(1 - \\frac{\\pi}{2})$",
+  "E": "$a^2(1 - \\pi)$",
+  "F": "$\\frac{\\pi a^2}{2}$"
+}
+
+==== C3 id=e02a7e28-c656-452a-9be6-8958006bd2e8 D=3 tag=M4 ans=D ====
+The curve with equation
+
+$$
+y = \log_2(x)
+$$
+
+
+meets the curve with equation
+
+$$
+y = 3 - \log_2(k-x)
+$$
+
+
+where $k$ is a positive constant, at two distinct points.
+
+The $x$ -coordinates of these two points are $p$ and $q$, where $q > p$.
+
+Given that $q - p = 2$, what is the value of $k$?
+--- options ---
+{
+  "A": "$4$",
+  "B": "$2\\sqrt{5}$",
+  "C": "$4\\sqrt{2}$",
+  "D": "$6$",
+  "E": "$8$",
+  "F": "$2\\sqrt{10}$"
+}
+
+==== C11 id=8cafbdf2-ed42-4471-80f9-510c9305c6d3 D=3 tag=M5 ans=E ====
+A solid metal sphere of diameter 6 cm and a solid metal cylinder of diameter 8 cm and height 3 cm are melted down. The molten metal is used to cast a number of identical solid cones, each with diameter 2 cm and height 3 cm.
+
+Assuming no metal is lost, how many complete cones can be made?
+--- options ---
+{
+  "A": "$28$",
+  "B": "$36$",
+  "C": "$48$",
+  "D": "$75$",
+  "E": "$84$",
+  "F": "$120$"
+}
+
+==== C21 id=72ebeb7b-732c-4bcc-ad30-447c7d38053b D=4 tag=M5 ans=B ====
+A circle is tangent to the line $y = 0$ and the line $3x - 4y = 0$. The circle passes through the point $(6, 3)$.
+What is the sum of the possible values for the radius of the circle?
+
+--- options ---
+{
+  "A": "3",
+  "B": "14/3",
+  "C": "5",
+  "D": "15",
+  "E": "18"
+}
+
+==== D13 id=211de947-5858-4030-b536-96e4b51fe8bd D=3 tag=M2 ans=D ====
+Seven distinct items are arranged in a row.
+How many arrangements are possible in which no two of three specific items are adjacent?
+
+--- options ---
+{
+  "A": "240",
+  "B": "576",
+  "C": "720",
+  "D": "1440",
+  "E": "4320"
+}
+
+==== D16 id=22016305-e510-4f37-ad46-2ad780603111 D=2 tag=M3 ans=A ====
+Two cones have the same volume. The height of the second cone is twice the height of the first cone.
+
+If the base radius of the first cone is $r$, what is the base radius of the second cone?
+--- options ---
+{
+  "A": "$\\frac{r}{\\sqrt{2}}$",
+  "B": "$\\frac{r}{2}$",
+  "C": "$\\frac{r}{4}$",
+  "D": "$r\\sqrt{2}$",
+  "E": "$2r$",
+  "F": "$4r$"
+}
+
+==== D22 id=fc51bef2-c3cc-44c4-83af-b7aa928aa4e5 D=4 tag=M5 ans=C ====
+In a mathematical investigation, a shape is defined by the equation:
+
+$$
+x^2 + y^2 - 4tx - 2ky + 4t^2 = 0
+$$
+
+The parameter $k$ is a fixed positive constant. The parameter $t$ is a variable, and $t > 0$.
+
+Which of the following statements about the shape is/are correct as $t$ varies?
+
+1. The area of the shape is constant.
+2. The shape has exactly one point of intersection with the $x$ -axis.
+3. The distance of the center of the shape from the origin is a linear function of $t$.
+--- options ---
+{
+  "A": "$1$ only",
+  "B": "$2$ only",
+  "C": "$1$ and $2$ only",
+  "D": "$1$ and $3$ only",
+  "E": "$2$ and $3$ only",
+  "F": "$1$, $2$ and $3$"
+}
+
+==== E6 id=86248555-5e15-4d9d-8168-4b10c7bc6d51 D=2 tag=M2 ans=D ====
+A solid cuboid has side lengths $2^a$, $2^b$, and $2^c$, where $a, b, c$ are integers such that $a > b > c > 0$.
+
+A process is applied repeatedly: the cuboid is cut in half by a plane perpendicular to its longest edge. If there is more than one longest edge, only one is chosen to be cut. The process stops as soon as the cuboid is a cube.
+
+Let $N$ be the total number of cuts required, and let $S$ be the side length of the final cube.
+
+Which pair of expressions for $N$ and $S$ is correct?
+--- options ---
+{
+  "A": "$N = a-b, \\quad S = 2^b$",
+  "B": "$N = a-c, \\quad S = 2^c$",
+  "C": "$N = a+b-c, \\quad S = 2^c$",
+  "D": "$N = a+b-2c, \\quad S = 2^c$",
+  "E": "$N = a+b-2c, \\quad S = 2^{3c}$"
+}
+
+==== E25 id=07653e48-1747-449d-849f-649ae79618b8 D=5 tag=M4 ans=D ====
+A circular sector has a fixed radius $r$ and a variable angle $\theta$ radians.
+Its perimeter is $P$ and its area is $A$.
+
+A graph of $A$ against $P$ is a straight line which passes through the points $(14, 6)$ and $(20, 24)$.
+
+What is the value of $r$?
+--- options ---
+{
+  "A": "$\\frac{2}{3}$",
+  "B": "$3$",
+  "C": "$4$",
+  "D": "$6$",
+  "E": "$8$",
+  "F": "$12$"
+}
+
+==== E26 id=0120d098-6eca-425a-8fa5-1eaaec33fda8 D=1 tag=M4 ans=A ====
+Which inequality defines the complete set of values of $x$ satisfying $|3 - 2x| < 9$?
+
+--- options ---
+{
+  "A": "-3 < x < 6",
+  "B": "-6 < x < 3",
+  "C": "x < 6",
+  "D": "x > -3",
+  "E": "x < -3 or x > 6"
+}

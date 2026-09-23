@@ -1,0 +1,29 @@
+{
+  "questionId": 2157,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 2,
+  "stemBlocks": [
+    "Shortly after opening her parachute, a free-fall parachutist of mass $60\\text{kg}$ (including equipment) experiences the forces shown in the diagram. Which line in the table gives the size and direction of the acceleration of the parachutist at this instant?",
+    "|  | size of acceleration/m\\ s^{-2} | direction of acceleration |\n| --- | --- | --- |\n| A | 5.0 | downwards |\n| B | 10.0 | downwards |\n| C | 5.0 | upwards |\n| D | 10.0 | upwards |\n| E | 0.0 | — |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "drag (air resistance) = $900\\text{ N}$\nweight = $600\\text{ N}$\n[diagram not to scale]",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:37:46.621031+00:00",
+  "sourceImageHash": "40284165575e4ad93423a26cf6a8d89984dd26b0ebf1c564644c519a401c1825",
+  "status": "ok"
+}

@@ -1,0 +1,56 @@
+{
+  "stage": "style_checker",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "shorter",
+      "notes": "Perfectly calibrated for an ESAT Section 1 question. It tests a fundamental concept with a classic, high-frequency trap."
+    },
+    "selectivity_audit": {
+      "main_trap": "The 'diameter vs area' trap: students often forget to square the diameter scaling factor, leading to the common error of treating resistance as inversely proportional to diameter (1/2) rather than area (1/4).",
+      "why_not_plug_and_chug": "No numerical values for resistivity or absolute dimensions are provided; the student must perform symbolic proportional reasoning.",
+      "expected_mid_student_error": "Selecting B (3/2 R) by failing to square the diameter factor.",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 1,
+      "estimated_solution_steps": 2,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "This is an exemplary ESAT question. It is concise, relies on a single core physical principle, and uses a well-defined trap to discriminate between students who understand the geometry of the resistance formula and those who do not."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 2
+}

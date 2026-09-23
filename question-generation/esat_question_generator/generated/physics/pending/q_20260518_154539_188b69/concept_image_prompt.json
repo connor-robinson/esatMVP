@@ -1,0 +1,93 @@
+{
+  "image_id": "circuit_parallel_XY",
+  "model_purpose": "concept_visual",
+  "answer_depends_on_image": false,
+  "recommended_model": "MODEL_IMAGE_HIGH_QUALITY",
+  "prompt": "A brutally simple, monochrome physics circuit diagram in the style of a printed TMUA/ENGAA exam paper. The image shows a standard DC circuit with a power supply and two parallel branches. On the left is a standard DC cell symbol (one long thin vertical line and one short thick vertical line). The circuit wires form a rectangular loop that splits into two parallel horizontal branches on the right. The top parallel branch contains a standard UK-style resistor symbol (a simple empty rectangle). The bottom parallel branch contains an identical standard resistor symbol (an empty rectangle). Label the top resistor 'X' and the bottom resistor 'Y'. The labels 'X' and 'Y' should be in an italic serif font, placed centrally just above their respective rectangles with no leader lines. The background must be pure white #FFFFFF. No current arrows, no extra labels, no 3D effects, and no other components.",
+  "negative_prompt": "Pure white background only; no grey paper, gradient, or texture. No extra labels. No overlap. No sans-serif fonts. No decorative shading. No photorealism. No colour. No exact answer-bearing measurements. No clutter. No malformed symbols. No current arrows, no voltmeters, no ammeters. No unrequested arrows, force labels, field symbols, construction arcs, or explanatory overlays.",
+  "required_labels": [
+    "X",
+    "Y"
+  ],
+  "forbidden_labels": [
+    "V",
+    "I",
+    "R",
+    "P"
+  ],
+  "label_anchors": [
+    {
+      "text": "X",
+      "label_type": "apparatus_part",
+      "text_placement": "centrally just above the top resistor rectangle",
+      "leader_target": "none",
+      "must_not_point_at": [
+        "the cell",
+        "the bottom resistor"
+      ]
+    },
+    {
+      "text": "Y",
+      "label_type": "apparatus_part",
+      "text_placement": "centrally just above the bottom resistor rectangle",
+      "leader_target": "none",
+      "must_not_point_at": [
+        "the cell",
+        "the top resistor"
+      ]
+    }
+  ],
+  "layout_logic": {
+    "must_show_relations": [
+      "The two resistors must be in parallel with each other.",
+      "The power supply must be connected across the parallel combination."
+    ],
+    "measurement_mapping": [],
+    "relative_size_constraints": [
+      "The two resistor rectangles should be drawn identically in size, as is standard for circuit diagrams, despite the physical wires having different dimensions."
+    ]
+  },
+  "simplicity_limits": {
+    "max_object_types": 3,
+    "max_labels": 2,
+    "allow_force_arrows": false,
+    "allow_field_patterns": false,
+    "allow_construction_arcs": false,
+    "allow_mixed_representations": false
+  },
+  "hard_constraints": [
+    "background must be pure white #FFFFFF with no grey fill or gradient",
+    "circuit must be a standard schematic diagram",
+    "resistors must be drawn as standard empty rectangles",
+    "no current arrows or extra annotations"
+  ],
+  "style": {
+    "target_style": "tmua_engaa_exam_diagram",
+    "exam_style": true,
+    "black_and_white": true,
+    "background": "pure_white_#FFFFFF",
+    "serif_font": "Times New Roman-like",
+    "math_variables_italic": true,
+    "minimal": true,
+    "not_to_scale": true,
+    "no_overlap": true,
+    "logic_sensitive": true,
+    "brutally_simple": true
+  },
+  "post_generation_checks": {
+    "run_concept_image_verifier": true,
+    "verify_no_overlap": true,
+    "verify_font_exam_like": true,
+    "verify_no_extra_labels": true,
+    "verify_not_answer_bearing": true,
+    "verify_object_relations": true,
+    "verify_measurement_clarity": false,
+    "verify_relative_size_plausibility": true,
+    "verify_simplification_level": true,
+    "verify_no_unrequested_arrows_or_symbols": true,
+    "verify_visual_simplicity": true,
+    "verify_pure_white_background": true,
+    "verify_label_anchor_targets": true,
+    "verify_medium_labels_not_on_objects": true
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "questionId": 3196,
+  "examName": "ENGAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 7,
+  "stemBlocks": [
+    "The diagram shows a circuit that includes a battery with an emf of $18 \\text{ V}$ and internal resistance $r$.\nThe three identical resistors in the external circuit each have resistance $R$.\nThe terminal potential difference across the battery is $16 \\text{ V}$.\nWhich expression gives $R$ in terms of $r$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:48:58.231475+00:00",
+  "sourceImageHash": "0e44c358d3e7fb4bef135874a3a2e09b7d88f38640d77e83aaa74a8f41d7f2de",
+  "status": "ok"
+}

@@ -1,0 +1,28 @@
+{
+  "questionId": 3833,
+  "examName": "TMUA",
+  "examYear": 2017,
+  "paperName": "Paper 2",
+  "questionNumber": 4,
+  "stemBlocks": [
+    "A set of five cards each have a letter printed on their front and a number printed on their back, as follows: Which one of the five cards provides a counterexample to the following statement? Every card that has a vowel on its front has an even number on its back."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A set of five cards each have a letter printed on their front and a number printed on their back.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:22.037216+00:00",
+  "sourceImageHash": "66edfeb101f8ce75794024bfe51bacce9ff9e6fdfcfa37dc22aa7849b2ebe295",
+  "status": "ok"
+}

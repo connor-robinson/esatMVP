@@ -1,0 +1,28 @@
+{
+  "questionId": 2817,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 78,
+  "stemBlocks": [
+    "The diagram shows the life cycle of one species of ant, in which males are haploid and females are diploid.\nWhich of the letters on the diagram represent(s) meiosis?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Life cycle of an ant species showing adult male, egg, adult female, sperm, and zygote, with arrows labeled P, Q, R, S indicating transitions.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.414605+00:00",
+  "sourceImageHash": "8a576143b5154011027e42bf7e2d4ace7b9b870a6a9823d946a94defd68cfc00",
+  "status": "ok"
+}

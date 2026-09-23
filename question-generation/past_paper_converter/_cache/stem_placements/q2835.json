@@ -1,0 +1,29 @@
+{
+  "questionId": 2835,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 16,
+  "stemBlocks": [
+    "$PQR$ is a triangle as shown. $S$ and $T$ are points on the sides $PQ$ and $PR$. $ST$ is parallel to $QR$. $PS = 3$ cm, $ST = x$ cm, $QS = (x + 2)$ cm, $QR = (2x + 1)$ cm.",
+    "What is the length, in cm, of $QR$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.363277+00:00",
+  "sourceImageHash": "7a86367b88b8dcb4d4a9ac923fba8c994331ff7667725e8d1120461823a3b604",
+  "status": "ok"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "esat-mathematics-2-practice-modules",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {"typecheck": "tsc --noEmit", "validate:data": "node --import tsx src/validate.ts"},
+  "dependencies": {"zod": "^4.1.5"},
+  "devDependencies": {"tsx": "^4.23.13", "typescript": "^5.9.2"}
+}

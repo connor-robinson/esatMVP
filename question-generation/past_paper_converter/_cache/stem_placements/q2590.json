@@ -1,0 +1,31 @@
+{
+  "questionId": 2590,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 21,
+  "stemBlocks": [
+    "The current-voltage graph for a diode is shown.",
+    "The diode is connected in series with a resistor and a $6.0 \\text{ V}$ battery. The current in the circuit is $8.0 \\text{ mA}$.",
+    "What is the resistance of the resistor?",
+    "(Assume that the battery has negligible resistance.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Current-voltage graph for a diode",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:18.982213+00:00",
+  "sourceImageHash": "6574372128d3c7c78bf39bf7c57944beb86c8d26512cbd347eb137ff1e50ed0e",
+  "status": "ok"
+}

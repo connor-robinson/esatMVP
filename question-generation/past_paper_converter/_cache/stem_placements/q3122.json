@@ -1,0 +1,29 @@
+{
+  "questionId": 3122,
+  "examName": "ENGAA",
+  "examYear": 2019,
+  "paperName": "Section 2",
+  "questionNumber": 13,
+  "stemBlocks": [
+    "The circuit below contains three identical resistors, and two identical cells. When the switch is open, the power dissipated by resistor X is $P$.",
+    "What is the power dissipated by resistor X after the switch is closed?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:42:12.053208+00:00",
+  "sourceImageHash": "4e81dbc80c60dedc3fff53db9ef0e5374455e54cb826dff3bfbb9e27438e5cf8",
+  "status": "ok"
+}

@@ -1,0 +1,30 @@
+{
+  "questionId": 1895,
+  "examName": "ENGAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 48,
+  "stemBlocks": [
+    "A book of mass $m$ rests on a rough horizontal surface. The surface is now tilted as shown:\nWhen the angle of tilt $\\theta$ is $20^{\\circ}$, the book slides down the slope at a constant speed.",
+    "What is the acceleration of the book down the slope when the angle of tilt is $25^{\\circ}$?",
+    "(gravitational field strength $= g$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:26:26.120282+00:00",
+  "sourceImageHash": "64ad639d54ccbc80e64d8e56fc14d943984fecb6ff180c010bc233e85f4aa9d2",
+  "status": "ok"
+}

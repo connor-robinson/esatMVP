@@ -1,0 +1,29 @@
+{
+  "questionId": 3441,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 52,
+  "stemBlocks": [
+    "DNA replication is an enzyme-catalysed reaction. Experiments were performed at different temperatures using double-stranded DNA (dsDNA), with different percentages of guanine and cytosine base pairs (GC), as the substrate.\nThe graph shows how the relative rates of DNA replication vary with both temperature and the base composition of the substrate. The enzyme is thermally stable at all temperatures in the range.\nThe temperature coefficient ($Q_{10}$) can be used to analyse the effect of increasing temperature on the rate of DNA replication. $Q_{10}$ can be calculated as follows:\n$$Q_{10} = \\frac{\\text{rate of reaction at } (x+10)^{\\circ}\\text{C}}{\\text{rate of reaction at } x^{\\circ}\\text{C}}$$\nFor the temperatures investigated, which of the following statements is/are correct?",
+    "1 $Q_{10}$ can be zero if the substrate has only adenine and thymine base pairs.\n2 $Q_{10}$ is always greater than one for substrates with 60% GC.\n3 At any single temperature below the optimum for this enzyme, $Q_{10}$ is always less for a substrate with 60% GC than for a substrate with 100% GC."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing relative rates of DNA replication as a function of temperature and percentage of GC base pairs, with a key for relative rate.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.157308+00:00",
+  "sourceImageHash": "4d4349af0298a8b12e29a39765c63959a91de6687616161d48ed0490c0f2411b",
+  "status": "ok"
+}

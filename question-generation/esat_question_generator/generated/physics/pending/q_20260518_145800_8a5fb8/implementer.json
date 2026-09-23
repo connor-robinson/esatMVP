@@ -1,0 +1,69 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_a9a3eea7",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Medium",
+      "task_signature": "proportional_change",
+      "primary_tag": "2",
+      "secondary_tags": [
+        "1"
+      ]
+    },
+    "question": {
+      "stem": "Two solid spheres, X and Y, have identical volumes. They fall through the same fluid, which has a constant density $\\rho$.\n\nThe density of sphere X is $5\\rho$ and the density of sphere Y is $4\\rho$.\n\nThe drag force on each sphere is given by $F = kv$, where $v$ is its velocity and $k$ is the same constant for both spheres.\n\nSphere X reaches a terminal velocity $v_0$. What is the terminal velocity of sphere Y?",
+      "options": {
+        "A": "$\\frac{3}{4} v_0$",
+        "B": "$\\frac{4}{5} v_0$",
+        "C": "$\\frac{5}{6} v_0$",
+        "D": "$\\frac{4}{3} v_0$",
+        "E": "$\\frac{5}{4} v_0$",
+        "F": "$\\frac{6}{5} v_0$"
+      },
+      "correct_option": "A"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "At terminal velocity, the drag force equals the net downward force (Weight - Upthrust). Since both spheres have the same volume and are in the same fluid, the upthrust is identical for both.",
+      "reasoning": "1. For an object at terminal velocity, $W = U + F_d$, so $F_d = W - U$.\n2. The weight of a sphere is $W = \\rho_{\\text{obj}} V g$ and the upthrust is $U = \\rho_{\\text{fluid}} V g$.\n3. For sphere X: $k v_0 = 5\\rho V g - \\rho V g = 4\\rho V g$.\n4. For sphere Y: $k v_Y = 4\\rho V g - \\rho V g = 3\\rho V g$.\n5. Taking the ratio gives $\\frac{k v_Y}{k v_0} = \\frac{3\\rho V g}{4\\rho V g} = \\frac{3}{4}$, so $v_Y = \\frac{3}{4} v_0$."
+    },
+    "distractor_map": {
+      "A": "Correct. Uses the net force (Weight - Upthrust) which is proportional to (density_obj - density_fluid).",
+      "B": "Ignores upthrust completely, assuming terminal velocity is directly proportional to object density (4/5).",
+      "C": "Incorrectly adds upthrust to weight ($W + U = F_d$), leading to a ratio of (4+1)/(5+1) = 5/6.",
+      "D": "Inverts the correct proportional relationship, assuming terminal velocity is inversely proportional to net force.",
+      "E": "Inverts the object density relationship, assuming terminal velocity is inversely proportional to object density.",
+      "F": "Inverts the incorrect $W + U$ relationship."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Recognising that upthrust is constant and must be subtracted from weight to find the driving force for terminal velocity.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 2,
+        "estimated_solution_steps": 3,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

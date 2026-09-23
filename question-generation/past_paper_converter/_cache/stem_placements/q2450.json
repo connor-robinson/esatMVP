@@ -1,0 +1,28 @@
+{
+  "questionId": 2450,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 61,
+  "stemBlocks": [
+    "A desert food chain is shown below.\nAssume that 10% of the energy from each stage in the food chain is passed on.\nIf 150 000 units of energy are contained in the producer, how much energy will be lost in the transfer between the primary and secondary consumers?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:49:16.184298+00:00",
+  "sourceImageHash": "b24d091e96e15db67ea17ab56232c66c15704214d53569fed2258d54add62587",
+  "status": "ok"
+}

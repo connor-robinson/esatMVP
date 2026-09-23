@@ -1,0 +1,29 @@
+{
+  "questionId": 2723,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 64,
+  "stemBlocks": [
+    "The diagram shows part of the carbon cycle. Which row identifies the correct descriptions for boxes P, Q, R and S?",
+    "|  | CO$_2$ in atmosphere | carbon-rich compounds in animals | carbon-rich compounds in decomposers | carbon-rich compounds in plants |\n| --- | --- | --- | --- | --- |\n| A | P | Q | R | S |\n| B | Q | P | S | R |\n| C | S | Q | R | P |\n| D | Q | S | P | R |\n| E | S | R | Q | P |\n| F | R | S | P | Q |\n| G | P | R | Q | S |\n| H | R | P | S | Q |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:58.224509+00:00",
+  "sourceImageHash": "f133bee3a4c101a5269f7d7f8b59b032a7b8508b6f85f6dbe4b48dc7100d6be0",
+  "status": "ok"
+}

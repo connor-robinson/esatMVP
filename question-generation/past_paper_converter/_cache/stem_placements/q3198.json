@@ -1,0 +1,29 @@
+{
+  "questionId": 3198,
+  "examName": "ENGAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 9,
+  "stemBlocks": [
+    "A uniform rod XY of length $3.0 \\text{ m}$ has a weight of $20 \\text{ N}$. The rod is supported by two light wires, P and Q, as shown. P and Q are attached $0.50 \\text{ m}$ from ends X and Y, respectively. A $40 \\text{ N}$ load is moved from end X to end Y. The rod remains horizontal at all times.",
+    "Which graph shows the variation of the tension $T$ in wire P with the position of the load as it is moved along the rod?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:48:58.239632+00:00",
+  "sourceImageHash": "b06f6891aec6f5d51baf30bdfe167007dd2d13c0b2880d5ed2f056d12aadf073",
+  "status": "ok"
+}

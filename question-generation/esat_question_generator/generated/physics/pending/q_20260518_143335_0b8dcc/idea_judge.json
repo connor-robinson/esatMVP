@@ -1,0 +1,40 @@
+{
+  "stage": "idea_judge",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "selectivity_score": 0,
+    "checks": {
+      "schema_preserved": "pass",
+      "on_spec": "pass",
+      "reasoning_hinge_present": "pass",
+      "not_direct_substitution": "pass",
+      "wrong_paths_specific": "pass",
+      "visual_feasible": "pass",
+      "mcq_viable": "pass",
+      "difficulty_match": "pass",
+      "goldilocks_complexity": "pass"
+    },
+    "complexity_audit": {
+      "number_of_core_physics_principles": 2,
+      "estimated_solution_steps": 3,
+      "requires_derived_relationship": false,
+      "uses_multi_topic_chain": false,
+      "goldilocks_verdict": "good"
+    },
+    "reasoning_hinge_summary": "The candidate must recognize that terminal velocity occurs when Weight = Upthrust + Drag. By setting up this balance for two different fluids and taking the ratio, they eliminate the unknown drag constant and object volume, allowing them to solve for the object's density in terms of fluid densities.",
+    "expected_mid_student_error": "Mid-level students will likely neglect the upthrust term entirely or attempt to use a simple proportionality (e.g., v ∝ 1/ρ_fluid) without accounting for the additive nature of the forces.",
+    "notes": [
+      "The design successfully avoids the 'too easy' trap by requiring a ratio-based approach rather than a single-step calculation.",
+      "The physics is strictly ESAT-appropriate (Newton's 1st Law + Archimedes' Principle).",
+      "The complexity is well-contained within the Goldilocks zone."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

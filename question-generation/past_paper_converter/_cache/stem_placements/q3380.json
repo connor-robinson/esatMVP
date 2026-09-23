@@ -1,0 +1,30 @@
+{
+  "questionId": 3380,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 51,
+  "stemBlocks": [
+    "Some chemotherapy drugs interfere with the mitotic cell cycle. The following table lists five chemotherapy drugs and their mechanisms of action. The following diagram shows a simplified version of the mitotic cell cycle. Which row identifies the position on the diagram where each chemotherapy drug is most likely to act?",
+    "Five chemotherapy drugs and their mechanisms of action.\n| chemotherapy drug | mechanism of action |\n| --- | --- |\n| Dinaciclib | prevents cells progressing beyond prophase |\n| Doxorubicin | prevents DNA repair following incorrect DNA replication |\n| Methotrexate | inhibits enzymes responsible for DNA synthesis |\n| Vinblastine | inhibits spindle fibre assembly |\n| Wiskostatin | inhibits cytokinesis |",
+    "Positions on the diagram where each chemotherapy drug is most likely to act.\n|  | Dinaciclib | Doxorubicin | Methotrexate | Vinblastine | Wiskostatin |\n| --- | --- | --- | --- | --- | --- |\n| A | 4 | 3 | 1 | 6 | 5 |\n| B | 3 | 2 | 4 | 5 | 6 |\n| C | 5 | 2 | 3 | 6 | 4 |\n| D | 4 | 3 | 2 | 5 | 6 |\n| E | 3 | 4 | 2 | 1 | 5 |\n| F | 3 | 2 | 4 | 1 | 5 |\n| G | 4 | 5 | 2 | 3 | 6 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A simplified version of the mitotic cell cycle.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 3,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:10.865813+00:00",
+  "sourceImageHash": "c2bbda416291353d1d4860d1557914ef3d3713fc995cf24b52a522927f2e635e",
+  "status": "ok"
+}

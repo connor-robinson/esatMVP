@@ -1,0 +1,28 @@
+{
+  "questionId": 3043,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 64,
+  "stemBlocks": [
+    "A student carried out an experiment to investigate the effect of temperature on the rate of photosynthesis. All of the other variables were kept constant. The graph shows the results obtained.\nThe student considered the graph and made the following conclusions.\n1 Up to $22 \\, ^\\circ \\text{C}$ temperature is limiting the rate of photosynthesis.\n2 At temperatures higher than $22 \\, ^\\circ \\text{C}$ not all of the enzymes work so the rate of photosynthesis drops.\n3 As the temperature increases across the temperature range studied, the rate of photosynthesis increases due to increased kinetic energy.\nWhich of the student's conclusions is/are correct?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing rate of photosynthesis (arbitrary units) versus temperature (degrees Celsius), with a peak at 22 degrees Celsius.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:16.012228+00:00",
+  "sourceImageHash": "8ec1ef669ec901b8f0a739a136a9c3990ce2cd94f3f650c1ff5a6ad7bd89916a",
+  "status": "ok"
+}

@@ -1,0 +1,11 @@
+{
+  "stage": "idea_judge",
+  "status": "error",
+  "verdict": null,
+  "payload": null,
+  "notes": [],
+  "error": "No parseable JSON object in model output.",
+  "raw_text": "{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"selectivity_score\": 0,\n  \"checks\": {\n    \"schema_preserved\": \"pass\",\n    \"on_spec\": \"pass\",\n    \"reasoning_hinge_present\": \"pass\",\n    \"not_direct_substitution\": \"pass\",\n    \"wrong_paths_specific\": \"pass\",\n    \"visual_feasible\": \"pass\",\n    \"mcq_viable\": \"pass\",\n    \"difficulty_match\": \"pass\",\n    \"goldilocks_complexity\": \"pass\"\n  },\n  \"complexity_audit\": {\n    \"number_of_core_physics_principles\": 2,\n    \"estimated_solution_steps\": 3,\n    \"requires_derived_relationship\": true,\n    \"uses_multi_topic_chain\": false,\n    \"goldilocks_verdict\": \"good\"\n  },\n  \"reasoning_hinge_summary\": \"The candidate must recognize that mass is not given directly but is related to momentum and kinetic energy via $m = p^2 / 2E_k$. The hinge is the correct algebraic manipulation of the proportionality $m \\propto p^2 / E_k$ and the subsequent application of the scaling factors.\",\n  \"expected_mid_student_error\": \"Failing to square the momentum ratio (treating it as $m \\propto p/E_k$) or inverting the relationship (calculating $E_k/p^2$).\",\n  \"notes\": [\n    \"The idea perfectly fits the ESAT Goldilocks zone by requiring a synthesis of two standard definitions into a single proportional relationship.\",\n    \"The absence of absolute values forces the candidate to use the intended proportional reasoning method, satisfying the anti-plug-and-chug requirement.\"\n  ]\n}",
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

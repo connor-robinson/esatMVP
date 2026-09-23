@@ -1,0 +1,65 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_8ffbc902",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Medium",
+      "task_signature": "compare_scenarios",
+      "primary_tag": "1",
+      "secondary_tags": [
+        "Energy",
+        "Forces",
+        "Springs"
+      ]
+    },
+    "question": {
+      "stem": "A light spring is stood vertically on a surface.\n\nCase 1: A mass is gently placed on top of the uncompressed spring. The spring compresses by a distance $x_1$ to reach its equilibrium position.\n\nCase 2: The same mass is dropped from rest from a height where it just touches the top of the uncompressed spring. The spring compresses by a maximum distance $x_2$.\n\nWhat is the value of the ratio $x_2 / x_1$?",
+      "options": {
+        "A": "$\\frac{1}{2}$",
+        "B": "$1$",
+        "C": "$\\sqrt{2}$",
+        "D": "$2$",
+        "E": "$4$",
+        "F": "It depends on the mass and spring constant."
+      },
+      "correct_option": "D"
+    },
+    "visual_requirements": {
+      "visual_need": "concept_image_only",
+      "visual_role": "supportive",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": "A side-by-side pair of simple diagrams. Left: A mass is shown just touching the top of an uncompressed vertical spring, with a label indicating it is dropped (Case 2). Right: The same mass is shown resting on the spring, which is compressed to its equilibrium position (Case 1). The compressions in the two cases, x2 and x1, could be labelled for clarity in the solution."
+    },
+    "solution": {
+      "key_insight": "The static equilibrium case is governed by a balance of forces, while the dynamic dropping case is governed by conservation of energy. At the point of maximum dynamic compression, the net force is not zero.",
+      "reasoning": "Let the mass be $m$ and the spring constant be $k$.\n\nIn Case 1 (static equilibrium), the system is at rest, so the net force is zero. The upward spring force, $F_s = kx_1$, must balance the downward gravitational force (weight), $F_g = mg$.\n$$kx_1 = mg$$ \n$$x_1 = \\frac{mg}{k}$$ \n\nIn Case 2 (dynamic compression), we consider the conservation of mechanical energy from the point of release to the point of maximum compression. The mass starts at rest and ends momentarily at rest. The loss in gravitational potential energy (GPE) is converted into a gain in elastic potential energy (EPE).\n\nThe mass falls a vertical distance of $x_2$. The loss in GPE is $mgx_2$. The gain in EPE is $\\frac{1}{2}kx_2^2$.\n\n$$mgx_2 = \\frac{1}{2}kx_2^2$$ \nSince $x_2 > 0$, we can divide both sides by $x_2$: \n$$mg = \\frac{1}{2}kx_2$$ \n$$x_2 = \\frac{2mg}{k}$$ \n\nNow we can find the ratio $x_2 / x_1$: \n$$\\frac{x_2}{x_1} = \\frac{2mg/k}{mg/k} = 2$$"
+    },
+    "distractor_map": {
+      "A": "This is the inverse of the correct ratio, $x_1/x_2$. This error occurs from inverting the final fraction.",
+      "B": "This is the most common incorrect answer. It arises from the misconception that at the point of maximum dynamic compression, the forces are balanced ($kx_2 = mg$), just as they are in the static equilibrium case. This would incorrectly imply $x_2 = x_1$.",
+      "C": "This distractor, $\\sqrt{2}$, often appears in energy-related problems (e.g., relating speed and height) and can be chosen by students who are confused about the relationship between energy and displacement for a spring.",
+      "D": "Correct. This is derived by correctly applying force balance for the static case ($kx_1 = mg$) and energy conservation for the dynamic case ($mgx_2 = \\frac{1}{2}kx_2^2$), which shows that $x_2 = 2x_1$.",
+      "E": "This may arise from incorrectly reasoning that because elastic potential energy is proportional to $x^2$, and the displacement doubles, the ratio should be squared ($2^2=4$).",
+      "F": "This is incorrect. As shown in the derivation, the mass $m$ and spring constant $k$ cancel out when the ratio is calculated, resulting in a constant value."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "The solution requires distinguishing between a static force-balance model and a dynamic energy-conservation model for two different scenarios involving the same components.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-pro",
+  "attempts": 1
+}

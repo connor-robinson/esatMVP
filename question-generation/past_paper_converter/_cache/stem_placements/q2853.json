@@ -1,0 +1,29 @@
+{
+  "questionId": 2853,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 34,
+  "stemBlocks": [
+    "Radioactive isotope X undergoes a single beta ($\\beta^-$) decay to form the stable isotope Y.\nA sample consists only of X and Y. The graph shows how the mass of Y present in the sample varies with time. After a long time, the mass of Y in the sample becomes a constant 50 g.",
+    "What is the half-life of X?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.376328+00:00",
+  "sourceImageHash": "e256860d7a1f211e745ce164b2d7a3a79ef7c53e08e8eaf696ab401367aea42a",
+  "status": "ok"
+}

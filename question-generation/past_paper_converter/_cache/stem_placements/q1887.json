@@ -1,0 +1,30 @@
+{
+  "questionId": 1887,
+  "examName": "ENGAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 40,
+  "stemBlocks": [
+    "A block of mass $1.0 \\text{ kg}$ is at rest on a rough horizontal surface. The block is attached by a light inextensible string to a force meter. The other end of the force meter is attached by another light inextensible string via a frictionless pulley to a load of mass $1.0 \\text{ kg}$. The block remains stationary.",
+    "What is the reading on the force meter?",
+    "(gravitational field strength = $10 \\text{ N kg}^{-1}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:26:26.112694+00:00",
+  "sourceImageHash": "323fd8bd4ba69d8729c79a7570c3679febb637e3317305253c4333b27c9274df",
+  "status": "ok"
+}

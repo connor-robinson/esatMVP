@@ -1,0 +1,94 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_f4c1e46f",
+    "module": "physics",
+    "variation_mode": "FAR",
+    "target_difficulty": "Medium",
+    "idea_summary": "A fluid dynamics problem involving a network of pipes and pumps asks for the power dissipated in a single 'load' pipe. The system is a direct analogue of a DC circuit, and the optimal solution involves finding the system's Thévenin equivalent.",
+    "schema_invariant": {
+      "core_move": "Replace a complex linear source system (a network of pumps/pipes) with its simple equivalent model (an equivalent pressure source P_Th and series resistance R_Th) to find the power dissipated in a fixed external load (a specific pipe).",
+      "what_must_not_change": [
+        "A complex linear source system connected to a single fixed load.",
+        "The goal is to calculate a property (power) of the load component only.",
+        "The most efficient solution involves simplifying the source system into an equivalent single source and single internal impedance."
+      ],
+      "what_can_change": [
+        "The physical domain (from electricity to fluid dynamics).",
+        "The specific quantities (Voltage -> Pressure, Current -> Flow Rate, Electrical Resistance -> Flow Resistance, Electrical Power -> Fluid Power).",
+        "The arrangement of components in the source network."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "tempting_wrong_model",
+      "reasoning_hinge": "Recognising that the fluid network problem is isomorphic to a DC circuit problem and can be solved efficiently by finding the Thévenin equivalent of the source network.",
+      "why_top_students_win": "They spot the analogy to DC circuits, mentally apply the Thévenin simplification, and solve a much simpler problem very quickly.",
+      "why_mid_students_miss": "They attempt to solve the full system of simultaneous equations for pressures and flows, which is slow and error-prone. Alternatively, they spot the analogy but make a mistake calculating the equivalent resistance or pressure."
+    },
+    "minimum_reasoning_depth": {
+      "steps": 3,
+      "must_include": [
+        "model_selection",
+        "non_obvious_inference",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "This idea matches the reference schema's core logic of simplifying a source to analyze a fixed load. Like a Medium ESAT question, it requires spotting a non-obvious simplification rather than just applying a formula. The 'collapse moment' ensures the solution is fast once the insight is gained.",
+    "task_signature": "compare_scenarios",
+    "tool_footprint": [
+      "analogy_reasoning",
+      "system_simplification",
+      "proportional_reasoning",
+      "power_calculation"
+    ],
+    "primary_tag": "5",
+    "secondary_tags": [
+      "4"
+    ],
+    "visual_need": "concept_image_only",
+    "visual_role": "supportive",
+    "visual_brief": "A simple schematic of the pipe network. For example, a main pipe splitting into two parallel branches, which then rejoin and connect to the 'load' pipe. Labels for pumps (as circles with arrows) and pipes (as zig-zag lines, like resistors) with symbolic resistances (e.g., R, 2R) would be helpful. No values are answer-bearing.",
+    "surface_twist": "The problem is framed in the domain of fluid dynamics (water pumps, pipes, pressure, flow rate) instead of electronics (batteries, resistors, voltage, current). This disguises its origin as a standard circuit analysis problem solvable with Thévenin's theorem.",
+    "why_still_on_spec": "The problem relies on linear relationships directly analogous to Ohm's Law (ΔP = Q * R_f) and power dissipation (P = Q² * R_f), which are given or can be inferred. The core skills tested are applying rules for series/parallel combinations and proportional reasoning, which are fundamental to ESAT Physics (Tag 5: Electricity and Magnetism). No prior knowledge of fluid dynamics is required.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Attempts to solve the full system of simultaneous equations for pressure and flow, which is time-consuming and complex.",
+        "distractor_role": "This path is a time sink and likely leads to arithmetic errors, but a determined student might arrive at a wrong answer this way."
+      },
+      {
+        "mistake": "Correctly identifies the circuit analogy but miscalculates the Thévenin equivalent resistance (R_Th), for instance by not 'shorting' the ideal pressure source when calculating the equivalent resistance of the parallel pipes.",
+        "distractor_role": "Leads to a plausible but incorrect numerical answer based on a common procedural error in circuit analysis."
+      },
+      {
+        "mistake": "Miscalculates the Thévenin equivalent pressure (P_Th), for instance by making a mistake in the potential divider rule.",
+        "distractor_role": "Another plausible but incorrect numerical answer stemming from a common error."
+      },
+      {
+        "mistake": "Confuses power in a fixed load with the condition for maximum power transfer, and calculates the power dissipated if the load pipe's resistance were equal to R_Th.",
+        "distractor_role": "A classic misconception-based distractor that tests if the student read the question carefully (fixed load vs. variable load)."
+      }
+    ],
+    "difficulty_rationale": "This is Medium difficulty because it requires a conceptual leap (spotting the analogy) to unlock a simple solution path. It's not Easy because the surface representation is unfamiliar. It's not Hard because the analogy is direct and the subsequent calculation is simple (a single series circuit). The 'collapse moment' makes it fast for those who see the trick.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "There is no single formula to apply. The candidate must first recognize the underlying structure of the problem is equivalent to a circuit, then decide to simplify the 'source' part of the system using Thévenin's theorem (even if they don't know the name). Only after this conceptual simplification step does a simple calculation become possible."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The correct answer is unique. Plausible distractors can be generated from common, distinct errors in the simplification process (error in R_Th, error in P_Th), applying the wrong theorem (maximum power transfer), or calculating the wrong quantity (total power)."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-pro",
+  "attempts": 1
+}

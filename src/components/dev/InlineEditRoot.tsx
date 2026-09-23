@@ -213,6 +213,8 @@ export function InlineEditRoot() {
   return (
     <div
       data-inline-edit-ui="1"
+      contentEditable={false}
+      suppressContentEditableWarning
       className="fixed bottom-4 left-1/2 z-[9999] w-[min(42rem,calc(100vw-1.5rem))] -translate-x-1/2 rounded-2xl bg-[#0F172A] px-4 py-3 text-sm text-white shadow-2xl shadow-black/50"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">

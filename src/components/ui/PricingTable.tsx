@@ -2,7 +2,7 @@
 
 import { ReactNode, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { Check, Crown } from "lucide-react";
+import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { OWN_REFERRAL_CODE_MESSAGE } from "@/lib/feedbackReferral/codes";
 
@@ -34,7 +34,7 @@ interface PricingTableProps {
 }
 
 const CARD_SHELL =
-  "relative flex h-full flex-col rounded-organic-xl p-6 shadow-[0_12px_40px_-24px_rgba(0,0,0,0.55)] sm:p-7";
+  "relative flex h-full flex-col p-6 shadow-sm border border-border/40 sm:p-7";
 
 export function PricingTable({
   tiers,
@@ -74,52 +74,31 @@ export function PricingTable({
               onMouseEnter={() => setHoveredId(tier.id)}
               className={cn(
                 CARD_SHELL,
-                "origin-center transition-[transform,background-color,box-shadow,color] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
+                "origin-center transition-[transform,background-color,box-shadow,color,border-color] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
                 isActive
-                  ? "z-10 scale-[1.13] bg-primary text-black shadow-[0_24px_60px_-16px_rgba(0,0,0,0.55)]"
+                  ? "z-10 scale-[1.08] bg-[#A9B167]/10 dark:bg-[#A9B167]/20 text-text shadow-md border-[#A9B167]/50"
                   : "z-0 scale-100 bg-surface-elevated",
               )}
             >
-              {tier.featured ? (
-                <div className="absolute right-4 top-0 z-20 -translate-y-1/2">
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] shadow-[0_8px_20px_-10px_rgba(0,0,0,0.55)] transition-colors duration-300",
-                      isActive
-                        ? "bg-black text-white"
-                        : "bg-primary text-black",
-                    )}
-                  >
-                    <Crown
-                      className={cn(
-                        "h-3.5 w-3.5 shrink-0",
-                        isActive ? "text-primary" : "text-black",
-                      )}
-                      strokeWidth={2.25}
-                      aria-hidden
-                    />
-                    Best value
-                  </span>
-                </div>
-              ) : null}
+              {/* Featured badge removed per user request for more trustworthy design */}
 
               <div className="mb-5 space-y-2">
                 <h3
                   className={cn(
                     "text-lg font-semibold tracking-tight transition-colors duration-300",
-                    isActive ? "text-black" : "text-text",
+                    isActive ? "text-text" : "text-text",
                   )}
                 >
                   {tier.name}
                 </h3>
                 {tier.discountLabel ? (
                   <span
-                    className={cn(
-                      "inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide transition-colors duration-300",
-                      isActive
-                        ? "bg-black text-white"
-                        : "bg-primary/20 text-primary",
-                    )}
+                      className={cn(
+                        "inline-flex px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide transition-colors duration-300",
+                        isActive
+                          ? "bg-[#A9B167]/20 text-[#A9B167]"
+                          : "bg-primary/20 text-primary",
+                      )}
                   >
                     {tier.discountLabel}
                   </span>
@@ -129,7 +108,7 @@ export function PricingTable({
                     <span
                       className={cn(
                         "text-lg font-semibold line-through transition-colors duration-300",
-                        isActive ? "text-black/45" : "text-text-subtle",
+                        isActive ? "text-text-subtle" : "text-text-subtle",
                       )}
                     >
                       {tier.compareAtPrice}
@@ -138,7 +117,7 @@ export function PricingTable({
                   <span
                     className={cn(
                       "text-2xl font-bold tracking-tight transition-colors duration-300 sm:text-3xl",
-                      isActive ? "text-black" : "text-text",
+                      isActive ? "text-[#A9B167]" : "text-text",
                     )}
                   >
                     {tier.price}
@@ -147,7 +126,7 @@ export function PricingTable({
                     <span
                       className={cn(
                         "text-sm transition-colors duration-300",
-                        isActive ? "text-black/75" : "text-text-muted",
+                        isActive ? "text-text-muted" : "text-text-muted",
                       )}
                     >
                       {tier.caption}
@@ -158,7 +137,7 @@ export function PricingTable({
                   <p
                     className={cn(
                       "text-xs leading-snug transition-colors duration-300",
-                      isActive ? "text-black/70" : "text-text-subtle",
+                      isActive ? "text-text-subtle" : "text-text-subtle",
                     )}
                   >
                     {tier.priceNote}
@@ -169,7 +148,7 @@ export function PricingTable({
               <ul
                 className={cn(
                   "mb-6 flex-1 space-y-3 text-sm transition-colors duration-300",
-                  isActive ? "text-black/85" : "text-text-muted",
+                  isActive ? "text-text" : "text-text-muted",
                 )}
               >
                 {tier.features.map((feature) => (
@@ -177,7 +156,7 @@ export function PricingTable({
                     <Check
                       className={cn(
                         "mt-0.5 h-4 w-4 shrink-0 transition-colors duration-300",
-                        isActive ? "text-black" : "text-primary",
+                        isActive ? "text-[#A9B167]" : "text-primary",
                       )}
                       strokeWidth={2.5}
                       aria-hidden
@@ -192,16 +171,16 @@ export function PricingTable({
                 size="md"
                 disabled={isDisabledCta}
                 className={cn(
-                  "w-full rounded-organic-lg border-0 font-semibold transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                  "w-full border-0 font-semibold transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
                   tier.ctaLabel === OWN_REFERRAL_CODE_MESSAGE &&
                     "whitespace-normal px-3 text-xs leading-snug sm:text-sm",
                   showPrimaryCta && "hover:scale-[1.025] active:scale-[1.01]",
                   isActive &&
                     showPrimaryCta &&
-                    "!bg-black !text-white hover:!bg-black/90 hover:!text-white hover:shadow-none",
+                    "!bg-[#A9B167] !text-black hover:!bg-[#A9B167]/90 hover:!text-black hover:shadow-none",
                   isActive &&
                     !showPrimaryCta &&
-                    "bg-black/15 text-black hover:bg-black/20",
+                    "bg-[#A9B167]/15 text-text hover:bg-[#A9B167]/20",
                   !isActive &&
                     showPrimaryCta &&
                     "bg-surface-mid text-text shadow-sm hover:bg-surface-neutral hover:text-text",

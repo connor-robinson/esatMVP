@@ -1,0 +1,29 @@
+{
+  "questionId": 1971,
+  "examName": "ENGAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 16,
+  "stemBlocks": [
+    "In the following circuit, all five resistors have the same resistance.\nThe reading on the voltmeter is $1.0\\text{ V}$.",
+    "What is the voltage across the battery?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:42.161961+00:00",
+  "sourceImageHash": "24a528ac80c25037205b301d539a2f1e4bc36e4958001c7377d24a13a9813c98",
+  "status": "ok"
+}

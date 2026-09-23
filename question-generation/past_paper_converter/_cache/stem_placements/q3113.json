@@ -1,0 +1,29 @@
+{
+  "questionId": 3113,
+  "examName": "ENGAA",
+  "examYear": 2019,
+  "paperName": "Section 2",
+  "questionNumber": 4,
+  "stemBlocks": [
+    "The battery in the circuit shown has an emf of $16\\ \\text{V}$ and an internal resistance of $1.0\\ \\Omega$. Which line in the table gives the voltmeter readings when switch S is in its open and closed states?",
+    "voltmeter reading /V\n|  | when S is open | when S is closed |\n| --- | --- | --- |\n| A | \\frac{4.0}{3.0} | 2.0 |\n| B | 4.0 | 6.0 |\n| C | 4.0 | 2.4 |\n| D | 6.0 | 2.4 |\n| E | 6.0 | 4.0 |\n| F | \\frac{48}{11} | \\frac{48}{19} |\n| G | \\frac{48}{11} | \\frac{48}{7.0} |\n| H | \\frac{128}{11} | \\frac{64}{7.0} |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:42:12.051077+00:00",
+  "sourceImageHash": "662847e4a64abc408db5728e236e60d931d51b878292325d7c29566805f2dce1",
+  "status": "ok"
+}

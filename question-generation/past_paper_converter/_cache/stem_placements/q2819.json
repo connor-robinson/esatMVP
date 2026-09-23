@@ -1,0 +1,30 @@
+{
+  "questionId": 2819,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 80,
+  "stemBlocks": [
+    "The kite diagram shows the distribution of dandelions and daisies along a transect in a field. A quadrat with sides of $0.5 \\text{ m}$ was used to collect the data. Each square on the vertical axis represents 1 plant. For example, in the quadrat centred at $5 \\text{ m}$ there were 6 daisies.",
+    "Which of the following statements about the data is/are correct?",
+    "1 Across the transect, the number of dandelions is proportional to the number of daisies.\n2 Repeating the experiment along a different transect would result in an identical pattern.\n3 The density of dandelions at $5 \\text{ m}$ is 36 plants per square metre."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Kite diagram showing distribution of dandelions and daisies along a transect.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.418358+00:00",
+  "sourceImageHash": "65b08293ec9f6a64ec3ad82974b92c60f53c58258b81ef8beb6b0614b51b1e74",
+  "status": "ok"
+}

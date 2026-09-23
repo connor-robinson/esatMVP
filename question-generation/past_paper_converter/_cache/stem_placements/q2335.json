@@ -1,0 +1,30 @@
+{
+  "questionId": 2335,
+  "examName": "NSAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 36,
+  "stemBlocks": [
+    "A student carries out an experiment to measure the speed of sound. A loudspeaker that emits sound in all directions is placed between two buildings that are $128 \\text{ m}$ apart as shown. The student and loudspeaker are $48 \\text{ m}$ from one of the buildings.\nThe loudspeaker is connected to a signal generator that causes it to emit regular clicks. The student notices that each click results in two echoes, one from each building. The rate at which the clicks are produced is gradually increased from zero until each echo coincides with a new click being emitted by the loudspeaker.",
+    "What is the frequency of emission of clicks when this happens?",
+    "(The speed of sound in air = $320 \\text{ ms}^{-1}$.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Diagram showing two buildings $128 \\text{ m}$ apart, with a student and loudspeaker positioned $48 \\text{ m}$ from one building.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:25:34.698275+00:00",
+  "sourceImageHash": "43fc0b56aea31004d971c497641918b6c4e838ec80392c68079af19d0805f1eb",
+  "status": "ok"
+}

@@ -1,0 +1,95 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_a9a3eea7",
+    "module": "physics",
+    "variation_mode": "FAR",
+    "target_difficulty": "Hard",
+    "idea_summary": "A conducting rod slides at terminal velocity down rails in a magnetic field. The question asks how the power dissipated as heat changes when the magnetic field is altered. This disguises a terminal velocity force-balance problem within an electromagnetic context.",
+    "schema_invariant": {
+      "core_move": "The core reasoning is to establish a steady-state condition (terminal velocity) by balancing a constant driving force (gravity) against a velocity-dependent resistive force (magnetic braking force). This is equivalent to the original schema's balance of weight, buoyancy, and drag.",
+      "what_must_not_change": [
+        "An object reaches a terminal velocity.",
+        "The terminal velocity is determined by the balance of a constant driving force and a velocity-dependent resistive force.",
+        "The question requires calculating how a parameter change affects this steady state."
+      ],
+      "what_can_change": [
+        "The physical context is changed from fluid dynamics to electromagnetism.",
+        "The forces are gravity and magnetic braking, not weight, buoyancy, and fluid drag.",
+        "The question is framed in terms of power dissipated, not velocity itself."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "tempting_wrong_model",
+      "reasoning_hinge": "The candidate must realise that at terminal velocity, the dissipated electrical power is exactly equal to the rate of loss of gravitational potential energy (P = mgv_t). This avoids the trap of focusing only on the electrical power formula P = (BLv)²/R.",
+      "why_top_students_win": "They will use the energy conservation principle (P_dissipated = mgv_t), correctly deduce how v_t depends on B from the force balance equation (v_t ∝ 1/B²), and combine these two insights to find the new power.",
+      "why_mid_students_miss": "They will focus on the formula for power dissipated by the induced current, P = ε²/R = (BLv)²/R. Seeing P ∝ B² and P ∝ v², they might assume P ∝ B² and conclude the power quadruples, forgetting that v is not independent and will change significantly."
+    },
+    "minimum_reasoning_depth": {
+      "steps": 3,
+      "must_include": [
+        "model_selection",
+        "non_obvious_inference",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "The question combines standard physics principles (mechanics, EM) in a way that requires conceptual clarity, similar to how difficult ESAT questions test fundamental understanding rather than calculation. The solution is fast once the correct physical model is chosen.",
+    "task_signature": "compare_scenarios",
+    "tool_footprint": [
+      "energy conservation",
+      "force equilibrium",
+      "proportional reasoning",
+      "electromagnetic induction"
+    ],
+    "primary_tag": "4",
+    "secondary_tags": [
+      "1",
+      "5"
+    ],
+    "visual_need": "concept_image_only",
+    "visual_role": "supportive",
+    "visual_brief": "A simple schematic showing two parallel vertical conducting rails. A horizontal conducting rod rests on the rails, free to slide. Arrows indicate a uniform magnetic field perpendicular to the plane of the rails (e.g., into the page).",
+    "surface_twist": "The problem is presented as one about electromagnetic induction and power, completely hiding the fluid dynamics context of the original schema. The collapse moment occurs when the student realizes it's fundamentally a terminal velocity problem governed by F_net = 0, and that at this steady state, P_in (gravitational) = P_out (electrical).",
+    "why_still_on_spec": "All concepts are from standard ESAT/A-Level physics. Specifically: force balance (Newton's Laws, Tag 1), gravitational potential energy and power (Tag 5), and electromagnetic induction (ε=Blv, F=BIL, Tag 4). The question combines them but does not introduce new laws or require derivations beyond this scope.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Assuming P ∝ B² from the formula P = (BLv)²/R while ignoring the fact that v changes. If B doubles, this leads to the conclusion that power becomes 4 times greater.",
+        "distractor_role": "This is the most tempting distractor, based on a plausible but incomplete application of a formula."
+      },
+      {
+        "mistake": "Incorrectly deriving the relationship between v_t and B, for example by finding v_t ∝ 1/B instead of v_t ∝ 1/B². This would lead to concluding power is halved if B is doubled.",
+        "distractor_role": "A calculation error in the proportional reasoning step."
+      },
+      {
+        "mistake": "Confusing the force and power relationships. For example, knowing that F_drag ∝ B², and incorrectly assuming P ∝ B².",
+        "distractor_role": "A conceptual confusion between force, energy and power dependencies."
+      },
+      {
+        "mistake": "Thinking that because the system reaches a new equilibrium, the power dissipated must be the same as before. A misunderstanding of 'steady state'.",
+        "distractor_role": "A distractor corresponding to 'no change'."
+      }
+    ],
+    "difficulty_rationale": "The problem is 'Hard' because it requires navigating a conceptual trap. The surface-level formula (P ∝ B²) points to the wrong answer. The correct solution requires a deeper insight: either by applying the energy conservation principle P_dissipated = mgv_t, or by carefully carrying through the full algebraic substitution. The former path is much faster and demonstrates superior physical intuition, which is what makes the question selective.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "Directly substituting a single formula, like P = (BLv)²/R, without understanding that 'v' is also a function of 'B', will lead to the wrong answer. The candidate must first reason about the physical system to establish the relationship between v and B before they can determine the effect on P. This is a conceptual step, not a substitution step."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The proportional reasoning nature of the problem generates a clear set of possible answers (e.g., if the original power is P and a parameter is doubled, the new power could be P/4, P/2, P, 2P, 4P). Each of these options corresponds to a specific, plausible line of correct or incorrect reasoning."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-pro",
+  "attempts": 1
+}

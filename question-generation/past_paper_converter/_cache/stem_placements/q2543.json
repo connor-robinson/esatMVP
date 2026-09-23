@@ -1,0 +1,30 @@
+{
+  "questionId": 2543,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 64,
+  "stemBlocks": [
+    "In a laboratory, the activity of two lipase enzymes on the same type of lipid was studied. One lipase enzyme was produced from a mutation in the gene that coded for the original enzyme. The mutation occurred in the sequence for three adjacent amino acids called serine, aspartic acid and histidine. The graph shows the results of this study.",
+    "Which of the following statements is/are correct?",
+    "1 The serine, aspartic acid and histidine amino acids could be in the active site of the enzyme.\n2 All mutations affecting the region coding for serine, aspartic acid and histidine amino acids will be expected to have the same effect.\n3 At point Q on the graph, the pH of the reaction mixture will be higher than at P."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing total mass of product over time for lipase and mutated lipase, with points P and Q marked on the lipase curve.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 1.0
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.840217+00:00",
+  "sourceImageHash": "9c07b638fbe0250ebec14adac0e3388f2c540cf0f301994c7e6068b3947262e7",
+  "status": "ok"
+}

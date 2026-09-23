@@ -1,0 +1,30 @@
+{
+  "questionId": 2022,
+  "examName": "ENGAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 27,
+  "stemBlocks": [
+    "A flat rectangular coil of wire with sides of length 30 cm and 20 cm is freely pivoted about an axle. The axle passes through the middle of the sides of length 30 cm.\nPart of the coil is between the poles of a U-shaped magnet as shown in the diagram.",
+    "The poles are 4.0 cm long. The magnetic field can be considered uniform between the poles, and zero elsewhere.\nThe coil is connected to a power supply so that there is a current in it.\nThe current is 0.60 A and the magnetic flux density is 0.050 T. There are 50 turns of wire in the coil.",
+    "What is the moment about the axle, in N cm, produced by the magnetic force acting on the coil?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "[diagram not to scale]",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 2,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:25.595339+00:00",
+  "sourceImageHash": "6bb33451ab1fd4e0ab5fb6471ba68b26f44f4115b2a09c34f3543f1e0bfaddb4",
+  "status": "ok"
+}

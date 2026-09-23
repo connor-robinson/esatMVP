@@ -1,0 +1,30 @@
+{
+  "questionId": 2623,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 54,
+  "stemBlocks": [
+    "The diagram shows the electrolysis of molten lead(II) bromide, PbBr$_2$, using graphite electrodes to separate the compound into its elements.",
+    "Which of the following statements about this electrolysis is/are correct?",
+    "1. Lead is formed at the negative electrode.\n2. Electrons flow through the external circuit away from the positive electrode towards the negative electrode.\n3. Bromine molecules and lead are produced in a 2:1 molar ratio."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:19.022300+00:00",
+  "sourceImageHash": "617c15b870cd5a0f3a2bc36fb7bf6b93d6fb7c958252c89be41a331110356b33",
+  "status": "ok"
+}

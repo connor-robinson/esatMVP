@@ -1,0 +1,282 @@
+{
+  "id": "P_ad97dfb5-Medium-1c727615a7",
+  "schema_id": "P_ad97dfb5",
+  "difficulty": "Medium",
+  "idea_plan": {
+    "schema_id": "P_ad97dfb5",
+    "module": "physics",
+    "variation_mode": "FAR",
+    "target_difficulty": "Medium",
+    "idea_summary": "Given the ratio of momentum and the ratio of kinetic energy for two objects, candidates must determine the ratio of their masses by applying power-law scaling to the relationship E_k = p^2 / (2m).",
+    "schema_invariant": {
+      "core_move": "Calculate the scaling factor of a target variable by combining the scaling factors of other variables, applying the correct exponents from the governing physical law.",
+      "what_must_not_change": [
+        "The necessity to apply a power (e.g., squaring) to one scaling factor.",
+        "The necessity to handle an inverse or direct proportional relationship correctly.",
+        "The use of ratios or scaling factors rather than absolute values."
+      ],
+      "what_can_change": [
+        "The physical domain (shifting from gravity/astrophysics to mechanics).",
+        "Which variable is the subject of the scaling (solving for an independent linear variable rather than the dependent squared variable)."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "proportional_reasoning",
+      "reasoning_hinge": "Recognizing that mass scales proportionally with the square of momentum and inversely with kinetic energy (m ∝ p^2 / E_k), and correctly applying the ratios without algebraic slip-ups.",
+      "why_top_students_win": "Top students immediately construct the proportional relationship m_A/m_B = (p_A/p_B)^2 * (E_kB/E_kA) and compute the result in one fast step.",
+      "why_mid_students_miss": "Mid students often forget to square the momentum ratio, or they incorrectly multiply by the kinetic energy ratio instead of its inverse."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Kinetic energy and momentum relationship (E_k = p^2 / 2m, or E_k = 1/2 mv^2 combined with p = mv).",
+      "supporting_idea_if_any": "Proportional scaling across multiple variables.",
+      "estimated_solution_steps": 3,
+      "number_of_core_physics_principles": 1,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 3,
+      "must_include": [
+        "recall_or_derive_relationship",
+        "isolate_target_variable",
+        "apply_scaling_factors_with_exponents"
+      ]
+    },
+    "reference_alignment": "Matches the mathematical cognitive load of scaling a density or gravitational force, but shifts the context to mechanics, maintaining the ESAT style of testing fundamental fluency.",
+    "task_signature": "proportional_change",
+    "tool_footprint": [
+      "algebraic_manipulation",
+      "proportional_reasoning",
+      "ratio_calculation"
+    ],
+    "primary_tag": "2",
+    "secondary_tags": [
+      "1"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "Instead of predicting a dependent variable (like force or intensity) from changing spatial dimensions, the task asks to find an intrinsic property (mass) given the ratios of two dynamical variables (momentum and energy).",
+    "why_still_on_spec": "The definitions of kinetic energy and momentum are core GCSE/A-level mechanics. Combining them or reasoning about their ratios is standard ESAT territory.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Failing to square the momentum ratio (using m ∝ p / E_k).",
+        "distractor_role": "Produces a linearly scaled incorrect ratio."
+      },
+      {
+        "mistake": "Applying a direct proportion for kinetic energy instead of an inverse proportion (using m ∝ p^2 * E_k).",
+        "distractor_role": "Produces an inverted incorrect ratio."
+      },
+      {
+        "mistake": "Squaring the kinetic energy ratio instead of the momentum ratio.",
+        "distractor_role": "Produces an exponent-swapped incorrect ratio."
+      }
+    ],
+    "difficulty_rationale": "The difficulty is Medium because the underlying physics is very familiar, but handling a squared ratio and an inverse ratio simultaneously in a completely abstract (no units/values) setting tests working memory and algebraic discipline.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "No absolute values are provided. The candidate must either execute proportional reasoning algebraically or invent their own valid set of dummy numbers for both objects, which requires understanding the physical constraint."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The combination of squaring and inverting operations naturally generates a set of highly plausible, distinct integer or simple fraction distractors."
+    }
+  },
+  "question_package": {
+    "metadata": {
+      "schema_id": "P_ad97dfb5",
+      "module": "physics",
+      "variation_mode": "FAR",
+      "target_difficulty": "Medium",
+      "task_signature": "proportional_change",
+      "primary_tag": "2",
+      "secondary_tags": [
+        "1"
+      ]
+    },
+    "question": {
+      "stem": "Two objects, X and Y, are in motion. Object X has $3$ times the momentum of object Y, and $4$ times the kinetic energy of object Y.\n\nWhat is the ratio of their masses, $\\frac{m_{\\text{X}}}{m_{\\text{Y}}}$?\n\n<figure class=\"qg-diagram\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 600 420\" width=\"600\" height=\"420\" role=\"img\" aria-label=\"concept image\"><image href=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_154835_215019/concept_image_v1.png\" x=\"0\" y=\"0\" width=\"600\" height=\"420\" preserveAspectRatio=\"xMidYMid meet\" /></svg><figcaption>concept image</figcaption></figure>\n",
+      "options": {
+        "A": "$\\frac{3}{16}$",
+        "B": "$\\frac{3}{4}$",
+        "C": "$\\frac{4}{9}$",
+        "D": "$\\frac{9}{4}$",
+        "E": "$12$",
+        "F": "$36$"
+      },
+      "correct_option": "D",
+      "stem_before_visual": "Two objects, X and Y, are in motion. Object X has $3$ times the momentum of object Y, and $4$ times the kinetic energy of object Y.\n\nWhat is the ratio of their masses, $\\frac{m_{\\text{X}}}{m_{\\text{Y}}}$?"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "Kinetic energy and momentum are related by $E_k = \\frac{p^2}{2m}$, which means mass is proportional to the square of momentum and inversely proportional to kinetic energy.",
+      "reasoning": "1. Rearrange the relationship $E_k = \\frac{p^2}{2m}$ to make mass the subject: $m = \\frac{p^2}{2E_k}$.\n2. This reveals the proportional relationship $m \\propto \\frac{p^2}{E_k}$.\n3. We are given the scaling factors for momentum ($p_{\\text{X}} = 3p_{\\text{Y}}$) and kinetic energy ($E_{k\\text{X}} = 4E_{k\\text{Y}}$).\n4. Substitute these factors into the proportional relationship: $\\frac{m_{\\text{X}}}{m_{\\text{Y}}} = \\frac{(3)^2}{4} = \\frac{9}{4}$."
+    },
+    "distractor_map": {
+      "A": "Incorrectly squares the kinetic energy ratio instead of the momentum ratio ($m \\propto p / E_k^2$).",
+      "B": "Fails to square the momentum ratio ($m \\propto p / E_k$).",
+      "C": "Inverts the relationship, treating mass as proportional to kinetic energy over squared momentum ($m \\propto E_k / p^2$).",
+      "D": "Correct option.",
+      "E": "Fails to square momentum and incorrectly assumes direct proportionality for kinetic energy ($m \\propto p \\cdot E_k$).",
+      "F": "Incorrectly assumes mass is directly proportional to kinetic energy ($m \\propto p^2 \\cdot E_k$)."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Recognizing that mass scales proportionally with the square of momentum and inversely with kinetic energy.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 1,
+        "estimated_solution_steps": 3,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "verifier_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "D",
+    "independent_solution": {
+      "main_law_or_principle": "Kinetic energy and momentum relationship: $E_k = \\frac{p^2}{2m}$",
+      "calculation_or_logic": "Given $p_X = 3p_Y$ and $E_{kX} = 4E_{kY}$. From $E_k = \\frac{p^2}{2m}$, we have $m = \\frac{p^2}{2E_k}$. Therefore, the ratio $\\frac{m_X}{m_Y} = \\frac{p_X^2 / (2E_{kX})}{p_Y^2 / (2E_{kY})} = \\left(\\frac{p_X}{p_Y}\\right)^2 \\cdot \\left(\\frac{E_{kY}}{E_{kX}}\\right)$. Substituting the given ratios: $\\frac{m_X}{m_Y} = (3)^2 \\cdot \\left(\\frac{1}{4}\\right) = \\frac{9}{4}$.",
+      "verified_answer_value": "9/4",
+      "claimed_answer_value": "9/4",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Recall $E_k = p^2/2m$",
+        "Isolate $m$",
+        "Apply ratio scaling"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "derived_relationship_audit": {
+      "requires_nontrivial_derivation": false,
+      "number_of_linked_relationships": 0,
+      "relationships_given_in_stem": [],
+      "safe_for_esat": true
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a",
+      "derived_relationship_safety": "pass"
+    },
+    "notes": [
+      "The question is a standard proportional reasoning task based on fundamental mechanics definitions."
+    ]
+  },
+  "style_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "shorter",
+      "notes": "The question is perfectly calibrated for ESAT. It tests the ability to manipulate proportional relationships derived from standard definitions without requiring complex multi-step derivations."
+    },
+    "selectivity_audit": {
+      "main_trap": "The primary trap is the exponent on the momentum ratio (squaring it) and the inverse relationship with kinetic energy. Students who treat the variables as linearly proportional will fall into the distractors.",
+      "why_not_plug_and_chug": "There are no absolute values to plug in; the student must understand the underlying physical relationship $m = p^2 / 2E_k$ to determine the scaling factor.",
+      "expected_mid_student_error": "A student might incorrectly calculate $3/4$ (linear) or $4/9$ (inverting the momentum ratio), which are provided as distractors.",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 1,
+      "estimated_solution_steps": 3,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "Excellent use of proportional reasoning. The distractors are well-constructed to catch common algebraic and conceptual errors."
+    ]
+  },
+  "models": {
+    "designer": "gemini-3.1-pro-preview",
+    "implementer": "gemini-3.1-pro-preview",
+    "verifier": "gemini-3.1-flash-lite",
+    "style_judge": "gemini-3.1-flash-lite"
+  },
+  "attempts": 1,
+  "created_at": "2026-05-18T15:52:21.942493",
+  "token_usage": {
+    "prompt_tokens": 35039,
+    "candidates_tokens": 5582,
+    "total_tokens": 49880
+  },
+  "tags": {
+    "primary_tag": "3",
+    "secondary_tags": [],
+    "primary_confidence": 1.0,
+    "reasoning": "The question requires the application of the definitions of momentum and kinetic energy, and their interrelationship with mass. These concepts are fundamental to the topic of Mechanics.",
+    "_raw_text": "```json\n{\n  \"primary_tag\": \"3\",\n  \"secondary_tags\": [],\n  \"primary_confidence\": 1.0,\n  \"reasoning\": \"The question requires the application of the definitions of momentum and kinetic energy, and their interrelationship with mass. These concepts are fundamental to the topic of Mechanics.\"\n}\n```"
+  },
+  "schema_block_snapshot": "## **P_ad97dfb5. Scaling quantities with power law relationships**\n\n**Core move:** Calculate the resultant value of a dependent physical quantity by applying given scaling factors to its independent variables in a power law relationship.\n\n**Seen in / context:**\n- Stefan-Boltzmann law (P = σAT⁴ or P = kR²T⁴)\nGravitational force/potential (F = Gm₁m₂/r²)\nElectric force/potential (F = kq₁q₂/r²)\nIntensity of waves (I ∝ 1/r²)\nAny physical law where a quantity depends on powers of other variables.\n\n**Possible wrong paths:**\n- Incorrectly applying the exponents to the scaling factors (e.g., multiplying by 2 for R² instead of 2²).\nMisinterpreting the scaling factor (e.g., 'decrease by a factor of two' means multiplying by 1/2, not subtracting 2).\nPerforming absolute calculations when a ratio-based approach would be simpler and less error-prone.\nErrors in manipulating scientific notation or powers of 10.\n\n**Notes for generation:**\n- Encourage the use of ratios (e.g., P_final/P_initial) to cancel out constants and original values, simplifying the calculation.\nEnsure the definition of 'factor of X' increase/decrease is consistent and clearly understood.\nCan involve multiple variables changing simultaneously, requiring careful application of all scaling factors and exponents.\n\n**Exemplar questions:**\n- `NSAA_2016_Section1_Q26_NSAA_Sec`: Initial exemplar for new schema.\n- `NSAA_2017_Section1_Q28_NSAA_Sec`: The question requires calculating the ratio of densities (a dependent physical quantity) by applying the given ratio of radii (an independent variable) using a power law relationship (density is inversely proportional to the cube of the radius, ρ ∝ r⁻³). This directly matches the core move of schema P_ad97dfb5.",
+  "pipeline": "v4",
+  "has_visual": true,
+  "visual_type": "concept_image",
+  "answer_depends_on_visual": false,
+  "question_stem_before_auto_diagram": "Two objects, X and Y, are in motion. Object X has $3$ times the momentum of object Y, and $4$ times the kinetic energy of object Y.\n\nWhat is the ratio of their masses, $\\frac{m_{\\text{X}}}{m_{\\text{Y}}}$?",
+  "visual_assets": [
+    {
+      "kind": "concept_image",
+      "spec_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260518_154835_215019\\concept_image_prompt.json",
+      "image_paths": [
+        "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_154835_215019/concept_image_v1.png"
+      ],
+      "renderer": "gemini_image_v1",
+      "qc_status": "pass",
+      "qc_source": "concept_image_verifier.json",
+      "answer_bearing": false,
+      "checksum": null
+    }
+  ]
+}

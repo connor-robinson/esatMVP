@@ -1,0 +1,30 @@
+{
+  "questionId": 3312,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 43,
+  "stemBlocks": [
+    "A number of patients in a hospital were infected with the same bacterial pathogen. The symptoms of this infection included pain in the abdomen, sickness and loss of appetite partly resulting from decreased production of acid in the stomach.\nThe bacteria present in their digestive systems were compared with those of healthy volunteers.\nSamples were taken from each person and examined in order to identify the type of bacteria present and their relative proportions.\nThe results of the study are shown in the chart.",
+    "Which of the following statements could be correct?",
+    "1 Type S and type T feed on different biological molecules.\n2 The DNA sequence of bacterial genes was used to classify the bacteria.\n3 Type P, type Q and type R reduce in number because they require an alkaline environment."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Bar chart showing the percentage of different types of bacteria (P, Q, R, S, T) present in samples from healthy individuals (black bars) and infected individuals (grey bars).",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 1.0
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:13.288546+00:00",
+  "sourceImageHash": "73aaf5518fa6590109e0a81671885f638fce55a568f52440d12c37ea957f8d92",
+  "status": "ok"
+}

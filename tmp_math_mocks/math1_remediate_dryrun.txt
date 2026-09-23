@@ -1,0 +1,89 @@
+﻿DRY-RUN (pass --apply to write)
+
+
+=== B7 (replace) ΓÇö Uses log_2 (MM5 / Math 2) ===
+  current 30c2cdba D=3 M4
+  Let $x$ and $y$ be positive real numbers such that: $$u = \log_2 \left( \frac{x^3 y^2}{32} \right)$$ and $$v = \log_2 \left( \frac{x y^2}{8} \right)$$ Given that $u - v = 4$, what ΓÇª
+  ΓåÆ pick 17e93d1b-c2b2-4d29-baeb-64f359993a2c D=4 M4 ans=B
+     The graphs of the functions $y = (k-1)x^2 + 6x$ and $y = -k - 7$ intersect at exactly one point. What is the sum of all possible real values of the constant $k$?ΓÇª
+     (rejected 10 of 40 for reuse/OOS)
+
+=== B18 (replace) ΓÇö Needs arithmetic-series sum 1+ΓÇª+50 (MM2.2) ===
+  current cd21ee99 D=5 M2
+  An exam paper is formatted in sections. For any integer $k \ge 1$, Section $k$ contains exactly $k$ pages. The paper is printed such that every section must begin on an odd-numbereΓÇª
+  ΓåÆ pick 495bda7b-6421-46e4-b46f-6a145f8ab5f3 D=5 M4 ans=E
+     Let the function $f$ be defined by $f(x) = x^2 - 2$. The function $f^n(x)$ is defined by $f^1(x)=f(x)$ and $f^{n+1}(x) = f(f^n(x))$ for $n \ge 1$. Find the number of distinct real ΓÇª
+     (rejected 11 of 40 for reuse/OOS)
+
+=== B19 (replace) ΓÇö Flagged for replacement ===
+  current 378be343 D=2 M5
+  A region in the $xy$ -plane is defined by the following inequalities: $$ 0 \le x \le a $$ $$ 0 \le y \le a $$ $$ x^2 + y^2 \ge a^2 $$ where $a$ is a positive constant. What is the ΓÇª
+  ΓåÆ pick 4580021a-8038-4020-b9a9-9a9758805a26 D=2 M3 ans=C
+     The non-zero quantities $x$, $y$ and $z$ satisfy the ratios $x:y = 3:2$ and $y:z = 5:4$. What is the value of $\frac{x+z}{y}$?ΓÇª
+     (rejected 8 of 40 for reuse/OOS)
+
+=== C3 (replace) ΓÇö Uses log_2 (MM5 / Math 2) ===
+  current e02a7e28 D=3 M4
+  The curve with equation $$ y = \log_2(x) $$ meets the curve with equation $$ y = 3 - \log_2(k-x) $$ where $k$ is a positive constant, at two distinct points. The $x$ -coordinates oΓÇª
+  ΓåÆ pick 98f0e33e-abdb-44f4-a072-8aff29e931f7 D=3 M4 ans=E
+     A square has side length $x$ cm. A rectangle is formed by doubling one dimension of the square and decreasing the other dimension by 4 cm. The area of the resulting rectangle is 15ΓÇª
+     (rejected 8 of 40 for reuse/OOS)
+
+=== C11 (fix) ΓÇö Supply sphere/cone volume formulae ===
+  current 8cafbdf2 D=3 M5
+  A solid metal sphere of diameter 6 cm and a solid metal cylinder of diameter 8 cm and height 3 cm are melted down. The molten metal is used to cast a number of identical solid coneΓÇª
+  ΓåÆ stem will gain volume formula(e)
+
+=== C21 (replace) ΓÇö Too long / Math-2-style tangent-circle geometry ===
+  current 72ebeb7b D=4 M5
+  A circle is tangent to the line $y = 0$ and the line $3x - 4y = 0$. The circle passes through the point $(6, 3)$. What is the sum of the possible values for the radius of the circlΓÇª
+  ΓåÆ pick c04ff38c-b943-4d56-8b98-3f6b6961f47d D=4 M4 ans=A
+     A tank is filled by a tap and emptied by a drain. The drain takes 10 minutes longer to empty the full tank than the tap takes to fill the empty tank. Starting with an empty tank, bΓÇª
+     (rejected 9 of 40 for reuse/OOS)
+
+=== D13 (replace) ΓÇö Heavy formal combinatorics (Math 2 style) ===
+  current 211de947 D=3 M2
+  Seven distinct items are arranged in a row. How many arrangements are possible in which no two of three specific items are adjacent?ΓÇª
+  ΓåÆ pick ed241f47-8956-4552-a801-bc77353ee52f D=3 M7 ans=D
+     Three fair, six-sided dice are rolled. Let $p$ be the probability that the sum of the numbers obtained is 6, and let $q$ be the probability that the sum of the numbers obtained is ΓÇª
+     (rejected 6 of 40 for reuse/OOS)
+
+=== D16 (fix) ΓÇö Supply cone volume formula ===
+  current 22016305 D=2 M3
+  Two cones have the same volume. The height of the second cone is twice the height of the first cone. If the base radius of the first cone is $r$, what is the base radius of the secΓÇª
+  ΓåÆ stem will gain volume formula(e)
+
+=== D22 (replace) ΓÇö General circle equation (MM3.2) ===
+  current fc51bef2 D=4 M5
+  In a mathematical investigation, a shape is defined by the equation: $$ x^2 + y^2 - 4tx - 2ky + 4t^2 = 0 $$ The parameter $k$ is a fixed positive constant. The parameter $t$ is a vΓÇª
+  ΓåÆ pick 88472cf2-548f-4060-8c35-f4812324fcea D=4 M1 ans=E
+     A composite solid cylinder is formed from two metals, P and Q. The volume of metal P is 60 cm┬│ and the volume of metal Q is 90 cm┬│. The density of metal P is 5 g/cm┬│ and the densitΓÇª
+     (rejected 12 of 40 for reuse/OOS)
+
+=== E6 (rewrite) ΓÇö Ambiguous whether cuts retain one piece or all ===
+  current 86248555 D=2 M2
+  A solid cuboid has side lengths $2^a$, $2^b$, and $2^c$, where $a, b, c$ are integers such that $a > b > c > 0$. A process is applied repeatedly: the cuboid is cut in half by a plaΓÇª
+  ΓåÆ rewritten stem:
+A solid cuboid has side lengths $2^a$, $2^b$, and $2^c$, where $a$, $b$, and $c$ are integers such that $a > b > c > 0$.
+
+The following process is applied repeatedly to a **single** piece.
+
+- Cut that piece in half by a plane perpendicular to its longest edge. If two or more edges share the longest length, choose exactly one of them.
+- Keep exactly one of the two resulting pieces and discard the oΓÇª
+
+=== E25 (replace) ΓÇö Radians / sector formulae (MM4.2) ===
+  current 07653e48 D=5 M4
+  A circular sector has a fixed radius $r$ and a variable angle $\theta$ radians. Its perimeter is $P$ and its area is $A$. A graph of $A$ against $P$ is a straight line which passesΓÇª
+  ΓåÆ pick b3663069-7d41-4911-a682-764faceade34 D=5 M7 ans=D
+     A game involves one fair coin and three identical biased coins. For the fair coin, the outcomes are a score of 0 or a score of 2, with equal probability. For each biased coin, the ΓÇª
+     (rejected 4 of 8 for reuse/OOS)
+
+=== E26 (replace) ΓÇö Modulus inequality (Math 2) ===
+  current 0120d098 D=1 M4
+  Which inequality defines the complete set of values of $x$ satisfying $|3 - 2x| < 9$?ΓÇª
+  ΓåÆ pick 9920b553-c91c-48ee-ad98-aa4f8285ed55 D=1 M4 ans=E
+     Find the solution of the equation: $$ \frac{x^2 - x - 6}{x^2 - 4x + 3} = 2 $$ΓÇª
+     (rejected 5 of 8 for reuse/OOS)
+
+Wrote 12 change records ΓåÆ C:\Users\anson\Desktop\nocalcMVP2_real\tmp_math_mocks\math1_spec_remediation_changes.json
+Replacement uniqueness OK (9 distinct).

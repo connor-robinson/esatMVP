@@ -1,0 +1,30 @@
+{
+  "questionId": 2342,
+  "examName": "NSAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 43,
+  "stemBlocks": [
+    "A chromatogram was produced for 4 separate dyes (W, X, Y and Z) using filter paper and a water solvent.\nA second chromatogram was produced using a mixture of two of the dyes, again using filter paper and a water solvent:",
+    "Which of the following statements, if any, are correct?",
+    "1 The concentration of dye W must be twice the concentration of dye Z.\n2 The mobile phase is the filter paper.\n3 The mixture in the second chromatogram contained dyes W and Y."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:25:34.702300+00:00",
+  "sourceImageHash": "013dd9dd0f187d74490f71ed5455ca32f7c2f4a36dd61a696a24698b9a6ad353",
+  "status": "ok"
+}

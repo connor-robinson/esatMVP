@@ -1,0 +1,28 @@
+{
+  "questionId": 2153,
+  "examName": "ENGAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 38,
+  "stemBlocks": [
+    "A sound wave can travel from a source at P to a detector at R directly or by reflecting at Q.\nThe angle between PR and PQ is 30° and the distance from P to R is $d$ as shown.\nThere is a phase difference of $\\pi$ radians between the incident and reflected wave at Q.\nWaves that reach R via Q are in phase with waves that reach R directly from P.\nWhich expression gives the greatest wavelength of sound waves for which this is true?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:06.375277+00:00",
+  "sourceImageHash": "b8ee8ee4f2f7f65ce490af0767b0c3a10e65d48ce1a550594002a0b009c172dd",
+  "status": "ok"
+}

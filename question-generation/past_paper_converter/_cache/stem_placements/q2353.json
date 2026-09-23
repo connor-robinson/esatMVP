@@ -1,0 +1,32 @@
+{
+  "questionId": 2353,
+  "examName": "NSAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 54,
+  "stemBlocks": [
+    "The structure of ethanol is given below:",
+    "Given the equation below and the overall enthalpy change for the reaction, which option correctly identifies the bond energy of the C-O bond in ethanol?",
+    "$H_2C=CH_2(g) + H_2O(g) \\rightarrow C_2H_5OH(g)$",
+    "$\\Delta H = -45 \\text{ kJ mol}^{-1}$",
+    "(Mean bond energy ($kJ \\text{ mol}^{-1}$): $H-H = +436$; $C-C = +346$; $C-H = +413$; $O-H = +464$; $C=C = +611$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Structure of ethanol",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:25:34.710241+00:00",
+  "sourceImageHash": "e2e105b032b0206c0513a33cfaa6d8db55310350b4701000e28a9ca070f58c76",
+  "status": "ok"
+}

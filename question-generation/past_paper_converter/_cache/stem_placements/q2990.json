@@ -1,0 +1,29 @@
+{
+  "questionId": 2990,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 11,
+  "stemBlocks": [
+    "In the triangle PQR shown below:\nX lies on PR\n$\\angle QXR$ is $90^\\circ$\n$\\frac{QX}{PX} = \\frac{1}{6}$\n$\\frac{QX}{XR} = \\frac{2}{3}$\nM is the midpoint of PR.",
+    "What is $\\frac{QX}{MX}$ ?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:15.948607+00:00",
+  "sourceImageHash": "ff612e306f3b1ac92745fb026a2daa534334cc3803ea963a4ee0cece7455f953",
+  "status": "ok"
+}

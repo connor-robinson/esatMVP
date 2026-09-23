@@ -1,0 +1,29 @@
+{
+  "questionId": 3142,
+  "examName": "ENGAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 13,
+  "stemBlocks": [
+    "An elastic cord with spring constant $k$ is fixed to two points P and Q on the diameter of a ring so that the cord is taut but unstretched. The radius of the ring is $r$. The midpoint of the cord is then pulled and fixed to a point on the ring halfway between P and Q.",
+    "What is the energy stored in the elastic cord?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:44:04.580521+00:00",
+  "sourceImageHash": "4ef1a7d3128b60b30611e8a5fc1c3d0b64e31276aead1d49bc6e1993c07567ec",
+  "status": "ok"
+}

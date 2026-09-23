@@ -1,0 +1,30 @@
+{
+  "questionId": 2805,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 66,
+  "stemBlocks": [
+    "The graph shows changes in population size (number of individuals) of a species of tortoise over the last century. These tortoises are only found on one small island in the Galapagos.",
+    "Which of the following could account for the change in population shown after time Z on the graph?",
+    "1 reduced rainfall\n2 reduced availability of resources\n3 failure to adapt to competition from an introduced species"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing population size (number of individuals) of a species of tortoise over time (years). The population is stable until time Z, after which it declines sharply.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.392993+00:00",
+  "sourceImageHash": "47200c9e9d267d306a84523773f6f805fee9c4d729847930dc84a17db2084220",
+  "status": "ok"
+}

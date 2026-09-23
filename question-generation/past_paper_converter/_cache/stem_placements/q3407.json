@@ -1,0 +1,29 @@
+{
+  "questionId": 3407,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 18,
+  "stemBlocks": [
+    "A tennis ball of mass $0.060 \\text{ kg}$ travels horizontally and strikes a vertical wall at $30 \\text{ ms}^{-1}$. It leaves the wall in the opposite direction at $20 \\text{ ms}^{-1}$.\nThe graph shows how the resultant horizontal force acting on the ball varies with time during this collision.",
+    "What is the duration of the collision?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.073811+00:00",
+  "sourceImageHash": "31e98a814e1dec455b3c6d3913488f16b2f39985d1f562c2a77241a547a6b759",
+  "status": "ok"
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 2381,
+  "examName": "NSAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 82,
+  "stemBlocks": [
+    "The diagram shows a uniform, solid, heavy cube with side $d$. The cube rests with one of its edges in contact with a table that is perfectly level. A horizontal force $P$ acts on another edge of the cube, and the cube is stationary.\nBelow are four statements about the forces on the cube.\n1 It is possible that there is no frictional force between the cube and the table.\n2 There must be a frictional force acting to the left between the cube and the table.\n3 There must be a frictional force acting to the right between the cube and the table.\n4 Force $P$ has a clockwise moment about the edge in contact with the table equal to $P \\times d$.",
+    "Which of the statements is/are correct?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:25:34.768395+00:00",
+  "sourceImageHash": "8cd4223871420995eee71bc1b53995c380adc0a75d6ec92bb45c3adfb412f045",
+  "status": "ok"
+}

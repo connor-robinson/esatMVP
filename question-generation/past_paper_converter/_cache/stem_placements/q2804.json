@@ -1,0 +1,30 @@
+{
+  "questionId": 2804,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 65,
+  "stemBlocks": [
+    "The diagram shows two gametes, gamete P and gamete Q, fusing to form cell R in a healthy human. R divides to form two cells, S and T. S and T grow into two separate individuals.",
+    "Which of the following statements is/are correct?",
+    "1 The number of double strands of DNA is the same in gamete P and cell T.\n2 If gamete Q contains a Y chromosome, then both individuals that grow from cells S and T will be genetically male.\n3 A mutation in the DNA in cell R before mitosis will always change the phenotype of cell S."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Diagram showing gamete P and gamete Q fusing to form cell R, which then divides into cells S and T.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.383310+00:00",
+  "sourceImageHash": "7109251ba1c604a216323bf73575be6aa495e07d504e3d61d2c7f4ee8558c3c7",
+  "status": "ok"
+}

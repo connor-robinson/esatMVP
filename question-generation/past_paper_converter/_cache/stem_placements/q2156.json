@@ -1,0 +1,28 @@
+{
+  "questionId": 2156,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 1,
+  "stemBlocks": [
+    "A square piece of metal has a semicircular piece cut out of it as shown. The area of the remaining metal is $100 \\text{ cm}^2$. Which one of the following is a correct expression for the length of the side of the square in centimetres?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:37:46.614718+00:00",
+  "sourceImageHash": "bfa1c67cc8ee60657a13387a8b2e91197c01a674f7c8e8b742a2f5e7a3869c61",
+  "status": "ok"
+}

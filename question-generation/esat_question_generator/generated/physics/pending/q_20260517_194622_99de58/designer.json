@@ -1,0 +1,93 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_d4f05622",
+    "module": "physics",
+    "variation_mode": "FAR",
+    "target_difficulty": "Medium",
+    "idea_summary": "A current-carrying wire is suspended from a force sensor in a magnetic field. The change in the sensor's reading is requested when a total charge Q flows in time t, framing an F=BIL calculation within a mechanics context.",
+    "schema_invariant": {
+      "core_move": "The core reasoning is a two-step calculation: first determine the current from charge and time (I=Q/t), then use this current to find the magnetic force on the conductor (F=BIL).",
+      "what_must_not_change": [
+        "The need to calculate current I from charge Q and time t.",
+        "The subsequent use of this current in the magnetic force equation F=BILsin(theta)."
+      ],
+      "what_can_change": [
+        "The physical context of the current-carrying element (e.g., wire, beam, moving object).",
+        "The way the force is measured or observed (e.g., acceleration, balancing another force).",
+        "The question being asked (e.g., calculate force, or calculate a parameter that depends on the force)."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "tempting_wrong_model",
+      "reasoning_hinge": "Recognising that the 'change in reading' of the force sensor is a direct measure of the magnetic force alone, and that the initial weight of the wire is irrelevant to this change.",
+      "why_top_students_win": "They immediately parse 'change in reading' as the target quantity (F_magnetic) and are not distracted by the gravitational force, proceeding directly to the two-step calculation.",
+      "why_mid_students_miss": "They get confused by the mechanics context. They may try to calculate the total force (mg ± BIL), forget to calculate I from Q and t, or incorrectly try to relate the weight (mg) to the magnetic force."
+    },
+    "minimum_reasoning_depth": {
+      "steps": 3,
+      "must_include": [
+        "model_selection",
+        "non_obvious_inference",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "This idea preserves the core two-step calculation of the original schema (I=Q/t, then F=BIL) but embeds it in a mechanics context (force balance), which adds a reasoning layer. The difficulty is elevated from a simple 'Easy' calculation to 'Medium' by requiring this initial interpretation, but the solution is still fast once the hinge is passed.",
+    "task_signature": "compare_scenarios",
+    "tool_footprint": [
+      "force_balance",
+      "current_definition",
+      "motor_effect",
+      "isolating_variables"
+    ],
+    "primary_tag": "4",
+    "secondary_tags": [
+      "2"
+    ],
+    "visual_need": "concept_image_only",
+    "visual_role": "supportive",
+    "visual_brief": "A simple schematic showing a horizontal wire suspended from a force sensor (like a newton meter). Arrows indicate a uniform magnetic field passing through the wire, perpendicular to it. The diagram helps visualize the setup but contains no answer-bearing values.",
+    "surface_twist": "The problem is framed as a mechanics/statics problem involving a force balance, disguising the core electromagnetism calculation. The collapse moment occurs when the candidate realises the 'change in the balance reading' is simply the magnetic force, F=BIL, turning it into a standard EM problem.",
+    "why_still_on_spec": "The physics is entirely within ESAT scope. It uses the definition of current (I=Q/t) and the formula for the force on a current-carrying wire in a magnetic field (F=BIL), both from tag 4 (Electricity and Magnetism). The context of balancing forces uses concepts from tag 2 (Mechanics).",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "The student cannot proceed because they are looking for a given value of current 'I' and do not realise it must be calculated from Q and t.",
+        "distractor_role": "Leads to guessing or abandoning the question."
+      },
+      {
+        "mistake": "The student incorrectly equates the weight of the wire to the magnetic force, mg = BIL, and tries to solve for a quantity.",
+        "distractor_role": "A distractor based on a misunderstanding of equilibrium, e.g., an answer derived from B = mg/(IL)."
+      },
+      {
+        "mistake": "The student calculates the current I correctly, but then adds or subtracts the initial weight (which would need to be given) from the magnetic force.",
+        "distractor_role": "An answer corresponding to mg + BIL or |mg - BIL|."
+      },
+      {
+        "mistake": "A simple arithmetic error in I=Q/t, for example, not converting units of time if given in minutes.",
+        "distractor_role": "A numerically incorrect answer resulting from a predictable calculation slip."
+      }
+    ],
+    "difficulty_rationale": "This is a Medium difficulty question. It requires more than direct formula application by embedding the core physics in a simple but non-obvious context. The reasoning hinge (interpreting 'change in reading') is a single, clear step that discriminates between candidates who can model a situation and those who only apply formulas. The subsequent calculation is straightforward, ensuring the question is fast to solve for those who understand.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "A candidate cannot solve this by simply finding a formula and substituting values. They must first interpret the physical situation to deduce that the quantity they need to calculate is the magnetic force, isolated from the gravitational force. Only after this interpretation can they proceed with the two-step calculation (I=Q/t, then F=BIL)."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "Viable distractors can be generated based on common misconceptions: confusing the change in force with the total force, using Q instead of I, making unit conversion errors, or incorrectly relating the magnetic and gravitational forces."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-pro",
+  "attempts": 1
+}

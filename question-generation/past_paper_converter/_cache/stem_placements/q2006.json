@@ -1,0 +1,29 @@
+{
+  "questionId": 2006,
+  "examName": "ENGAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 11,
+  "stemBlocks": [
+    "A car of mass 800 kg travels in a straight line along a horizontal road.\nThe car accelerates non-uniformly from rest for 5.0 seconds and then moves at constant speed, as shown in the distance-time graph:",
+    "What is the average resultant force acting on the car over the time for which it is accelerating?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "distance-time graph",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:25.574267+00:00",
+  "sourceImageHash": "999cedc569942137a691720a01788c1270f32207a3a0b40504140e4bf36b647a",
+  "status": "ok"
+}

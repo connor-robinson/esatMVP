@@ -1,0 +1,29 @@
+{
+  "questionId": 3282,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 13,
+  "stemBlocks": [
+    "Water enters a horizontal pipe of cross-sectional area $0.0040 \\text{ m}^2$ at constant speed $0.50 \\text{ m s}^{-1}$. At the end of the pipe the cross-sectional area reduces to $0.0020 \\text{ m}^2$ and the water leaves the pipe as shown. The density of water is $1000 \\text{ kg m}^{-3}$.",
+    "How much power must be supplied to the water to maintain the flow in this section of the pipe? (Assume that the water is incompressible and that frictional forces can be neglected.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:13.250917+00:00",
+  "sourceImageHash": "d9fcbe6cb12f16c514c765804ecbd1f572d53a37545237c436cb23185b22ab5e",
+  "status": "ok"
+}

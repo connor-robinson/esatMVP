@@ -1,0 +1,28 @@
+{
+  "questionId": 2712,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 53,
+  "stemBlocks": [
+    "Calcium carbonate reacts with hydrochloric acid according to the following chemical equation: $\\text{CaCO}_3\\text{(s)} + 2\\text{HCl(aq)} \\rightarrow \\text{CaCl}_2\\text{(aq)} + \\text{H}_2\\text{O(l)} + \\text{CO}_2\\text{(g)}$\nLine P on the graph shows how the volume of carbon dioxide formed changes with time when $4.0 \\text{ g}$ of calcium carbonate reacts with $50 \\text{ cm}^3$ of $1.0 \\text{ mol dm}^{-3}$ hydrochloric acid at $20 \\text{ °C}$.\nA second reaction was carried out under identical conditions with the same mass of calcium carbonate but using $50 \\text{ cm}^3$ of $2.0 \\text{ mol dm}^{-3}$ hydrochloric acid.\nWhich line (A-F) best represents how the volume of carbon dioxide formed changes with time in the second reaction?\n($M_r$ value: $\\text{CaCO}_3 = 100$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:58.211437+00:00",
+  "sourceImageHash": "0d583bb0cc32bf21ce3883f54e40a43c2199f6ed8c1161ea862bb52d1aaa651a",
+  "status": "ok"
+}

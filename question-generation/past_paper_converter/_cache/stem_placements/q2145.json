@@ -1,0 +1,29 @@
+{
+  "questionId": 2145,
+  "examName": "ENGAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 30,
+  "stemBlocks": [
+    "Two identical, uniform, thin planks, each of mass $40 \\text{ kg}$, are propped up against one another in equilibrium on a rough surface as shown. Each plank is at an angle of $30^\\circ$ to the vertical.",
+    "What is the magnitude of the friction force at point P? (gravitational field strength = $10 \\text{ N kg}^{-1}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:06.360717+00:00",
+  "sourceImageHash": "d0e00fbe700dba7ceb04c4b58c77e288e46121a28e61d9c0f83daa0ad62b94fd",
+  "status": "ok"
+}

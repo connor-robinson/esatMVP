@@ -1,0 +1,29 @@
+{
+  "questionId": 2770,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 31,
+  "stemBlocks": [
+    "A $6.0 \\text{ V}$ battery is connected to an $8.0 \\Omega$ resistor and a filament lamp as shown in the circuit diagram. The reading on the ammeter is $0.25 \\text{ A}$.",
+    "Which graph is a possible $V-I$ graph for the filament lamp?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.364764+00:00",
+  "sourceImageHash": "5793cda102acf27c2733e713aa0a0f215c615e64cf926d687f8d6533892443ca",
+  "status": "ok"
+}

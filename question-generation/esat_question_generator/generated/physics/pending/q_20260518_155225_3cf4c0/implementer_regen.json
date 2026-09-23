@@ -1,0 +1,67 @@
+{
+  "stage": "implementer_regen",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_ad97dfb5",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Easy",
+      "task_signature": "proportional_change",
+      "primary_tag": "5",
+      "secondary_tags": []
+    },
+    "question": {
+      "stem": "Two wires, X and Y, are made from the same metal.\n\nWire Y has three times the length and twice the diameter of wire X.\n\nThe electrical resistance of wire X is $R$.\n\nWhat is the electrical resistance of wire Y?",
+      "options": {
+        "A": "$\\frac{3}{4}R$",
+        "B": "$\\frac{3}{2}R$",
+        "C": "$\\frac{4}{3}R$",
+        "D": "$\\frac{9}{4}R$",
+        "E": "$6R$",
+        "F": "$12R$"
+      },
+      "correct_option": "A"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "Resistance is proportional to length and inversely proportional to the square of the diameter.",
+      "reasoning": "The resistance of a wire is given by $R = \\rho \\frac{L}{A}$.\nSince the cross-sectional area $A = \\pi \\frac{d^2}{4}$, we have $R \\propto \\frac{L}{d^2}$.\nFor wire Y, the length $L$ is multiplied by 3, and the diameter $d$ is multiplied by 2.\nThe new resistance is proportional to $\\frac{3}{2^2} = \\frac{3}{4}$.\nTherefore, the resistance of wire Y is $\\frac{3}{4}R$."
+    },
+    "distractor_map": {
+      "A": "Correct. The length factor is 3 and the diameter factor is 2, which must be squared in the denominator.",
+      "B": "Forgets to square the diameter scaling factor, incorrectly assuming resistance is inversely proportional to diameter rather than area.",
+      "C": "Inverts the relationship, effectively calculating the ratio as $d^2 / L$ instead of $L / d^2$.",
+      "D": "Incorrectly squares both the length and the diameter scaling factors.",
+      "E": "Forgets to square the diameter and incorrectly assumes resistance is directly proportional to both length and diameter.",
+      "F": "Squares the diameter but incorrectly assumes resistance is directly proportional to area rather than inversely proportional."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Recognising that cross-sectional area is proportional to the square of the diameter, so the scaling factor for diameter must be squared.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 1,
+        "estimated_solution_steps": 2,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 2
+}

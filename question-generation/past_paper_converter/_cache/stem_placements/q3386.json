@@ -1,0 +1,30 @@
+{
+  "questionId": 3386,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 57,
+  "stemBlocks": [
+    "The graph shows the rate of removal of sodium ions from a giant axon in a squid. Between 100 and 230 minutes, a reversible inhibitor of mitochondrial activity was present.",
+    "Which of the following statements is/are correct?",
+    "1 The removal of sodium ions across the cell surface membrane of the axon is an active process requiring ATP.\n2 The concentration of sodium ions in the axon must increase after the inhibitor has been removed.\n3 In the 50 minutes before the inhibitor was added, the rate of removal of sodium ions from the axon decreases by $4.4 \\times 10^{-3}$ arbitrary units per minute."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing the rate of removal of sodium ions from an axon over time, with an inhibitor of mitochondrial activity present between 100 and 230 minutes.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:10.881822+00:00",
+  "sourceImageHash": "db2c2abe390bd3a59303523a8238f8aea605699b6bf777cc8272a81aa1e0da95",
+  "status": "ok"
+}

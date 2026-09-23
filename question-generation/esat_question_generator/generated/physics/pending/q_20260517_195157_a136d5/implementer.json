@@ -1,0 +1,66 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_1462623d",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Hard",
+      "task_signature": "wave_or_radiation_reasoning",
+      "primary_tag": "4",
+      "secondary_tags": [
+        "4.1",
+        "4.4"
+      ]
+    },
+    "question": {
+      "stem": "A monochromatic electromagnetic wave travels in a vacuum with wavelength $λ$. The wave enters a homogeneous, transparent medium with a refractive index $n$, where $n > 1$. \n\nWhat is the decrease in the wavelength of the wave?",
+      "options": {
+        "A": "$λ \\frac{(n-1)}{n}$",
+        "B": "$λ(n-1)$",
+        "C": "$\\frac{λ}{n}$",
+        "D": "$nλ$",
+        "E": "$λ \\frac{(n+1)}{n}$",
+        "F": "$0$"
+      },
+      "correct_option": "A"
+    },
+    "visual_requirements": {
+      "visual_need": "concept_image_only",
+      "visual_role": "supportive",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": {
+        "description": "A simple diagram showing a wave train travelling from a region on the left labelled 'Vacuum (n=1)' into a block on the right labelled 'Medium (n>1)'. The wave should be represented by a sine wave. The wavelength should be visibly shorter in the medium than in the vacuum. The diagram should not be to scale or contain any values. It is purely to illustrate the physical situation."
+      }
+    },
+    "solution": {
+      "key_insight": "The frequency of a wave is determined by its source and does not change when the wave enters a new medium. Its speed and wavelength, however, must change to accommodate the new conditions.",
+      "reasoning": "1.  In a vacuum, the relationship between the speed of light $c$, frequency $f$, and wavelength $λ$ is $c = fλ$. This can be rearranged to give $f = c/λ$.\n\n2.  When the wave enters the medium of refractive index $n$, its speed is reduced to $v = c/n$.\n\n3.  The crucial physical principle is that the frequency $f$ of the wave remains constant because it is determined by the source of the wave.\n\n4.  The new wavelength in the medium, let's call it $λ'$, is given by the wave equation in the medium: $v = fλ'$.\n\n5.  We can find $λ'$ by substituting our expressions for $v$ and $f$: \n    $λ' = \\frac{v}{f} = \\frac{c/n}{c/λ} = \\frac{c}{n} \\times \\frac{λ}{c} = \\frac{λ}{n}$.\n\n6.  The question asks for the *decrease* in wavelength, which is the initial wavelength minus the new wavelength: $Δλ = λ - λ'$.\n\n7.  Substituting the expression for $λ'$: \n    $Δλ = λ - \\frac{λ}{n} = λ(1 - \\frac{1}{n}) = λ(\\frac{n-1}{n})$.\n\n8.  Therefore, the decrease in wavelength is $λ \\frac{(n-1)}{n}$."
+    },
+    "distractor_map": {
+      "A": "Correct. This is derived by recognising that frequency is invariant, calculating the new wavelength as $λ/n$, and then finding the difference $λ - λ/n$.",
+      "B": "This is a common and significant error. It arises from incorrectly assuming that the frequency must change to keep the speed of light term constant in the wave equation. If one assumes the new frequency is $f/n$, the new wavelength becomes $nλ$, leading to an *increase* of $nλ - λ = λ(n-1)$.",
+      "C": "This is the correct value for the new wavelength ($λ' = λ/n$) inside the medium, but it is not the *decrease* in wavelength, which is the difference between the old and new values.",
+      "D": "This is the incorrect new wavelength derived from the flawed reasoning described for option B. A student might choose this if they calculate the new value but not the change.",
+      "E": "This likely results from an algebraic error, for example, incorrectly adding the initial and new wavelengths ($λ + λ/n$) instead of calculating the difference.",
+      "F": "This corresponds to the fundamental misconception that the wavelength of a wave is an invariant property when it moves between media. In reality, it is the frequency that remains constant."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Identifying frequency as the invariant quantity when a wave crosses a media boundary.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-pro",
+  "attempts": 1
+}

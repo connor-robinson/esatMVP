@@ -1,0 +1,30 @@
+{
+  "questionId": 3439,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 50,
+  "stemBlocks": [
+    "Scientists found that water loss rates varied between plants of the same species, even when kept in identical conditions. To investigate this, they used one species of plant to produce plant Q. This contained a mutation that deleted the whole of gene X. The scientists also produced a version of plant Q with an unmutated copy of gene X reinserted into the plant genome. They confirmed that the new copy of gene X allowed the plant to produce functional protein X from the gene. The mutation in Q is shown in the table with the other plants used in the investigation. [Other than the differences mentioned, all plants are genetically identical and grow normally. The rate of photosynthesis is the same in all three plants.] The water use efficiencies of the plants were compared. For a given rate of photosynthesis, plant water use efficiency is inversely proportional to the rate of transpiration. The reactions were carried out at $21 \\text{ } ^\\circ \\text{C}$ in 10 hours of constant light intensity and $40\\%$ humidity. The plants were also supplied with a constant carbon dioxide concentration to ensure constant photosynthesis rates. These conditions were the same for all plants. The results of the experiment are shown in the chart.",
+    "Which row is correct?",
+    "| plant | description |\n| --- | --- |\n| P | contains unmutated version of gene X |\n| Q | contains a deletion of the whole of gene X from plant DNA |\n| R | plant Q with an unmutated copy of gene X reinserted into the genome |\n|  | effect of protein X on transpiration rates | effect of increasing humidity on the water use efficiency of plant Q |\n| --- | --- | --- |\n| A | decrease | decreases |\n| B | decrease | stays the same |\n| C | decrease | increases |\n| D | increase | decreases |\n| E | increase | stays the same |\n| F | increase | increases |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.145262+00:00",
+  "sourceImageHash": "05cb6ea6ea62d27c94ad3257fff3245bdf94a1b8a03ae3aabffb223cca79aa35",
+  "status": "ok"
+}

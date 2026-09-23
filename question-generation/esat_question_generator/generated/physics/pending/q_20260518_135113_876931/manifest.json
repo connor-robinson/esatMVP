@@ -1,0 +1,425 @@
+{
+  "question_id": "q_20260518_135113_876931",
+  "subject": "physics",
+  "schema_id": "P_a9a3eea7",
+  "difficulty": "Medium",
+  "status": "accepted",
+  "failure_gate": null,
+  "failure_reasons": [],
+  "has_visual": false,
+  "visual_type": "none",
+  "answer_depends_on_visual": false,
+  "assets": [],
+  "model_trace": {
+    "designer": "gemini-2.5-pro",
+    "idea_judge": "gemini-2.5-flash",
+    "implementer": "gemini-2.5-pro",
+    "verifier": "gemini-2.5-flash",
+    "style_checker": "gemini-2.5-flash",
+    "visual_router": "gemini-2.5-flash",
+    "tag_labeler": "gemini-2.5-flash"
+  },
+  "retry_counts": {
+    "implementer": 0
+  },
+  "stages": [
+    {
+      "stage": "designer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "schema_id": "P_a9a3eea7",
+        "module": "physics",
+        "variation_mode": "SIBLING",
+        "target_difficulty": "Medium",
+        "idea_summary": "An object falls at a given terminal velocity in a fluid. The student must use the force balance equation (Weight = Buoyancy + Drag) to calculate the density of the object, rather than the velocity.",
+        "schema_invariant": {
+          "core_move": "Applying Newton's first law (equilibrium of forces) to an object at terminal velocity in a fluid, considering weight, buoyancy, and drag.",
+          "what_must_not_change": [
+            "Force balance at terminal velocity is the core concept",
+            "Weight, buoyancy, and drag are the three forces",
+            "The drag force model is provided"
+          ],
+          "what_can_change": [
+            "The unknown variable being solved for (e.g., density instead of velocity)",
+            "The direction of motion (falling vs. rising)",
+            "The context (e.g., object in liquid vs. balloon in air)",
+            "Proportional reasoning vs. direct calculation"
+          ]
+        },
+        "discrimination_mechanism": {
+          "type": "reverse_inference",
+          "reasoning_hinge": "The candidate must rearrange the terminal velocity force-balance equation to solve for the object's density, given the terminal velocity as a known parameter.",
+          "why_top_students_win": "They correctly identify the force balance (`W = U + D`), substitute the density-based expressions for W and U, and perform the algebraic rearrangement correctly to isolate the object's density.",
+          "why_mid_students_miss": "They are conditioned to solve for velocity and may get confused. They might incorrectly rearrange the algebra, for example, getting `rho_obj = rho_fluid + Drag` (forgetting the `Vg` term), or they might neglect the buoyancy force entirely."
+        },
+        "goldilocks_complexity_audit": {
+          "main_physics_principle": "Newton's First Law (equilibrium of forces at terminal velocity).",
+          "supporting_idea_if_any": "Archimedes' principle (buoyancy) and the definition of density.",
+          "estimated_solution_steps": 3,
+          "number_of_core_physics_principles": 2,
+          "requires_derived_relationship": false,
+          "too_easy_risk": "low",
+          "too_hard_risk": "low",
+          "goldilocks_verdict": "good"
+        },
+        "minimum_reasoning_depth": {
+          "steps": 2,
+          "must_include": [
+            "model_selection",
+            "non_obvious_inference"
+          ]
+        },
+        "reference_alignment": "Similar to a standard terminal velocity problem in pace, but asks for an input (density) rather than the output (velocity), requiring algebraic rearrangement instead of direct substitution. This maintains the 'force balance' core while changing the cognitive task.",
+        "task_signature": "reverse_reasoning",
+        "tool_footprint": [
+          "force_balance",
+          "buoyancy",
+          "reverse_inference",
+          "algebraic_rearrangement"
+        ],
+        "primary_tag": "2",
+        "secondary_tags": [
+          "2.5"
+        ],
+        "visual_need": "none",
+        "visual_role": "none",
+        "visual_brief": "",
+        "surface_twist": "",
+        "why_still_on_spec": "Uses core ESAT Physics concepts: Newton's Laws (specifically equilibrium, tag 2.5), Density (tag 2.2), and Forces (tag 2.5), including buoyancy. The rearrangement is standard algebraic skill expected at this level.",
+        "constraints_used": [
+          "short condition descriptions only",
+          "no final numbers",
+          "no full equations unless the schema requires them",
+          "no exact geometric diagram dependence",
+          "no multi-law derivation chain"
+        ],
+        "intended_wrong_paths": [
+          {
+            "mistake": "Neglecting buoyancy. The student sets `Weight = Drag` and solves for density from there. This leads to `rho_obj = Drag / (V*g)`.",
+            "distractor_role": "A common oversimplification, especially if the fluid is described as air or a low-density liquid."
+          },
+          {
+            "mistake": "Incorrectly calculating weight or buoyancy. E.g., using the fluid density to calculate weight, or the object density for buoyancy.",
+            "distractor_role": "Tests careful application of definitions of weight and upthrust."
+          },
+          {
+            "mistake": "Algebraic error during rearrangement. For example, solving for `rho_obj - rho_fluid` but forgetting to add `rho_fluid` at the end.",
+            "distractor_role": "Catches students who rush the final algebraic step."
+          }
+        ],
+        "difficulty_rationale": "The difficulty is Medium because it is not a direct application of a memorised formula. The student must select the correct model (force balance including buoyancy) and then perform a non-trivial algebraic rearrangement to find an input parameter rather than the final velocity. This is a step beyond 'plug-and-chug' but uses only standard school-level principles.",
+        "anti_plug_and_chug_check": {
+          "would_formula_substitution_alone_solve_it": false,
+          "why_not": "There is no single formula for 'object density given terminal velocity'. The student must derive the required relationship by setting up the force equilibrium equation `W = U + D`, substituting `W=rho_obj*V*g` and `U=rho_fluid*V*g`, and then rearranging to make `rho_obj` the subject."
+        },
+        "mcq_viability": {
+          "viable": true,
+          "reason": "The correct answer is a unique value derived from the setup. The common misconceptions (neglecting buoyancy, algebraic errors, mixing up densities) lead to predictable and plausible incorrect answers that can be used as distractors."
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-pro",
+      "attempts": 1
+    },
+    {
+      "stage": "idea_judge",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "selectivity_score": 0,
+        "checks": {
+          "schema_preserved": "pass",
+          "on_spec": "pass",
+          "reasoning_hinge_present": "pass",
+          "not_direct_substitution": "pass",
+          "wrong_paths_specific": "pass",
+          "visual_feasible": "pass",
+          "mcq_viable": "pass",
+          "difficulty_match": "pass",
+          "goldilocks_complexity": "pass"
+        },
+        "complexity_audit": {
+          "number_of_core_physics_principles": 2,
+          "estimated_solution_steps": 3,
+          "requires_derived_relationship": false,
+          "uses_multi_topic_chain": false,
+          "goldilocks_verdict": "good"
+        },
+        "reasoning_hinge_summary": "The candidate must correctly set up the force balance equation (Weight = Buoyancy + Drag) for an object at terminal velocity, substitute density-based expressions for weight and buoyancy, and then algebraically rearrange the equation to solve for the object's density.",
+        "expected_mid_student_error": "Mid-performing students are likely to neglect the buoyancy force, leading to an incorrect force balance (Weight = Drag), or make algebraic errors during the rearrangement to solve for the object's density.",
+        "notes": [
+          "The idea successfully reverses the typical terminal velocity problem, requiring algebraic rearrangement rather than direct calculation, which aligns with the 'Medium' difficulty target.",
+          "The two core physics principles (Newton's 1st Law and Archimedes' Principle) are closely related and appropriately combined for this problem type, fitting within the Goldilocks zone.",
+          "The specified wrong paths are plausible and target common conceptual and algebraic errors."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "implementer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "metadata": {
+          "schema_id": "P_a9a3eea7",
+          "module": "physics",
+          "variation_mode": "SIBLING",
+          "target_difficulty": "Medium",
+          "task_signature": "P_a9a3eea7_reverse_inference_medium_0",
+          "primary_tag": "2",
+          "secondary_tags": [
+            "2.2",
+            "2.5"
+          ]
+        },
+        "question": {
+          "stem": "An object of volume $0.20\\text{ m}^3$ falls through a liquid of density $1500\\text{ kg m}^{-3}$. It reaches a terminal velocity at which the drag force is $1000\\text{ N}$.\n\nWhat is the density of the object in $\\text{kg m}^{-3}$?\n\n(Assume the acceleration of free fall $g = 10\\text{ m s}^{-2}$.)",
+          "options": {
+            "A": "500",
+            "B": "1000",
+            "C": "1500",
+            "D": "2000",
+            "E": "2500",
+            "F": "4000"
+          },
+          "correct_option": "D"
+        },
+        "visual_requirements": {
+          "visual_need": "none",
+          "visual_role": "none",
+          "answer_depends_on_visual": false,
+          "graph_request": null,
+          "schematic_request": null,
+          "concept_image_request": null
+        },
+        "solution": {
+          "key_insight": "At terminal velocity, the net force on the falling object is zero. Therefore, the downward weight force must be balanced by the sum of the upward buoyancy (upthrust) and drag forces.",
+          "reasoning": "Let $\\rho_{obj}$ be the density of the object and $\\rho_{fluid}$ be the density of the fluid.\n\n1.  At terminal velocity, the forces are in equilibrium. The downward weight ($W$) is balanced by the upward buoyancy ($U$) and the upward drag ($D$).\n    $$W = U + D$$\n2.  Calculate the buoyancy force: $U = \\rho_{fluid} \\times V \\times g = 1500 \\times 0.20 \\times 10 = 3000\\text{ N}$.\n3.  The drag force $D$ is given as $1000\\text{ N}$.\n4.  Substitute these values into the equilibrium equation to find the weight of the object:\n    $$W = 3000\\text{ N} + 1000\\text{ N} = 4000\\text{ N}$$\n5.  Use the definition of weight, $W = \\rho_{obj} \\times V \\times g$, to find the object's density:\n    $$4000 = \\rho_{obj} \\times 0.20 \\times 10$$\n    $$4000 = \\rho_{obj} \\times 2$$\n    $$\\rho_{obj} = \\frac{4000}{2} = 2000\\text{ kg m}^{-3}$$"
+        },
+        "distractor_map": {
+          "A": "This is the result of neglecting the buoyancy force. If $W = D$, then $\\rho_{obj} V g = 1000$, so $\\rho_{obj} \\times 2 = 1000$, which gives $\\rho_{obj} = 500\\text{ kg m}^{-3}$.",
+          "B": "This result comes from an incorrect force balance, such as $U = W + D$. This would give $3000 = W + 1000$, so $W = 2000\\text{ N}$. Then $\\rho_{obj} \\times 2 = 2000$, giving $\\rho_{obj} = 1000\\text{ kg m}^{-3}$.",
+          "C": "This is the density of the fluid. An object with this density would experience neutral buoyancy (if drag were zero), but it is not the density of the falling object.",
+          "D": "Correct. The weight ($4000\\text{ N}$) is correctly calculated by summing buoyancy ($3000\\text{ N}$) and drag ($1000\\text{ N}$), and then used to find the density.",
+          "E": "This result may arise from a conceptual error, such as adding the drag force value directly to the fluid density: $1500 + 1000 = 2500$. This is dimensionally inconsistent.",
+          "F": "This is the magnitude of the object's weight in Newtons ($W = 4000\\text{ N}$). A student might correctly calculate the weight but forget to divide by $Vg$ to find the density."
+        },
+        "quality_self_check": {
+          "reasoning_hinge_used": "The core task is not to find terminal velocity, but to use the given terminal velocity condition (i.e., the specific drag force) to reverse-calculate an intrinsic property (density) of the object, requiring rearrangement of the force balance equation.",
+          "not_direct_substitution": true,
+          "exactly_one_correct": true,
+          "no_calculator_friendly": true,
+          "on_spec": true,
+          "visual_dependency_safe": true,
+          "goldilocks_complexity": {
+            "number_of_core_physics_principles": 2,
+            "estimated_solution_steps": 3,
+            "requires_derived_relationship": false,
+            "not_overstacked": true
+          }
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-pro",
+      "attempts": 1
+    },
+    {
+      "stage": "deterministic_validator",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "ok": true,
+        "errors": [],
+        "warnings": [],
+        "option_keys": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F"
+        ],
+        "summary": "ok"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": null,
+      "attempts": 1
+    },
+    {
+      "stage": "verifier",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "correct_option_verified": "D",
+        "independent_solution": {
+          "main_law_or_principle": "Newton's First Law (force equilibrium at terminal velocity) and Archimedes' Principle (buoyancy).",
+          "calculation_or_logic": "At terminal velocity, the net force on the object is zero. The downward weight (W) is balanced by the upward buoyancy (U) and upward drag (D).\nEquation: W = U + D\n\n1.  Calculate Buoyancy (U):\n    U = \\rho_{fluid} \\times V \\times g\n    U = 1500 \\text{ kg m}^{-3} \\times 0.20 \\text{ m}^3 \\times 10 \\text{ m s}^{-2}\n    U = 3000 \\text{ N}\n\n2.  Substitute U and D into the equilibrium equation to find W:\n    W = 3000 \\text{ N} + 1000 \\text{ N}\n    W = 4000 \\text{ N}\n\n3.  Use the definition of weight (W = \\rho_{obj} \\times V \\times g) to find \\rho_{obj}:\n    4000 \\text{ N} = \\rho_{obj} \\times 0.20 \\text{ m}^3 \\times 10 \\text{ m s}^{-2}\n    4000 = \\rho_{obj} \\times 2\n    \\rho_{obj} = \\frac{4000}{2}\n    \\rho_{obj} = 2000 \\text{ kg m}^{-3}",
+          "verified_answer_value": "2000",
+          "claimed_answer_value": "2000",
+          "matches_claim": true
+        },
+        "spec_audit": {
+          "required_physics_moves": [
+            "Apply Newton's First Law for force equilibrium",
+            "Calculate buoyancy force using Archimedes' principle",
+            "Calculate weight using density and volume",
+            "Algebraic rearrangement to solve for an unknown density"
+          ],
+          "all_explicitly_on_spec": true,
+          "borderline_or_offspec_moves": []
+        },
+        "derived_relationship_audit": {
+          "requires_nontrivial_derivation": false,
+          "number_of_linked_relationships": 3,
+          "relationships_given_in_stem": [],
+          "safe_for_esat": true
+        },
+        "checks": {
+          "correctness": "pass",
+          "uniqueness": "pass",
+          "syllabus": "pass",
+          "no_calc_feasibility": "pass",
+          "ambiguity": "pass",
+          "diagram_dependency": "pass",
+          "distractor_safety": "pass",
+          "katex_formatting": "pass",
+          "graph_or_visual_validation": "n/a",
+          "derived_relationship_safety": "pass"
+        },
+        "notes": [
+          "The question correctly applies force equilibrium at terminal velocity, incorporating weight, buoyancy, and a given drag force.",
+          "The calculations are straightforward and suitable for a no-calculator environment.",
+          "The distractors are well-designed to target common conceptual and algebraic errors.",
+          "The problem requires solving for an input parameter (density) rather than an output (velocity), which aligns with the 'reverse_inference' discrimination mechanism and is appropriate for a medium difficulty level."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "style_checker",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "style_score": {
+          "total": 40,
+          "breakdown": {
+            "stem_tone": 5,
+            "physics_authenticity": 5,
+            "reasoning_quality": 5,
+            "selectivity": 5,
+            "no_calc_engineering": 5,
+            "option_realism": 5,
+            "distractor_plausibility": 5,
+            "goldilocks_calibration": 5
+          }
+        },
+        "difficulty_calibration": {
+          "difficulty_vs_reference": "similar",
+          "length_feel_vs_reference": "similar",
+          "notes": "The question is well-calibrated for a 'Medium' difficulty. It requires setting up a force balance equation and performing algebraic rearrangement, which is a step beyond direct formula application but uses standard school-level physics."
+        },
+        "selectivity_audit": {
+          "main_trap": "Neglecting the buoyancy force. This is a common misconception in fluid dynamics problems, leading to a plausible distractor (Option A).",
+          "why_not_plug_and_chug": "The question requires the student to construct the force balance equation (Weight = Buoyancy + Drag) and then rearrange it to solve for the object's density. There is no single pre-existing formula for this specific scenario, making it reasoning-driven rather than plug-and-chug.",
+          "expected_mid_student_error": "The most common error would be to neglect buoyancy, assuming only weight and drag are relevant. Other errors might include algebraic mistakes during rearrangement or confusing the object's density with the fluid's density.",
+          "verdict": "selective"
+        },
+        "complexity_audit": {
+          "estimated_core_principles": 2,
+          "estimated_solution_steps": 4,
+          "overstacked": false,
+          "goldilocks_verdict": "good"
+        },
+        "flags": {
+          "too_easy": false,
+          "too_hard": false,
+          "too_wordy": false,
+          "too_recall_heavy": false,
+          "too_plug_and_chug": false,
+          "over_advanced_chain": false,
+          "possible_verifier_miss": false
+        },
+        "notes": [
+          "The question is concise, clear, and uses standard school-level physics concepts (Newton's First Law, Archimedes' Principle, density).",
+          "The numerical values are perfectly chosen for a no-calculator environment, with `g=10` simplifying calculations.",
+          "The 'reverse inference' nature of solving for density rather than terminal velocity makes it an excellent test of conceptual understanding and algebraic manipulation.",
+          "The distractors are well-designed, targeting common errors like neglecting buoyancy or making algebraic slips, enhancing the question's selectivity."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "visual_router",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "visual_route": "none",
+        "answer_depends_on_visual": false,
+        "required_files": [],
+        "reason": "The question describes a straightforward physics scenario involving force balance at terminal velocity. All necessary information (object volume, fluid density, drag force, g) is provided numerically in the text. A visual representation, such as a diagram of an object falling in a liquid or a force diagram, would not add essential information or clarify the problem's physics for comprehension or calculation. The problem is conceptual and calculation-based, and the setup is clearly described verbally.",
+        "next_prompt_file": null,
+        "style_target_if_image": null,
+        "blocking_issue": null,
+        "simplicity_audit": {
+          "visual_needed": false,
+          "can_be_described_in_one_sentence": true,
+          "estimated_object_types": 0,
+          "estimated_labels": 0,
+          "requires_unwanted_arrows_or_symbols": false,
+          "route_is_conservative": true
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "tag_labeler",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "primary_tag": "3",
+        "secondary_tags": [
+          "5"
+        ],
+        "primary_confidence": 0.95,
+        "reasoning": "The primary reasoning involves applying the principle of force equilibrium (Newton's First Law) at terminal velocity, balancing weight, buoyancy, and drag forces, which are core concepts of Mechanics. The concept of density from Matter is essential for calculating both the object's weight and the buoyancy force.",
+        "_raw_text": "```json\n{\n  \"primary_tag\": \"3\",\n  \"secondary_tags\": [\"5\"],\n  \"primary_confidence\": 0.95,\n  \"reasoning\": \"The primary reasoning involves applying the principle of force equilibrium (Newton's First Law) at terminal velocity, balancing weight, buoyancy, and drag forces, which are core concepts of Mechanics. The concept of density from Matter is essential for calculating both the object's weight and the buoyancy force.\"\n}\n```"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    }
+  ],
+  "pipeline": "v4",
+  "created_at": "2026-05-18T13:57:24+01:00"
+}

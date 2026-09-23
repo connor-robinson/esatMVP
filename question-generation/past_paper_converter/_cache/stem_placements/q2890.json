@@ -1,0 +1,28 @@
+{
+  "questionId": 2890,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 71,
+  "stemBlocks": [
+    "The effect of pH on the breakdown of starch by pancreatic amylase was investigated. Starch and pancreatic amylase solution were mixed in test tubes, each at a different pH. The percentage of starch remaining after 5 minutes was recorded on the graph. All other variables were kept constant.\nUsing these results, which of the following conclusions could be correct?\n1 During the 5 minutes, there are more enzyme-product complexes formed at pH 4.5 than at pH 6.\n2 The shape of the enzyme is different at pH 5 compared to the shape at pH 7.\n3 The optimum pH for this enzyme is approximately pH 7 under the conditions of this experiment."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing percentage of starch remaining after 5 minutes versus pH.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.399401+00:00",
+  "sourceImageHash": "cf3cbbda980e38be93317547ef05bb01165f936943790270ae88b661e56f207e",
+  "status": "ok"
+}

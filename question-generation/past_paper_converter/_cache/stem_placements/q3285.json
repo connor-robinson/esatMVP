@@ -1,0 +1,29 @@
+{
+  "questionId": 3285,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 16,
+  "stemBlocks": [
+    "A car is at rest on a straight horizontal road. At time $t = 0 \\text{s}$ the car starts to move along the road. The graph shows how its acceleration varies from $t = 0 \\text{s}$ to $t = 20 \\text{s}$.",
+    "What is the displacement of the car from its starting position when $t = 20 \\text{s}$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing acceleration / m s$^{-2}$ versus time / s. From $t=0$ to $t=10 \\text{s}$, acceleration is $2.0 \\text{ m s}^{-2}$. From $t=10$ to $t=20 \\text{s}$, acceleration is $-1.5 \\text{ m s}^{-2}$.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:13.260928+00:00",
+  "sourceImageHash": "0a14492b32e5e8c2d298158dec6ab7bb2d681ce5ac653b79fc8d42b03040d258",
+  "status": "ok"
+}

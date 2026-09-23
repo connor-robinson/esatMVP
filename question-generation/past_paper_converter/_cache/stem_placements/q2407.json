@@ -1,0 +1,28 @@
+{
+  "questionId": 2407,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 18,
+  "stemBlocks": [
+    "The shortest distance between two opposite sides of a regular hexagon is 12 cm. Find the area, in cm$^2$, of the regular hexagon."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:49:16.052662+00:00",
+  "sourceImageHash": "0c2ffb5cd1406d5cdab2f0b727bd8c4252ef96fb7c34d0cc2438901c0dacc25c",
+  "status": "ok"
+}

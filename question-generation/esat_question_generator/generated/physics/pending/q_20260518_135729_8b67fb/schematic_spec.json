@@ -1,0 +1,65 @@
+{
+  "diagram_id": "d1",
+  "schematic_type": "simple_circuit",
+  "answer_depends_on_diagram": false,
+  "components": [
+    {
+      "id": "battery1",
+      "type": "battery",
+      "label": "6.0 V",
+      "position_hint": "left",
+      "properties": {}
+    },
+    {
+      "id": "resistor1",
+      "type": "resistor",
+      "label": "3.0 Ω",
+      "position_hint": "top",
+      "properties": {}
+    },
+    {
+      "id": "wire_segment1",
+      "type": "resistor",
+      "label": "20 cm",
+      "position_hint": "right",
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "from": "battery1",
+      "to": "resistor1",
+      "type": "wire"
+    },
+    {
+      "from": "resistor1",
+      "to": "wire_segment1",
+      "type": "wire"
+    },
+    {
+      "from": "wire_segment1",
+      "to": "battery1",
+      "type": "wire"
+    }
+  ],
+  "labels": [
+    {
+      "text": "B = 0.50 T (into page)",
+      "target_id": "wire_segment1",
+      "placement": "above"
+    }
+  ],
+  "style": {
+    "exam_style": true,
+    "black_and_white": true,
+    "minimal": true,
+    "not_to_scale": true
+  },
+  "render_checks": {
+    "no_exact_geometry_required": true,
+    "all_answer_bearing_info_also_in_text": true,
+    "placeholder_id_matches_stem": true,
+    "not_complex_electromagnetism": true,
+    "not_multi_force_diagram": true
+  }
+}

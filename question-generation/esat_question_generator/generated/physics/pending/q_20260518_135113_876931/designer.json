@@ -1,0 +1,101 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_a9a3eea7",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Medium",
+    "idea_summary": "An object falls at a given terminal velocity in a fluid. The student must use the force balance equation (Weight = Buoyancy + Drag) to calculate the density of the object, rather than the velocity.",
+    "schema_invariant": {
+      "core_move": "Applying Newton's first law (equilibrium of forces) to an object at terminal velocity in a fluid, considering weight, buoyancy, and drag.",
+      "what_must_not_change": [
+        "Force balance at terminal velocity is the core concept",
+        "Weight, buoyancy, and drag are the three forces",
+        "The drag force model is provided"
+      ],
+      "what_can_change": [
+        "The unknown variable being solved for (e.g., density instead of velocity)",
+        "The direction of motion (falling vs. rising)",
+        "The context (e.g., object in liquid vs. balloon in air)",
+        "Proportional reasoning vs. direct calculation"
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "reverse_inference",
+      "reasoning_hinge": "The candidate must rearrange the terminal velocity force-balance equation to solve for the object's density, given the terminal velocity as a known parameter.",
+      "why_top_students_win": "They correctly identify the force balance (`W = U + D`), substitute the density-based expressions for W and U, and perform the algebraic rearrangement correctly to isolate the object's density.",
+      "why_mid_students_miss": "They are conditioned to solve for velocity and may get confused. They might incorrectly rearrange the algebra, for example, getting `rho_obj = rho_fluid + Drag` (forgetting the `Vg` term), or they might neglect the buoyancy force entirely."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Newton's First Law (equilibrium of forces at terminal velocity).",
+      "supporting_idea_if_any": "Archimedes' principle (buoyancy) and the definition of density.",
+      "estimated_solution_steps": 3,
+      "number_of_core_physics_principles": 2,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 2,
+      "must_include": [
+        "model_selection",
+        "non_obvious_inference"
+      ]
+    },
+    "reference_alignment": "Similar to a standard terminal velocity problem in pace, but asks for an input (density) rather than the output (velocity), requiring algebraic rearrangement instead of direct substitution. This maintains the 'force balance' core while changing the cognitive task.",
+    "task_signature": "reverse_reasoning",
+    "tool_footprint": [
+      "force_balance",
+      "buoyancy",
+      "reverse_inference",
+      "algebraic_rearrangement"
+    ],
+    "primary_tag": "2",
+    "secondary_tags": [
+      "2.5"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "",
+    "why_still_on_spec": "Uses core ESAT Physics concepts: Newton's Laws (specifically equilibrium, tag 2.5), Density (tag 2.2), and Forces (tag 2.5), including buoyancy. The rearrangement is standard algebraic skill expected at this level.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Neglecting buoyancy. The student sets `Weight = Drag` and solves for density from there. This leads to `rho_obj = Drag / (V*g)`.",
+        "distractor_role": "A common oversimplification, especially if the fluid is described as air or a low-density liquid."
+      },
+      {
+        "mistake": "Incorrectly calculating weight or buoyancy. E.g., using the fluid density to calculate weight, or the object density for buoyancy.",
+        "distractor_role": "Tests careful application of definitions of weight and upthrust."
+      },
+      {
+        "mistake": "Algebraic error during rearrangement. For example, solving for `rho_obj - rho_fluid` but forgetting to add `rho_fluid` at the end.",
+        "distractor_role": "Catches students who rush the final algebraic step."
+      }
+    ],
+    "difficulty_rationale": "The difficulty is Medium because it is not a direct application of a memorised formula. The student must select the correct model (force balance including buoyancy) and then perform a non-trivial algebraic rearrangement to find an input parameter rather than the final velocity. This is a step beyond 'plug-and-chug' but uses only standard school-level principles.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "There is no single formula for 'object density given terminal velocity'. The student must derive the required relationship by setting up the force equilibrium equation `W = U + D`, substituting `W=rho_obj*V*g` and `U=rho_fluid*V*g`, and then rearranging to make `rho_obj` the subject."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The correct answer is a unique value derived from the setup. The common misconceptions (neglecting buoyancy, algebraic errors, mixing up densities) lead to predictable and plausible incorrect answers that can be used as distractors."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-pro",
+  "attempts": 1
+}

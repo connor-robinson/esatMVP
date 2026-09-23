@@ -1,0 +1,29 @@
+{
+  "questionId": 1825,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 32,
+  "stemBlocks": [
+    "A crate has a total mass of $800 \\text{ kg}$, including its contents. A helicopter of mass $4200 \\text{ kg}$ is carrying the crate using a light inextensible rope as shown: The helicopter and crate are accelerating upwards at $2.0 \\text{ ms}^{-2}$.",
+    "What is the tension in the rope? (The gravitational field strength $g$ is $10 \\text{ Nkg}^{-1}$; air resistance can be ignored.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:23:52.631474+00:00",
+  "sourceImageHash": "2ffe1b97b22007d8aa5b32fe523f06dda3b776524f891ae482e3e3ca9349d419",
+  "status": "ok"
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 2437,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 48,
+  "stemBlocks": [
+    "Magnesium reacts with sulfuric acid according to the following chemical equation: $Mg(s) + H_2SO_4(aq) \\rightarrow MgSO_4(aq) + H_2(g)$\nLine P on each graph shows how the volume of hydrogen formed changes with time when $1.2g$ of magnesium reacts with $40 \\text{ cm}^3$ of $1.0 \\text{ mol dm}^{-3}$ sulfuric acid at $20 \\text{ °C}$.\n($A_r$ value: $Mg = 24$)\nTwo further experiments were carried out and the volumes of hydrogen formed were plotted.\nExperiment Q: $1.2g$ of magnesium + $40 \\text{ cm}^3$ of $2.0 \\text{ mol dm}^{-3}$ sulfuric acid at $20 \\text{ °C}$\nExperiment R: $1.2g$ of magnesium + $40 \\text{ cm}^3$ of $0.5 \\text{ mol dm}^{-3}$ sulfuric acid at $20 \\text{ °C}$\nWhich lines show how the volume of hydrogen formed will change with time in each experiment?",
+    "|  | experiment Q | experiment R |\n| --- | --- | --- |\n| A | 1 | 4 |\n| B | 1 | 5 |\n| C | 2 | 4 |\n| D | 2 | 5 |\n| E | 3 | 4 |\n| F | 3 | 5 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:49:16.147774+00:00",
+  "sourceImageHash": "b6dbb4a85e8458935aa79bdef1e2115d115f161f5d18926e1fa08806bc8bab9e",
+  "status": "ok"
+}

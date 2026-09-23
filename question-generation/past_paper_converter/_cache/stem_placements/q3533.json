@@ -1,0 +1,28 @@
+{
+  "questionId": 3533,
+  "examName": "TMUA",
+  "examYear": 2022,
+  "paperName": "Paper 1",
+  "questionNumber": 4,
+  "stemBlocks": [
+    "These sectors of circles are similar. The arc length of the smaller sector is 6. The difference between the areas of the sectors is 21. Find the positive difference between the perimeters of the sectors."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Smaller sector with radius $r$ and arc length $6$",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:21.973788+00:00",
+  "sourceImageHash": "72470252aefb00efb9eb91a28e0a45e55ed293a706af78b5bee6bf4437fe553c",
+  "status": "ok"
+}

@@ -1,0 +1,28 @@
+{
+  "questionId": 1877,
+  "examName": "ENGAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 30,
+  "stemBlocks": [
+    "The diagram shows a crane being used on a building site. The crane is perfectly balanced about P.\nThe load is now moved to the left by 5.0 m.\nTo keep the crane perfectly balanced about P, how far does the counterweight have to move, and in which direction?\n(gravitational field strength = 10 N \\text{kg}^{-1})"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:26:26.103220+00:00",
+  "sourceImageHash": "a88f4dd64d64b3f22fc6da24ab9bda2424a36c3075bf71b57bc4c60c055925b9",
+  "status": "ok"
+}

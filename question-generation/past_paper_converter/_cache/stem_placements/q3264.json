@@ -1,0 +1,29 @@
+{
+  "questionId": 3264,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 55,
+  "stemBlocks": [
+    "Which row in the table is correct?",
+    "|  | type of cell division taking place | rate of DNA synthesis per cell between 12 and 17 hours / fg h$^{-1}$ | period that could be part of interphase |\n| --- | --- | --- | --- |\n| A | meiosis | 2 | 0 to 17 hours |\n| B | meiosis | 0.5 | 0 to 17 hours |\n| C | meiosis | 2 | 12 to 24 hours |\n| D | meiosis | 0.5 | 12 to 24 hours |\n| E | mitosis | 2 | 0 to 17 hours |\n| F | mitosis | 0.5 | 0 to 17 hours |\n| G | mitosis | 2 | 12 to 24 hours |\n| H | mitosis | 0.5 | 12 to 24 hours |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "The graph shows the mean mass of DNA of a population of cells dividing at the same time, measured in femtograms ($10^{-15}$g) per cell.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:13.958559+00:00",
+  "sourceImageHash": "a1423a23b2eab722df44b2ac0b7c5c23f36b82ff421472faabff06e4cf66d381",
+  "status": "ok"
+}

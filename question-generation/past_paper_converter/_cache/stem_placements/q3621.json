@@ -1,0 +1,28 @@
+{
+  "questionId": 3621,
+  "examName": "TMUA",
+  "examYear": 2016,
+  "paperName": "Paper 1",
+  "questionNumber": 12,
+  "stemBlocks": [
+    "A right circular cylinder is contained within a sphere of radius 5 cm in such a way that the whole of the circumferences of both ends of the cylinder are in contact with the sphere.\nThe diagram shows a planar cross section through the centre of the sphere and cylinder.\nFind, in cubic centimetres, the maximum possible volume of the cylinder."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "[diagram not to scale]",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:21.991554+00:00",
+  "sourceImageHash": "e1973c740a66f2e8a4779173a16c904f9e3f7f80bb240ca2ec3adb339167224a",
+  "status": "ok"
+}

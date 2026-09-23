@@ -1,0 +1,40 @@
+{
+  "questionId": 3206,
+  "examName": "ENGAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 17,
+  "stemBlocks": [
+    "A projectile is launched from an inclined plane.\nThe graphs show the variation of the horizontal and vertical components of the velocity of the projectile with time from when it is launched until it hits the plane at time $T$.",
+    "What is the angle of the plane to the horizontal?",
+    "(gravitational field strength = $10 \\text{ N kg}^{-1}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing horizontal component of velocity against time.",
+      "role": "stem_diagram"
+    },
+    {
+      "id": "d2",
+      "alt": "Graph showing vertical component of velocity against time.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    },
+    {
+      "assetId": "d2",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:48:58.247646+00:00",
+  "sourceImageHash": "96b7b4fac9adf8d6021bf34787c530d17dadf723de437a76a6d8124cfeb9c3bf",
+  "status": "ok"
+}

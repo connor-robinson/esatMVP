@@ -1,0 +1,69 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_ad97dfb5",
+      "module": "physics",
+      "variation_mode": "FAR",
+      "target_difficulty": "Medium",
+      "task_signature": "proportional_change",
+      "primary_tag": "2",
+      "secondary_tags": [
+        "1"
+      ]
+    },
+    "question": {
+      "stem": "Two objects, X and Y, are in motion. Object X has $3$ times the momentum of object Y, and $4$ times the kinetic energy of object Y.\n\nWhat is the ratio of their masses, $\\frac{m_{\\text{X}}}{m_{\\text{Y}}}$?",
+      "options": {
+        "A": "$\\frac{3}{16}$",
+        "B": "$\\frac{3}{4}$",
+        "C": "$\\frac{4}{9}$",
+        "D": "$\\frac{9}{4}$",
+        "E": "$12$",
+        "F": "$36$"
+      },
+      "correct_option": "D"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "Kinetic energy and momentum are related by $E_k = \\frac{p^2}{2m}$, which means mass is proportional to the square of momentum and inversely proportional to kinetic energy.",
+      "reasoning": "1. Rearrange the relationship $E_k = \\frac{p^2}{2m}$ to make mass the subject: $m = \\frac{p^2}{2E_k}$.\n2. This reveals the proportional relationship $m \\propto \\frac{p^2}{E_k}$.\n3. We are given the scaling factors for momentum ($p_{\\text{X}} = 3p_{\\text{Y}}$) and kinetic energy ($E_{k\\text{X}} = 4E_{k\\text{Y}}$).\n4. Substitute these factors into the proportional relationship: $\\frac{m_{\\text{X}}}{m_{\\text{Y}}} = \\frac{(3)^2}{4} = \\frac{9}{4}$."
+    },
+    "distractor_map": {
+      "A": "Incorrectly squares the kinetic energy ratio instead of the momentum ratio ($m \\propto p / E_k^2$).",
+      "B": "Fails to square the momentum ratio ($m \\propto p / E_k$).",
+      "C": "Inverts the relationship, treating mass as proportional to kinetic energy over squared momentum ($m \\propto E_k / p^2$).",
+      "D": "Correct option.",
+      "E": "Fails to square momentum and incorrectly assumes direct proportionality for kinetic energy ($m \\propto p \\cdot E_k$).",
+      "F": "Incorrectly assumes mass is directly proportional to kinetic energy ($m \\propto p^2 \\cdot E_k$)."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Recognizing that mass scales proportionally with the square of momentum and inversely with kinetic energy.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 1,
+        "estimated_solution_steps": 3,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

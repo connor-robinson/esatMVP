@@ -1,0 +1,69 @@
+The user aborted a request.
+
+Retrying 1/3...
+The user aborted a request.
+
+Retrying 1/3...
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (130kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⨯ Error: Cannot find module './1682.js'
+Require stack:
+- C:\Users\anson\Desktop\nocalcMVP2_real\.next\server\webpack-runtime.js
+- C:\Users\anson\Desktop\nocalcMVP2_real\.next\server\pages\_document.js
+- C:\Users\anson\Desktop\nocalcMVP2_real\node_modules\next\dist\server\require.js
+- C:\Users\anson\Desktop\nocalcMVP2_real\node_modules\next\dist\server\load-components.js
+- C:\Users\anson\Desktop\nocalcMVP2_real\node_modules\next\dist\build\utils.js
+- C:\Users\anson\Desktop\nocalcMVP2_real\node_modules\next\dist\server\dev\hot-middleware.js
+- C:\Users\anson\Desktop\nocalcMVP2_real\node_modules\next\dist\server\dev\hot-reloader-webpack.js
+- C:\Users\anson\Desktop\nocalcMVP2_real\node_modules\next\dist\server\lib\router-utils\setup-dev-bundler.js
+- C:\Users\anson\Desktop\nocalcMVP2_real\node_modules\next\dist\server\lib\router-server.js
+- C:\Users\anson\Desktop\nocalcMVP2_real\node_modules\next\dist\server\lib\start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at C:\Users\anson\Desktop\nocalcMVP2_real\node_modules\next\dist\server\require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (C:\Users\anson\Desktop\nocalcMVP2_real\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (C:\Users\anson\Desktop\nocalcMVP2_real\.next\server\webpack-runtime.js:198:28)
+    at C:\Users\anson\Desktop\nocalcMVP2_real\.next\server\webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (C:\Users\anson\Desktop\nocalcMVP2_real\.next\server\webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (C:\Users\anson\Desktop\nocalcMVP2_real\.next\server\webpack-runtime.js:162:22)
+    at C:\Users\anson\Desktop\nocalcMVP2_real\.next\server\pages\_document.js:1:340
+    at Object.<anonymous> (C:\Users\anson\Desktop\nocalcMVP2_real\.next\server\pages\_document.js:1:383)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Object..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (C:\Users\anson\Desktop\nocalcMVP2_real\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (C:\Users\anson\Desktop\nocalcMVP2_real\node_modules\next\dist\server\require.js:109:84)
+    at C:\Users\anson\Desktop\nocalcMVP2_real\node_modules\next\dist\server\load-components.js:72:65
+    at async Promise.all (index 0)
+    at async loadComponentsImpl (C:\Users\anson\Desktop\nocalcMVP2_real\node_modules\next\dist\server\load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (C:\Users\anson\Desktop\nocalcMVP2_real\node_modules\next\dist\server\next-server.js:710:36) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\.next\\server\\pages\\_document.js',
+    'C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\node_modules\\next\\dist\\server\\dev\\hot-middleware.js',
+    'C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\node_modules\\next\\dist\\server\\dev\\hot-reloader-webpack.js',
+    'C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\node_modules\\next\\dist\\server\\lib\\router-utils\\setup-dev-bundler.js',
+    'C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\node_modules\\next\\dist\\server\\lib\\router-server.js',
+    'C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\node_modules\\next\\dist\\server\\lib\\start-server.js'
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "questionId": 3050,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 71,
+  "stemBlocks": [
+    "The graph shows how body temperature of a human varies over a period of 60 minutes.",
+    "Which of the following could have caused the temperature change between X and Y?",
+    "1 Homeostasis causing more sweat production.\n2 The temperature control centre in the brain causing hairs on the skin to stand up on end.\n3 The temperature control centre in the brain causing less blood to flow near the skin's surface."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing body temperature over time, with points X and Y marked.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:16.031468+00:00",
+  "sourceImageHash": "a1fa73e62baf19756d15e0370fc9dcbf101bbf1ecf4933c156a26d0cc2edd49b",
+  "status": "ok"
+}

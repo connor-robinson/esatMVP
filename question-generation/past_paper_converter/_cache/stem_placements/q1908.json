@@ -1,0 +1,29 @@
+{
+  "questionId": 1908,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 7,
+  "stemBlocks": [
+    "A rectangle $PQRS$ is drawn inside a circle, with its vertices on the circumference of the circle.\nThe ratio of the length of $PQ$ to the length of $QR$ is $2:1$.\nThe area of the rectangle $PQRS$ is $96 \\text{ cm}^2$.",
+    "What is the radius, in cm, of the circle?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:28:14.885199+00:00",
+  "sourceImageHash": "fb6ad7732c8e42edf195189bd03f5d5d5ab5aedfd38b4108de9b74abf59431ee",
+  "status": "ok"
+}

@@ -1,0 +1,49 @@
+{
+  "stage": "verifier",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "E",
+    "independent_solution": {
+      "main_law_or_principle": "Conservation of linear momentum",
+      "calculation_or_logic": "Let the initial momentum of the light pulse be $p$ in the positive direction. The initial momentum of the stationary object is 0.\n\nCase 1: Perfect Absorption\nInitial total momentum = $p + 0 = p$.\nAfter absorption, the light pulse has 0 momentum. The object gains momentum $p_\\text{abs}$.\nBy conservation of momentum: $p = 0 + p_\\text{abs} \\implies p_\\text{abs} = p$.\n\nCase 2: Perfect Reflection\nInitial total momentum = $p + 0 = p$.\nAfter reflection, the light pulse travels in the opposite direction, so its momentum is $-p$. The object gains momentum $p_\\text{refl}$.\nBy conservation of momentum: $p = -p + p_\\text{refl} \\implies p_\\text{refl} = p - (-p) = 2p$.\n\nRatio: $p_\\text{refl} / p_\\text{abs} = (2p) / p = 2$.",
+      "verified_answer_value": "2",
+      "claimed_answer_value": "2",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Conservation of linear momentum",
+        "Vector nature of momentum",
+        "Application of given photon momentum formula",
+        "Comparison of two scenarios"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a"
+    },
+    "notes": [
+      "The question correctly applies the principle of conservation of momentum to a light-matter interaction.",
+      "The distinction between absorption (momentum change $p$) and reflection (momentum change $2p$) is fundamental and correctly tested.",
+      "The provided formula for photon momentum ($p=E/c$) ensures the question is self-contained and does not require prior advanced knowledge.",
+      "The distractors are well-designed to target common misconceptions."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

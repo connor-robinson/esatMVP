@@ -1,0 +1,28 @@
+{
+  "questionId": 3314,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 45,
+  "stemBlocks": [
+    "A group of scientists studied the effect of droughts on the reproduction rate and lifespan of different species of birds. The graph shows their results. Each data point refers to a different species. The x-axis represents the average probability of bird surviving the year, and the y-axis represents the percentage change in reproductive activity in drought versus non-drought years. Which of these statements is/are correct?\n1 The overall trend for this data shows that birds with shorter life expectancies tended to change their reproduction rates less in drought years.\n2 Some birds were found to reproduce more in drought years than in non-drought years.\n3 These birds were being studied for the effect of a biotic factor on their population size."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:13.295287+00:00",
+  "sourceImageHash": "13a2e2d1975206bece7d63e67f5a578fe04621aaf5f02a10a7dc42eaa571e16d",
+  "status": "ok"
+}

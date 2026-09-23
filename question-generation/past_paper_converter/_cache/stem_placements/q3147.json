@@ -1,0 +1,30 @@
+{
+  "questionId": 3147,
+  "examName": "ENGAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 18,
+  "stemBlocks": [
+    "The stress in a steel cable increases with time and is then maintained at a constant value, as shown. The wire does not reach its limit of proportionality. The table shows properties of the steel used in the cable and the dimensions of the cable.",
+    "How much work was done to stretch the cable?",
+    "| length / m | cross-sectional area / m$^2$ | Young modulus / Pa |\n| --- | --- | --- |\n| 4.0 | $2.0 \\times 10^{-4}$ | $2.0 \\times 10^{11}$ |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:44:04.589923+00:00",
+  "sourceImageHash": "3f01b0265acd8a7335c99c2f82c75035c8342cf23f95bec5c68c897ea8164145",
+  "status": "ok"
+}

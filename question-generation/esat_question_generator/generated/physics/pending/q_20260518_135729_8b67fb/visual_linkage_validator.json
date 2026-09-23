@@ -1,0 +1,30 @@
+{
+  "stage": "visual_linkage_validator",
+  "status": "fail",
+  "verdict": null,
+  "payload": {
+    "ok": false,
+    "errors": [
+      {
+        "field": "question.stem",
+        "kind": "missing_placeholder",
+        "message": "visual_need=accurate_schematic_json but stem has no <DIAGRAM id=\"...\" /> placeholder."
+      }
+    ],
+    "warnings": [],
+    "option_keys": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F"
+    ],
+    "summary": "1 error(s)"
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": null,
+  "attempts": 1
+}

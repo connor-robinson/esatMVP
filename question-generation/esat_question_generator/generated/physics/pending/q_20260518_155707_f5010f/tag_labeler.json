@@ -1,0 +1,17 @@
+{
+  "stage": "tag_labeler",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "primary_tag": "4",
+    "secondary_tags": [],
+    "primary_confidence": 1.0,
+    "reasoning": "The question is a direct application of the specific heat capacity formula ($Q = mc\\Delta T$) and the principle of conservation of thermal energy, which are core concepts within Thermal physics.",
+    "_raw_text": "```json\n{\n  \"primary_tag\": \"4\",\n  \"secondary_tags\": [],\n  \"primary_confidence\": 1.0,\n  \"reasoning\": \"The question is a direct application of the specific heat capacity formula ($Q = mc\\\\Delta T$) and the principle of conservation of thermal energy, which are core concepts within Thermal physics.\"\n}\n```"
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

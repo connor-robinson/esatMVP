@@ -1,0 +1,29 @@
+{
+  "questionId": 3438,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 49,
+  "stemBlocks": [
+    "Scientists tested the effect of protein P on the survival of bacterial cell populations. They tested this with, and without, the presence of chemical Q. Chemical Q disrupts the formation of disulfide bonds. The results are shown on the chart. All other factors were kept constant. Assume that rates of cell division are constant and so do not affect population size. Which row in the table is correct?",
+    "| experiment | 1 | 2 | 3 | 4 | 5 | 6 |\n| --- | --- | --- | --- | --- | --- | --- |\n| concentration of protein P / $\\mu$M | 0 | 0 | 5 | 5 | 5 | 5 |\n| concentration of chemical Q / $\\mu$M | 0 | 50 | 0 | 10 | 25 | 50 |\n|  | protein P kills bacterial cells | percentage increase in number of live bacteria remaining from experiment 4 to experiment 5 | which level of protein structure differs between P in experiments 3 and 6? |\n| --- | --- | --- | --- |\n| A | yes | 900 | primary |\n| B | yes | 1000 | tertiary |\n| C | yes | 900 | tertiary |\n| D | yes | 1000 | secondary |\n| E | no | 900 | tertiary |\n| F | no | 1000 | primary |\n| G | no | 900 | secondary |\n| H | no | 1000 | tertiary |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.141246+00:00",
+  "sourceImageHash": "b5de0eeaba51d9909b2877c331314c30bd1d7528e03b85431f3e8f5cb6f83665",
+  "status": "ok"
+}

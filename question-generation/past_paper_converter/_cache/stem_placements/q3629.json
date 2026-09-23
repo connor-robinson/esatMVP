@@ -1,0 +1,28 @@
+{
+  "questionId": 3629,
+  "examName": "TMUA",
+  "examYear": 2016,
+  "paperName": "Paper 1",
+  "questionNumber": 20,
+  "stemBlocks": [
+    "The diagram shows a square-based pyramid with base $PQRS$ and vertex $O$. All the edges of the pyramid are of length 20 metres. Find the shortest distance, in metres, along the outer surface of the pyramid from $P$ to the midpoint of $OR$."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:21.995729+00:00",
+  "sourceImageHash": "e811804f54f5fb5cec90dbe83358792a17c78e2af9bbaad06550408b32fcc722",
+  "status": "ok"
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 1927,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 26,
+  "stemBlocks": [
+    "The diagram shows a circuit containing a battery and three identical resistors X, Y and Z.\nThe total power supplied by the battery is 18W.",
+    "What is the power dissipated as heat in resistor X?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:28:14.900541+00:00",
+  "sourceImageHash": "3eb0a4d9ae314758ff58a8f0b64ea63fffa1d81b2ea917324ae8e4b0fd5223eb",
+  "status": "ok"
+}

@@ -1,0 +1,28 @@
+{
+  "questionId": 3153,
+  "examName": "ENGAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 4,
+  "stemBlocks": [
+    "Two objects of mass $M$ and $m$ are connected by a rope over a pulley on an inclined plane as shown. There is no friction between the plane and the object. The pulley is smooth, and the rope has negligible mass. The angle $\\theta$ of the plane to the horizontal is such that $\\sin \\theta = 0.80$ and $\\cos \\theta = 0.60$. The object with mass $M$ accelerates down the slope. Which expression describes the full range of possible values of $M$ compared with $m$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:45:27.613242+00:00",
+  "sourceImageHash": "7381b5c4d6471630a94a86ecbf2dada7b0f7e56612ced7b1bb7656c550bee31b",
+  "status": "ok"
+}

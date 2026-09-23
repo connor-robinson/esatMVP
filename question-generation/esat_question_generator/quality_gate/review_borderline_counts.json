@@ -1,0 +1,39 @@
+{
+  "total_esat_pool": 1985,
+  "not_reviewed_unassessed": 200,
+  "reviewed_assessed": 1785,
+  "reviewed_by_action": {
+    "approve": 1342,
+    "regenerate": 79,
+    "human_review": 262,
+    "move_to_math2": 92,
+    "delete": 10
+  },
+  "human_review_remaining": 262,
+  "borderline_curriculum_human_review_any_blockers": {
+    "total": 133,
+    "by_subject": {
+      "Biology": 5,
+      "Chemistry": 9,
+      "Math 1": 38,
+      "Math 2": 56,
+      "Physics": 25
+    }
+  },
+  "borderline_only_curriculum_human_review": {
+    "total": 86,
+    "by_subject": {
+      "Biology": 4,
+      "Chemistry": 6,
+      "Math 1": 25,
+      "Math 2": 37,
+      "Physics": 14
+    }
+  },
+  "borderline_only_curriculum_already_approved": {
+    "total": 11,
+    "by_subject": {
+      "Math 2": 11
+    }
+  }
+}

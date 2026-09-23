@@ -1,0 +1,30 @@
+{
+  "questionId": 3444,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 55,
+  "stemBlocks": [
+    "Which of the following statements is/are correct?",
+    "(Assume no mutations)",
+    "1 Among individuals 1, 2, 3 and 4, there must be 4 recessive alleles.\n2 The probability of individual 5 having gained the recessive allele from individual 1 is 25% because each parent has two alleles.\n3 If one body cell is taken from each of the seven individuals, the difference between the theoretical maximum number of recessive alleles present and the theoretical minimum number is two."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "The diagram shows the inheritance of an autosomal recessive genetic condition.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.160310+00:00",
+  "sourceImageHash": "fdb6fd6198f3da14481c18d04df04ac309882b94aa2b46549012eed48e015720",
+  "status": "ok"
+}

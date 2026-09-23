@@ -1,0 +1,100 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_a9a3eea7",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Medium",
+    "idea_summary": "An object with a lower density than a liquid is released from the bottom of a tank and rises, reaching a constant terminal velocity. The candidate must formulate the force balance to find an expression for the drag constant.",
+    "schema_invariant": {
+      "core_move": "Apply Newton's first law to a system at terminal velocity, correctly substituting expressions for weight, upthrust (buoyancy), and drag.",
+      "what_must_not_change": [
+        "The state of terminal velocity (zero acceleration)",
+        "The presence of three forces: weight, upthrust, and drag",
+        "The dependence of weight and upthrust on object and fluid densities respectively"
+      ],
+      "what_can_change": [
+        "The direction of motion (rising instead of falling)",
+        "The quantity to be solved for (e.g., drag constant instead of velocity)",
+        "The specific drag model (e.g., linear vs quadratic)"
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "vector_direction",
+      "reasoning_hinge": "Recognising that because the object is rising, the drag force acts downwards, meaning the correct force balance is Upthrust = Weight + Drag.",
+      "why_top_students_win": "They systematically identify the direction of motion and assign force vectors accordingly, recognising that drag opposes motion and therefore adds to the weight.",
+      "why_mid_students_miss": "They rely on rote-memorised formulas for falling objects (where Weight = Upthrust + Drag), leading to a sign error in the final expression."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Newton's First Law (equilibrium of forces at terminal velocity)",
+      "supporting_idea_if_any": "Archimedes' principle (Upthrust = weight of displaced fluid)",
+      "estimated_solution_steps": 3,
+      "number_of_core_physics_principles": 2,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 3,
+      "must_include": [
+        "model_selection",
+        "non_obvious_inference",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "Preserves the core difficulty of balancing three fluid forces, but shifts the cognitive load from algebraic rearrangement to correct vector setup by reversing the direction of motion.",
+    "task_signature": "force_motion_reasoning",
+    "tool_footprint": [
+      "force_balance_setup",
+      "vector_direction_assignment",
+      "algebraic_rearrangement"
+    ],
+    "primary_tag": "3",
+    "secondary_tags": [
+      "2"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "No visual required. The text clearly describes a rising object.",
+    "surface_twist": "",
+    "why_still_on_spec": "Terminal velocity, density, weight, and upthrust (buoyancy) are standard specification topics. Applying Newton's first law to a rising object is a direct application of core force mechanics.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Assuming drag acts upwards (as it does for falling objects), leading to Upthrust + Drag = Weight.",
+        "distractor_role": "Produces an answer with a reversed sign for the density difference (e.g., object density minus fluid density instead of fluid minus object)."
+      },
+      {
+        "mistake": "Swapping the densities used for upthrust and weight (using fluid density for weight and object density for upthrust).",
+        "distractor_role": "Produces an answer with the densities reversed, compounding with or cancelling out the drag direction error."
+      },
+      {
+        "mistake": "Ignoring the weight of the object entirely, assuming upthrust is the only upward force and drag is the only downward force.",
+        "distractor_role": "Produces an answer that only depends on the fluid density, missing the object density term."
+      }
+    ],
+    "difficulty_rationale": "It requires clear physical reasoning rather than just plugging numbers into a memorised formula. The twist of a rising object cleanly discriminates candidates who understand the vector nature of drag from those who just memorised the falling-sphere derivation.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "A standard terminal velocity formula assumes a falling object. Applying it directly here will result in a sign error because the drag force vector has reversed relative to gravity."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The algebraic expression for the drag constant can be easily presented as multiple-choice options with variations in the signs and density terms, directly mapping to common student errors."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

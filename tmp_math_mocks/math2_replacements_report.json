@@ -1,0 +1,76 @@
+{
+  "apply": true,
+  "report": [
+    {
+      "slot": "A4",
+      "action": "replace",
+      "questionId": "4343cd5e-2f45-43ca-a778-e8cfd1d516af",
+      "oldTopic": "MM7",
+      "newTopic": "MM7",
+      "answer": "D"
+    },
+    {
+      "slot": "B9",
+      "action": "replace",
+      "questionId": "fe6c3318-cd97-419a-8a09-b9b3620f3339",
+      "oldTopic": "MM3",
+      "newTopic": "MM4",
+      "answer": "C"
+    },
+    {
+      "slot": "B23",
+      "action": "replace",
+      "questionId": "09a6fe36-12fc-418a-a410-7aaa7ee4cc2a",
+      "oldTopic": "MM5",
+      "newTopic": "MM8",
+      "answer": "E"
+    },
+    {
+      "slot": "C17",
+      "action": "insert",
+      "questionId": "3cf58f03-09f2-4918-ad00-fd37165fb067",
+      "newTopic": "MM6",
+      "answer": "A"
+    },
+    {
+      "slot": "C18",
+      "action": "replace",
+      "questionId": "d6e63880-cda4-4f37-937a-ac735dda912f",
+      "oldTopic": "MM5",
+      "newTopic": "MM2",
+      "answer": "C"
+    },
+    {
+      "slot": "C24",
+      "action": "replace",
+      "questionId": "5aaaabf7-42d5-4894-8942-8860242ad1fd",
+      "oldTopic": "MM7",
+      "newTopic": "MM7",
+      "answer": "E"
+    },
+    {
+      "slot": "D17",
+      "action": "replace",
+      "questionId": "dbe599f2-cef6-4d60-9683-b9a7aeb4f422",
+      "oldTopic": "MM5",
+      "newTopic": "MM2",
+      "answer": "E"
+    },
+    {
+      "slot": "D23",
+      "action": "replace",
+      "questionId": "79eca23c-4894-46db-8b0c-4d478ec3c356",
+      "oldTopic": "MM5",
+      "newTopic": "MM8",
+      "answer": "B"
+    },
+    {
+      "slot": "E1",
+      "action": "replace",
+      "questionId": "27dbb43a-a1f4-44cd-836c-d46fe573697b",
+      "oldTopic": "MM7",
+      "newTopic": "MM6",
+      "answer": "D"
+    }
+  ]
+}

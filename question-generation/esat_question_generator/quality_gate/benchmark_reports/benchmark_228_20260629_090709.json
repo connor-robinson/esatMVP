@@ -1,0 +1,46 @@
+{
+  "generated_at": "2026-06-29T09:07:09.566167+00:00",
+  "mode": "read_only_benchmark",
+  "manual_file": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\data\\manual_overrides\\esat_228_manual_keep_reject.json",
+  "manual_checksum_sha256": "08346b04a98308d52c8d2ccec6a8343f4d0e3731188323b5104acbf7eafff9b8",
+  "validator_version": "v3_benchmark",
+  "model": "gemini-1.5-flash-002",
+  "evaluated_count": 0,
+  "error_count": 5,
+  "summary": {
+    "total": 0,
+    "correct": 0,
+    "accuracy": 0.0,
+    "critical_false_positive_count": 0,
+    "disagreement_count": 0,
+    "gold_in_syllabus": 0,
+    "gold_out_of_syllabus": 0,
+    "gold_invalid_question": 0
+  },
+  "confusion_matrix": {},
+  "critical_false_positives": [],
+  "disagreements": [],
+  "errors": [
+    {
+      "id": "39f065de",
+      "error": "404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/global/publishers/google/models/gemini-1.5-flash-002` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "id": "3ab4ca8f",
+      "error": "404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/global/publishers/google/models/gemini-1.5-flash-002` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "id": "51f57eca",
+      "error": "403 PERMISSION_DENIED. {'error': {'code': 403, 'message': 'Agent Platform API has not been used in project project-26e317b7-d790-4164-a97 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/aiplatform.googleapis.com/overview?project=project-26e317b7-d790-4164-a97 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.', 'status': 'PERMISSION_DENIED', 'details': [{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'SERVICE_DISABLED', 'domain': 'googleapis.com', 'metadata': {'serviceTitle': 'Agent Platform API', 'containerInfo': 'project-26e317b7-d790-4164-a97', 'activationUrl': 'https://console.developers.google.com/apis/api/aiplatform.googleapis.com/overview?project=project-26e317b7-d790-4164-a97', 'consumer': 'projects/project-26e317b7-d790-4164-a97', 'service': 'aiplatform.googleapis.com'}}, {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': 'Agent Platform API has not been used in project project-26e317b7-d790-4164-a97 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/aiplatform.googleapis.com/overview?project=project-26e317b7-d790-4164-a97 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.'}, {'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Google developers console API activation', 'url': 'https://console.developers.google.com/apis/api/aiplatform.googleapis.com/overview?project=project-26e317b7-d790-4164-a97'}]}]}}"
+    },
+    {
+      "id": "524e015c",
+      "error": "404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/global/publishers/google/models/gemini-1.5-flash-002` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "id": "524f5ed5",
+      "error": "404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/global/publishers/google/models/gemini-1.5-flash-002` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    }
+  ],
+  "all_results": []
+}

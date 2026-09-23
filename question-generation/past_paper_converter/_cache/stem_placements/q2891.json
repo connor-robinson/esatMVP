@@ -1,0 +1,30 @@
+{
+  "questionId": 2891,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 72,
+  "stemBlocks": [
+    "The diagram summarises the homeostatic control of blood glucose concentration.",
+    "Which row is correct?",
+    "|  | gland V | hormone W | hormone X | process Y | process Z |\n| --- | --- | --- | --- | --- | --- |\n| A | pancreas | adrenaline | insulin | nervous response | nervous response |\n| B | pancreas | glucagon | insulin | negative feedback | negative feedback |\n| C | pancreas | insulin | glucagon | negative feedback | negative feedback |\n| D | pancreas | insulin | glucagon | nervous response | negative feedback |\n| E | pituitary | adrenaline | ADH | negative feedback | nervous response |\n| F | pituitary | ADH | glucagon | nervous response | negative feedback |\n| G | pituitary | ADH | insulin | nervous response | nervous response |\n| H | pituitary | glucagon | insulin | negative feedback | nervous response |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.399401+00:00",
+  "sourceImageHash": "ad006dcbe4f1dc049ec81b1e5492f2408264c4b62f00c76e740fb652506c2e30",
+  "status": "ok"
+}

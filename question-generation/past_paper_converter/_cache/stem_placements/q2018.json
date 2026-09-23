@@ -1,0 +1,30 @@
+{
+  "questionId": 2018,
+  "examName": "ENGAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 23,
+  "stemBlocks": [
+    "The braking system of a car includes two cylinders containing an incompressible oil, linked by a flexible tube that also contains oil. There is a freely moving piston in each cylinder. One piston is labelled X, and the other is labelled Y in the diagram.\nWhen the driver presses on the brake pedal, a force is exerted on piston X. The pressure produced in the oil by this force is transmitted through the oil so that it causes a force to act on piston Y. This presses the brakes against the moving parts.\nThe diameter of piston X is $4.0 \\text{ cm}$. The diameter of piston Y is $12.0 \\text{ cm}$.\nThe driver exerts a force of $36.0 \\text{ N}$ on piston X and it moves a distance of $5.4 \\text{ cm}$ to the right.",
+    "What is the resultant force on piston Y and how far does it move along the cylinder?",
+    "|  | force on piston Y / N | distance moved by piston Y / cm |\n| --- | --- | --- |\n| A | 4.0 | 0.60 |\n| B | 4.0 | 48.6 |\n| C | 12.0 | 1.80 |\n| D | 12.0 | 16.2 |\n| E | 108 | 1.80 |\n| F | 108 | 16.2 |\n| G | 324 | 0.60 |\n| H | 324 | 48.6 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:25.574267+00:00",
+  "sourceImageHash": "eddf338d22d8f25237091ebbbea626ee434e8c86bead3448241dc03fc19cf8d1",
+  "status": "ok"
+}

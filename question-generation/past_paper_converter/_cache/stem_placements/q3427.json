@@ -1,0 +1,59 @@
+{
+  "questionId": 3427,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 38,
+  "stemBlocks": [
+    "The general structure of an amino acid is:",
+    "The R group determines the identity of the amino acid.",
+    "The equation for the reaction between three amino acids to make a tripeptide is shown.",
+    "The three amino acids may be the same or different.",
+    "A tripeptide is broken down into its three component amino acids and analysed using chromatography.",
+    "The chromatogram is shown. Only two spots are present.",
+    "The $R_f$ values in this solvent and the $M_r$ values for some amino acids, including all those that make up the tripeptide, are given in the table.",
+    "The constituent amino acids from 0.0100 mol of tripeptide are reacted separately with aqueous sodium hydroxide.",
+    "In total, $40.0\\ \\text{cm}^3$ of $1.00\\ \\text{mol dm}^{-3}$ of aqueous sodium hydroxide is required to exactly neutralise the acid groups on the amino acids.",
+    "Which row identifies $M_r$ of the tripeptide and the number of different tripeptides (as structural isomers) with this $M_r$ that can be made from the amino acids present?",
+    "($A_r$ values: H = 1; C = 12; N = 14; O = 16)",
+    "| R group on the amino acid | $R_f$ | $M_r$ of amino acid |\n| --- | --- | --- |\n| -\\text{CH}_3 | 0.30 | 89 |\n| -\\text{CH}(\\text{CH}_3)_2 | 0.42 | 117 |\n| -\\text{CH}_2\\text{COOH} | 0.60 | 133 |\n| -\\text{CH}_2\\text{CH}_2\\text{COOH} | 0.67 | 147 |\n|  | $M_r$ of tripeptide | number of different tripeptides possible |\n| --- | --- | --- |\n| A | 275 | 3 |\n| B | 311 | 3 |\n| C | 319 | 3 |\n| D | 345 | 3 |\n| E | 275 | 6 |\n| F | 311 | 6 |\n| G | 319 | 6 |\n| H | 345 | 6 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    },
+    {
+      "id": "d2",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    },
+    {
+      "id": "d3",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    },
+    {
+      "assetId": "d2",
+      "insertAfterBlock": 3,
+      "confidence": 0.98
+    },
+    {
+      "assetId": "d3",
+      "insertAfterBlock": 6,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.103506+00:00",
+  "sourceImageHash": "467931bed1aad8e17389370399ec3587cfd87693610b1b150f4ba7ba16560d91",
+  "status": "ok"
+}

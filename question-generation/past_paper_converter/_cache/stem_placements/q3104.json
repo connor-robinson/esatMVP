@@ -1,0 +1,29 @@
+{
+  "questionId": 3104,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 2",
+  "questionNumber": 13,
+  "stemBlocks": [
+    "A stick at position X dips into water every $0.80 \\text{ s}$, creating a circular wave which travels at a constant speed.\nThe diagrams show the wave crests at a time $t$ and $1.0 \\text{ s}$ later. One of the wave crests, labelled Q, appears in both diagrams.\nIn each diagram, the distance from X to a wave crest is labelled.",
+    "What is the wavelength of the wave?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:40:49.358854+00:00",
+  "sourceImageHash": "0a09cc72f900a7033ca4da57d8eb945d758294921cdbfa7dd49d4f01bedc935a",
+  "status": "ok"
+}

@@ -1,0 +1,39 @@
+{
+  "questionId": 3417,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 28,
+  "stemBlocks": [
+    "Triiodomethane is a pale-yellow solid with the formula $CHI_3$. It is formed when some organic compounds react with alkaline aqueous iodine. When an alcohol reacts, the series of steps that take place during the reaction to produce the triiodomethane are: A compound with the following structural formula is completely reacted with excess alkaline aqueous iodine and the reaction mixture is then acidified with an excess of a dilute acid.",
+    "What is the final organic compound that is produced along with the triiodomethane?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Reaction scheme for triiodomethane formation: $\\\\ce{CH_3-C(H)(OH)-R \\xrightarrow{\\text{oxidation}} CH_3-C(=O)-R \\xrightarrow{\\text{substitution}} CI_3-C(=O)-R \\downarrow \\text{decomposition} \\\\ CHI_3 + R-C(=O)-O^-}$",
+      "role": "stem_diagram"
+    },
+    {
+      "id": "d8",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    },
+    {
+      "assetId": "d8",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.093843+00:00",
+  "sourceImageHash": "86ee79efa4258741673a560721633040912cd3bc8785f7f1ee2f0cf745a3381f",
+  "status": "ok"
+}

@@ -1,0 +1,102 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_ad97dfb5",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Extreme",
+    "idea_summary": "Candidates are given that drag force scales as r²v², and must find the ratio of terminal velocities for two spheres of the same material where one has 8 times the mass of the other.",
+    "schema_invariant": {
+      "core_move": "Calculate the resultant value of a dependent physical quantity by applying given scaling factors to its independent variables in a power law relationship.",
+      "what_must_not_change": [
+        "The necessity to use proportional reasoning and power laws.",
+        "The absence of absolute values (ratio-based solve)."
+      ],
+      "what_can_change": [
+        "The physical context (terminal velocity instead of fields/radiation).",
+        "The need to derive the final power law relationship from a physical constraint (force balance) before applying the scaling factor."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "proportional_reasoning",
+      "reasoning_hinge": "Equating the scaling of weight (r³) with the scaling of drag (r²v²) to deduce that terminal velocity v scales with √r.",
+      "why_top_students_win": "They immediately recognise that at terminal velocity, weight ∝ drag. Since mass ∝ r³, they write r³ ∝ r²v², simplifying to v ∝ √r. Mass × 8 means r × 2, so v × √2.",
+      "why_mid_students_miss": "They may ignore the r² term in the drag proportionality and assume drag only depends on v², leading to v² ∝ m, giving a ratio of √8. Or, they might fail to cube-root the mass ratio to find the radius ratio."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Force balance at terminal velocity (Weight = Drag).",
+      "supporting_idea_if_any": "Mass of a sphere scales with the cube of its radius (m ∝ r³).",
+      "estimated_solution_steps": 3,
+      "number_of_core_physics_principles": 1,
+      "requires_derived_relationship": true,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 3,
+      "must_include": [
+        "derive_radius_scaling_from_mass",
+        "equate_weight_and_drag_proportionalities",
+        "solve_for_velocity_scaling"
+      ]
+    },
+    "reference_alignment": "Requires the exact same cognitive skill (tracking exponents in scaling ratios) but hides the core power law behind a simple force balance, elevating it to Extreme without adding tedious algebra.",
+    "task_signature": "proportional_change",
+    "tool_footprint": [
+      "identify_scaling_factor",
+      "equate_forces",
+      "manipulate_proportionality"
+    ],
+    "primary_tag": "1",
+    "secondary_tags": [
+      "2"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "Instead of being handed a named formula (like Stefan-Boltzmann or Gravity), the candidate must combine a geometric scaling law (volume) with a given drag proportionality to create their own scaling law.",
+    "why_still_on_spec": "Terminal velocity and the volume/mass relationship of spheres are standard school physics. The drag proportionality is explicitly given in the stem, keeping it perfectly on-spec.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Ignoring the r² dependence in the drag force and assuming drag ∝ v² only, so v² ∝ m.",
+        "distractor_role": "Yields a ratio of √8 (or 2√2)."
+      },
+      {
+        "mistake": "Assuming radius scales directly with mass (r ∝ m instead of r³ ∝ m), so r × 8. Then 8 ∝ 8²v², leading to v ∝ 1/√8.",
+        "distractor_role": "Yields a ratio of 1/(2√2)."
+      },
+      {
+        "mistake": "Finding the radius ratio (r × 2) but multiplying the velocity by this factor directly instead of rooting it.",
+        "distractor_role": "Yields a ratio of 2."
+      },
+      {
+        "mistake": "Assuming v² ∝ r³, leading to v ∝ r^(3/2) because they forgot the r² in the drag term.",
+        "distractor_role": "Yields a ratio of √8."
+      }
+    ],
+    "difficulty_rationale": "The difficulty is purely conceptual and structural. The algebra is trivial (cube root of 8, square root of 2), but the candidate must independently link m ∝ r³ and r³ ∝ r²v² under time pressure. This is a highly selective ESAT move.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "There is no standard formula to plug into. The candidate must synthesize the scaling relationship v ∝ √r from the physical condition of terminal velocity."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The common errors (forgetting a power, confusing mass with radius scaling) lead to distinct, clean numerical ratios (e.g., 2, √8, 1/√8) that make excellent distractors."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

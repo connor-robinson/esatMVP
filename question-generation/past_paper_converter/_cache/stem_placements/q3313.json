@@ -1,0 +1,30 @@
+{
+  "questionId": 3313,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 44,
+  "stemBlocks": [
+    "A scientist studied one species of plant and grew some at $20 \\text{ °C}$ (plants P) and some at $30 \\text{ °C}$ (plants Q). All other variables were kept constant.\nThe scientist then placed plants from each group into six separate temperature-controlled cabinets, each at a different temperature. The plants were left for 15 minutes to adjust to their new temperature. The scientist then measured the rate of net carbon dioxide uptake by the leaves on the plants. All other variables were kept constant.\nThe results are shown in the graph.",
+    "Which of the following statements is/are correct?",
+    "1 At $35 \\text{ °C}$, a $200 \\text{ cm}^2$ leaf of plant P would take up $1.44 \\times 10^7 \\mu\\text{mol}$ of carbon dioxide in one hour.\n2 Assuming that their respiration rates are the same, the rate of oxygen production in a leaf from plant P at $20 \\text{ °C}$ will be approximately equal to that in a leaf of the same size from plant Q at $30 \\text{ °C}$.\n3 The optimum temperature for maximum rate of photosynthesis in plant P must be $30 \\text{ °C}$."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Key\nplants P grown at $20 \\text{ °C}$\nplants Q grown at $30 \\text{ °C}$\nnet carbon dioxide uptake / $\\mu\\text{mol m}^{-2}\\text{s}^{-1}$\nleaf temperature/$\\text{°C}$",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:13.290618+00:00",
+  "sourceImageHash": "3219eaecde471403a0e38e92bdbf4b46e3661b2a783662c5c47a77077ae1987c",
+  "status": "ok"
+}

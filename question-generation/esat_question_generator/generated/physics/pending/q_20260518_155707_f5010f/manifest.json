@@ -1,0 +1,611 @@
+{
+  "question_id": "q_20260518_155707_f5010f",
+  "subject": "physics",
+  "schema_id": "P_ae6afb3b",
+  "difficulty": "Easy",
+  "status": "accepted",
+  "failure_gate": null,
+  "failure_reasons": [],
+  "has_visual": true,
+  "visual_type": "concept_image",
+  "answer_depends_on_visual": false,
+  "assets": [
+    {
+      "kind": "concept_image",
+      "spec_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260518_155707_f5010f\\concept_image_prompt.json",
+      "image_paths": [
+        "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_155707_f5010f/concept_image_v1.png"
+      ],
+      "renderer": "gemini_image_v1",
+      "qc_status": "pass",
+      "qc_source": "concept_image_verifier.json",
+      "answer_bearing": false,
+      "checksum": null
+    }
+  ],
+  "model_trace": {
+    "designer": "gemini-3.1-pro-preview",
+    "idea_judge": "gemini-3.1-flash-lite",
+    "implementer": "gemini-3.1-pro-preview",
+    "verifier": "gemini-3.1-flash-lite",
+    "style_checker": "gemini-3.1-flash-lite",
+    "visual_router": "gemini-3.1-flash-lite",
+    "concept_image_prompt": "gemini-3.1-pro-preview",
+    "concept_image_verifier": "gemini-3.1-flash-lite",
+    "tag_labeler": "gemini-2.5-flash"
+  },
+  "retry_counts": {
+    "implementer": 0,
+    "concept_image_regen": 0
+  },
+  "stages": [
+    {
+      "stage": "designer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "schema_id": "P_ae6afb3b",
+        "module": "physics",
+        "variation_mode": "SIBLING",
+        "target_difficulty": "Easy",
+        "idea_summary": "A hot block is placed in a cold liquid. The candidate must determine the liquid's temperature rise in terms of the block's temperature drop, given the relative masses and specific heat capacities as simple multiples.",
+        "schema_invariant": {
+          "core_move": "Equating thermal energy lost by the hot object to thermal energy gained by the cold object (m_1 c_1 \\Delta T_1 = m_2 c_2 \\Delta T_2).",
+          "what_must_not_change": [
+            "The underlying principle of conservation of thermal energy in an isolated mixture.",
+            "The use of mass, specific heat capacity, and temperature change."
+          ],
+          "what_can_change": [
+            "The physical objects involved.",
+            "Asking for a proportional temperature change rather than an exact final equilibrium temperature.",
+            "Using algebraic multiples instead of numerical values for mass and specific heat."
+          ]
+        },
+        "discrimination_mechanism": {
+          "type": "proportional_reasoning",
+          "reasoning_hinge": "Recognizing that the temperature change is inversely proportional to the product of mass and specific heat capacity (m*c) when the exchanged heat Q is equal.",
+          "why_top_students_win": "They immediately set up the equality m_b * c_b * \\Delta T_b = m_l * c_l * \\Delta T_l and substitute the multiples to find the ratio of temperature changes.",
+          "why_mid_students_miss": "They may assume temperature change is directly proportional to mass or specific heat, or they might get confused by the absence of initial temperature values."
+        },
+        "goldilocks_complexity_audit": {
+          "main_physics_principle": "Conservation of thermal energy (Q_lost = Q_gained)",
+          "supporting_idea_if_any": "Specific heat capacity equation (Q = mc\\Delta T)",
+          "estimated_solution_steps": 2,
+          "number_of_core_physics_principles": 1,
+          "requires_derived_relationship": false,
+          "too_easy_risk": "low",
+          "too_hard_risk": "low",
+          "goldilocks_verdict": "good"
+        },
+        "minimum_reasoning_depth": {
+          "steps": 2,
+          "must_include": [
+            "model_selection",
+            "short_calculation_or_comparison"
+          ]
+        },
+        "reference_alignment": "Shifts the focus from calculating a final numerical temperature to evaluating a proportional change, maintaining an easy cognitive load but feeling distinct from standard textbook numerical problems.",
+        "task_signature": "proportional_change",
+        "tool_footprint": [
+          "equate_energy",
+          "proportional_reasoning",
+          "isolate_variable"
+        ],
+        "primary_tag": "3",
+        "secondary_tags": [],
+        "visual_need": "none",
+        "visual_role": "none",
+        "visual_brief": "",
+        "surface_twist": "Instead of providing temperatures (e.g., 80°C and 20°C) and asking for the final equilibrium temperature, the question provides relative masses and specific heat capacities (e.g., mass 2m, specific heat 3c) and asks for the temperature rise of the liquid in terms of the block's temperature drop (\\Delta T).",
+        "why_still_on_spec": "Thermal energy transfer and the specific heat capacity equation Q = mc\\Delta T are fundamental parts of the ESAT Thermal Physics specification.",
+        "constraints_used": [
+          "short condition descriptions only",
+          "no final numbers",
+          "no full equations unless the schema requires them",
+          "no exact geometric diagram dependence",
+          "no multi-law derivation chain"
+        ],
+        "intended_wrong_paths": [
+          {
+            "mistake": "Assuming temperature change is directly proportional to the product of mass and specific heat capacity, leading to a multiplier instead of a fraction.",
+            "distractor_role": "Inverted ratio distractor (e.g., 6\\Delta T instead of \\Delta T / 6)."
+          },
+          {
+            "mistake": "Only accounting for the ratio of specific heat capacities and ignoring the mass ratio.",
+            "distractor_role": "Partial ratio distractor (e.g., \\Delta T / 3)."
+          },
+          {
+            "mistake": "Only accounting for the mass ratio and ignoring the specific heat capacity ratio.",
+            "distractor_role": "Partial ratio distractor (e.g., \\Delta T / 2)."
+          }
+        ],
+        "difficulty_rationale": "It is an Easy question because it tests a single core relationship (Q = mc\\Delta T) with a straightforward proportionality. However, using abstract multiples instead of concrete numbers prevents pure, unthinking calculator plug-and-chug, making it highly suitable for ESAT Section 1.",
+        "anti_plug_and_chug_check": {
+          "would_formula_substitution_alone_solve_it": false,
+          "why_not": "Because no explicit initial or final temperatures are given, the candidate must actively construct the proportionality algebraically rather than just typing numbers into a formula."
+        },
+        "mcq_viability": {
+          "viable": true,
+          "reason": "The algebraic fractions (e.g., \\Delta T/6, \\Delta T/3, 2\\Delta T, 6\\Delta T) make for clean, unambiguous multiple-choice options that directly map to common proportional reasoning errors."
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-pro-preview",
+      "attempts": 1
+    },
+    {
+      "stage": "idea_judge",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "selectivity_score": 0,
+        "checks": {
+          "schema_preserved": "pass",
+          "on_spec": "pass",
+          "reasoning_hinge_present": "pass",
+          "not_direct_substitution": "pass",
+          "wrong_paths_specific": "pass",
+          "visual_feasible": "pass",
+          "mcq_viable": "pass",
+          "difficulty_match": "pass",
+          "goldilocks_complexity": "pass"
+        },
+        "complexity_audit": {
+          "number_of_core_physics_principles": 1,
+          "estimated_solution_steps": 2,
+          "requires_derived_relationship": false,
+          "uses_multi_topic_chain": false,
+          "goldilocks_verdict": "good"
+        },
+        "reasoning_hinge_summary": "The candidate must recognize that the equality of heat transfer (Q_lost = Q_gained) implies an inverse proportionality between the temperature change and the product of mass and specific heat capacity (mc).",
+        "expected_mid_student_error": "Students will likely fail to multiply the mass and specific heat ratios together, instead applying only one of the two factors to the temperature change.",
+        "notes": [
+          "The design successfully avoids plug-and-chug by using algebraic multiples, forcing the student to understand the relationship rather than just calculating a value.",
+          "The difficulty level is appropriate for an 'Easy' ESAT question as it tests a fundamental concept without requiring complex multi-step derivations."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "implementer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "metadata": {
+          "schema_id": "P_ae6afb3b",
+          "module": "physics",
+          "variation_mode": "SIBLING",
+          "target_difficulty": "Easy",
+          "task_signature": "proportional_change",
+          "primary_tag": "3",
+          "secondary_tags": []
+        },
+        "question": {
+          "stem": "A hot solid block is placed into a cold liquid in an insulated container.\n\nThe mass of the liquid is twice the mass of the block. The specific heat capacity of the liquid is three times the specific heat capacity of the block.\n\nThe temperature of the block decreases by $\\Delta T$.\n\nAssuming no thermal energy is transferred to the surroundings, what is the temperature increase of the liquid?",
+          "options": {
+            "A": "$\\frac{\\Delta T}{6}$",
+            "B": "$\\frac{\\Delta T}{5}$",
+            "C": "$\\frac{\\Delta T}{3}$",
+            "D": "$\\frac{\\Delta T}{2}$",
+            "E": "$5\\Delta T$",
+            "F": "$6\\Delta T$"
+          },
+          "correct_option": "A"
+        },
+        "visual_requirements": {
+          "visual_need": "none",
+          "visual_role": "none",
+          "answer_depends_on_visual": false,
+          "graph_request": null,
+          "schematic_request": null,
+          "concept_image_request": null
+        },
+        "solution": {
+          "key_insight": "The temperature change of an object is inversely proportional to the product of its mass and specific heat capacity for a given amount of thermal energy transferred.",
+          "reasoning": "By conservation of energy, the thermal energy lost by the block equals the thermal energy gained by the liquid: $Q_{\\text{lost}} = Q_{\\text{gained}}$.\nUsing $Q = mc\\Delta T$, we have $m_b c_b \\Delta T = m_l c_l \\Delta T_l$.\nSubstituting the given ratios $m_l = 2m_b$ and $c_l = 3c_b$ gives $m_b c_b \\Delta T = (2m_b)(3c_b)\\Delta T_l$.\nSimplifying this yields $m_b c_b \\Delta T = 6 m_b c_b \\Delta T_l$, which rearranges to $\\Delta T_l = \\frac{\\Delta T}{6}$."
+        },
+        "distractor_map": {
+          "A": "Correct. The product of mass and specific heat capacity for the liquid is 6 times that of the block, so its temperature change is 1/6th of the block's.",
+          "B": "Incorrectly adding the multiplier factors (2 + 3 = 5) instead of multiplying them.",
+          "C": "Ignores the mass difference, only accounting for the ratio of the specific heat capacities.",
+          "D": "Ignores the specific heat capacity difference, only accounting for the mass ratio.",
+          "E": "Incorrectly adds the multiplier factors and assumes temperature change is directly proportional to the product of mass and specific heat capacity.",
+          "F": "Incorrectly assumes temperature change is directly proportional to the product of mass and specific heat capacity, leading to a multiplier of 6 instead of a fraction."
+        },
+        "quality_self_check": {
+          "reasoning_hinge_used": "Recognizing that the temperature change is inversely proportional to the product of mass and specific heat capacity (mc) when the exchanged heat Q is equal.",
+          "not_direct_substitution": true,
+          "exactly_one_correct": true,
+          "no_calculator_friendly": true,
+          "on_spec": true,
+          "visual_dependency_safe": true,
+          "goldilocks_complexity": {
+            "number_of_core_physics_principles": 1,
+            "estimated_solution_steps": 2,
+            "requires_derived_relationship": false,
+            "not_overstacked": true
+          }
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-pro-preview",
+      "attempts": 1
+    },
+    {
+      "stage": "deterministic_validator",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "ok": true,
+        "errors": [],
+        "warnings": [],
+        "option_keys": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F"
+        ],
+        "summary": "ok"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": null,
+      "attempts": 1
+    },
+    {
+      "stage": "verifier",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "correct_option_verified": "A",
+        "independent_solution": {
+          "main_law_or_principle": "Conservation of thermal energy (Q_lost = Q_gained) and the specific heat capacity equation (Q = mcΔT).",
+          "calculation_or_logic": "Let m_b and c_b be the mass and specific heat of the block. Let m_l and c_l be the mass and specific heat of the liquid. Given: m_l = 2m_b, c_l = 3c_b. Energy balance: m_b * c_b * ΔT_b = m_l * c_l * ΔT_l. Substituting: m_b * c_b * ΔT = (2m_b) * (3c_b) * ΔT_l. This simplifies to: m_b * c_b * ΔT = 6 * m_b * c_b * ΔT_l. Solving for ΔT_l: ΔT_l = ΔT / 6.",
+          "verified_answer_value": "ΔT/6",
+          "claimed_answer_value": "ΔT/6",
+          "matches_claim": true
+        },
+        "spec_audit": {
+          "required_physics_moves": [
+            "Set up energy balance equation",
+            "Substitute proportional variables",
+            "Algebraic simplification"
+          ],
+          "all_explicitly_on_spec": true,
+          "borderline_or_offspec_moves": []
+        },
+        "derived_relationship_audit": {
+          "requires_nontrivial_derivation": false,
+          "number_of_linked_relationships": 0,
+          "relationships_given_in_stem": [],
+          "safe_for_esat": true
+        },
+        "checks": {
+          "correctness": "pass",
+          "uniqueness": "pass",
+          "syllabus": "pass",
+          "no_calc_feasibility": "pass",
+          "ambiguity": "pass",
+          "diagram_dependency": "pass",
+          "distractor_safety": "pass",
+          "katex_formatting": "pass",
+          "graph_or_visual_validation": "n/a",
+          "derived_relationship_safety": "pass"
+        },
+        "notes": [
+          "The question is a standard application of the principle of conservation of energy in thermal systems, perfectly aligned with the ESAT syllabus."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "style_checker",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "style_score": {
+          "total": 40,
+          "breakdown": {
+            "stem_tone": 5,
+            "physics_authenticity": 5,
+            "reasoning_quality": 5,
+            "selectivity": 5,
+            "no_calc_engineering": 5,
+            "option_realism": 5,
+            "distractor_plausibility": 5,
+            "goldilocks_calibration": 5
+          }
+        },
+        "difficulty_calibration": {
+          "difficulty_vs_reference": "similar",
+          "length_feel_vs_reference": "shorter",
+          "notes": "The question is perfectly calibrated for an 'Easy' ESAT item. It avoids the trap of being a simple plug-and-chug by using algebraic ratios, which forces the student to demonstrate conceptual understanding of the inverse proportionality between temperature change and the heat capacity product (mc)."
+        },
+        "selectivity_audit": {
+          "main_trap": "The primary trap is the confusion between direct and inverse proportionality. Students who fail to set up the energy balance equation will likely choose options based on additive or simple multiplicative relationships (e.g., 6ΔT or ΔT/5).",
+          "why_not_plug_and_chug": "There are no numerical values for temperature, mass, or specific heat capacity to plug into a calculator. The student must manipulate the variables algebraically.",
+          "expected_mid_student_error": "A student might incorrectly assume that because the liquid has a larger mass and higher specific heat, its temperature change should be larger (e.g., 6ΔT), or they might simply add the factors (2+3=5) to get ΔT/5.",
+          "verdict": "selective"
+        },
+        "complexity_audit": {
+          "estimated_core_principles": 1,
+          "estimated_solution_steps": 2,
+          "overstacked": false,
+          "goldilocks_verdict": "good"
+        },
+        "flags": {
+          "too_easy": false,
+          "too_hard": false,
+          "too_wordy": false,
+          "too_recall_heavy": false,
+          "too_plug_and_chug": false,
+          "over_advanced_chain": false,
+          "possible_verifier_miss": false
+        },
+        "notes": [
+          "Excellent example of an ESAT-style question. It is concise, requires a single core physical model, and uses distractors that target specific conceptual misunderstandings."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "visual_router",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "visual_route": "none",
+        "answer_depends_on_visual": false,
+        "required_files": [],
+        "reason": "The problem is a straightforward algebraic proportionality task that does not require any visual aid for comprehension.",
+        "next_prompt_file": null,
+        "style_target_if_image": null,
+        "blocking_issue": null,
+        "simplicity_audit": {
+          "visual_needed": false,
+          "can_be_described_in_one_sentence": true,
+          "estimated_object_types": 0,
+          "estimated_labels": 0,
+          "requires_unwanted_arrows_or_symbols": false,
+          "route_is_conservative": true
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "concept_image_prompt",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "image_id": "img_thermal_block_liquid",
+        "model_purpose": "concept_visual",
+        "answer_depends_on_image": false,
+        "recommended_model": "MODEL_IMAGE_HIGH_QUALITY",
+        "prompt": "A simple 2D cross-section diagram of a solid block submerged in a liquid inside an insulated container. Object relations: The container is a simple open-topped rectangular tank with a thick, diagonally-hatched outer wall representing insulation. The liquid fills the lower portion of the container. A simple rectangular solid block rests flat on the bottom of the container, fully submerged in the liquid. Label anchors: Label 'liquid' placed outside the container to the top-left; a single straight leader line enters the container and terminates on an empty patch of liquid above the block. It must not point at the block, the surface line, or the container walls. Label 'solid block' placed outside the container to the bottom-left; leader line points to the outline of the block. Label 'insulated container' placed outside to the right; leader line points to the hatched wall of the container. Style: Professional monochrome admissions-test diagram. Pure white background #FFFFFF. Crisp black vector-like line art. Times New Roman-like serif typography. Minimalist, no clutter. Negative constraints: No grey wash, gradient, or paper texture. No extra labels, no temperature values, no heat flow arrows, no 3D perspective, no photorealism, no overlapping lines.",
+        "negative_prompt": "Pure white background only; no grey paper, gradient, or texture. No extra labels. No overlap. No sans-serif fonts. No decorative shading. No photorealism. No colour unless explicitly requested. No exact answer-bearing measurements. No clutter. No malformed symbols. Do not place objects in the wrong support/location relationship. No medium label pointing at objects inside the medium. No fluid label terminating on a sphere, wall, or meniscus. No unrequested arrows, force labels, field symbols, construction arcs, or explanatory overlays. No heat flow arrows. No temperature values.",
+        "required_labels": [
+          "liquid",
+          "solid block",
+          "insulated container"
+        ],
+        "forbidden_labels": [
+          "T",
+          "\\Delta T",
+          "m",
+          "c",
+          "heat",
+          "energy"
+        ],
+        "label_anchors": [
+          {
+            "text": "liquid",
+            "label_type": "medium",
+            "text_placement": "outside_container_top_left",
+            "leader_target": "empty_liquid_patch_above_block",
+            "must_not_point_at": [
+              "solid block",
+              "container walls",
+              "surface line only"
+            ]
+          },
+          {
+            "text": "solid block",
+            "label_type": "object",
+            "text_placement": "outside_container_bottom_left",
+            "leader_target": "object_outline",
+            "must_not_point_at": [
+              "liquid",
+              "container walls"
+            ]
+          },
+          {
+            "text": "insulated container",
+            "label_type": "apparatus_part",
+            "text_placement": "outside_container_right",
+            "leader_target": "hatched_container_wall",
+            "must_not_point_at": [
+              "liquid",
+              "solid block"
+            ]
+          }
+        ],
+        "layout_logic": {
+          "must_show_relations": [
+            "solid block must be fully submerged in the liquid",
+            "solid block must rest on the bottom of the container",
+            "container must have a visibly thick or hatched wall to indicate insulation"
+          ],
+          "measurement_mapping": [],
+          "relative_size_constraints": [
+            "container must be large enough to clearly show empty liquid space above and around the block"
+          ]
+        },
+        "simplicity_limits": {
+          "max_object_types": 3,
+          "max_labels": 3,
+          "allow_force_arrows": false,
+          "allow_field_patterns": false,
+          "allow_construction_arcs": false,
+          "allow_mixed_representations": false
+        },
+        "hard_constraints": [
+          "background must be pure white #FFFFFF with no grey fill or gradient",
+          "label liquid: text outside container; leader ends on empty liquid, not on the block or walls",
+          "no unrequested arrows, heat flow indicators, or temperature labels",
+          "no overlapping labels"
+        ],
+        "style": {
+          "target_style": "tmua_engaa_exam_diagram",
+          "exam_style": true,
+          "black_and_white": true,
+          "background": "pure_white_#FFFFFF",
+          "serif_font": "Times New Roman-like",
+          "math_variables_italic": true,
+          "minimal": true,
+          "not_to_scale": true,
+          "no_overlap": true,
+          "logic_sensitive": true,
+          "brutally_simple": true
+        },
+        "post_generation_checks": {
+          "run_concept_image_verifier": true,
+          "verify_no_overlap": true,
+          "verify_font_exam_like": true,
+          "verify_no_extra_labels": true,
+          "verify_not_answer_bearing": true,
+          "verify_object_relations": true,
+          "verify_measurement_clarity": true,
+          "verify_relative_size_plausibility": true,
+          "verify_simplification_level": true,
+          "verify_no_unrequested_arrows_or_symbols": true,
+          "verify_visual_simplicity": true,
+          "verify_pure_white_background": true,
+          "verify_label_anchor_targets": true,
+          "verify_medium_labels_not_on_objects": true
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-pro-preview",
+      "attempts": 1
+    },
+    {
+      "stage": "concept_image_verifier",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "checks": {
+          "exam_style_match": "pass",
+          "serif_font_match": "pass",
+          "math_label_quality": "pass",
+          "no_overlap": "pass",
+          "label_accuracy": "pass",
+          "no_extra_labels": "pass",
+          "monochrome_style": "pass",
+          "layout_cleanliness": "pass",
+          "illustrative_only_safety": "pass",
+          "professionalism": "pass",
+          "object_relation_accuracy": "pass",
+          "measurement_anchor_clarity": "pass",
+          "relative_magnitude_plausibility": "pass",
+          "simplification_level": "pass",
+          "visual_simplicity": "pass",
+          "no_unrequested_arrows": "pass",
+          "no_unrequested_field_patterns": "pass",
+          "main_setup_clarity": "pass",
+          "no_mixed_representations": "pass",
+          "pure_white_background": "pass",
+          "label_target_accuracy": "pass",
+          "medium_label_anchor_rule": "pass",
+          "label_ambiguity": "pass"
+        },
+        "label_audit": [
+          {
+            "text": "liquid",
+            "intended_type": "medium",
+            "observed_target": "empty_liquid_patch",
+            "correct": true,
+            "issue": ""
+          },
+          {
+            "text": "solid block",
+            "intended_type": "object",
+            "observed_target": "block_outline",
+            "correct": true,
+            "issue": ""
+          },
+          {
+            "text": "insulated container",
+            "intended_type": "apparatus_part",
+            "observed_target": "hatched_wall",
+            "correct": true,
+            "issue": ""
+          }
+        ],
+        "reasons": [
+          "The image adheres to all visual requirements for a TMUA/ENGAA-style diagram.",
+          "Labels are correctly placed outside the container with leaders pointing to the appropriate targets.",
+          "The background is pure white and the style is clean, monochrome, and minimalist.",
+          "No unrequested information or answer-bearing symbols are present."
+        ],
+        "regen_feedback": "",
+        "delete_reason": ""
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "tag_labeler",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "primary_tag": "4",
+        "secondary_tags": [],
+        "primary_confidence": 1.0,
+        "reasoning": "The question is a direct application of the specific heat capacity formula ($Q = mc\\Delta T$) and the principle of conservation of thermal energy, which are core concepts within Thermal physics.",
+        "_raw_text": "```json\n{\n  \"primary_tag\": \"4\",\n  \"secondary_tags\": [],\n  \"primary_confidence\": 1.0,\n  \"reasoning\": \"The question is a direct application of the specific heat capacity formula ($Q = mc\\\\Delta T$) and the principle of conservation of thermal energy, which are core concepts within Thermal physics.\"\n}\n```"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    }
+  ],
+  "pipeline": "v4",
+  "created_at": "2026-05-18T16:01:33+01:00"
+}

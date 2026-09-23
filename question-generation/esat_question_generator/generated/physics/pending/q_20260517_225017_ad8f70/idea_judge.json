@@ -1,0 +1,32 @@
+{
+  "stage": "idea_judge",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "selectivity_score": 0,
+    "checks": {
+      "schema_preserved": "pass",
+      "on_spec": "pass",
+      "reasoning_hinge_present": "pass",
+      "not_direct_substitution": "pass",
+      "wrong_paths_specific": "pass",
+      "visual_feasible": "pass",
+      "mcq_viable": "pass",
+      "difficulty_match": "pass"
+    },
+    "reasoning_hinge_summary": "The core hinge is realizing that 'constant temperature' implies a steady state where the electrical power input precisely balances the total rate of thermal energy loss to the surroundings (P_in = P_out). Candidates must then apply knowledge of how surface properties (emissivity) affect radiative heat loss, and that convection losses would be similar for identical objects at the same temperature.",
+    "expected_mid_student_error": "Mid-level students may fail to connect the electrical power input to the rate of heat loss, or they might incorrectly assume that since the temperature is constant and the objects are identical in size, the power required must be the same. They might also confuse the roles of absorption and emission, or underestimate the significance of radiation compared to convection.",
+    "notes": [
+      "The inversion of the problem from passive cooling to active heating to maintain temperature is a good way to test the underlying physics in a fresh context.",
+      "The visual brief is appropriate and supportive without being essential or answer-bearing.",
+      "The intended wrong paths are well-articulated and target common misconceptions related to thermal equilibrium and surface properties."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

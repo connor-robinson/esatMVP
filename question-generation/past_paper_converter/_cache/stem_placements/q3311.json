@@ -1,0 +1,30 @@
+{
+  "questionId": 3311,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 42,
+  "stemBlocks": [
+    "The diagram shows a food chain. The numbers represent energy available and are in arbitrary units (a.u.), and the percentages represent efficiency of energy transfer. The energy transfer between trophic levels is not 100% efficient.",
+    "Which row is correct for this food chain?",
+    "|  | efficiency of energy transfer $x$ | a reason for inefficiency of energy transfer from Q to R |\n| --- | --- | --- |\n| A | 1% | energy lost as heat |\n| B | 1% | cellulose not digested |\n| C | 1% | some wavelengths of light not used |\n| D | 5% | energy lost as heat |\n| E | 5% | cellulose not digested |\n| F | 5% | some wavelengths of light not used |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:13.283946+00:00",
+  "sourceImageHash": "7616f96198de4ad4a88e4fb5de4572d748008aafa2c7971a6474fcab73bb9098",
+  "status": "ok"
+}

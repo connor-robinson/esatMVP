@@ -1,0 +1,29 @@
+{
+  "questionId": 3180,
+  "examName": "ENGAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 11,
+  "stemBlocks": [
+    "Two small hard spheres of mass $m$ and $2m$ are suspended side by side from light vertical strings of length $l$. The more massive sphere is raised so that its string is horizontal, and then released. It swings through $90^\\circ$ and strikes the smaller sphere. The two spheres stick together, and rise to a maximum height $h$ as shown in the diagram.",
+    "Which expression gives the height $h$ in terms of $l$? (Assume that air resistance is negligible.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:46:58.353281+00:00",
+  "sourceImageHash": "d2bb2a652646504bc502a6e98e0e15008f89e3f074857cbff64422a4217b6769",
+  "status": "ok"
+}

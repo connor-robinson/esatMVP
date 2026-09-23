@@ -1,0 +1,29 @@
+{
+  "questionId": 2894,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 75,
+  "stemBlocks": [
+    "Different samples of the same pond plant were kept underwater and exposed to five different colours of light at the same light intensity. All other variables were kept constant. The time taken for the plant to release 20 bubbles was recorded. The results are shown in the chart.",
+    "Which of the following conclusions is/are correct? 1 This pond plant photosynthesises fastest when exposed to green light. 2 When exposed to any of these colours of light, this pond plant would release only oxygen. 3 When exposed to blue light, this pond plant produces 30 bubbles per minute."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.409170+00:00",
+  "sourceImageHash": "c418993740b72df32ff7938b7978d509213bd9c57dc52db6bf2fa4ccf86d7dd5",
+  "status": "ok"
+}

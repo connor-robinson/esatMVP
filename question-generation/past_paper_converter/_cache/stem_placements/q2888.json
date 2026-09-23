@@ -1,0 +1,29 @@
+{
+  "questionId": 2888,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 69,
+  "stemBlocks": [
+    "The graph shows the number of live bacteria growing in a nutrient broth at $30 \\text{ \\degree C}$ over 60 hours.",
+    "Which statement is correct?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing thousands of live bacteria per $\\text{mm}^3$ over time in hours.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.399401+00:00",
+  "sourceImageHash": "8f5baeff4420f3bcecc0c3b83e32feef0aba80132f45de0573e84bd4d9c99aaf",
+  "status": "ok"
+}

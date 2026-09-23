@@ -1,0 +1,52 @@
+{
+  "stage": "verifier",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "D",
+    "independent_solution": {
+      "main_law_or_principle": "Force balance at terminal velocity (Weight = Drag).",
+      "calculation_or_logic": "1. Mass $m \\propto r^3$ (same material). Given $m_Q = 27 m_P$, then $r_Q = \\sqrt[3]{27} r_P = 3 r_P$.\n2. At terminal velocity, $W = F_D$. Weight $W \\propto m \\propto r^3$. Drag $F_D \\propto r v$ (given).\n3. Equating: $r^3 \\propto r v \\implies v \\propto r^2$.\n4. Ratio of velocities: $v_Q / v_P = (r_Q / r_P)^2 = (3)^2 = 9$.",
+      "verified_answer_value": "9",
+      "claimed_answer_value": "9",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "derive_radius_scaling_from_mass",
+        "equate_weight_and_drag_proportionalities",
+        "solve_for_velocity_scaling"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "derived_relationship_audit": {
+      "requires_nontrivial_derivation": false,
+      "number_of_linked_relationships": 0,
+      "relationships_given_in_stem": [],
+      "safe_for_esat": true
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a",
+      "derived_relationship_safety": "pass"
+    },
+    "notes": [
+      "The question is physically sound and adheres to the ESAT syllabus. The scaling logic is clear and the distractors are well-constructed based on common conceptual errors."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 3
+}

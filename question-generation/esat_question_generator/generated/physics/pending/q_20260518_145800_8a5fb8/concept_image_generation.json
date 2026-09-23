@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260518_145800_8a5fb8\\assets\\concept_image_v1.png",
+    "bytes": 647847,
+    "model": "imagen-4.0-ultra-generate-001",
+    "aspect_ratio": "4:3",
+    "seed": null,
+    "duration_s": 15.478
+  },
+  "prompt_used": "A simple 2D cross-section diagram of a rectangular tank filled with fluid, containing two identical circles (representing spheres) side-by-side. The fluid surface is indicated by a simple horizontal dashed line at the top of the tank. The two circles are fully submerged in the fluid and are not touching each other. Required labels: 'X' placed clearly next to or inside the left circle, 'Y' placed clearly next to or inside the right circle, and 'fluid' with a simple leader line pointing to the empty space inside the tank. Illustrative only, not answer-bearing. Simple monochrome exam diagram. No unrequested arrows, symbols, or field patterns. No clutter. Clean black vector-like lines on a very light grey background. Times New Roman-like serif font.",
+  "public_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_145800_8a5fb8/concept_image_v1.png"
+}

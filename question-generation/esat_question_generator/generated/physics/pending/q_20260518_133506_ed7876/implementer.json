@@ -1,0 +1,67 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_2db4e658",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Hard",
+      "task_signature": "wave_or_radiation_reasoning",
+      "primary_tag": "4",
+      "secondary_tags": []
+    },
+    "question": {
+      "stem": "Two points, A and B, on a long string are separated by a distance of $8.4\\text{ m}$. A continuous transverse wave of frequency $2.0\\text{ Hz}$ travels along the string from A to B.\n\nThe distance between A and B is known to be between one and two wavelengths.\n\nAt time $t = 0$, point A is at a crest. Point B reaches a crest for the first time after $t = 0$ at $t = 0.20\\text{ s}$.\n\nWhat is the speed of the wave?",
+      "options": {
+        "A": "$7.0\\text{ m s}^{-1}$",
+        "B": "$10.5\\text{ m s}^{-1}$",
+        "C": "$12\\text{ m s}^{-1}$",
+        "D": "$16.8\\text{ m s}^{-1}$",
+        "E": "$28\\text{ m s}^{-1}$",
+        "F": "$42\\text{ m s}^{-1}$"
+      },
+      "correct_option": "C"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "The time delay of $0.20\\text{ s}$ represents a fraction of the wave's period, but because the distance is greater than one wavelength, the total travel time for a crest from A to B must include an additional full period.",
+      "reasoning": "1. The wave period is $T = 1 / f = 1 / 2.0 = 0.50\\text{ s}$.\n2. A crest at A travels to B. Since B reaches its first crest after $t=0$ at $t=0.20\\text{ s}$, the travel time from A to B must be $\\Delta t = 0.20\\text{ s} + nT$, where $n$ is an integer.\n3. We are told the distance $d$ is between $1\\lambda$ and $2\\lambda$. Because $d = v \\Delta t$ and $\\lambda = v T$, the travel time must be between $1T$ and $2T$ (between $0.50\\text{ s}$ and $1.00\\text{ s}$).\n4. Therefore, $n = 1$, making the true travel time $\\Delta t = 0.20 + 0.50 = 0.70\\text{ s}$.\n5. The wave speed is $v = d / \\Delta t = 8.4 / 0.70 = 12\\text{ m s}^{-1}$."
+    },
+    "distractor_map": {
+      "A": "Assumes the distance is between 2 and 3 wavelengths ($n=2$), giving a travel time of $1.20\\text{ s}$ and $v = 8.4 / 1.20 = 7.0\\text{ m s}^{-1}$.",
+      "B": "Correctly includes one full wavelength but misinterprets the phase shift direction, using a travel time of $0.50 - 0.20 + 0.50 = 0.80\\text{ s}$.",
+      "C": "Correct option.",
+      "D": "Ignores the phase shift entirely and simply divides the distance by the period ($v = 8.4 / 0.50 = 16.8\\text{ m s}^{-1}$).",
+      "E": "Misinterprets the phase shift direction (using $0.30\\text{ s}$) and ignores the boundary condition that distance $> 1\\lambda$, giving $v = 8.4 / 0.30 = 28\\text{ m s}^{-1}$.",
+      "F": "Assumes the crest at A takes exactly $0.20\\text{ s}$ to reach B, ignoring the wave cycles already between them (fails the $> 1\\lambda$ constraint), giving $v = 8.4 / 0.20 = 42\\text{ m s}^{-1}$."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Translating a temporal delay into a spatial phase shift and resolving the integer wavelength ambiguity using the stated boundary condition.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 2,
+        "estimated_solution_steps": 4,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

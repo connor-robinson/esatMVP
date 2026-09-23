@@ -1,0 +1,94 @@
+{
+  "image_id": "img_momentum_mass_concept",
+  "model_purpose": "concept_visual",
+  "answer_depends_on_image": false,
+  "recommended_model": "MODEL_IMAGE_FAST",
+  "prompt": "A brutally simple physics diagram illustrating two objects in motion. Two identical circles (representing spheres) are drawn side-by-side with generous horizontal spacing. The left circle contains the label X centered inside it. The right circle contains the label Y centered inside it. From the right edge of each circle, a simple straight horizontal arrow points to the right to indicate motion. The arrows should be the same length. The image is illustrative only and not answer-bearing. Style: professional monochrome admissions-test diagram. Use clean black vector-like strokes on a pure white #FFFFFF background. The labels X and Y must be in a Times New Roman-like serif font. No other labels, no extra arrows, no shading, no 3D rendering, and no background clutter.",
+  "negative_prompt": "Pure white background only; no grey paper, gradient, or texture. No extra labels. No overlap. No sans-serif fonts. No decorative shading. No photorealism. No colour. No exact answer-bearing measurements. No clutter. No malformed symbols. Do not place objects in the wrong support/location relationship. No unrequested arrows, force labels, field symbols, construction arcs, or explanatory overlays.",
+  "required_labels": [
+    "X",
+    "Y"
+  ],
+  "forbidden_labels": [
+    "p",
+    "E_k",
+    "m",
+    "v"
+  ],
+  "label_anchors": [
+    {
+      "text": "X",
+      "label_type": "object",
+      "text_placement": "centered_inside",
+      "leader_target": "none",
+      "must_not_point_at": [
+        "the arrow",
+        "empty space"
+      ]
+    },
+    {
+      "text": "Y",
+      "label_type": "object",
+      "text_placement": "centered_inside",
+      "leader_target": "none",
+      "must_not_point_at": [
+        "the arrow",
+        "empty space"
+      ]
+    }
+  ],
+  "layout_logic": {
+    "must_show_relations": [
+      "Circles must be side-by-side and clearly separated",
+      "Each circle must have exactly one horizontal arrow pointing right"
+    ],
+    "measurement_mapping": [],
+    "relative_size_constraints": [
+      "Both circles should appear roughly the same size",
+      "Both arrows should appear roughly the same length"
+    ]
+  },
+  "simplicity_limits": {
+    "max_object_types": 2,
+    "max_labels": 2,
+    "allow_force_arrows": false,
+    "allow_field_patterns": false,
+    "allow_construction_arcs": false,
+    "allow_mixed_representations": false
+  },
+  "hard_constraints": [
+    "Labels X and Y must be centered inside their respective circles",
+    "No leader lines",
+    "Background must be pure white #FFFFFF with no grey fill or gradient",
+    "No unrequested arrows, force labels, field symbols, or construction arcs"
+  ],
+  "style": {
+    "target_style": "tmua_engaa_exam_diagram",
+    "exam_style": true,
+    "black_and_white": true,
+    "background": "pure_white_#FFFFFF",
+    "serif_font": "Times New Roman-like",
+    "math_variables_italic": true,
+    "minimal": true,
+    "not_to_scale": true,
+    "no_overlap": true,
+    "logic_sensitive": true,
+    "brutally_simple": true
+  },
+  "post_generation_checks": {
+    "run_concept_image_verifier": true,
+    "verify_no_overlap": true,
+    "verify_font_exam_like": true,
+    "verify_no_extra_labels": true,
+    "verify_not_answer_bearing": true,
+    "verify_object_relations": true,
+    "verify_measurement_clarity": true,
+    "verify_relative_size_plausibility": true,
+    "verify_simplification_level": true,
+    "verify_no_unrequested_arrows_or_symbols": true,
+    "verify_visual_simplicity": true,
+    "verify_pure_white_background": true,
+    "verify_label_anchor_targets": true,
+    "verify_medium_labels_not_on_objects": true
+  }
+}

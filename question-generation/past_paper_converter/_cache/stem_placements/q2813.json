@@ -1,0 +1,29 @@
+{
+  "questionId": 2813,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 74,
+  "stemBlocks": [
+    "The pedigree diagram shows the inheritance of a phenotypic feature caused by a recessive allele.",
+    "What is the probability that individual 6 is an unaffected male?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.404573+00:00",
+  "sourceImageHash": "dfb830036576f6dff9b36b97378ce0d5392a711de1c32d6505ea7d9b797eae39",
+  "status": "ok"
+}

@@ -1,0 +1,278 @@
+{
+  "id": "P_ad97dfb5-Easy-711d43e6e8",
+  "schema_id": "P_ad97dfb5",
+  "difficulty": "Easy",
+  "idea_plan": {
+    "schema_id": "P_ad97dfb5",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Easy",
+    "idea_summary": "Compare the electrical resistance of two wires of the same material, where the second wire has a scaled length and a scaled diameter, requiring the application of the inverse-square scaling of diameter.",
+    "schema_invariant": {
+      "core_move": "Calculate the resultant value of a dependent physical quantity by applying given scaling factors to its independent variables in a power law relationship.",
+      "what_must_not_change": [
+        "The necessity of proportional reasoning over absolute calculation.",
+        "The presence of a non-linear (squared or higher power) relationship in the formula."
+      ],
+      "what_can_change": [
+        "The specific physics context (e.g., electricity instead of gravity or radiation).",
+        "Which variables are scaled (e.g., scaling two variables such that their effects cancel out)."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "proportional_reasoning",
+      "reasoning_hinge": "Recognizing that resistance is inversely proportional to the square of the diameter, not just the diameter itself.",
+      "why_top_students_win": "They immediately synthesize R ∝ L/d² and apply the scaling factors as a ratio without needing absolute values.",
+      "why_mid_students_miss": "They either forget to square the scaling factor for the diameter (treating area as directly proportional to diameter) or apply the scaling factors in the wrong direction (multiplying instead of dividing)."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Electrical resistance depends on length and cross-sectional area (R = ρL/A).",
+      "supporting_idea_if_any": "Cross-sectional area of a cylinder is proportional to the square of its diameter.",
+      "estimated_solution_steps": 2,
+      "number_of_core_physics_principles": 1,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "medium",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 2,
+      "must_include": [
+        "model_selection",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "Matches the pace of standard ESAT proportional reasoning questions by using a well-known formula but abstracting away the absolute numbers.",
+    "task_signature": "proportional_change",
+    "tool_footprint": [
+      "identify_scaling_factors",
+      "apply_power_law",
+      "construct_ratio"
+    ],
+    "primary_tag": "3",
+    "secondary_tags": [
+      "7"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "No visual needed; the text description of the two wires is sufficient and standard.",
+    "surface_twist": "",
+    "why_still_on_spec": "The resistance formula (R = ρL/A) and the area of a circle are standard GCSE/A-level topics. Proportional reasoning with these formulas is a staple of ESAT Section 1.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Scaling the area linearly with the diameter (e.g., if diameter is doubled, assuming area is doubled instead of quadrupled).",
+        "distractor_role": "Produces a ratio that under-corrects for the diameter change."
+      },
+      {
+        "mistake": "Assuming resistance is directly proportional to area rather than inversely proportional.",
+        "distractor_role": "Produces a ratio that scales in the wrong direction."
+      },
+      {
+        "mistake": "Squaring the length scaling factor instead of the diameter scaling factor.",
+        "distractor_role": "Produces a wildly incorrect ratio based on misremembering the formula."
+      }
+    ],
+    "difficulty_rationale": "It is Easy because the formula is universally known and only two variables are changing. However, it remains selective because students must successfully combine two ideas (resistance formula + area formula) entirely in the abstract (ratios) without the crutch of a calculator or absolute values.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "No absolute values for length, diameter, or resistivity are provided, forcing the student to construct and simplify a ratio algebraically."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The possible errors (forgetting the square, inverting the relationship) lead to clean, predictable integer or simple fraction ratios that make perfect multiple-choice options."
+    }
+  },
+  "question_package": {
+    "metadata": {
+      "schema_id": "P_ad97dfb5",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Easy",
+      "task_signature": "proportional_change",
+      "primary_tag": "3",
+      "secondary_tags": [
+        "7"
+      ]
+    },
+    "question": {
+      "stem": "Wire X has length $L$ and diameter $d$. Its electrical resistance is $R$.\n\nWire Y is made of the same material. It has length $2L$ and diameter $4d$.\n\nWhat is the electrical resistance of wire Y?\n\n<figure class=\"qg-diagram\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 600 420\" width=\"600\" height=\"420\" role=\"img\" aria-label=\"concept image\"><image href=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_154430_ea9d40/concept_image_v1.png\" x=\"0\" y=\"0\" width=\"600\" height=\"420\" preserveAspectRatio=\"xMidYMid meet\" /></svg><figcaption>concept image</figcaption></figure>\n",
+      "options": {
+        "A": "$R/8$",
+        "B": "$R/4$",
+        "C": "$R/2$",
+        "D": "$R$",
+        "E": "$2R$",
+        "F": "$8R$"
+      },
+      "correct_option": "A",
+      "stem_before_visual": "Wire X has length $L$ and diameter $d$. Its electrical resistance is $R$.\n\nWire Y is made of the same material. It has length $2L$ and diameter $4d$.\n\nWhat is the electrical resistance of wire Y?"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "Electrical resistance is directly proportional to length and inversely proportional to the cross-sectional area, which scales with the square of the diameter ($R \\propto L/d^2$).",
+      "reasoning": "The resistance of a wire is given by $R = \\rho L / A$. Since the cross-section is circular, the area is $A = \\pi (d/2)^2$, meaning resistance is proportional to $L/d^2$.\nFor wire Y, the length is multiplied by $2$, and the diameter is multiplied by $4$.\nApplying these scaling factors, the new resistance $R_Y$ is proportional to $2 / 4^2 = 2 / 16 = 1/8$.\nTherefore, the resistance of wire Y is $R/8$."
+    },
+    "distractor_map": {
+      "A": "Correct option.",
+      "B": "Mistake: Assumes resistance is proportional to $L^2/d^2$, squaring the length scaling factor as well as the diameter.",
+      "C": "Mistake: Assumes resistance is inversely proportional to diameter rather than diameter squared, using $L/d$ (ratio $2/4 = 1/2$).",
+      "D": "Mistake: Assumes resistance is proportional to $L^2/d$, squaring the length instead of the diameter (ratio $2^2/4 = 1$).",
+      "E": "Mistake: Assumes resistance is proportional to $d/L$, inverting the relationship and forgetting to square the diameter (ratio $4/2 = 2$).",
+      "F": "Mistake: Assumes resistance is proportional to area over length ($d^2/L$), completely inverting the correct relationship (ratio $4^2/2 = 8$)."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Recognizing that resistance is inversely proportional to the square of the diameter, not just the diameter itself.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 1,
+        "estimated_solution_steps": 2,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "verifier_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "A",
+    "independent_solution": {
+      "main_law_or_principle": "Resistance of a wire $R = \\rho \\frac{L}{A}$, where $A = \\pi (d/2)^2$. Thus $R \\propto \\frac{L}{d^2}$.",
+      "calculation_or_logic": "Let $R_X = k \\frac{L}{d^2}$. For wire Y, $L_Y = 2L$ and $d_Y = 4d$. The new resistance $R_Y = k \\frac{2L}{(4d)^2} = k \\frac{2L}{16d^2} = \\frac{2}{16} R_X = \\frac{1}{8} R_X$.",
+      "verified_answer_value": "R/8",
+      "claimed_answer_value": "R/8",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Identify resistance formula",
+        "Relate area to diameter squared",
+        "Apply proportional scaling"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "derived_relationship_audit": {
+      "requires_nontrivial_derivation": false,
+      "number_of_linked_relationships": 0,
+      "relationships_given_in_stem": [],
+      "safe_for_esat": true
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a",
+      "derived_relationship_safety": "pass"
+    },
+    "notes": [
+      "The question is a standard proportional reasoning task well within ESAT syllabus limits."
+    ]
+  },
+  "style_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "shorter",
+      "notes": "Perfectly calibrated for an ESAT Section 1 proportional reasoning question."
+    },
+    "selectivity_audit": {
+      "main_trap": "The student must correctly identify that resistance is inversely proportional to the *square* of the diameter. Failing to square the scaling factor (4) is the primary discriminator.",
+      "why_not_plug_and_chug": "No numerical values are provided for L, d, or ρ, necessitating a purely algebraic ratio approach.",
+      "expected_mid_student_error": "Calculating the ratio as 2/4 = 1/2 (Option C), ignoring the area-diameter squared relationship.",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 1,
+      "estimated_solution_steps": 2,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "Excellent example of a high-selectivity, low-complexity question. It tests fundamental understanding of the resistance formula and proportional reasoning without requiring any complex derivation."
+    ]
+  },
+  "models": {
+    "designer": "gemini-3.1-pro-preview",
+    "implementer": "gemini-3.1-pro-preview",
+    "verifier": "gemini-3.1-flash-lite",
+    "style_judge": "gemini-3.1-flash-lite"
+  },
+  "attempts": 1,
+  "created_at": "2026-05-18T15:48:32.859026",
+  "token_usage": {
+    "prompt_tokens": 34275,
+    "candidates_tokens": 5366,
+    "total_tokens": 48971
+  },
+  "tags": {
+    "primary_tag": "1",
+    "secondary_tags": [],
+    "primary_confidence": 1.0,
+    "reasoning": "The question directly tests the understanding of electrical resistance and its dependence on the physical dimensions (length and diameter) of a wire. This is a core concept within Electricity.",
+    "_raw_text": "{\"primary_tag\": \"1\", \"secondary_tags\": [], \"primary_confidence\": 1.0, \"reasoning\": \"The question directly tests the understanding of electrical resistance and its dependence on the physical dimensions (length and diameter) of a wire. This is a core concept within Electricity.\"}"
+  },
+  "schema_block_snapshot": "## **P_ad97dfb5. Scaling quantities with power law relationships**\n\n**Core move:** Calculate the resultant value of a dependent physical quantity by applying given scaling factors to its independent variables in a power law relationship.\n\n**Seen in / context:**\n- Stefan-Boltzmann law (P = σAT⁴ or P = kR²T⁴)\nGravitational force/potential (F = Gm₁m₂/r²)\nElectric force/potential (F = kq₁q₂/r²)\nIntensity of waves (I ∝ 1/r²)\nAny physical law where a quantity depends on powers of other variables.\n\n**Possible wrong paths:**\n- Incorrectly applying the exponents to the scaling factors (e.g., multiplying by 2 for R² instead of 2²).\nMisinterpreting the scaling factor (e.g., 'decrease by a factor of two' means multiplying by 1/2, not subtracting 2).\nPerforming absolute calculations when a ratio-based approach would be simpler and less error-prone.\nErrors in manipulating scientific notation or powers of 10.\n\n**Notes for generation:**\n- Encourage the use of ratios (e.g., P_final/P_initial) to cancel out constants and original values, simplifying the calculation.\nEnsure the definition of 'factor of X' increase/decrease is consistent and clearly understood.\nCan involve multiple variables changing simultaneously, requiring careful application of all scaling factors and exponents.\n\n**Exemplar questions:**\n- `NSAA_2016_Section1_Q26_NSAA_Sec`: Initial exemplar for new schema.\n- `NSAA_2017_Section1_Q28_NSAA_Sec`: The question requires calculating the ratio of densities (a dependent physical quantity) by applying the given ratio of radii (an independent variable) using a power law relationship (density is inversely proportional to the cube of the radius, ρ ∝ r⁻³). This directly matches the core move of schema P_ad97dfb5.",
+  "pipeline": "v4",
+  "has_visual": true,
+  "visual_type": "concept_image",
+  "answer_depends_on_visual": false,
+  "question_stem_before_auto_diagram": "Wire X has length $L$ and diameter $d$. Its electrical resistance is $R$.\n\nWire Y is made of the same material. It has length $2L$ and diameter $4d$.\n\nWhat is the electrical resistance of wire Y?",
+  "visual_assets": [
+    {
+      "kind": "concept_image",
+      "spec_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260518_154430_ea9d40\\concept_image_prompt.json",
+      "image_paths": [
+        "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_154430_ea9d40/concept_image_v1.png"
+      ],
+      "renderer": "gemini_image_v1",
+      "qc_status": "pass",
+      "qc_source": "concept_image_verifier.json",
+      "answer_bearing": false,
+      "checksum": null
+    }
+  ]
+}

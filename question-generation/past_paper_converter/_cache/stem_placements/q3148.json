@@ -1,0 +1,29 @@
+{
+  "questionId": 3148,
+  "examName": "ENGAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 19,
+  "stemBlocks": [
+    "The following graph shows how the displacement of an object travelling along a straight, horizontal track varies with time.",
+    "Which graph shows the velocity of this object against displacement?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A displacement-time graph showing three segments: linear increase, constant, and linear decrease.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 1.0
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:44:04.594343+00:00",
+  "sourceImageHash": "385ca774dc6bc36c9409f6099b35f1b844420c501060dafa7833a34b0e80299d",
+  "status": "ok"
+}

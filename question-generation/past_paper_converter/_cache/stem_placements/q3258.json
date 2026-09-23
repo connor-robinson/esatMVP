@@ -1,0 +1,33 @@
+{
+  "questionId": 3258,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 49,
+  "stemBlocks": [
+    "In the disease emphysema the walls of the alveoli break down so that several smaller alveoli fuse to form a single large alveolus. The diagram shows a model of the effect of emphysema on spherical alveoli.",
+    "Which of the following statements is/are correct?",
+    "1 The surface area-to-volume ratio of the four healthy alveoli is twice that of the single emphysema alveolus.",
+    "2 For the same concentration gradient, the rate of diffusion of oxygen into the blood from a single healthy alveolus will be greater than for a single emphysema alveolus.",
+    "3 Oxygen molecules will only move across the alveolus wall from the inside to the outside of an alveolus.",
+    "(surface area of a sphere = $4\\pi r^2$; volume of a sphere = $\\frac{4}{3}\\pi r^3$, where $r$ is the radius)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:13.946344+00:00",
+  "sourceImageHash": "50453aae5182aa81313a9f1d79266db83366f012d082dc44ad55d56068e72b6a",
+  "status": "ok"
+}

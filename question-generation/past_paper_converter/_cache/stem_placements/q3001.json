@@ -1,0 +1,29 @@
+{
+  "questionId": 3001,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 22,
+  "stemBlocks": [
+    "The displacement-time graph shown represents a wave of wavelength $1.5 \\text{ cm}$.",
+    "What is the speed of the wave?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A displacement-time graph showing a sinusoidal wave. The x-axis is labeled 'time / s' with major ticks at 0, 1, 2, 3, 4, 5. The y-axis is labeled 'displacement'. The wave completes one full cycle in 2 seconds.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:15.964303+00:00",
+  "sourceImageHash": "d784a9e20f6a05be98959b61e28573d0e438ea4ddae4d1d997c6f92781350b1d",
+  "status": "ok"
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 3137,
+  "examName": "ENGAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 8,
+  "stemBlocks": [
+    "The diagram shows a solid triangular prism. The sides of the triangular cross section of the prism are of length $x$. The height of the prism is $3x$. The uniform density of the prism is $\\rho$. The gravitational field strength is $g$.",
+    "What is the minimum pressure the prism can exert when it rests on level ground?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A solid triangular prism with an equilateral triangular base of side length $x$ and height $3x$.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:44:04.577452+00:00",
+  "sourceImageHash": "3bd4d866a2a94eba69dd0374517b4bb8beb36c3a9a114e219fe6bc6943c07f66",
+  "status": "ok"
+}

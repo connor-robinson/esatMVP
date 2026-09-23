@@ -1,0 +1,29 @@
+{
+  "questionId": 2797,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 58,
+  "stemBlocks": [
+    "0.500 g of magnesium (an excess) was added to dilute hydrochloric acid. The following graph shows the total volume of the gas released over time as the reaction progresses. All volumes were measured in cm$^3$ at room temperature and pressure.",
+    "What is the mass of magnesium remaining after two seconds? ($A_r$ value: Mg = 24. Assume that the volume of one mole of gas at room temperature and pressure is 24.0 dm$^3$.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.379025+00:00",
+  "sourceImageHash": "b160bca4559e93e65f26798c4cd05a8509956ba15b5244b346d35355f86db1e0",
+  "status": "ok"
+}

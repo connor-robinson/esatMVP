@@ -1,0 +1,29 @@
+{
+  "questionId": 3100,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 2",
+  "questionNumber": 9,
+  "stemBlocks": [
+    "The circuit shown in the diagram contains six resistors and an ideal digital voltmeter.",
+    "What is the reading on the voltmeter?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:40:49.334938+00:00",
+  "sourceImageHash": "8ddecdad2c44db5186309852a1c9823c09fa6f9b68212888fc204d6d6dd4c030",
+  "status": "ok"
+}

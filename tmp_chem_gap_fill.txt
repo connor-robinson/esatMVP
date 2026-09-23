@@ -1,0 +1,372 @@
+ESAT Chemistry Gap-Fill Question Pack
+30 original multiple-choice questions
+Designed to strengthen areas that were underrepresented across ESAT CAMP Chemistry Mocks A-E.
+The questions are written for review and bank-building, not as an official UAT-UK paper.
+Format target: ESAT Chemistry - short, calculator-free, application-focused multiple choice. Content aligned to the current
+UAT-UK Chemistry Guide/specification topics.
+Coverage allocation
+Area QuestionsWhy weighted this way
+C17 Air and water 6 Almost absent in A-E
+C15 Kinetic/Particle theory4 Almost absent in A-E
+C16 Chemical tests 5 Underrepresented; especially gas/flame/water tests
+C14 Metals 4 Uses/alloys/transition-metal properties underrepresented
+C13 Organic breadth 4 Cracking, structural isomerism, condensation polymers
+C4 Quantitative gaps 3 Avogadro, solubility, percentage yield
+C8 Separation techniques2 Filtration/crystallisation/method selection
+C7 Group chemistry 1 Noble gases especially light
+C12 Electrolysis 1 DC and electroplating
+Review note: Answers and short rationales are at the end. Question pages do not show topic tags or
+difficulty.
+Questions
+1 A 200 cm³ sample of dry air is passed repeatedly over excess heated copper until no further
+reaction occurs. Assume dry air contains 20.95% oxygen by volume and that only oxygen
+reacts with the copper. What volume of gas remains, measured under the same conditions?
+A 42.0 cm³
+B 158 cm³
+C 160 cm³
+D 179 cm³
+E 200 cm³
+2 After water vapour and carbon dioxide have been removed, liquefied air contains mainly
+nitrogen, argon and oxygen. Their boiling points are shown. As the liquid is warmed slowly, in
+which order are the gases collected first to last?
+gas boiling point / °C
+nitrogen -196
+argon -186
+oxygen -183
+A oxygen, argon, nitrogen
+B nitrogen, oxygen, argon
+C nitrogen, argon, oxygen
+D argon, nitrogen, oxygen
+E argon, oxygen, nitrogen
+3 Which of the following statements about greenhouse gases is/are correct?
+Methane can be released by the decomposition of organic waste in landfill sites.
+Greenhouse gases mainly cool the Earth by reflecting incoming visible light back into
+space.
+Burning fossil fuels can increase atmospheric carbon dioxide and strengthen the
+greenhouse effect.
+A none of them
+B 1 only
+C 2 only
+D 3 only
+E 1 and 2 only
+F 1 and 3 only
+G 2 and 3 only
+H 1, 2 and 3
+1. 
+2. 
+3. 
+4 Pollutant P is formed when a carbon-containing fuel burns with insufficient oxygen. Pollutant Q
+can form inside a hot car engine when nitrogen and oxygen from the air react. Which pair
+correctly identifies P and Q?
+A P: carbon monoxide; Q: nitrogen oxides
+B P: carbon dioxide; Q: sulfur dioxide
+C P: sulfur dioxide; Q: carbon monoxide
+D P: nitrogen oxides; Q: carbon dioxide
+E P: methane; Q: carbon monoxide
+5 A power station burns a fuel containing a small amount of sulfur. Which pollutant-effect pair is
+most directly associated with the sulfur impurity?
+A carbon monoxide - reduced oxygen transport in blood
+B carbon dioxide - ozone depletion
+C sulfur dioxide - acidification of lakes and soils
+D nitrogen - global warming
+E methane - acid rain
+6 Which of the following statements about drinking-water treatment is/are correct?
+Chlorine is used to reduce the number of harmful microorganisms.
+Fluoride ions may be added to help reduce tooth decay.
+Chlorine is added mainly to remove dissolved salts from the water.
+A none of them
+B 1 only
+C 2 only
+D 3 only
+E 1 and 2 only
+F 1 and 3 only
+G 2 and 3 only
+H 1, 2 and 3
+1. 
+2. 
+3. 
+7 Which particle diagram best represents a liquid? The particles are shown at one instant and are
+not drawn to scale.
+A A
+B B
+C C
+D D
+8 A pure solid is heated until it melts completely. Which of the following statements about its
+particles during melting is/are correct?
+The particles remain particles of the same substance.
+Their arrangement becomes less ordered and they become able to move past one
+another.
+They become widely separated from one another as in a gas.
+A none of them
+B 1 only
+C 2 only
+D 3 only
+E 1 and 2 only
+F 1 and 3 only
+G 2 and 3 only
+H 1, 2 and 3
+9 A pure liquid is boiling at its normal boiling point while energy is supplied continuously. Why can
+the temperature remain constant while boiling continues?
+A The particles stop moving while bonds are broken.
+B The supplied energy is destroyed as the gas forms.
+C The supplied energy is used to overcome attractions between particles as they separate.
+D The particles lose kinetic energy as the liquid boils.
+E The mass of each particle decreases during boiling.
+1. 
+2. 
+3. 
+10 Water vapour condenses on a cold surface. Which description is correct?
+A The particles become farther apart and energy is absorbed from the surroundings.
+B The particles become closer together and energy is transferred to the surroundings.
+C The particles become fixed in a regular lattice immediately and energy is absorbed.
+D The particles change into different molecules and energy is released.
+E The particles remain equally spaced but move faster.
+11 Four gases W, X, Y and Z give the observations shown. Which row correctly identifies all four
+gases?
+gas observation
+W burning splint gives a squeaky pop
+X relights a glowing splint
+Y turns limewater cloudy
+Z damp blue litmus turns red and is then bleached
+A W H₂, X O₂, Y CO₂, Z Cl₂
+B W O₂, X H₂, Y Cl₂, Z CO₂
+C W H₂, X CO₂, Y O₂, Z Cl₂
+D W CO₂, X O₂, Y H₂, Z Cl₂
+E W Cl₂, X H₂, Y CO₂, Z O₂
+12 An aqueous solution gives a lilac flame. After acidification with dilute nitric acid, aqueous silver
+nitrate gives a cream precipitate. Which compound could be present?
+A LiCl
+B NaBr
+C KCl
+D KBr
+E CaI₂
+F CuBr₂
+13 An aqueous solution gives a green precipitate when aqueous sodium hydroxide is added. A
+separate sample gives a white precipitate when aqueous barium chloride is added in the
+presence of dilute hydrochloric acid. Which salt could the solution contain?
+A FeSO₄
+B FeCl₂
+C CuSO₄
+D Fe₂(SO₄)₃
+E MgSO₄
+F CaCl₂
+14 A salt solution gives a green flame. After acidification with dilute nitric acid, aqueous silver
+nitrate produces a white precipitate. Which salt is consistent with both observations?
+A NaCl
+B KCl
+C CuCl₂
+D CuBr₂
+E CaCl₂
+F LiBr
+15 A colourless liquid turns anhydrous copper(II) sulfate from white to blue. Which conclusion is
+justified by this observation alone?
+A The liquid is pure water.
+B The liquid contains water.
+C The liquid contains no dissolved substances.
+D The liquid has pH 7.
+E The liquid boils at exactly 100 °C.
+16 Four metals are being considered for an overhead electrical cable. The cable must have the
+lowest possible mass while still having at least good electrical conductivity and good corrosion
+resistance. Which metal is most suitable based only on the data shown?
+metal density / g cm⁻³ electrical conductivity corrosion resistance
+P 2.7 good good
+Q 8.9 excellent good
+R 7.9 moderate poor
+S 4.5 poor excellent
+A P
+B Q
+C R
+D S
+E There is not enough information
+17 A pure metal and an alloy made from it have the properties shown. Which statement is best
+supported by the data?
+material tensile strength / MPa percentage extension before breaking
+pure metal 210 42
+alloy 510 13
+A The alloy is weaker and more ductile than the pure metal.
+B The alloy is stronger and less ductile than the pure metal.
+C The alloy must conduct electricity better than the pure metal.
+D The alloy must have a lower density than the pure metal.
+E The two materials have identical mechanical properties.
+18 Which of the following are common properties of transition metals?
+They can form stable ions in different oxidation states.
+Their compounds are often coloured.
+They or their compounds are often used as catalysts.
+A none of them
+B 1 only
+C 2 only
+D 3 only
+E 1 and 2 only
+F 1 and 3 only
+G 2 and 3 only
+H 1, 2 and 3
+19 Metal P can be extracted from its oxide by heating the oxide with carbon. Metal Q is extracted
+by electrolysis of a molten compound. Which statements are consistent with this information?
+Q is more reactive than P.
+Formation of Q metal at the cathode is a reduction process.
+When carbon removes oxygen from the oxide of P, the oxide of P is reduced.
+A none of them
+B 1 only
+C 2 only
+D 3 only
+E 1 and 2 only
+F 1 and 3 only
+G 2 and 3 only
+H 1, 2 and 3
+1. 
+2. 
+3. 
+1. 
+2. 
+3. 
+20 A long-chain alkane is cracked according to the incomplete equation: C₁₂H₂₆ → C₇H₁₆ + X.
+Which option correctly gives X and one expected property of X?
+A C₅H₁₀; decolourises bromine water
+B C₅H₁₂; decolourises bromine water
+C C₅H₁₀; does not react with bromine water
+D C₅H₁₂; is an alkene
+E C₆H₁₂; decolourises bromine water
+21 Compound P has condensed structural formula CH₃CH₂CH₂CH₃. Compound Q has condensed
+structural formula CH₃CH(CH₃)CH₃. Which statement is correct?
+A P and Q have different molecular formulae.
+B P and Q are structural isomers.
+C P is an alkane but Q is an alkene.
+D P and Q differ only in the positions of their hydrogen atoms in space.
+E P and Q must have identical physical properties.
+22 Propane-1,3-diol, HOCH₂CH₂CH₂OH, reacts with butanedioic acid, HOOCCH₂CH₂COOH, to
+form a polyester. Which expression represents a repeating unit of the polyester?
+A [-OCH₂CH₂CH₂OCOCH₂CH₂CO-]ₙ
+B [-CH₂CH₂CH₂COOCH₂CH₂COO-]ₙ
+C [-NHCH₂CH₂CH₂NHCOCH₂CH₂CO-]ₙ
+D [-OCH₂CH₂CH₂OCH₂CH₂CH₂O-]ₙ
+E [-CH₂CH₂CH₂CH₂CH₂CH₂-]ₙ
+23 A diamine, H₂N(CH₂)₄NH₂, reacts with a dicarboxylic acid, HOOC(CH₂)₂COOH, to form a
+polymer. Which pair correctly identifies the linkage formed in the polymer and the small
+molecule eliminated during polymerisation?
+A -COO- and H₂
+B -CONH- and H₂O
+C -C=C- and H₂O
+D -CONH- and CO₂
+E -O-O- and H₂
+24 Avogadro's number is 6.0 × 10²³ mol⁻¹. How many oxygen atoms are present in 0.25 mol of O₂
+molecules?
+A 1.5 × 10²³
+B 3.0 × 10²³
+C 6.0 × 10²³
+D 1.2 × 10²⁴
+E 2.4 × 10²⁴
+25 The solubility of solid X in water is shown. A saturated solution is prepared using 50 g of water
+at 60 °C and is then cooled to 20 °C. Assume no water evaporates. What mass of X
+crystallises?
+temperature / °C solubility of X / g per 100 g water
+20 30
+60 80
+A 10 g
+B 15 g
+C 20 g
+D 25 g
+E 40 g
+26 Calcium carbonate decomposes according to CaCO₃(s) → CaO(s) + CO₂(g). A student heats
+0.100 mol of CaCO₃ and obtains 4.20 g of CaO. The relative formula mass of CaO is 56.0.
+What is the percentage yield of CaO?
+A 60%
+B 70%
+C 75%
+D 80%
+E 90%
+27 A dry mixture contains sand and copper(II) sulfate crystals. Which sequence would allow a
+student to obtain both the sand and pure copper(II) sulfate crystals?
+A Add water, filter, then crystallise the filtrate.
+B Heat strongly, then use a separating funnel.
+C Add water, evaporate the whole mixture to dryness, then filter.
+D Use fractional distillation, then centrifuge the residue.
+E Filter the dry mixture, then add water to the residue.
+28 A mixture contains an insoluble solid and two miscible liquids with boiling points 70 °C and 120
+°C. Which procedure is most suitable for obtaining a pure sample of the 70 °C liquid?
+A Fractional distillation only
+B Filtration followed by fractional distillation
+C Separating funnel followed by evaporation
+D Centrifugation followed by crystallisation
+E Filtration followed by a separating funnel
+29 Argon is used to provide a protective atmosphere around some hot metals during welding.
+Which property of argon is most important for this use?
+A It is very reactive with metals.
+B It is chemically very unreactive.
+C It is a strong oxidising agent.
+D It has a very high melting point.
+E It forms acidic oxides readily.
+30 The apparatus is used to coat a metal spoon with silver. Which of the following statements is/
+are correct?
+The spoon should be connected to the negative terminal so that Ag⁺ ions are reduced
+on its surface.
+A silver anode can replace Ag⁺ ions removed from the electrolyte during plating.
+Alternating current is preferred because regularly reversing the electrode polarity
+increases the thickness of the coating.
+A none of them
+B 1 only
+C 2 only
+D 3 only
+E 1 and 2 only
+F 1 and 3 only
+G 2 and 3 only
+H 1, 2 and 3
+1. 
+2. 
+3. 
+Answer key and review notes
+Q Ans Spec Diff. Short rationale
+1 B C17.1 2/5 Oxygen occupies 0.2095 × 200 = 41.9 cm³, so 200 - 41.9 = 158.1 cm³ remains.
+2 C C17.1 2/5 The component with the lowest boiling point vaporises first: nitrogen, then argon, then
+oxygen.
+3 F C17.2 2/5 Statements 1 and 3 are correct. Greenhouse warming is associated with reduced loss
+of infrared radiation, not mainly reflection of visible light.
+4 A C17.3 3/5 Incomplete combustion can form CO. High engine temperatures can produce nitrogen
+oxides from nitrogen and oxygen in air.
+5 C C17.3 2/5 Sulfur in the fuel can form SO₂ on combustion; SO₂ contributes to acid rain and
+environmental acidification.
+6 E C17.4 1/5 Statements 1 and 2 are correct. Chlorination is for disinfection, not desalination.
+7 B C15.1 1/5 A liquid has particles close together but in a disordered arrangement, able to move past
+one another.
+8 E C15.2 2/5 Melting changes particle arrangement and freedom of movement, not chemical identity;
+particles in a liquid remain close together.
+9 C C15.2 2/5 During a change of state, energy is used to overcome attractive forces and change
+particle arrangement rather than raise the temperature.
+10 B C15.2 2/5 Condensation changes gas to liquid: particles become closer and less free to move,
+and energy is released to the surroundings.
+11 A C16.1 1/5 These are the standard tests for H₂, O₂, CO₂ and Cl₂ respectively.
+12 D C16.2,C16.4 2/5 A lilac flame indicates K⁺; a cream silver halide precipitate indicates Br⁻, so KBr fits both
+tests.
+13 A C16.2,C16.3 2/5 Green Fe(OH)₂ identifies Fe²⁺, while the acidified barium test identifies sulfate, giving
+FeSO₄.
+14 C C16.2,C16.4 2/5 A green flame identifies Cu²⁺ and a white silver halide precipitate identifies chloride, so
+CuCl₂ is consistent.
+15 B C16.5 2/5 The test confirms the presence of water, but it does not establish purity, pH or boiling
+point.
+16 A C14.3 3/5 For an overhead cable, low mass is important while good conductivity and corrosion
+resistance are also needed. P best combines these properties.
+17 B C14.3 2/5 The alloy has a much greater tensile strength but a smaller extension before breaking,
+so it is stronger and less ductile.
+18 H C14.5 2/5 All three are specified common properties of transition metals.
+19 H C14.1,C14.4 2/5 All three are consistent with the reactivity/extraction model: highly reactive metals
+require electrolysis, and metal extraction involves reduction.
+20 A C13.1c,C13.3c2/5 Balancing atoms gives C₅H₁₀, an alkene, so it decolourises bromine water.
+Q Ans Spec Diff. Short rationale
+21 B C13.1d 2/5 Both have molecular formula C₄H₁₀ but different atom connectivity, so they are
+structural isomers.
+22 A C13.4b 4/5 A diol plus a dicarboxylic acid forms ester links, giving -O-(diol residue)-O-CO-(diacid
+residue)-CO-.
+23 B C13.4b,C13.4c3/5 A diamine and dicarboxylic acid form a polyamide with -CONH- links by condensation,
+eliminating water.
+24 B C4.2 2/5 0.25 mol O₂ contains 0.50 mol O atoms, so the number of atoms is 0.50 × 6.0 × 10²³ =
+3.0 × 10²³.
+25 D C4.9b 3/5 At 60 °C, 50 g water dissolves 40 g X. At 20 °C it can retain 15 g, so 25 g crystallises.
+26 C C4.11 3/5 The predicted mass is 0.100 × 56.0 = 5.60 g. Percentage yield = 4.20/5.60 × 100 =
+75%.
+27 A C8.2,C8.3 2/5 Copper(II) sulfate dissolves in water but sand does not. Filtration separates sand;
+crystallisation recovers the dissolved salt.
+28 B C8.3 3/5 First remove the insoluble solid by filtration, then separate the two miscible liquids by
+fractional distillation.
+29 B C7.1 1/5 Argon is a noble gas and is very unreactive, so it can protect hot metal from reaction
+with the surrounding air.
+30 E C12.2,C12.6 3/5 The object being plated is the cathode; a silver anode can replenish Ag⁺. Direct current
+is required so the electrode roles do not keep reversing.

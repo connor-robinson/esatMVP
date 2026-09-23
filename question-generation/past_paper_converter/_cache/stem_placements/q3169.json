@@ -1,0 +1,29 @@
+{
+  "questionId": 3169,
+  "examName": "ENGAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 20,
+  "stemBlocks": [
+    "A water trough has the shape of a prism, with a cross section that is a right-angled isosceles triangle. One rectangular face and the two triangular ends of the trough are vertical, as shown. The trough contains water of depth $0.60 \\text{ m}$ measured on the vertical rectangular face.",
+    "What is the force exerted by the water on one triangular end of the trough? (density of water = $1000 \\text{ kg m}^{-3}$; gravitational field strength = $10 \\text{ N kg}^{-1}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:45:27.643217+00:00",
+  "sourceImageHash": "3d6737e2152d01304b2960b7e4e34d1bae49a2500cc04f2156ec918ef4c8b722",
+  "status": "ok"
+}

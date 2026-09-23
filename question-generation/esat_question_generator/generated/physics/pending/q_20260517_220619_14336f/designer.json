@@ -1,0 +1,90 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_121b9ac8",
+    "module": "physics",
+    "variation_mode": "FAR",
+    "target_difficulty": "Medium",
+    "idea_summary": "Compare the final momentum of a stationary object after it is struck by a pulse of light, considering two cases: perfect absorption and perfect reflection. The formula for photon momentum (p=E/c) is provided in the question stem.",
+    "schema_invariant": {
+      "core_move": "Applying the principle of conservation of momentum to a 'collision' interaction to determine an outcome.",
+      "what_must_not_change": [
+        "A closed system interaction where initial and final states are linked by momentum conservation.",
+        "The vector nature of momentum (specifically, the change in momentum) is the key to the solution."
+      ],
+      "what_can_change": [
+        "The 'colliding' entities are photons and a macroscopic object, not two macroscopic objects.",
+        "The physical context is radiation pressure/optics, not classical mechanics.",
+        "The task is to compare two scenarios rather than calculate a single value."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "tempting_wrong_model",
+      "reasoning_hinge": "Realising that the change in the light's momentum is twice as large for perfect reflection (from +p to -p, so Δp is 2p) as it is for perfect absorption (from +p to 0, so Δp is p). This doubles the impulse imparted to the object.",
+      "why_top_students_win": "They correctly model the interaction as a collision, apply momentum conservation, and correctly calculate the change in momentum for both an 'inelastic' (absorption) and 'elastic' (reflection) case.",
+      "why_mid_students_miss": "They may assume that because the same initial pulse of light is used in both cases, the momentum transferred is the same. They fail to account for the momentum of the reflected light, effectively ignoring the vector change."
+    },
+    "minimum_reasoning_depth": {
+      "steps": 2,
+      "must_include": [
+        "model_selection",
+        "non_obvious_inference",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "The difficulty is similar to comparing an elastic and a perfectly inelastic collision in mechanics. The pace is fast once the principle is identified. The FAR variation disguises this standard comparison in a modern physics context, requiring the candidate to see the underlying unity of the physics principles.",
+    "task_signature": "compare_scenarios",
+    "tool_footprint": [
+      "momentum_conservation",
+      "impulse",
+      "proportional_reasoning",
+      "wave_particle_duality",
+      "comparison"
+    ],
+    "primary_tag": "4",
+    "secondary_tags": [
+      "7"
+    ],
+    "visual_need": "concept_image_only",
+    "visual_role": "supportive",
+    "visual_brief": "Two simple side-by-side diagrams. Left: An arrow representing a light pulse hits a block and is absorbed (no outgoing arrow). Right: An arrow representing a light pulse hits a block and bounces back (outgoing arrow shown). The diagrams are purely conceptual.",
+    "surface_twist": "The problem is framed in the context of light pressure on a surface, which appears to be an optics or modern physics topic. The collapse moment occurs when the student realizes it is a standard momentum conservation problem, analogous to a ball hitting a wall and either sticking (absorption) or bouncing off elastically (reflection).",
+    "why_still_on_spec": "The core concept is Conservation of Momentum (ESAT Physics tag 4.2). The calculation of change in momentum (Δp) is a standard skill. The formula for photon momentum, p=E/c, would be provided in the stem, making the question about applying a given piece of information within a familiar framework, not recalling off-spec knowledge.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Assuming the momentum transferred is the same for absorption and reflection because the initial light pulse is identical.",
+        "distractor_role": "This leads to a ratio of 1:1 for the final momenta."
+      },
+      {
+        "mistake": "Confusing momentum with kinetic energy, and attempting to use E = 1/2 mv^2 inappropriately.",
+        "distractor_role": "This could lead to a ratio involving square roots, such as 1:sqrt(2)."
+      },
+      {
+        "mistake": "Incorrectly calculating the change in momentum for reflection as zero (e.g., final magnitude minus initial magnitude, p - p = 0).",
+        "distractor_role": "A distractor suggesting reflection imparts zero momentum, or a very small momentum compared to absorption."
+      }
+    ],
+    "difficulty_rationale": "Medium. The question requires more than direct formula application. The candidate must first recognize momentum conservation as the relevant principle in an unfamiliar context, and then correctly execute the comparison, which hinges on understanding the vector change in momentum. This two-step reasoning process is selective but computationally trivial.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "The question asks for a comparison between two processes (absorption vs. reflection). A student cannot simply substitute numbers into a formula. They must construct and compare two models based on the principle of momentum conservation, specifically focusing on how the change in momentum differs between the two cases."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The question asks for the ratio of the final momenta (or velocities) in the two cases. This naturally generates distinct numerical options like 1:1, 1:2, 2:1, 1:4, etc., each corresponding to a specific and plausible physical misconception."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-pro",
+  "attempts": 1
+}

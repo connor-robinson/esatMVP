@@ -1,0 +1,30 @@
+{
+  "questionId": 1811,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 18,
+  "stemBlocks": [
+    "A cubic block has a hole through it with a square cross-section. The dimensions are shown on the diagram. The weight of the block is $30 \\text{ N}$.",
+    "What is the density of the material from which the block is made?",
+    "(The gravitational field strength $g$ is $10 \\text{ N kg}^{-1}.)$"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A 3D diagram of a cubic block with a square hole through its center. The outer side length is indicated as 10 cm. The side length of the square hole is indicated as 5.0 cm.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:23:52.610548+00:00",
+  "sourceImageHash": "9e6a3d05f8528623459f6f9c9f47a554b0aa93485c02acae64ed5b5b283c75d1",
+  "status": "ok"
+}

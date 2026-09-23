@@ -1,0 +1,607 @@
+{
+  "candidateA": [
+    {
+      "number": 1,
+      "stem": "A tracking sensor draws a current of 0.30 A for the first 20 s of every minute. For the remaining 40 s, it draws 0.050 A. What total charge passes through the sensor in 10 minutes?",
+      "options": {},
+      "raw_texts": [
+        "1.\nA tracking sensor draws a current of 0.30 A for the first 20 s of every minute. For the remaining 40 s, it draws 0.050 A. What total charge passes through the sensor in 10 minutes?"
+      ]
+    },
+    {
+      "number": 2,
+      "stem": "A robot moves 60 m east in 20 s, then 20 m west in 5 s. It remains stationary for the next 5 s. Which row gives its average speed and its average velocity over the full 30 s?",
+      "options": {},
+      "raw_texts": [
+        "2.\nA robot moves 60 m east in 20 s, then 20 m west in 5 s. It remains stationary for the next 5 s. Which row gives its average speed and its average velocity over the full 30 s?"
+      ]
+    },
+    {
+      "number": 3,
+      "stem": "A 0.20 kg aluminium block is heated by a 60 W heater for 90 s. Its temperature rises by 25 °C. How much energy is transferred from the block to the surroundings during the heating? (specific heat capacity of aluminium = 900 J kg⁻¹ °C⁻¹)",
+      "options": {},
+      "raw_texts": [
+        "3.\nA 0.20 kg aluminium block is heated by a 60 W heater for 90 s. Its temperature rises by 25 °C. How much energy is transferred from the block to the surroundings during the heating? (specific heat capacity of aluminium = 900 J kg⁻¹ °C⁻¹)"
+      ]
+    },
+    {
+      "number": 4,
+      "stem": "A small float oscillates vertically as water waves pass. The waves have amplitude 4.0 cm, frequency 2.5 Hz and wavelength 0.80 m. What is the average speed of the float over many complete oscillations?",
+      "options": {},
+      "raw_texts": [
+        "4.\nA small float oscillates vertically as water waves pass. The waves have amplitude 4.0 cm, frequency 2.5 Hz and wavelength 0.80 m. What is the average speed of the float over many complete oscillations?"
+      ]
+    },
+    {
+      "number": 5,
+      "stem": "A nucleus X has mass number 226 and atomic number 88. It decays by emitting four alpha particles and three beta-minus particles. What are the mass number and atomic number of the final nucleus?",
+      "options": {},
+      "raw_texts": [
+        "5.\nA nucleus X has mass number 226 and atomic number 88. It decays by emitting four alpha particles and three beta-minus particles. What are the mass number and atomic number of the final nucleus?"
+      ]
+    },
+    {
+      "number": 6,
+      "stem": "A diver seals a syringe containing ideal gas at the bottom of a lake. The gas volume is 60 cm³. At the surface, its volume is 240 cm³. The piston moves freely and the gas temperature is constant. What is the gas volume when the syringe is halfway from the surface to the bottom?",
+      "options": {},
+      "raw_texts": [
+        "6.\nA diver seals a syringe containing ideal gas at the bottom of a lake. The gas volume is 60 cm³. At the surface, its volume is 240 cm³. The piston moves freely and the gas temperature is constant. What is the gas volume when the syringe is halfway from the surface to the bottom?"
+      ]
+    },
+    {
+      "number": 7,
+      "stem": "A metal rod of mass 0.060 kg lies on horizontal rails. A 0.15 m section carries a current of 2.5 A upwards through a uniform magnetic field of 0.80 T directed into the page. A constant resistive force of 0.10 N opposes the motion. What is the rod's initial acceleration and direction?",
+      "options": {},
+      "raw_texts": [
+        "7.\nA metal rod of mass 0.060 kg lies on horizontal rails. A 0.15 m section carries a current of 2.5 A upwards through a uniform magnetic field of 0.80 T directed into the page. A constant resistive force of 0.10 N opposes the motion. What is the rod's initial acceleration and direction?"
+      ]
+    },
+    {
+      "number": 8,
+      "stem": "Blocks P and Q, of masses 2.0 kg and 3.0 kg, are in contact on a horizontal surface. A 20 N force pushes P to the right. Friction on P is 2.0 N and friction on Q is 3.0 N. What force does P exert on Q?",
+      "options": {},
+      "raw_texts": [
+        "8.\nBlocks P and Q, of masses 2.0 kg and 3.0 kg, are in contact on a horizontal surface. A 20 N force pushes P to the right. Friction on P is 2.0 N and friction on Q is 3.0 N. What force does P exert on Q?"
+      ]
+    },
+    {
+      "number": 9,
+      "stem": "A 200 Ω fixed resistor and an NTC thermistor are connected in series across a 12 V battery. A voltmeter is connected across the fixed resistor. The thermistor resistance is 400 Ω at 20 °C and 100 Ω at 80 °C. What are the voltmeter readings at these temperatures?",
+      "options": {},
+      "raw_texts": [
+        "9.\nA 200 Ω fixed resistor and an NTC thermistor are connected in series across a 12 V battery. A voltmeter is connected across the fixed resistor. The thermistor resistance is 400 Ω at 20 °C and 100 Ω at 80 °C. What are the voltmeter readings at these temperatures?"
+      ]
+    },
+    {
+      "number": 10,
+      "stem": "A motor takes an electrical input power of 5.0 kW and is 72% efficient. It lifts a 240 kg load vertically at constant speed. What is the speed of the load? (g = 10 N kg⁻¹)",
+      "options": {},
+      "raw_texts": [
+        "10.\nA motor takes an electrical input power of 5.0 kW and is 72% efficient. It lifts a 240 kg load vertically at constant speed. What is the speed of the load? (g = 10 N kg⁻¹)"
+      ]
+    },
+    {
+      "number": 11,
+      "stem": "An ultrasound probe sends a short pulse into a metal block. Reflections return from a crack after 0.12 ms and from the far surface after 0.20 ms. The speed of ultrasound in the metal is 4800 m s⁻¹. What is the distance between the crack and the far surface?",
+      "options": {},
+      "raw_texts": [
+        "11.\nAn ultrasound probe sends a short pulse into a metal block. Reflections return from a crack after 0.12 ms and from the far surface after 0.20 ms. The speed of ultrasound in the metal is 4800 m s⁻¹. What is the distance between the crack and the far surface?"
+      ]
+    },
+    {
+      "number": 12,
+      "stem": "Three cylindrical rods are made from the same material and connect the same hot and cold reservoirs. Rod A has length L and cross-sectional area S. Rod B has length 2L and area 3S. Rod C has length L/2 and area S/2. Which ordering gives their conduction rates from lowest to highest?",
+      "options": {},
+      "raw_texts": [
+        "12.\nThree cylindrical rods are made from the same material and connect the same hot and cold reservoirs. Rod A has length L and cross-sectional area S. Rod B has length 2L and area 3S. Rod C has length L/2 and area S/2. Which ordering gives their conduction rates from lowest to highest?"
+      ]
+    },
+    {
+      "number": 13,
+      "stem": "Two branches are connected in parallel across a 12 V battery. One branch contains a 6.0 Ω resistor and an ideal diode that is forward biased. The other contains a 3.0 Ω resistor and an ideal diode that is reverse biased. What is the total current supplied by the battery?",
+      "options": {},
+      "raw_texts": [
+        "13.\nTwo branches are connected in parallel across a 12 V battery. One branch contains a 6.0 Ω resistor and an ideal diode that is forward biased. The other contains a 3.0 Ω resistor and an ideal diode that is reverse biased. What is the total current supplied by the battery?"
+      ]
+    },
+    {
+      "number": 14,
+      "stem": "A sealed hollow metal object has an external volume of 100 cm³ and a mass of 540 g. It is fully submerged in water of density 1000 kg m⁻³. What is the downward resultant force on it? (g = 10 N kg⁻¹)",
+      "options": {},
+      "raw_texts": [
+        "14.\nA sealed hollow metal object has an external volume of 100 cm³ and a mass of 540 g. It is fully submerged in water of density 1000 kg m⁻³. What is the downward resultant force on it? (g = 10 N kg⁻¹)"
+      ]
+    },
+    {
+      "number": 15,
+      "stem": "A 0.20 kg ball is moving vertically downward at 6.0 m s⁻¹ just before it strikes a bat. It leaves the bat moving vertically upward at 4.0 m s⁻¹. Contact lasts 0.10 s. What is the average upward contact force exerted by the bat? (g = 10 N kg⁻¹)",
+      "options": {},
+      "raw_texts": [
+        "15.\nA 0.20 kg ball is moving vertically downward at 6.0 m s⁻¹ just before it strikes a bat. It leaves the bat moving vertically upward at 4.0 m s⁻¹. Contact lasts 0.10 s. What is the average upward contact force exerted by the bat? (g = 10 N kg⁻¹)"
+      ]
+    },
+    {
+      "number": 16,
+      "stem": "An ideal transformer has 1200 turns on its 240 V primary coil and 60 turns on its secondary coil. Three identical lamps are connected in parallel across the secondary. Each lamp takes a current of 1.5 A. What current is drawn from the primary supply?",
+      "options": {},
+      "raw_texts": [
+        "16.\nAn ideal transformer has 1200 turns on its 240 V primary coil and 60 turns on its secondary coil. Three identical lamps are connected in parallel across the secondary. Each lamp takes a current of 1.5 A. What current is drawn from the primary supply?"
+      ]
+    },
+    {
+      "number": 17,
+      "stem": "Straight water waves pass from region X into region Y. Their wavelength changes from 6.0 cm in X to 4.0 cm in Y. The frequency is 5.0 Hz. Which row correctly gives the wave speeds and the change in direction for a ray that is not normal to the boundary?",
+      "options": {},
+      "raw_texts": [
+        "17.\nStraight water waves pass from region X into region Y. Their wavelength changes from 6.0 cm in X to 4.0 cm in Y. The frequency is 5.0 Hz. Which row correctly gives the wave speeds and the change in direction for a ray that is not normal to the boundary?"
+      ]
+    },
+    {
+      "number": 18,
+      "stem": "Two springs with spring constants 100 N m⁻¹ and 300 N m⁻¹ are joined in series. Their combined extension is 0.40 m and both remain within their limits of proportionality. What is the total elastic energy stored?",
+      "options": {},
+      "raw_texts": [
+        "18.\nTwo springs with spring constants 100 N m⁻¹ and 300 N m⁻¹ are joined in series. Their combined extension is 0.40 m and both remain within their limits of proportionality. What is the total elastic energy stored?"
+      ]
+    },
+    {
+      "number": 19,
+      "stem": "Four identical hot metal plates are placed in identical sealed containers. Which plate loses thermal energy at the greatest initial rate?",
+      "options": {},
+      "raw_texts": [
+        "19.\nFour identical hot metal plates are placed in identical sealed containers. Which plate loses thermal energy at the greatest initial rate?"
+      ]
+    },
+    {
+      "number": 20,
+      "stem": "The graph shows the current-voltage characteristic of a filament lamp. The lamp is connected in series with a 5.0 Ω resistor across a 10 V supply. What current flows?",
+      "options": {},
+      "raw_texts": [
+        "20.\nThe graph shows the current-voltage characteristic of a filament lamp. The lamp is connected in series with a 5.0 Ω resistor across a 10 V supply. What current flows?"
+      ]
+    },
+    {
+      "number": 21,
+      "stem": "A 0.20 kg block of ice at 0 °C is placed in 0.60 kg of water at 30 °C. No energy is transferred to the surroundings. What is the final temperature? (specific heat capacity of water = 4200 J kg⁻¹ °C⁻¹; specific latent heat of fusion of ice = 3.3 × 10^5 J kg⁻¹)",
+      "options": {},
+      "raw_texts": [
+        "21.\nA 0.20 kg block of ice at 0 °C is placed in 0.60 kg of water at 30 °C. No energy is transferred to the surroundings. What is the final temperature? (specific heat capacity of water = 4200 J kg⁻¹ °C⁻¹; specific latent heat of fusion of ice = 3.3 × 10^5 J kg⁻¹)"
+      ]
+    },
+    {
+      "number": 22,
+      "stem": "Two solid spheres are made from the same material and fall through the same liquid. Sphere B has twice the radius of sphere A. At speed v, the drag is D = kr²v², where r is radius and k is constant. Upthrust may be ignored. What is the ratio of their terminal speeds vB/vA?",
+      "options": {},
+      "raw_texts": [
+        "22.\nTwo solid spheres are made from the same material and fall through the same liquid. Sphere B has twice the radius of sphere A. At speed v, the drag is D = kr²v², where r is radius and k is constant. Upthrust may be ignored. What is the ratio of their terminal speeds vB/vA?"
+      ]
+    },
+    {
+      "number": 23,
+      "stem": "A bar magnet moves from X towards the centre of a coil at constant speed v, stops there, then returns from the centre to X at speed 2v. The first motion produces an induced pulse of peak magnitude E lasting time t. Which description fits the return pulse?",
+      "options": {},
+      "raw_texts": [
+        "23.\nA bar magnet moves from X towards the centre of a coil at constant speed v, stops there, then returns from the centre to X at speed 2v. The first motion produces an induced pulse of peak magnitude E lasting time t. Which description fits the return pulse?"
+      ]
+    },
+    {
+      "number": 24,
+      "stem": "Radio wave P has wavelength 3.0 m. X-ray Q has frequency 1.0 × 10^18 Hz. Both travel through a vacuum. Which row gives speed(Q)/speed(P) and frequency(Q)/frequency(P)? (speed of light = 3.0 × 10^8 m s⁻¹)",
+      "options": {},
+      "raw_texts": [
+        "24.\nRadio wave P has wavelength 3.0 m. X-ray Q has frequency 1.0 × 10^18 Hz. Both travel through a vacuum. Which row gives speed(Q)/speed(P) and frequency(Q)/frequency(P)? (speed of light = 3.0 × 10^8 m s⁻¹)"
+      ]
+    },
+    {
+      "number": 25,
+      "stem": "The velocity-time graph shows the motion of a 500 kg vehicle. Its velocity rises uniformly from 0 to 12 m s⁻¹ in 4 s, then falls uniformly to 4 m s⁻¹ at 8 s. Which row gives the total distance travelled and the average resultant force over the full 8 s?",
+      "options": {},
+      "raw_texts": [
+        "25.\nThe velocity-time graph shows the motion of a 500 kg vehicle. Its velocity rises uniformly from 0 to 12 m s⁻¹ in 4 s, then falls uniformly to 4 m s⁻¹ at 8 s. Which row gives the total distance travelled and the average resultant force over the full 8 s?"
+      ]
+    },
+    {
+      "number": 26,
+      "stem": "A 12 V battery is connected to a 6.0 Ω resistor P in series with a branch containing a 6.0 Ω resistor Q. Closing a switch adds another 6.0 Ω resistor R in parallel with Q. With the switch closed, what is the total power supplied by the battery and the current in Q?",
+      "options": {},
+      "raw_texts": [
+        "26.\nA 12 V battery is connected to a 6.0 Ω resistor P in series with a branch containing a 6.0 Ω resistor Q. Closing a switch adds another 6.0 Ω resistor R in parallel with Q. With the switch closed, what is the total power supplied by the battery and the current in Q?"
+      ]
+    },
+    {
+      "number": 27,
+      "stem": "A detector records 620 counts per minute from a radioactive source and background radiation. Two half-lives later it records 170 counts per minute. What is the background count rate, and what reading is expected after a further three half-lives?",
+      "options": {},
+      "raw_texts": [
+        "27.\nA detector records 620 counts per minute from a radioactive source and background radiation. Two half-lives later it records 170 counts per minute. What is the background count rate, and what reading is expected after a further three half-lives?"
+      ]
+    }
+  ],
+  "candidateB": [
+    {
+      "number": 1,
+      "stem": "A solid cuboid has side lengths x, 2x and 4x and density 2500 kg m⁻³. It rests on its largest face and produces a pressure of 5000 Pa. What pressure does it produce when resting on its smallest face? (g = 10 N kg⁻¹)",
+      "options": {},
+      "raw_texts": [
+        "1.\nA solid cuboid has side lengths x, 2x and 4x and density 2500 kg m⁻³. It rests on its largest face and produces a pressure of 5000 Pa. What pressure does it produce when resting on its smallest face? (g = 10 N kg⁻¹)"
+      ]
+    },
+    {
+      "number": 2,
+      "stem": "A rechargeable battery stores 54 kJ of energy. It is charged from a 9.0 V supply that provides a current of 2.0 A. Only 75% of the electrical energy supplied is stored. How long does charging take?",
+      "options": {},
+      "raw_texts": [
+        "2.\nA rechargeable battery stores 54 kJ of energy. It is charged from a 9.0 V supply that provides a current of 2.0 A. Only 75% of the electrical energy supplied is stored. How long does charging take?"
+      ]
+    },
+    {
+      "number": 3,
+      "stem": "A 300 kg cart starts from rest. Its distance-time graph curves smoothly to the point (4 s, 24 m), then becomes a straight line ending at (10 s, 60 m). What is the average resultant force on the cart during the first 4 s?",
+      "options": {},
+      "raw_texts": [
+        "3.\nA 300 kg cart starts from rest. Its distance-time graph curves smoothly to the point (4 s, 24 m), then becomes a straight line ending at (10 s, 60 m). What is the average resultant force on the cart during the first 4 s?"
+      ]
+    },
+    {
+      "number": 4,
+      "stem": "A cyclist rides directly towards a wall at 10 m s⁻¹. When 175 m from the wall, the cyclist sounds a horn. The speed of sound is 350 m s⁻¹. How long after sounding the horn does the cyclist hear the echo?",
+      "options": {},
+      "raw_texts": [
+        "4.\nA cyclist rides directly towards a wall at 10 m s⁻¹. When 175 m from the wall, the cyclist sounds a horn. The speed of sound is 350 m s⁻¹. How long after sounding the horn does the cyclist hear the echo?"
+      ]
+    },
+    {
+      "number": 5,
+      "stem": "Two long parallel wires carry currents upwards. The current in the right-hand wire is twice the current in the left-hand wire. Point M is halfway between them. What is the direction of the resultant magnetic field at M?",
+      "options": {},
+      "raw_texts": [
+        "5.\nTwo long parallel wires carry currents upwards. The current in the right-hand wire is twice the current in the left-hand wire. Point M is halfway between them. What is the direction of the resultant magnetic field at M?"
+      ]
+    },
+    {
+      "number": 6,
+      "stem": "A 0.30 kg metal block at 140 °C is placed in 0.20 kg of water at 20 °C. The final temperature is reached with no energy loss. What is the final temperature? (cmetal = 500 J kg⁻¹ °C⁻¹; cwater = 4200 J kg⁻¹ °C⁻¹)",
+      "options": {},
+      "raw_texts": [
+        "6.\nA 0.30 kg metal block at 140 °C is placed in 0.20 kg of water at 20 °C. The final temperature is reached with no energy loss. What is the final temperature? (cmetal = 500 J kg⁻¹ °C⁻¹; cwater = 4200 J kg⁻¹ °C⁻¹)"
+      ]
+    },
+    {
+      "number": 7,
+      "stem": "A neutral atom Q has 8 protons and 9 neutrons. Which option represents a positive ion of a different isotope of the same element?",
+      "options": {},
+      "raw_texts": [
+        "7.\nA neutral atom Q has 8 protons and 9 neutrons. Which option represents a positive ion of a different isotope of the same element?"
+      ]
+    },
+    {
+      "number": 8,
+      "stem": "A 3.0 kg trolley moves right at 6.0 m s⁻¹ and collides with a 1.0 kg trolley moving left at 2.0 m s⁻¹. They stick together. How much kinetic energy is transferred to other forms?",
+      "options": {},
+      "raw_texts": [
+        "8.\nA 3.0 kg trolley moves right at 6.0 m s⁻¹ and collides with a 1.0 kg trolley moving left at 2.0 m s⁻¹. They stick together. How much kinetic energy is transferred to other forms?"
+      ]
+    },
+    {
+      "number": 9,
+      "stem": "Two identical resistors are connected in parallel across a 6.0 V battery and dissipate a total power of 12 W. One resistor is then connected alone across a 9.0 V battery for 20 s. What charge passes through it?",
+      "options": {},
+      "raw_texts": [
+        "9.\nTwo identical resistors are connected in parallel across a 6.0 V battery and dissipate a total power of 12 W. One resistor is then connected alone across a 9.0 V battery for 20 s. What charge passes through it?"
+      ]
+    },
+    {
+      "number": 10,
+      "stem": "Air at pressure 1.00 × 10^5 Pa and density 1.20 kg m⁻³ is trapped beneath a freely moving piston. The piston has mass 40 kg and area 0.010 m². It settles slowly and the air remains at constant temperature. What is the final air density? (g = 10 N kg⁻¹)",
+      "options": {},
+      "raw_texts": [
+        "10.\nAir at pressure 1.00 × 10^5 Pa and density 1.20 kg m⁻³ is trapped beneath a freely moving piston. The piston has mass 40 kg and area 0.010 m². It settles slowly and the air remains at constant temperature. What is the final air density? (g = 10 N kg⁻¹)"
+      ]
+    },
+    {
+      "number": 11,
+      "stem": "A transverse wave travels to the right at 200 m s⁻¹. Its wavelength is 4.0 m. At t = 0, point P is at equilibrium on a section of the wave that rises as position increases. What is P's displacement 5.0 ms later if the amplitude is A?",
+      "options": {},
+      "raw_texts": [
+        "11.\nA transverse wave travels to the right at 200 m s⁻¹. Its wavelength is 4.0 m. At t = 0, point P is at equilibrium on a section of the wave that rises as position increases. What is P's displacement 5.0 ms later if the amplitude is A?"
+      ]
+    },
+    {
+      "number": 12,
+      "stem": "A power station supplies 1.2 MW at 12 kV to the primary of an ideal step-up transformer. The secondary has five times as many turns as the primary and feeds transmission cables of total resistance 5.0 Ω. What power is dissipated in the cables?",
+      "options": {},
+      "raw_texts": [
+        "12.\nA power station supplies 1.2 MW at 12 kV to the primary of an ideal step-up transformer. The secondary has five times as many turns as the primary and feeds transmission cables of total resistance 5.0 Ω. What power is dissipated in the cables?"
+      ]
+    },
+    {
+      "number": 13,
+      "stem": "A 500 kg rollercoaster car starts from rest 20 m above the bottom of a track. It reaches the bottom at 16 m s⁻¹ after travelling 60 m along the track. What is the average resistive force during the descent? (g = 10 N kg⁻¹)",
+      "options": {},
+      "raw_texts": [
+        "13.\nA 500 kg rollercoaster car starts from rest 20 m above the bottom of a track. It reaches the bottom at 16 m s⁻¹ after travelling 60 m along the track. What is the average resistive force during the descent? (g = 10 N kg⁻¹)"
+      ]
+    },
+    {
+      "number": 14,
+      "stem": "A radiator is below a window in a closed room. Which description gives the main convection current in the room?",
+      "options": {},
+      "raw_texts": [
+        "14.\nA radiator is below a window in a closed room. Which description gives the main convection current in the room?"
+      ]
+    },
+    {
+      "number": 15,
+      "stem": "Five identical resistors form two parallel branches across a battery. The top branch contains two resistors in series; the bottom branch contains three in series. A voltmeter across one top resistor reads 3.0 V. What is the battery voltage?",
+      "options": {},
+      "raw_texts": [
+        "15.\nFive identical resistors form two parallel branches across a battery. The top branch contains two resistors in series; the bottom branch contains three in series. A voltmeter across one top resistor reads 3.0 V. What is the battery voltage?"
+      ]
+    },
+    {
+      "number": 16,
+      "stem": "For a spring obeying Hooke's law, a graph of stored energy E against extension squared x² passes through E = 0.040 J when x² = 16 cm². What force stretches the spring to this point?",
+      "options": {},
+      "raw_texts": [
+        "16.\nFor a spring obeying Hooke's law, a graph of stored energy E against extension squared x² passes through E = 0.040 J when x² = 16 cm². What force stretches the spring to this point?"
+      ]
+    },
+    {
+      "number": 17,
+      "stem": "A rider moves rapidly towards a rigid wall while sounding a horn. The rider hears the reflected sound. Compared with the sound emitted at the horn, how do the amplitude and frequency of the echo heard by the rider compare?",
+      "options": {},
+      "raw_texts": [
+        "17.\nA rider moves rapidly towards a rigid wall while sounding a horn. The rider hears the reflected sound. Compared with the sound emitted at the horn, how do the amplitude and frequency of the echo heard by the rider compare?"
+      ]
+    },
+    {
+      "number": 18,
+      "stem": "A simple ac generator produces a sinusoidal output with peak voltage 6.0 V and period 20 ms. The coil's rotation speed is doubled while the magnetic field strength is halved. What are the new peak voltage and period?",
+      "options": {},
+      "raw_texts": [
+        "18.\nA simple ac generator produces a sinusoidal output with peak voltage 6.0 V and period 20 ms. The coil's rotation speed is doubled while the magnetic field strength is halved. What are the new peak voltage and period?"
+      ]
+    },
+    {
+      "number": 19,
+      "stem": "A 2.0 kW heater boils water for 5.0 minutes. During this time, 80% of the electrical energy reaches the water. What mass of water is vaporised? (specific latent heat of vaporisation = 2.4 × 10⁶ J kg⁻¹)",
+      "options": {},
+      "raw_texts": [
+        "19.\nA 2.0 kW heater boils water for 5.0 minutes. During this time, 80% of the electrical energy reaches the water. What mass of water is vaporised? (specific latent heat of vaporisation = 2.4 × 10⁶ J kg⁻¹)"
+      ]
+    },
+    {
+      "number": 20,
+      "stem": "A cart is pulled by a constant horizontal resultant force while ballast leaks out at a constant mass per second. Each piece of ballast leaves with the cart's horizontal velocity, so it gives no extra horizontal push. How does the cart's acceleration change as time passes?",
+      "options": {},
+      "raw_texts": [
+        "20.\nA cart is pulled by a constant horizontal resultant force while ballast leaks out at a constant mass per second. Each piece of ballast leaves with the cart's horizontal velocity, so it gives no extra horizontal push. How does the cart's acceleration change as time passes?"
+      ]
+    },
+    {
+      "number": 21,
+      "stem": "A negatively charged rod is brought close to the left side of a neutral metal sphere on an insulating stand. While the rod remains, the right side of the sphere is briefly earthed. The earth connection is removed before the rod is taken away. What is the sphere's final charge, and which way did electrons move during earthing?",
+      "options": {},
+      "raw_texts": [
+        "21.\nA negatively charged rod is brought close to the left side of a neutral metal sphere on an insulating stand. While the rod remains, the right side of the sphere is briefly earthed. The earth connection is removed before the rod is taken away. What is the sphere's final charge, and which way did electrons move during earthing?"
+      ]
+    },
+    {
+      "number": 22,
+      "stem": "A person stands 2.0 m in front of a plane mirror. The person walks 0.75 m towards the mirror while the mirror moves 0.25 m towards the person. What is the final distance between the person and their image?",
+      "options": {},
+      "raw_texts": [
+        "22.\nA person stands 2.0 m in front of a plane mirror. The person walks 0.75 m towards the mirror while the mirror moves 0.25 m towards the person. What is the final distance between the person and their image?"
+      ]
+    },
+    {
+      "number": 23,
+      "stem": "A 0.050 kg bar can slide without friction on horizontal rails in a 0.40 T magnetic field. A 0.20 m section is perpendicular to the field. A current of 1.0 A drives it to the right for 2.0 s. The current is then reversed and reduced to 0.50 A for 4.0 s. Starting from rest, what are its final speed and total distance travelled?",
+      "options": {},
+      "raw_texts": [
+        "23.\nA 0.050 kg bar can slide without friction on horizontal rails in a 0.40 T magnetic field. A 0.20 m section is perpendicular to the field. A current of 1.0 A drives it to the right for 2.0 s. The current is then reversed and reduced to 0.50 A for 4.0 s. Starting from rest, what are its final speed and total distance travelled?"
+      ]
+    },
+    {
+      "number": 24,
+      "stem": "A parachutist is falling at terminal velocity. Immediately after the parachute opens, the drag force is greater than the parachutist's weight. Which statement describes the motion immediately after opening and later at the new terminal velocity?",
+      "options": {},
+      "raw_texts": [
+        "24.\nA parachutist is falling at terminal velocity. Immediately after the parachute opens, the drag force is greater than the parachutist's weight. Which statement describes the motion immediately after opening and later at the new terminal velocity?"
+      ]
+    },
+    {
+      "number": 25,
+      "stem": "A composite conductor has two sections in series, made from the same material. Section X has length L and area 2A. Section Y has length 2L and area A. Its hot end is at 80 °C and cold end at 30 °C. At steady state, what is the temperature at the boundary between X and Y? (conduction rate is proportional to area × temperature difference / length)",
+      "options": {},
+      "raw_texts": [
+        "25.\nA composite conductor has two sections in series, made from the same material. Section X has length L and area 2A. Section Y has length 2L and area A. Its hot end is at 80 °C and cold end at 30 °C. At steady state, what is the temperature at the boundary between X and Y? (conduction rate is proportional to area × temperature difference / length)"
+      ]
+    },
+    {
+      "number": 26,
+      "stem": "The graph shows the amount of stable isotope Y in a sample as radioactive isotope X decays to Y. Initially the sample contains 60 units of X and 20 units of Y. After 6 minutes it contains 65 units of Y. What is the half-life of X?",
+      "options": {},
+      "raw_texts": [
+        "26.\nThe graph shows the amount of stable isotope Y in a sample as radioactive isotope X decays to Y. Initially the sample contains 60 units of X and 20 units of Y. After 6 minutes it contains 65 units of Y. What is the half-life of X?"
+      ]
+    },
+    {
+      "number": 27,
+      "stem": "A slider of mass 0.30 kg is launched up a frictionless slope by a spring compressed 4.0 cm and reaches vertical height h. The same spring is then compressed 6.0 cm to launch a 0.20 kg slider. What maximum vertical height does the second slider reach?",
+      "options": {},
+      "raw_texts": [
+        "27.\nA slider of mass 0.30 kg is launched up a frictionless slope by a spring compressed 4.0 cm and reaches vertical height h. The same spring is then compressed 6.0 cm to launch a 0.20 kg slider. What maximum vertical height does the second slider reach?"
+      ]
+    }
+  ],
+  "editorA": [],
+  "editorB": [],
+  "overview": [
+    [
+      "A",
+      [
+        "Question",
+        "Answer",
+        "Topic",
+        "Difficulty",
+        "Target",
+        "A1",
+        "E",
+        "P1.2 Electric circuits",
+        "2/4",
+        "70 s",
+        "A2",
+        "B",
+        "P3.1 Kinematics",
+        "75 s",
+        "A3",
+        "F",
+        "P4.4 Heat capacity",
+        "A4",
+        "C",
+        "P6.1 Wave properties",
+        "3/4",
+        "80 s",
+        "A5",
+        "A",
+        "P7.2 Radioactive decay",
+        "A6",
+        "D",
+        "P5.2 Ideal gases",
+        "4/4",
+        "100 s",
+        "A7",
+        "P2.3 The motor effect",
+        "85 s",
+        "A8",
+        "P3.4 Newton's laws",
+        "A9",
+        "A10",
+        "P3.7 Energy",
+        "A11",
+        "P6.4 Sound waves",
+        "A12",
+        "P4.1 Conduction",
+        "A13",
+        "65 s",
+        "A14",
+        "P5.4 Density",
+        "A15",
+        "P3.6 Momentum",
+        "A16",
+        "P2.5 Transformers",
+        "A17",
+        "P6.2 Wave behaviour",
+        "A18",
+        "P3.3 Force and extension",
+        "95 s",
+        "A19",
+        "P4.3 Thermal radiation",
+        "1/4",
+        "55 s",
+        "A20",
+        "A21",
+        "P5.3 State changes",
+        "105 s",
+        "A22",
+        "P3.5 Mass and weight",
+        "A23",
+        "P2.4 Electromagnetic induction",
+        "A24",
+        "P6.5 Electromagnetic spectrum",
+        "A25",
+        "90 s",
+        "A26",
+        "A27",
+        "P7.4 Half-life"
+      ]
+    ],
+    [
+      "B",
+      [
+        "Question",
+        "Answer",
+        "Topic",
+        "Difficulty",
+        "Target",
+        "B1",
+        "B",
+        "P5.5 Pressure",
+        "3/4",
+        "85 s",
+        "B2",
+        "F",
+        "P1.2 Electric circuits",
+        "B3",
+        "C",
+        "P3.1 Kinematics",
+        "B4",
+        "E",
+        "P6.4 Sound waves",
+        "4/4",
+        "100 s",
+        "B5",
+        "A",
+        "P2.2 Magnetic field due to a current",
+        "2/4",
+        "70 s",
+        "B6",
+        "D",
+        "P4.4 Heat capacity",
+        "90 s",
+        "B7",
+        "P7.1 Atomic structure",
+        "65 s",
+        "B8",
+        "P3.6 Momentum",
+        "B9",
+        "80 s",
+        "B10",
+        "P5.2 Ideal gases",
+        "B11",
+        "P6.1 Wave properties",
+        "95 s",
+        "B12",
+        "P2.5 Transformers",
+        "B13",
+        "P3.7 Energy",
+        "B14",
+        "P4.2 Convection",
+        "1/4",
+        "55 s",
+        "B15",
+        "B16",
+        "P3.3 Force and extension",
+        "B17",
+        "P6.2 Wave behaviour",
+        "B18",
+        "P2.4 Electromagnetic induction",
+        "B19",
+        "P5.3 State changes",
+        "B20",
+        "P3.4 Newton's laws",
+        "B21",
+        "P1.1 Electrostatics",
+        "B22",
+        "P6.3 Optics",
+        "B23",
+        "P2.3 The motor effect",
+        "105 s",
+        "B24",
+        "P3.5 Mass and weight",
+        "B25",
+        "P4.1 Conduction",
+        "B26",
+        "P7.4 Half-life",
+        "B27"
+      ]
+    ]
+  ],
+  "counts": {
+    "candA": 27,
+    "candB": 27,
+    "edA": 0,
+    "edB": 0
+  }
+}

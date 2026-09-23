@@ -1,0 +1,30 @@
+{
+  "questionId": 3306,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 37,
+  "stemBlocks": [
+    "Cats are unable to synthesise the amino acid taurine in their bodies, so they must obtain it from their food. It is often added to cat food as an additive.\nTaurine is a monoprotic acid with the following molecular structure:\n$$\\text{HO}-\\text{S}(=\\text{O})_2-\\text{CH}_2-\\text{CH}_2-\\text{NH}_2$$\n$M_r = 125$\nDietary studies suggest that a cat should consume 10 mg of taurine per kilogram of body mass per day.\nBrand X cat food contains taurine at a level of 0.008% by mass, but this level is too low for a cat to acquire a sufficient amount from a healthy amount of food.\nMagnesium taurate is an ionic salt which liberates taurine in the body. 8 cm$^3$ of a $0.5 \\text{ mol dm}^{-3}$ aqueous solution of magnesium taurate was added to a 10 kg bag of brand X cat food and thoroughly mixed.\nA particular cat bowl can hold a 50 g serving of cat food. A particular cat of mass 4000 g always eats a full serving.",
+    "What is the minimum number of bowls of cat food that this cat must eat to ensure that it has consumed its daily requirement of taurine?",
+    "(Assume that the addition of the solution does not significantly alter the total mass of the bag of cat food.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:13.282588+00:00",
+  "sourceImageHash": "744f1b2bb2ba02e75ed46caef3b8e87f5844dddee500a4ac698a7993a5cf0566",
+  "status": "ok"
+}

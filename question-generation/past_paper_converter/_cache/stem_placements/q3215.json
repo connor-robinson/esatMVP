@@ -1,0 +1,39 @@
+{
+  "questionId": 3215,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 6,
+  "stemBlocks": [
+    "Diagram 1 shows the positions of nine equally spaced particles in a medium. Diagram 2 shows the positions of the same nine particles, at a particular time, while a longitudinal wave is travelling through the medium.",
+    "What is the amplitude of the wave?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Diagram 1 shows equally spaced particles. Diagram 2 shows the particles displaced by a longitudinal wave.",
+      "role": "stem_diagram"
+    },
+    {
+      "id": "d2",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    },
+    {
+      "assetId": "d2",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:13.878264+00:00",
+  "sourceImageHash": "7499ad7a9e5f82fdc396ca6db4412d32503b664df006d0808bb2ac44ebb7d4e3",
+  "status": "ok"
+}

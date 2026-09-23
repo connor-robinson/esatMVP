@@ -1,0 +1,300 @@
+{
+  "job_id": "remediate-diagrams-20260916-083011",
+  "dry_run": false,
+  "resume_queue": true,
+  "generated_at": "2026-09-16T09:52:55.004505+00:00",
+  "high_count": 0,
+  "loose_count": 0,
+  "loose_needed_count": 0,
+  "confirmed_ids": [
+    "6fea1e88-f910-4fc0-ad94-f60e96adb72c",
+    "97f82763-e98e-4a8d-86ee-2bd826ce161e",
+    "e99bc50a-be38-47d2-bc1b-e5881a4074b9",
+    "55167465-ed70-4029-ba24-5e60a946cbd0",
+    "80cbf2f1-d125-4af0-8b13-f7ad4c9f6809",
+    "36736c68-f665-4d02-a4f6-7d99b08780b8",
+    "69c2dad6-a72d-4c69-aa2d-71479f42a237",
+    "4e06f6df-1aae-4d98-9f70-ca3190e6afc2",
+    "61cbb323-e27f-4c09-847f-78e83e3b1b69",
+    "6db37c31-f8f4-4e37-9aa3-d3a56b820b64",
+    "7cfc85a6-6304-46c6-81fd-1e68bf7f585d",
+    "4f221a27-2854-441f-9b59-c350dcc2d4fc",
+    "3b5be3d9-578e-4fb4-acf4-2751655fc03f",
+    "f0a4c221-8bda-4396-8c11-53390a83169a",
+    "cc57a57a-e948-4a3f-85e1-dd25e59a0d2b",
+    "9fc7af75-aab9-4252-aa0b-a48069b498ec",
+    "bb1bf6ee-e0f7-4ef6-9a27-3a444a844c38",
+    "fc9f72ce-d52c-4d76-ad6c-cda88dbb6e0d",
+    "9144f5a7-80c1-4a15-8645-8a301d18720f",
+    "3203fceb-9290-45a9-b779-ff9fe8bb99f4"
+  ],
+  "high_ids": [],
+  "loose_classifications": {},
+  "loose_needed_ids": [],
+  "backfill": {
+    "attempted": 13,
+    "merged": 9,
+    "merged_imagen": 0,
+    "merged_svg": 9,
+    "skipped": 7,
+    "failed": 4,
+    "by_id": {
+      "6fea1e88-f910-4fc0-ad94-f60e96adb72c": {
+        "final_status": "failed",
+        "reason": "row_exception: Server disconnected without sending a response.",
+        "verification_verdict": null,
+        "visual_kind": null
+      },
+      "97f82763-e98e-4a8d-86ee-2bd826ce161e": {
+        "final_status": "merged",
+        "reason": "graph_svg_ok",
+        "verification_verdict": null,
+        "visual_kind": "graph"
+      },
+      "e99bc50a-be38-47d2-bc1b-e5881a4074b9": {
+        "final_status": "merged",
+        "reason": "graph_svg_ok",
+        "verification_verdict": null,
+        "visual_kind": "graph"
+      },
+      "55167465-ed70-4029-ba24-5e60a946cbd0": {
+        "final_status": "merged",
+        "reason": "graph_svg_ok",
+        "verification_verdict": null,
+        "visual_kind": "graph"
+      },
+      "80cbf2f1-d125-4af0-8b13-f7ad4c9f6809": {
+        "final_status": "merged",
+        "reason": "graph_svg_ok",
+        "verification_verdict": null,
+        "visual_kind": "graph"
+      },
+      "36736c68-f665-4d02-a4f6-7d99b08780b8": {
+        "final_status": "failed",
+        "reason": "row_exception: All image models failed: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/imagen-4.0-generate-001` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}",
+        "verification_verdict": null,
+        "visual_kind": null
+      },
+      "69c2dad6-a72d-4c69-aa2d-71479f42a237": {
+        "final_status": "merged",
+        "reason": "graph_svg_ok",
+        "verification_verdict": null,
+        "visual_kind": "graph"
+      },
+      "4e06f6df-1aae-4d98-9f70-ca3190e6afc2": {
+        "final_status": "skipped",
+        "reason": "already_has_diagram"
+      },
+      "61cbb323-e27f-4c09-847f-78e83e3b1b69": {
+        "final_status": "skipped",
+        "reason": "already_has_diagram"
+      },
+      "6db37c31-f8f4-4e37-9aa3-d3a56b820b64": {
+        "final_status": "merged",
+        "reason": "graph_svg_ok",
+        "verification_verdict": null,
+        "visual_kind": "graph"
+      },
+      "7cfc85a6-6304-46c6-81fd-1e68bf7f585d": {
+        "final_status": "merged",
+        "reason": "graph_svg_ok",
+        "verification_verdict": null,
+        "visual_kind": "graph"
+      },
+      "4f221a27-2854-441f-9b59-c350dcc2d4fc": {
+        "final_status": "failed",
+        "reason": "row_exception: All image models failed: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/imagen-4.0-generate-001` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}",
+        "verification_verdict": null,
+        "visual_kind": null
+      },
+      "3b5be3d9-578e-4fb4-acf4-2751655fc03f": {
+        "final_status": "skipped",
+        "reason": "already_has_diagram"
+      },
+      "f0a4c221-8bda-4396-8c11-53390a83169a": {
+        "final_status": "skipped",
+        "reason": "already_has_diagram"
+      },
+      "cc57a57a-e948-4a3f-85e1-dd25e59a0d2b": {
+        "final_status": "merged",
+        "reason": "graph_svg_ok",
+        "verification_verdict": null,
+        "visual_kind": "graph"
+      },
+      "9fc7af75-aab9-4252-aa0b-a48069b498ec": {
+        "final_status": "skipped",
+        "reason": "already_has_diagram"
+      },
+      "bb1bf6ee-e0f7-4ef6-9a27-3a444a844c38": {
+        "final_status": "skipped",
+        "reason": "already_has_diagram"
+      },
+      "fc9f72ce-d52c-4d76-ad6c-cda88dbb6e0d": {
+        "final_status": "failed",
+        "reason": "row_exception: All image models failed: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/imagen-4.0-generate-001` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}",
+        "verification_verdict": null,
+        "visual_kind": null
+      },
+      "9144f5a7-80c1-4a15-8645-8a301d18720f": {
+        "final_status": "merged",
+        "reason": "graph_svg_ok",
+        "verification_verdict": null,
+        "visual_kind": "graph"
+      },
+      "3203fceb-9290-45a9-b779-ff9fe8bb99f4": {
+        "final_status": "skipped",
+        "reason": "already_has_diagram"
+      }
+    }
+  },
+  "post_backfill": {
+    "updated": 22
+  },
+  "quality_gate": {
+    "assessed": 23,
+    "failed": 1,
+    "by_id": {
+      "01a1ec3a-1088-4ac8-9cd6-a41c38cb0658": {
+        "verdict": "Pass",
+        "action": "approve",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "6fea1e88-f910-4fc0-ad94-f60e96adb72c": {
+        "verdict": "Pass",
+        "action": "human_review",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "97f82763-e98e-4a8d-86ee-2bd826ce161e": {
+        "verdict": "Pass",
+        "action": "approve",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "e99bc50a-be38-47d2-bc1b-e5881a4074b9": {
+        "verdict": "Minor",
+        "action": "human_review",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "55167465-ed70-4029-ba24-5e60a946cbd0": {
+        "verdict": "Pass",
+        "action": "approve",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "80cbf2f1-d125-4af0-8b13-f7ad4c9f6809": {
+        "verdict": "Pass",
+        "action": "approve",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "36736c68-f665-4d02-a4f6-7d99b08780b8": {
+        "verdict": "Pass",
+        "action": "approve",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "69c2dad6-a72d-4c69-aa2d-71479f42a237": {
+        "verdict": "Pass",
+        "action": "approve",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "4e06f6df-1aae-4d98-9f70-ca3190e6afc2": {
+        "verdict": "Pass",
+        "action": "approve",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "61cbb323-e27f-4c09-847f-78e83e3b1b69": {
+        "verdict": "Minor",
+        "action": "human_review",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "6db37c31-f8f4-4e37-9aa3-d3a56b820b64": {
+        "verdict": "Pass",
+        "action": "approve",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "7cfc85a6-6304-46c6-81fd-1e68bf7f585d": {
+        "verdict": "Pass",
+        "action": "approve",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "0e28beef-6ab0-4ae5-b480-21c04cb14733": {
+        "verdict": "Pass",
+        "action": "approve",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "4f221a27-2854-441f-9b59-c350dcc2d4fc": {
+        "verdict": "Pass",
+        "action": "approve",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "04da757c-a6a4-49ea-a225-7c2858684209": {
+        "verdict": "Pass",
+        "action": "approve",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "085f706b-3544-4205-8c81-e11c43b34a37": {
+        "verdict": "Pass",
+        "action": "approve",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "3b5be3d9-578e-4fb4-acf4-2751655fc03f": {
+        "error": "no JSON object found in model output"
+      },
+      "f0a4c221-8bda-4396-8c11-53390a83169a": {
+        "verdict": "Pass",
+        "action": "approve",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "cc57a57a-e948-4a3f-85e1-dd25e59a0d2b": {
+        "verdict": "Pass",
+        "action": "approve",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "9fc7af75-aab9-4252-aa0b-a48069b498ec": {
+        "verdict": "Pass",
+        "action": "approve",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "bb1bf6ee-e0f7-4ef6-9a27-3a444a844c38": {
+        "verdict": "Pass",
+        "action": "approve",
+        "graph_mode": "candidate",
+        "model": "gemini-2.5-flash"
+      },
+      "fc9f72ce-d52c-4d76-ad6c-cda88dbb6e0d": {
+        "verdict": "Minor",
+        "action": "human_review",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "9144f5a7-80c1-4a15-8645-8a301d18720f": {
+        "verdict": "Pass",
+        "action": "approve",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      },
+      "3203fceb-9290-45a9-b779-ff9fe8bb99f4": {
+        "verdict": "Pass",
+        "action": "approve",
+        "graph_mode": "none",
+        "model": "gemini-2.5-flash"
+      }
+    }
+  }
+}

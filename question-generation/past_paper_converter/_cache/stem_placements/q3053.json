@@ -1,0 +1,29 @@
+{
+  "questionId": 3053,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 74,
+  "stemBlocks": [
+    "The diagram shows part of the carbon cycle. Which row shows the numbered processes that use digestive or respiratory enzymes?",
+    "|  | process or processes that involve digestive enzymes | process or processes that involve respiratory enzymes |\n| --- | --- | --- |\n| A | 1 only | 2 and 3 only |\n| B | 2 only | 1 and 4 only |\n| C | 3 only | 2 and 4 only |\n| D | 4 only | 2 and 3 only |\n| E | 2 and 3 only | 1 only |\n| F | 3 and 4 only | 2 only |\n| G | 1 and 4 only | 3 only |\n| H | 2 and 3 only | 4 only |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:16.038793+00:00",
+  "sourceImageHash": "a5609ee98507c4ca8ea456d792c6803c7e045b252399d23fc4733b5a4259c34f",
+  "status": "ok"
+}

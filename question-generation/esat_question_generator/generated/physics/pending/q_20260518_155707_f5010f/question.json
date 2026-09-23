@@ -1,0 +1,277 @@
+{
+  "id": "P_ae6afb3b-Easy-16dfb9721d",
+  "schema_id": "P_ae6afb3b",
+  "difficulty": "Easy",
+  "idea_plan": {
+    "schema_id": "P_ae6afb3b",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Easy",
+    "idea_summary": "A hot block is placed in a cold liquid. The candidate must determine the liquid's temperature rise in terms of the block's temperature drop, given the relative masses and specific heat capacities as simple multiples.",
+    "schema_invariant": {
+      "core_move": "Equating thermal energy lost by the hot object to thermal energy gained by the cold object (m_1 c_1 \\Delta T_1 = m_2 c_2 \\Delta T_2).",
+      "what_must_not_change": [
+        "The underlying principle of conservation of thermal energy in an isolated mixture.",
+        "The use of mass, specific heat capacity, and temperature change."
+      ],
+      "what_can_change": [
+        "The physical objects involved.",
+        "Asking for a proportional temperature change rather than an exact final equilibrium temperature.",
+        "Using algebraic multiples instead of numerical values for mass and specific heat."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "proportional_reasoning",
+      "reasoning_hinge": "Recognizing that the temperature change is inversely proportional to the product of mass and specific heat capacity (m*c) when the exchanged heat Q is equal.",
+      "why_top_students_win": "They immediately set up the equality m_b * c_b * \\Delta T_b = m_l * c_l * \\Delta T_l and substitute the multiples to find the ratio of temperature changes.",
+      "why_mid_students_miss": "They may assume temperature change is directly proportional to mass or specific heat, or they might get confused by the absence of initial temperature values."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Conservation of thermal energy (Q_lost = Q_gained)",
+      "supporting_idea_if_any": "Specific heat capacity equation (Q = mc\\Delta T)",
+      "estimated_solution_steps": 2,
+      "number_of_core_physics_principles": 1,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 2,
+      "must_include": [
+        "model_selection",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "Shifts the focus from calculating a final numerical temperature to evaluating a proportional change, maintaining an easy cognitive load but feeling distinct from standard textbook numerical problems.",
+    "task_signature": "proportional_change",
+    "tool_footprint": [
+      "equate_energy",
+      "proportional_reasoning",
+      "isolate_variable"
+    ],
+    "primary_tag": "3",
+    "secondary_tags": [],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "Instead of providing temperatures (e.g., 80°C and 20°C) and asking for the final equilibrium temperature, the question provides relative masses and specific heat capacities (e.g., mass 2m, specific heat 3c) and asks for the temperature rise of the liquid in terms of the block's temperature drop (\\Delta T).",
+    "why_still_on_spec": "Thermal energy transfer and the specific heat capacity equation Q = mc\\Delta T are fundamental parts of the ESAT Thermal Physics specification.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Assuming temperature change is directly proportional to the product of mass and specific heat capacity, leading to a multiplier instead of a fraction.",
+        "distractor_role": "Inverted ratio distractor (e.g., 6\\Delta T instead of \\Delta T / 6)."
+      },
+      {
+        "mistake": "Only accounting for the ratio of specific heat capacities and ignoring the mass ratio.",
+        "distractor_role": "Partial ratio distractor (e.g., \\Delta T / 3)."
+      },
+      {
+        "mistake": "Only accounting for the mass ratio and ignoring the specific heat capacity ratio.",
+        "distractor_role": "Partial ratio distractor (e.g., \\Delta T / 2)."
+      }
+    ],
+    "difficulty_rationale": "It is an Easy question because it tests a single core relationship (Q = mc\\Delta T) with a straightforward proportionality. However, using abstract multiples instead of concrete numbers prevents pure, unthinking calculator plug-and-chug, making it highly suitable for ESAT Section 1.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "Because no explicit initial or final temperatures are given, the candidate must actively construct the proportionality algebraically rather than just typing numbers into a formula."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The algebraic fractions (e.g., \\Delta T/6, \\Delta T/3, 2\\Delta T, 6\\Delta T) make for clean, unambiguous multiple-choice options that directly map to common proportional reasoning errors."
+    }
+  },
+  "question_package": {
+    "metadata": {
+      "schema_id": "P_ae6afb3b",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Easy",
+      "task_signature": "proportional_change",
+      "primary_tag": "3",
+      "secondary_tags": []
+    },
+    "question": {
+      "stem": "A hot solid block is placed into a cold liquid in an insulated container.\n\nThe mass of the liquid is twice the mass of the block. The specific heat capacity of the liquid is three times the specific heat capacity of the block.\n\nThe temperature of the block decreases by $\\Delta T$.\n\nAssuming no thermal energy is transferred to the surroundings, what is the temperature increase of the liquid?\n\n<figure class=\"qg-diagram\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 600 420\" width=\"600\" height=\"420\" role=\"img\" aria-label=\"concept image\"><image href=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_155707_f5010f/concept_image_v1.png\" x=\"0\" y=\"0\" width=\"600\" height=\"420\" preserveAspectRatio=\"xMidYMid meet\" /></svg><figcaption>concept image</figcaption></figure>\n",
+      "options": {
+        "A": "$\\frac{\\Delta T}{6}$",
+        "B": "$\\frac{\\Delta T}{5}$",
+        "C": "$\\frac{\\Delta T}{3}$",
+        "D": "$\\frac{\\Delta T}{2}$",
+        "E": "$5\\Delta T$",
+        "F": "$6\\Delta T$"
+      },
+      "correct_option": "A",
+      "stem_before_visual": "A hot solid block is placed into a cold liquid in an insulated container.\n\nThe mass of the liquid is twice the mass of the block. The specific heat capacity of the liquid is three times the specific heat capacity of the block.\n\nThe temperature of the block decreases by $\\Delta T$.\n\nAssuming no thermal energy is transferred to the surroundings, what is the temperature increase of the liquid?"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "The temperature change of an object is inversely proportional to the product of its mass and specific heat capacity for a given amount of thermal energy transferred.",
+      "reasoning": "By conservation of energy, the thermal energy lost by the block equals the thermal energy gained by the liquid: $Q_{\\text{lost}} = Q_{\\text{gained}}$.\nUsing $Q = mc\\Delta T$, we have $m_b c_b \\Delta T = m_l c_l \\Delta T_l$.\nSubstituting the given ratios $m_l = 2m_b$ and $c_l = 3c_b$ gives $m_b c_b \\Delta T = (2m_b)(3c_b)\\Delta T_l$.\nSimplifying this yields $m_b c_b \\Delta T = 6 m_b c_b \\Delta T_l$, which rearranges to $\\Delta T_l = \\frac{\\Delta T}{6}$."
+    },
+    "distractor_map": {
+      "A": "Correct. The product of mass and specific heat capacity for the liquid is 6 times that of the block, so its temperature change is 1/6th of the block's.",
+      "B": "Incorrectly adding the multiplier factors (2 + 3 = 5) instead of multiplying them.",
+      "C": "Ignores the mass difference, only accounting for the ratio of the specific heat capacities.",
+      "D": "Ignores the specific heat capacity difference, only accounting for the mass ratio.",
+      "E": "Incorrectly adds the multiplier factors and assumes temperature change is directly proportional to the product of mass and specific heat capacity.",
+      "F": "Incorrectly assumes temperature change is directly proportional to the product of mass and specific heat capacity, leading to a multiplier of 6 instead of a fraction."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Recognizing that the temperature change is inversely proportional to the product of mass and specific heat capacity (mc) when the exchanged heat Q is equal.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 1,
+        "estimated_solution_steps": 2,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "verifier_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "A",
+    "independent_solution": {
+      "main_law_or_principle": "Conservation of thermal energy (Q_lost = Q_gained) and the specific heat capacity equation (Q = mcΔT).",
+      "calculation_or_logic": "Let m_b and c_b be the mass and specific heat of the block. Let m_l and c_l be the mass and specific heat of the liquid. Given: m_l = 2m_b, c_l = 3c_b. Energy balance: m_b * c_b * ΔT_b = m_l * c_l * ΔT_l. Substituting: m_b * c_b * ΔT = (2m_b) * (3c_b) * ΔT_l. This simplifies to: m_b * c_b * ΔT = 6 * m_b * c_b * ΔT_l. Solving for ΔT_l: ΔT_l = ΔT / 6.",
+      "verified_answer_value": "ΔT/6",
+      "claimed_answer_value": "ΔT/6",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Set up energy balance equation",
+        "Substitute proportional variables",
+        "Algebraic simplification"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "derived_relationship_audit": {
+      "requires_nontrivial_derivation": false,
+      "number_of_linked_relationships": 0,
+      "relationships_given_in_stem": [],
+      "safe_for_esat": true
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a",
+      "derived_relationship_safety": "pass"
+    },
+    "notes": [
+      "The question is a standard application of the principle of conservation of energy in thermal systems, perfectly aligned with the ESAT syllabus."
+    ]
+  },
+  "style_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "shorter",
+      "notes": "The question is perfectly calibrated for an 'Easy' ESAT item. It avoids the trap of being a simple plug-and-chug by using algebraic ratios, which forces the student to demonstrate conceptual understanding of the inverse proportionality between temperature change and the heat capacity product (mc)."
+    },
+    "selectivity_audit": {
+      "main_trap": "The primary trap is the confusion between direct and inverse proportionality. Students who fail to set up the energy balance equation will likely choose options based on additive or simple multiplicative relationships (e.g., 6ΔT or ΔT/5).",
+      "why_not_plug_and_chug": "There are no numerical values for temperature, mass, or specific heat capacity to plug into a calculator. The student must manipulate the variables algebraically.",
+      "expected_mid_student_error": "A student might incorrectly assume that because the liquid has a larger mass and higher specific heat, its temperature change should be larger (e.g., 6ΔT), or they might simply add the factors (2+3=5) to get ΔT/5.",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 1,
+      "estimated_solution_steps": 2,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "Excellent example of an ESAT-style question. It is concise, requires a single core physical model, and uses distractors that target specific conceptual misunderstandings."
+    ]
+  },
+  "models": {
+    "designer": "gemini-3.1-pro-preview",
+    "implementer": "gemini-3.1-pro-preview",
+    "verifier": "gemini-3.1-flash-lite",
+    "style_judge": "gemini-3.1-flash-lite"
+  },
+  "attempts": 1,
+  "created_at": "2026-05-18T16:01:33.585300",
+  "token_usage": {
+    "prompt_tokens": 35686,
+    "candidates_tokens": 6093,
+    "total_tokens": 46935
+  },
+  "tags": {
+    "primary_tag": "4",
+    "secondary_tags": [],
+    "primary_confidence": 1.0,
+    "reasoning": "The question is a direct application of the specific heat capacity formula ($Q = mc\\Delta T$) and the principle of conservation of thermal energy, which are core concepts within Thermal physics.",
+    "_raw_text": "```json\n{\n  \"primary_tag\": \"4\",\n  \"secondary_tags\": [],\n  \"primary_confidence\": 1.0,\n  \"reasoning\": \"The question is a direct application of the specific heat capacity formula ($Q = mc\\\\Delta T$) and the principle of conservation of thermal energy, which are core concepts within Thermal physics.\"\n}\n```"
+  },
+  "schema_block_snapshot": "## **P_ae6afb3b. Calorimetry and Thermal Energy Conservation**\n\n**Core move:** Apply the principle of conservation of thermal energy by equating the heat lost by hotter components to the heat gained by cooler components (Q_lost = Q_gained) using specific heat capacity and temperature changes.\n\n**Seen in / context:**\n- Determining initial or final temperatures in mixtures reaching thermal equilibrium\nFinding specific heat capacities of unknown materials through mixing\nCalculating mass of components in calorimetry experiments\nProblems involving phase changes (latent heat) alongside specific heat capacity\n\n**Possible wrong paths:**\n- Incorrectly assigning positive/negative signs to heat changes, leading to subtraction instead of equating magnitudes of heat transfer\nForgetting to convert units (e.g., grams to kilograms) to match the units of specific heat capacity\nUsing the specific heat capacity of the wrong material for a given component\nConfusing initial and final temperatures when calculating temperature change (ΔT)\n\n**Notes for generation:**\n- Ensure all mass units are consistent with the specific heat capacity units (e.g., kg with J kg⁻¹ °C⁻¹).\nClearly identify which component loses heat and which gains heat.\nTemperature change (ΔT) for a component should be calculated as (final temperature - initial temperature); however, when equating 'heat lost' and 'heat gained', it's often more intuitive to use the magnitude of temperature change for each part: Q = mc|ΔT|.\n\n**Exemplar questions:**\n- `NSAA_2022_Section1_Q35_NSAA_Sec`: Initial exemplar for new schema.",
+  "pipeline": "v4",
+  "has_visual": true,
+  "visual_type": "concept_image",
+  "answer_depends_on_visual": false,
+  "question_stem_before_auto_diagram": "A hot solid block is placed into a cold liquid in an insulated container.\n\nThe mass of the liquid is twice the mass of the block. The specific heat capacity of the liquid is three times the specific heat capacity of the block.\n\nThe temperature of the block decreases by $\\Delta T$.\n\nAssuming no thermal energy is transferred to the surroundings, what is the temperature increase of the liquid?",
+  "visual_assets": [
+    {
+      "kind": "concept_image",
+      "spec_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260518_155707_f5010f\\concept_image_prompt.json",
+      "image_paths": [
+        "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_155707_f5010f/concept_image_v1.png"
+      ],
+      "renderer": "gemini_image_v1",
+      "qc_status": "pass",
+      "qc_source": "concept_image_verifier.json",
+      "answer_bearing": false,
+      "checksum": null
+    }
+  ]
+}

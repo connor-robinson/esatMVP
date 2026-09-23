@@ -1,0 +1,28 @@
+{
+  "questionId": 1823,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 30,
+  "stemBlocks": [
+    "A parachutist is falling at terminal speed with his parachute open. The diagrams show, separately, the vertical forces acting on the parachute and the vertical forces acting on the parachutist.\nThe letters $L, M, N, P, Q$ and $R$ represent the magnitude of each force as indicated.\nConsider the following equations:\nEquation 1: $L = M+N$\nEquation 2: $R = P+Q$\nEquation 3: $L = Q$\nEquation 4: $N = P$\nEquation 5: $M+R = L+Q$\nWhich of these equations, if any, is/are the direct result of the application of Newton's Third Law to this situation?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:23:52.631474+00:00",
+  "sourceImageHash": "d72bd8633f2681b1c06757066c95679395ea992cc28f364549ec39663d0472cb",
+  "status": "ok"
+}

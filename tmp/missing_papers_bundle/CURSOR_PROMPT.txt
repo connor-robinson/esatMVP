@@ -1,0 +1,15 @@
+Use the attached missing-paper fetch bundle to complete the NSAA/ENGAA archive.
+
+1. Run `python download_missing_papers.py`.
+2. Read `downloaded/download_report.json`.
+3. Verify every successfully downloaded file opens as a PDF and maps to the intended exam/year/section.
+4. Important: NSAA Section 2 for 2016–2019 uses worked/model solutions, NOT MCQ answer keys. Label those as “Solutions” on the site.
+5. Copy only verified PDFs into the existing `public/downloads/past-papers/` structure, following the project's current naming convention rather than creating a second parallel convention.
+6. Update `pastPapersDownload.ts` only for files that now genuinely exist.
+7. Do NOT change sitemap, robots, canonicals, redirects, or indexing as part of this task.
+8. Do NOT add any URL to the sitemap.
+9. Report:
+   - files downloaded successfully,
+   - files still unresolved,
+   - exact site mappings changed,
+   - any source whose document did not match its label.

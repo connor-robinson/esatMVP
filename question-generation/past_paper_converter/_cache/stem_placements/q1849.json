@@ -1,0 +1,28 @@
+{
+  "questionId": 1849,
+  "examName": "ENGAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 2,
+  "stemBlocks": [
+    "A car is travelling along a horizontal road in a straight line. The graph is a velocity-time graph for part of the car's journey. During this part of the journey, what is the total distance that the car travels while it is decelerating?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "velocity / m s$^{-1}$ vs time / s graph",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:26:26.016905+00:00",
+  "sourceImageHash": "2a2de5412d86a262e92710be1b306b7b929b6ee071f889a594bd5eb51ada5bd2",
+  "status": "ok"
+}

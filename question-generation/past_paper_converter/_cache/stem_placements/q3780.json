@@ -1,0 +1,29 @@
+{
+  "questionId": 3780,
+  "examName": "TMUA",
+  "examYear": 2022,
+  "paperName": "Paper 2",
+  "questionNumber": 11,
+  "stemBlocks": [
+    "The diagram shows a kite $PQRS$ whose diagonals meet at $O$.\n$OP = x$\n$OQ = y$\n$OR = x$\n$OS = z$",
+    "Which of the following is necessary and sufficient for angle $SPQ$ to be a right angle?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:22.010474+00:00",
+  "sourceImageHash": "925630966fdfc0101ed0bc4f65646848a288c0cb3c9a5b0739b53c6496d2e1a9",
+  "status": "ok"
+}

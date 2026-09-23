@@ -1,0 +1,29 @@
+{
+  "questionId": 2744,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 5,
+  "stemBlocks": [
+    "Two solid cylinders, P and Q, are shown, where $x > y$.\nCylinder P has diameter $x$ and height $y$.\nCylinder Q has diameter $y$ and height $x$.",
+    "What is the positive difference between the total surface areas of P and Q?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.341026+00:00",
+  "sourceImageHash": "a8ac6d507383889f2cba2d20225bb1e17ff11ac355003e5fdc9d3236fb19f020",
+  "status": "ok"
+}

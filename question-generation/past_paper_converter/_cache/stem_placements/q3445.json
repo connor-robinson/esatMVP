@@ -1,0 +1,29 @@
+{
+  "questionId": 3445,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 56,
+  "stemBlocks": [
+    "The diagram shows an electrocardiogram (ECG) trace from a healthy human. The cardiac output was $5000 \\text{ cm}^3 \\text{ min}^{-1}$. Which row in the table gives the stroke volume and the approximate duration of ventricular systole?",
+    "|  | stroke volume / $ \\text{cm}^3 $ | approximate duration of ventricular systole / s |\n| --- | --- | --- |\n| A | 50 | 0.1 |\n| B | 50 | 0.5 |\n| C | 100 | 0.1 |\n| D | 100 | 0.5 |\n| E | $2.5 \\times 10^5$ | 0.1 |\n| F | $2.5 \\times 10^5$ | 0.5 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.164313+00:00",
+  "sourceImageHash": "6f6a7c6c2f7d3cb37dd396487cc721695564955fe035ea5ab4476a51dd0a29ae",
+  "status": "ok"
+}

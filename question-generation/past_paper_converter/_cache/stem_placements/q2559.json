@@ -1,0 +1,29 @@
+{
+  "questionId": 2559,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 80,
+  "stemBlocks": [
+    "An object of mass 40 kg is placed on a uniform, horizontal plank of mass 10 kg between two supports X and Y as shown in the diagram.",
+    "What is the contact force at X? (gravitational field strength = $10 \\text{ Nkg}^{-1}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.871823+00:00",
+  "sourceImageHash": "893a2dd5811735a8f7366b973c09745806d1820df113e0d986befabfe81ac301",
+  "status": "ok"
+}

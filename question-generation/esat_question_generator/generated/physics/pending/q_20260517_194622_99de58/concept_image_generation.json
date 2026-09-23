@@ -1,0 +1,11 @@
+{
+  "meta": {
+    "path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260517_194622_99de58\\assets\\concept_image_v1.png",
+    "bytes": 617014,
+    "model": "imagen-4.0-generate-001",
+    "aspect_ratio": "1:1",
+    "seed": null,
+    "duration_s": 13.616
+  },
+  "prompt_used": "### Subject/Content Brief\nAn illustrative diagram of a physics experiment setup. The diagram shows a straight, horizontal wire suspended from a force sensor. The wire is immersed in a uniform magnetic field that is perpendicular to its length.\n\n### Object Relation Brief\nA simple, rectangular block representing a force sensor is positioned at the top centre of the image. A straight, horizontal wire is suspended directly below it by two thin, vertical, parallel suspension wires, one at each end. The entire horizontal wire is situated within a rectangular region representing a uniform magnetic field. This magnetic field is directed into the page, indicated by a neat grid of 'X' symbols (crosses) filling the rectangular area.\n\n### Required Labels/Annotations\nNone. The diagram must be purely illustrative and contain no text, letters, numbers, or symbols other than the 'X's for the magnetic field.\n\n### Measurement Brief\nNo measurement arrows, scales, or dimensions are to be shown.\n\n### Style Block\nCreate this image in the precise style of a TMUA / ENGAA / NSAA printed exam-paper diagram. It must be a professional, high-fidelity, monochrome vector-style illustration. Use clean, crisp, thin black line art on a plain off-white or very light grey paper background. The layout must be clean, centred, and have generous whitespace. The drawing should be simplified and schematic, not realistic. The force sensor should be a simple rectangular block, and the wire a simple straight line.\n\n### Negative Block\nAvoid all labels, text, and numbers. Do not add any arrows for current or force. Do not show any decorative elements, shading, gradients, or colours. No 3D effects. The force sensor should be a minimal block, without a screen or buttons. Ensure there are no overlapping lines or symbols."
+}

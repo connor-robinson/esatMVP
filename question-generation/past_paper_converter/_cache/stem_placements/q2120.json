@@ -1,0 +1,29 @@
+{
+  "questionId": 2120,
+  "examName": "ENGAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 5,
+  "stemBlocks": [
+    "$WXYZ$ is a square of side length 1.\n$WM: MX = 1:2$\n$XN:NY=3:1$\n$YP: PZ = 4:1$",
+    "What is the area of triangle $MNP$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:06.341234+00:00",
+  "sourceImageHash": "42469cc346fae804a19f095717387ea49cc20ca635130de9d3b0bbea7a0514c0",
+  "status": "ok"
+}

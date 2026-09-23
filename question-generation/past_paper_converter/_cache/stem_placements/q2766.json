@@ -1,0 +1,29 @@
+{
+  "questionId": 2766,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 27,
+  "stemBlocks": [
+    "A light spring has an uncompressed length of $0.10\\ \\text{m}$. When an object of mass $0.5\\ \\text{kg}$ rests in equilibrium on top of the spring, the length of the spring reduces to $0.08\\ \\text{m}$ as shown.",
+    "What is the energy stored in the spring due to the compression? (gravitational field strength = $10\\ \\text{N}\\,\\text{kg}^{-1}$; the spring obeys Hooke's law)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.359693+00:00",
+  "sourceImageHash": "82fa87f229e3ad5b3496ae62c025c4c2309abadf32c101cce91bef20ed03f356",
+  "status": "ok"
+}

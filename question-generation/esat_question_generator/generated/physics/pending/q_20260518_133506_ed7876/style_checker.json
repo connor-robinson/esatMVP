@@ -1,0 +1,58 @@
+{
+  "stage": "style_checker",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "similar",
+      "notes": "The question hits the 'Hard' ESAT band perfectly by requiring a conceptual model of wave propagation rather than a rote formula application."
+    },
+    "selectivity_audit": {
+      "main_trap": "The 'v = d/t' trap (30 m/s or 42 m/s) which ignores the periodic nature of the wave and the spatial constraint.",
+      "why_not_plug_and_chug": "Direct substitution of the given numbers into standard formulas leads to incorrect answers; the student must synthesize the period, the phase shift, and the spatial constraint to determine the correct travel time.",
+      "expected_mid_student_error": "Assuming the crest at A travels directly to B in 0.20 s, ignoring the fact that the wave is continuous and the distance is greater than one wavelength.",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 2,
+      "estimated_solution_steps": 4,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "Excellent use of a boundary condition to resolve ambiguity in a wave problem.",
+      "The arithmetic is clean and well-suited for a no-calculator environment.",
+      "The distractors are highly effective at catching common conceptual errors."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

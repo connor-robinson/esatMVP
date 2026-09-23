@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260518_154824_dffa0d\\assets\\concept_image_v1.png",
+    "bytes": 320348,
+    "model": "imagen-4.0-ultra-generate-001",
+    "aspect_ratio": "4:3",
+    "seed": null,
+    "duration_s": 16.184
+  },
+  "prompt_used": "A brutally simple, monochrome 2D exam-style diagram of two spheres in a fluid. \n\nSetup: A tall rectangular tank, open at the top, is filled with fluid. The fluid surface is indicated by a simple horizontal straight line near the top of the tank. Inside the fluid, there are two solid spheres (drawn as simple empty circles) positioned side-by-side. The left sphere is smaller. The right sphere is visibly larger (approximately twice the diameter of the left one). Both spheres are fully submerged.\n\nLabels:\n- Label 'P' centred inside the smaller left sphere. No leader line.\n- Label 'Q' centred inside the larger right sphere. No leader line.\n- Label 'fluid' placed outside the tank to the right. A single straight leader line must enter the tank and terminate on an empty, homogeneous patch of fluid between the spheres and the surface. The leader must NOT point at or touch either sphere, the tank walls, or the surface line.\n\nStyle: Pure white background (#FFFFFF). Crisp black vector-like lines. Times New Roman-like serif font. No shading, no 3D rendering, no extra arrows, no force vectors, no velocity arrows, and no explanatory clutter. The diagram must look like a minimalist printed TMUA/ENGAA past-paper illustration.",
+  "public_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_154824_dffa0d/concept_image_v1.png"
+}

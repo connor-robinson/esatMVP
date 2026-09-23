@@ -1,0 +1,28 @@
+{
+  "questionId": 2783,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 44,
+  "stemBlocks": [
+    "A portion of the Periodic Table is given:\nWhich one of these trends is correct?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A portion of the Periodic Table",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.369097+00:00",
+  "sourceImageHash": "c4c3130a85aee1517f7f30de131579d448dbbf45cce0b05511e02974cf805c2e",
+  "status": "ok"
+}

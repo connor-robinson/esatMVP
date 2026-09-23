@@ -1,0 +1,29 @@
+{
+  "questionId": 2434,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 45,
+  "stemBlocks": [
+    "Consider this electrochemical cell containing an aqueous copper(II) chloride electrolyte: Which row in the following table identifies the reactions occurring at the electrodes?",
+    "|  | cathode (negative electrode) | anode (positive electrode) |\n| --- | --- | --- |\n| A | $Cu^{2+}(aq) + 2e^{-} \\to Cu(s)$ | $Cu(s) \\to Cu^{2+}(aq) + 2e^{-}$ |\n| B | $Cu(s) \\to Cu^{2+}(aq) + 2e^{-}$ | $Cu^{2+}(aq) + 2e^{-} \\to Cu(s)$ |\n| C | $2Cl^{-}(aq) \\to Cl_2(g) + 2e^{-}$ | $Cu^{2+}(aq) + 2e^{-} \\to Cu(s)$ |\n| D | $Cu^{2+}(aq) + 2e^{-} \\to Cu(s)$ | $2Cl^{-}(aq) \\to Cl_2(g) + 2e^{-}$ |\n| E | $Cu(s) \\to Cu^{2+}(aq) + 2e^{-}$ | $2OH^{-}(aq) \\to H_2(g) + O_2(g) + 2e^{-}$ |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:49:16.137397+00:00",
+  "sourceImageHash": "1b1086c27e0c20449fb04f7e7314f878d9208837a0d864949c9fa7704bfa2b05",
+  "status": "ok"
+}

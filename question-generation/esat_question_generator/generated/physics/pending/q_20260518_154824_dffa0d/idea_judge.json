@@ -1,0 +1,39 @@
+{
+  "stage": "idea_judge",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "selectivity_score": 0,
+    "checks": {
+      "schema_preserved": "pass",
+      "on_spec": "pass",
+      "reasoning_hinge_present": "pass",
+      "not_direct_substitution": "pass",
+      "wrong_paths_specific": "pass",
+      "visual_feasible": "pass",
+      "mcq_viable": "pass",
+      "difficulty_match": "pass",
+      "goldilocks_complexity": "pass"
+    },
+    "complexity_audit": {
+      "number_of_core_physics_principles": 1,
+      "estimated_solution_steps": 3,
+      "requires_derived_relationship": true,
+      "uses_multi_topic_chain": false,
+      "goldilocks_verdict": "good"
+    },
+    "reasoning_hinge_summary": "The candidate must equate the scaling of weight (m ∝ r³) with the scaling of drag (F_d ∝ r²v²) to derive the relationship v ∝ √r, then apply the mass ratio to find the velocity ratio.",
+    "expected_mid_student_error": "Students will likely fail to account for the r² dependence in the drag force, incorrectly assuming drag is only proportional to v², or they will fail to correctly relate mass to radius (r ∝ m^(1/3)).",
+    "notes": [
+      "The problem is a classic 'Extreme' difficulty ESAT question because it requires synthesis of two proportionalities rather than simple formula application.",
+      "The distractors are well-aligned with common conceptual pitfalls in scaling problems."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

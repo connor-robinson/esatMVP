@@ -1,0 +1,29 @@
+{
+  "questionId": 2113,
+  "examName": "ENGAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 38,
+  "stemBlocks": [
+    "Two isolated spheres have masses $m$ and $2m$. They are moving towards each other along the same straight line with speeds $4v$ and $v$ respectively as shown:\nThe spheres collide with each other and coalesce.",
+    "What is the loss of kinetic energy during the collision?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:34:35.023662+00:00",
+  "sourceImageHash": "dc1352a12c33664dcc603b69b7449db42dc62e0a083b774bce0cbdd257d0f205",
+  "status": "ok"
+}

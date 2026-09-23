@@ -1,0 +1,31 @@
+{
+  "questionId": 3101,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 2",
+  "questionNumber": 10,
+  "stemBlocks": [
+    "Four identical light springs are connected together using a light rod. A load of mass $m$ is suspended from the system so that the rod is horizontal, as shown in the diagram.",
+    "The spring constant of each spring is $k$ and all four springs obey Hooke's law throughout.",
+    "Which of the following expressions gives the elastic potential energy stored in the system?",
+    "(gravitational field strength = $g$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 1.0
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:40:49.334938+00:00",
+  "sourceImageHash": "fc3b249de25f782d14555bc7c68066edaaedd78181badb0ce09410f7220459f5",
+  "status": "ok"
+}

@@ -1,0 +1,28 @@
+{
+  "questionId": 3080,
+  "examName": "ENGAA",
+  "examYear": 2017,
+  "paperName": "Section 2",
+  "questionNumber": 6,
+  "stemBlocks": [
+    "The graph shows the current against voltage characteristics of four different electronic devices W, X, Y and Z. One of the devices is an $8 \\Omega$ resistor and one is a filament lamp rated $9 \\text{W}$ at $6 \\text{V}$. You may assume that the filament lamp does not 'blow' in the context of this question.\na) Which of the devices is the resistor?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing current against voltage for devices W, X, Y, and Z.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:39:07.383155+00:00",
+  "sourceImageHash": "e610af17dfe3e90a6df7113673db5db1915a68924dc534a1073d3ad8f40556fb",
+  "status": "ok"
+}

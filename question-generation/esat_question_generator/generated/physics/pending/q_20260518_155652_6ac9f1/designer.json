@@ -1,0 +1,98 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_ae6afb3b",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Hard",
+    "idea_summary": "Deduce the ratio of specific heat capacities of two liquids from their heating times under a constant power source, then use this ratio to find the final equilibrium temperature when the two liquids are mixed.",
+    "schema_invariant": {
+      "core_move": "Applying Q_lost = Q_gained where heat capacity must be handled as a derived ratio rather than an absolute known value.",
+      "what_must_not_change": [
+        "The core principle of thermal equilibrium (heat lost = heat gained)",
+        "The use of specific heat capacity and temperature changes"
+      ],
+      "what_can_change": [
+        "How the specific heat capacities are provided (derived from heating times instead of explicitly given)",
+        "The presence of an initial heating phase to establish the material properties"
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "proportional_reasoning",
+      "reasoning_hinge": "Realising that absolute values for mass, specific heat capacity, and heater power are unnecessary, as the ratio of the specific heat capacities can be extracted from the heating times.",
+      "why_top_students_win": "They set up the proportionalities from E=Pt and Q=mcΔT, find that liquid Y has twice the specific heat capacity of liquid X, and substitute this 2:1 ratio directly into the mixing equation.",
+      "why_mid_students_miss": "They either get stuck because P, m, and c are unknown, or they assume the heat capacities are equal because the masses and temperature changes in the heating phase are identical, leading them to calculate a simple average temperature."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Thermal energy conservation in mixtures (Q_lost = Q_gained)",
+      "supporting_idea_if_any": "Electrical/thermal energy transfer (E = Pt)",
+      "estimated_solution_steps": 3,
+      "number_of_core_physics_principles": 2,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 3,
+      "must_include": [
+        "link_power_to_heat_capacity",
+        "extract_ratio",
+        "solve_equilibrium_equation"
+      ]
+    },
+    "reference_alignment": "Requires the same conservation of energy equation as the reference, but elevates the difficulty by hiding the specific heat capacities behind a proportional reasoning step.",
+    "task_signature": "calculation_exact_value",
+    "tool_footprint": [
+      "proportional_reasoning",
+      "ratio_extraction",
+      "conservation_of_energy"
+    ],
+    "primary_tag": "3",
+    "secondary_tags": [
+      "2"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "Instead of giving the specific heat capacities directly or asking to find an unknown mass, the specific heat capacities must be inferred as a ratio from an initial, separate heating scenario.",
+    "why_still_on_spec": "Both E=Pt (power and energy) and E=mcΔT (specific heat capacity) are fundamental school physics topics. Combining them via a ratio is a standard test of deeper comprehension without requiring off-spec knowledge.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Assuming the heat capacities are equal because the masses and temperature changes in the first phase are the same, ignoring the different heating times.",
+        "distractor_role": "Yields the simple arithmetic mean of the two initial mixing temperatures."
+      },
+      {
+        "mistake": "Inverting the ratio of the specific heat capacities (e.g., assuming c_X = 2c_Y instead of c_Y = 2c_X).",
+        "distractor_role": "Yields a temperature skewed towards the initial temperature of liquid X instead of liquid Y."
+      },
+      {
+        "mistake": "Adding or subtracting the temperature changes directly without weighting them by the heat capacity ratio.",
+        "distractor_role": "Yields an unphysical extreme temperature."
+      }
+    ],
+    "difficulty_rationale": "The question is highly selective because it requires the candidate to confidently manipulate algebraic symbols (P, m, c) that will eventually cancel out, which deters weak candidates. However, the actual arithmetic is extremely simple (e.g., solving 60 - T = 2(T - 30)), ensuring it is fast for strong candidates.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "The candidate is not given c_X or c_Y to plug into the calorimetry formula; they must first construct a ratio from a separate physical process (heating over time)."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The two-step nature (ratio extraction -> equilibrium calculation) naturally produces clean, predictable wrong answers based on common ratio errors or oversimplifications."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

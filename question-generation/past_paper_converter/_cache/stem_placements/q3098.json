@@ -1,0 +1,28 @@
+{
+  "questionId": 3098,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 2",
+  "questionNumber": 7,
+  "stemBlocks": [
+    "A tennis ball travelling at a speed of $30 \\text{ m s}^{-1}$ hits a racket elastically with a kinetic energy of $27 \\text{ J}$.\nThe racket applies a variable force to the tennis ball for a time of $4.0 \\text{ ms}$ as shown.\nThe ball moves away in the opposite direction to its initial motion.\nWith what speed does the ball leave the racket?\n(Assume that resistive forces are negligible.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:40:49.334938+00:00",
+  "sourceImageHash": "9dd31e325f1ecc4b6436dc1e70f32cff6eef30751b5682043bbf685385120de8",
+  "status": "ok"
+}

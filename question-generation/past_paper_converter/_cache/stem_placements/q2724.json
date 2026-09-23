@@ -1,0 +1,29 @@
+{
+  "questionId": 2724,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 65,
+  "stemBlocks": [
+    "The diagram shows two human gametes, cell P and cell Q, fusing to form cell R. Cell P carries an additional copy of one of its chromosomes so that it has one more chromosome than cell Q. Cell R divides to form two cells S and T. S and T grow into two separate individuals. Using this information, which row shows the correct number of chromosomes in the nucleus of cell R and in the nucleus of cell T?",
+    "|  | cell R | cell T |\n| --- | --- | --- |\n| A | 23 | 24 |\n| B | 24 | 47 |\n| C | 24 | 48 |\n| D | 46 | 46 |\n| E | 47 | 24 |\n| F | 47 | 47 |\n| G | 92 | 47 |\n| H | 93 | 93 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:58.228535+00:00",
+  "sourceImageHash": "88125089f763f7335127b43b2b37ed3bdbd47b6f7a5edef6f502229d6fd4fe5f",
+  "status": "ok"
+}

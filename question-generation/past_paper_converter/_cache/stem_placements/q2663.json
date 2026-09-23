@@ -1,0 +1,29 @@
+{
+  "questionId": 2663,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 4,
+  "stemBlocks": [
+    "PQRS is a square with side length $x$. $M$ is the midpoint of side $PS$. A circular arc, with centre $M$, is drawn inside the square from $S$ to $P$. Another circular arc, with centre $P$, is drawn inside the square from $S$ to $Q$.",
+    "What is the area of the shaded region in terms of $x$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:58.172743+00:00",
+  "sourceImageHash": "70d6cff635735e4a7e5cf267a3967414dc33f39c251db43d16f992b33ea47391",
+  "status": "ok"
+}

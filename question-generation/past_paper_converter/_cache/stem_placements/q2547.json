@@ -1,0 +1,29 @@
+{
+  "questionId": 2547,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 68,
+  "stemBlocks": [
+    "The diagram below shows a circular piece of bacterial DNA called a plasmid that has been made recombinant by the insertion of a plant gene for herbicide resistance.\nBacteria containing only the recombinant plasmid had to be identified from bacteria that contained only the original plasmid. The original plasmid contained a gene coding for resistance to the antibiotic penicillin and a gene coding for resistance to the antibiotic tetracycline.\nThese bacteria were grown on two sets of agar plates. One set used agar that contained the antibiotic penicillin and the other set used agar that contained the antibiotic tetracycline.\nWhich row in the table correctly shows the growth of these bacteria on the two sets of agar?",
+    "|  | bacteria containing only | growth on agar containing penicillin | growth on agar containing tetracycline |\n| --- | --- | --- | --- |\n| A | recombinant plasmid | yes | yes |\n|  | original plasmid | no | no |\n| B | recombinant plasmid | yes | yes |\n|  | original plasmid | yes | no |\n| C | recombinant plasmid | yes | no |\n|  | original plasmid | yes | yes |\n| D | recombinant plasmid | no | no |\n|  | original plasmid | yes | yes |\n| E | recombinant plasmid | yes | yes |\n|  | original plasmid | no | yes |\n| F | recombinant plasmid | no | no |\n|  | original plasmid | no | no |\n| G | recombinant plasmid | yes | no |\n|  | original plasmid | no | yes |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.847435+00:00",
+  "sourceImageHash": "bc623106ed67d23f77df3b91c02c95646c5e7319545c32f826fe0aef9e0e7cba",
+  "status": "ok"
+}

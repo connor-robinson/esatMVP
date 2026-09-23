@@ -1,0 +1,31 @@
+{
+  "questionId": 2732,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 73,
+  "stemBlocks": [
+    "A student investigated the endothermic reaction of photosynthesis in pondweed. The student set up the apparatus as shown in the diagram.",
+    "The experiment was left for 5 minutes and the distance moved by the gas bubble along a capillary tube of 2 mm diameter was recorded. Using these values, the rate of gas production is $2\\pi \\text{ mm}^3$ per minute.",
+    "Which row of the table is correct?",
+    "|  | total distance moved by the gas bubble during the experiment / mm | reason why the reaction is described as endothermic | observations if the light source was moved further from the pondweed |\n| --- | --- | --- | --- |\n| A | 0.5 | the reaction releases energy | the gas bubble moves more slowly to the right |\n| B | 0.5 | the reaction takes in energy | the gas bubble moves more slowly to the left |\n| C | 2.0 | the reaction releases energy | the gas bubble moves more slowly to the left |\n| D | 2.0 | the reaction releases energy | the gas bubble moves more slowly to the right |\n| E | 2.5 | the reaction takes in energy | the gas bubble moves more slowly to the left |\n| F | 2.5 | the reaction takes in energy | the gas bubble moves more slowly to the right |\n| G | 10.0 | the reaction releases energy | the gas bubble moves more slowly to the left |\n| H | 10.0 | the reaction takes in energy | the gas bubble moves more slowly to the right |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:58.239612+00:00",
+  "sourceImageHash": "c22ac9286241d2225a276bed3d920e536411421ebe9e489749dc063e4c4002e9",
+  "status": "ok"
+}

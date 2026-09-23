@@ -1,0 +1,35 @@
+{
+  "stage": "visual_linkage_validator",
+  "status": "fail",
+  "verdict": null,
+  "payload": {
+    "ok": false,
+    "errors": [
+      {
+        "field": "question.stem",
+        "kind": "missing_placeholder",
+        "message": "visual_need=accurate_schematic_json but stem has no <DIAGRAM id=\"...\" /> placeholder."
+      }
+    ],
+    "warnings": [
+      {
+        "field": "question.options",
+        "kind": "non_default_count",
+        "message": "Expected 6 options (A-F); got 5."
+      }
+    ],
+    "option_keys": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "summary": "1 error(s)"
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": null,
+  "attempts": 1
+}

@@ -1,0 +1,30 @@
+{
+  "questionId": 3112,
+  "examName": "ENGAA",
+  "examYear": 2019,
+  "paperName": "Section 2",
+  "questionNumber": 3,
+  "stemBlocks": [
+    "A block of mass $2.0 \\text{kg}$ is on a plane which is inclined to the horizontal at an angle of $30^\\circ$. The block is attached to a load of mass $M$ by a light, inextensible string which passes over a smooth pulley.\nThe load moves downwards at a constant speed.\nA constant friction force of $5.0 \\text{N}$ acts on the block while it moves.",
+    "What is the value of $M$?",
+    "(gravitational field strength $= 10 \\text{Nkg}^{-1}$; assume that air resistance is negligible)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:42:12.051077+00:00",
+  "sourceImageHash": "c631d82ec7904d1cb9147f40fe934d597d26a71cbb564335e3c4bb723e0e681e",
+  "status": "ok"
+}

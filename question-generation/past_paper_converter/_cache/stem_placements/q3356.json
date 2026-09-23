@@ -1,0 +1,29 @@
+{
+  "questionId": 3356,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 27,
+  "stemBlocks": [
+    "$\\Delta G$ (Gibbs free energy change), $\\Delta H$ (enthalpy change) and $\\Delta S$ (entropy change) are thermodynamic quantities for a reaction linked by the equation\n$$\\Delta G = \\Delta H - T\\Delta S$$\nwhere $T$ = temperature measured in kelvin (K).\nThe graph shows how $\\Delta G$, in kJ mol$^{-1}$, varies with temperature, in K, for a reaction at constant pressure.\nIs the reaction endothermic or exothermic, and what is the value of $\\Delta S$, in Jmol$^{-1}$ K$^{-1}$? (Assume that $\\Delta H$ and $\\Delta S$ do not vary with temperature over this range.)",
+    "|  | the reaction is... | $\\Delta S$ / Jmol$^{-1}$ K$^{-1}$ |\n| --- | --- | --- |\n| A | endothermic | -0.20 |\n| B | endothermic | +0.20 |\n| C | endothermic | -200 |\n| D | endothermic | +200 |\n| E | exothermic | -0.20 |\n| F | exothermic | +0.20 |\n| G | exothermic | -200 |\n| H | exothermic | +200 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:10.833984+00:00",
+  "sourceImageHash": "1d1617121f4755a2985d20b325db642a5719f2476ecbf381904e0cace4668ee2",
+  "status": "ok"
+}

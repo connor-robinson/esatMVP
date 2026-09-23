@@ -1,0 +1,28 @@
+{
+  "questionId": 3418,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 29,
+  "stemBlocks": [
+    "Ethanethiol, CH$_3$CH$_2$SH, is a foul-smelling gas that is added to natural gas to enable humans to detect gas leaks, which would otherwise not be noticed.\nThe minimum concentration of ethanethiol that a person can detect is $1.8 \\times 10^{-7}$ mg per cm$^3$ of air.\nA gas leak happens in an empty room that has dimensions $20 \\text{ m} \\times 20 \\text{ m} \\times 3 \\text{ m}$. Assume that the ethanethiol is spread evenly throughout the room.\nIf a person detected the gas leak, what is the minimum number of molecules of ethanethiol in the room to 1 significant figure?\n(A$_r$ values: H = 1; C = 12; S = 32. Avogadro's number = $6 \\times 10^{23}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.098206+00:00",
+  "sourceImageHash": "3a79185f6031fa9b47fea8c711c53045d06d35b0ab36f166811db25910a29707",
+  "status": "ok"
+}

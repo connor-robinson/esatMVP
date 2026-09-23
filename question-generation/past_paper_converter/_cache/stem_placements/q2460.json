@@ -1,0 +1,30 @@
+{
+  "questionId": 2460,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 71,
+  "stemBlocks": [
+    "A power station released warm water into a river. This is an example of water pollution because the temperature of the river water was increased.\nA student was interested in the effects of the temperature increase on a pollution indicator species.\nThe student studied two graphs. Graph 1 showed the oxygen required by the pollution indicator species for survival and graph 2 showed the effect of temperature on the oxygen dissolved in the water.",
+    "The student wrote the following statements:\n1 As the oxygen required by the pollution indicator species for survival increases, the water temperature rises.\n2 There is less dissolved oxygen available to the pollution indicator species as the water temperature rises.\n3 The pollution indicator species will survive better in water at $30^{\\circ}\\text{C}$ than at $5^{\\circ}\\text{C}$ because it has a greater oxygen uptake at $30^{\\circ}\\text{C}$.",
+    "Which of the student's conclusions could be correct using only the information provided?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph 1: oxygen required for survival vs temperature of water. Graph 2: dissolved oxygen vs temperature of water.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:49:16.245438+00:00",
+  "sourceImageHash": "d6a7c69f01ef54f35ecff92fdccc179cc611e4f8164d452a4444eb451c9f133c",
+  "status": "ok"
+}

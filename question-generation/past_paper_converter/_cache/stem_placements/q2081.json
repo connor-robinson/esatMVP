@@ -1,0 +1,41 @@
+{
+  "questionId": 2081,
+  "examName": "ENGAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 6,
+  "stemBlocks": [
+    "Ultrasound is used to find a crack inside a cuboid block of metal. An ultrasound probe is held in contact with the top surface of the metal block and perpendicular to the surface. A short pulse of ultrasound is sent into the metal block at time $t = 0 \\text{ ms}$ and reflects from both the crack and the bottom surface of the metal block.",
+    "The times between the emission of the ultrasound pulse and the return of the reflections to the probe, and the strengths of the reflected pulses, are measured. The results are shown on the graph.",
+    "The speed of ultrasound in the metal is $5000 \\text{ ms}^{-1}$.",
+    "What is the distance between the **bottom surface** of the metal block and the crack?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Diagram showing an ultrasound probe on a metal block with a crack, and a graph of reflected pulse strength vs time.",
+      "role": "stem_diagram"
+    },
+    {
+      "id": "d2",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    },
+    {
+      "assetId": "d2",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:34:34.948610+00:00",
+  "sourceImageHash": "8f5c50b6f9c6191d0a9435f48498c23cdbee282b0d6875fae61af34fbe52ce09",
+  "status": "ok"
+}

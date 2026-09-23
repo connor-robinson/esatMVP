@@ -1,0 +1,29 @@
+{
+  "questionId": 2127,
+  "examName": "ENGAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 12,
+  "stemBlocks": [
+    "A large, flat, metal plate is coated on one side with a layer of thermally insulating material of the same thickness $a$ as the metal plate. The uninsulated top surface of the metal plate is maintained at a constant temperature $T_1$. The bottom surface of the insulating material is maintained at a constant, lower temperature $T_2$. The system is in equilibrium. The diagram shows this arrangement.",
+    "Which graph could show how the temperature varies with distance from the top surface of the metal plate to the bottom surface of the insulating material?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Diagram showing a metal plate on top of an insulating material, with temperatures $T_1$ and $T_2$ indicated.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:06.346307+00:00",
+  "sourceImageHash": "f206ffe4ea3f311e3880c392ba909081e0539fe7e41010f5e0e7d15149c4a1f4",
+  "status": "ok"
+}

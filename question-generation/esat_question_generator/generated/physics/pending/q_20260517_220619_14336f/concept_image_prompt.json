@@ -1,0 +1,65 @@
+{
+  "image_id": "img1",
+  "model_purpose": "concept_visual",
+  "answer_depends_on_image": false,
+  "recommended_model": "MODEL_IMAGE_FAST",
+  "prompt": "A high-fidelity, illustrative physics diagram for an exam paper, showing two scenarios side-by-side: a light pulse being absorbed by an object, and a light pulse being reflected by an object. The image must be purely conceptual and illustrative.\n\n### Subject/content brief:\nThe image consists of two simple diagrams arranged horizontally, labelled 'Case 1: Absorption' and 'Case 2: Reflection'. Each diagram shows a simple rectangular block and arrows representing a light pulse.\n\n### Object relation brief:\n- **Left Diagram (Absorption):** Draw a simple rectangular block. From the left, a single horizontal arrow points towards the right face of the block. The arrowhead should touch the block's surface, signifying absorption. There must be no arrow moving away from the block.\n- **Right Diagram (Reflection):** Draw an identical rectangular block. From the left, a horizontal arrow points towards the right face of the block. A second horizontal arrow of the same size must point away from the same face, moving from right to left along the same line as the incoming arrow, signifying reflection.\n- Both blocks should be identical and can be shown resting on a single, thin horizontal line representing a surface.\n\n### Required labels / annotations:\n- Above the left diagram, include the text: \"Case 1: Absorption\"\n- Above the right diagram, include the text: \"Case 2: Reflection\"\n\n### Measurement brief:\n- There are no measurements or measurement arrows in this diagram.\n\n### Style block:\n- **Overall Style:** Create a professional monochrome admissions-test diagram in the style of TMUA / ENGAA / NSAA printed past papers. The image must look like clean, black-and-white vector art.\n- **Color:** Use only black or dark-charcoal line art on a plain, very light grey or off-white paper background.\n- **Line Work:** Use crisp, thin, and consistent strokes. The outlines of the blocks should be slightly heavier than the arrows or the ground line.\n- **Typography:** Use a Times New Roman-like serif font for all labels. The text must be upright (not italic), sharp, and legible.\n- **Layout:** Ensure generous whitespace around and between the two diagrams. The two diagrams must be neatly aligned horizontally. Place labels clearly above their respective diagrams with no overlap with any part of the drawing.\n\n### Negative block:\n- Do not add any labels, symbols, or annotations other than those explicitly listed. Do not add variables like 'p' or 'E'.\n- Avoid 3D effects, shadows, gradients, or realistic textures.\n- Strictly no photorealism or cartoon styling.\n- Strictly no sans-serif fonts.\n- Strictly no colour.",
+  "negative_prompt": "No extra labels. No overlap. No sans-serif fonts. No decorative shading. No photorealism. No colour. No 3D effects. No shadows. Do not add variables like p, E, M. Do not omit the outgoing arrow in the reflection case. Do not add an outgoing arrow in the absorption case.",
+  "required_labels": [
+    "Case 1: Absorption",
+    "Case 2: Reflection"
+  ],
+  "forbidden_labels": [
+    "p",
+    "E",
+    "M",
+    "c",
+    "p_abs",
+    "p_refl",
+    "v",
+    "m"
+  ],
+  "layout_logic": {
+    "must_show_relations": [
+      "Two diagrams are presented side-by-side.",
+      "The left diagram, for absorption, shows an arrow pointing towards a block with no outgoing arrow.",
+      "The right diagram, for reflection, shows an arrow pointing towards a block and a second arrow of equal size pointing away from the block along the same line.",
+      "The blocks in both diagrams are identical."
+    ],
+    "measurement_mapping": [],
+    "relative_size_constraints": [
+      "The incoming and outgoing arrows in the reflection diagram should be visually the same length.",
+      "The incoming arrows in both diagrams should be visually the same length."
+    ]
+  },
+  "hard_constraints": [
+    "Must be two side-by-side diagrams.",
+    "Left diagram must be labelled 'Case 1: Absorption'.",
+    "Right diagram must be labelled 'Case 2: Reflection'.",
+    "Absorption diagram must not have an arrow leaving the block.",
+    "Reflection diagram must have an arrow leaving the block.",
+    "No overlapping labels or lines."
+  ],
+  "style": {
+    "target_style": "tmua_engaa_exam_diagram",
+    "exam_style": true,
+    "black_and_white": true,
+    "serif_font": "Times New Roman-like",
+    "math_variables_italic": true,
+    "minimal": true,
+    "not_to_scale": true,
+    "no_overlap": true,
+    "logic_sensitive": true
+  },
+  "post_generation_checks": {
+    "run_concept_image_verifier": true,
+    "verify_no_overlap": true,
+    "verify_font_exam_like": true,
+    "verify_no_extra_labels": true,
+    "verify_not_answer_bearing": true,
+    "verify_object_relations": true,
+    "verify_measurement_clarity": true,
+    "verify_relative_size_plausibility": true,
+    "verify_simplification_level": true
+  }
+}

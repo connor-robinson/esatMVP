@@ -1,0 +1,29 @@
+{
+  "questionId": 3828,
+  "examName": "TMUA",
+  "examYear": 2016,
+  "paperName": "Paper 2",
+  "questionNumber": 19,
+  "stemBlocks": [
+    "Some identical unit cubes are used to construct a three-dimensional object by gluing them together face to face. Sketches of this object are made by looking at it from the right-hand side, from the front and from above. These sketches are called the side elevation, the front elevation, and the plan view respectively.",
+    "How many cubes were used to construct the object?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "This is the side elevation of the object.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:22.027866+00:00",
+  "sourceImageHash": "9b47644b800bba02094ad6d131c27e55b4f1101bf4f01fa81509b936c5a0ad93",
+  "status": "ok"
+}

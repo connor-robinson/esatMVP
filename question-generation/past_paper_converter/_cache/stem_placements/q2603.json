@@ -1,0 +1,28 @@
+{
+  "questionId": 2603,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 34,
+  "stemBlocks": [
+    "The graph shows how a car's velocity changes in 85 seconds.\nWhat proportion of the total distance is travelled at constant velocity?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:19.005646+00:00",
+  "sourceImageHash": "4d9e8b58fb3e50de9d4d5159eb3413af18cc3fa326d39f27cb2531e3a894e171",
+  "status": "ok"
+}

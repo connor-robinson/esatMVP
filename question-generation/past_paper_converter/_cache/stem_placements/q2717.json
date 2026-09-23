@@ -1,0 +1,30 @@
+{
+  "questionId": 2717,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 58,
+  "stemBlocks": [
+    "Four separate experiments were carried out using different quantities of $2 \\text{ mol dm}^{-3}$ hydrochloric acid and $2 \\text{ mol dm}^{-3}$ sodium hydroxide in insulated polystyrene cups.\nAfter stirring, the maximum temperature was recorded and the results plotted on a graph as shown.\nThe temperatures of the acid and alkali on their own were also plotted on the graph. Two straight lines were drawn and extrapolated as shown.",
+    "What is the molar enthalpy change for the neutralisation reaction, in $ \\text{kJ mol}^{-1}$?",
+    "(Assume that the specific heat capacity of the solutions is $4 \\text{ Jg}^{-1}\\text{°C}^{-1}$, the density of dilute solutions is $1 \\text{ g cm}^{-3}$, and all heat is transferred to the solution.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:58.218902+00:00",
+  "sourceImageHash": "88a13f70360a9b2f3362e9b4d2afdbfa88bb936ed0c3f3f63e46925380c148a1",
+  "status": "ok"
+}

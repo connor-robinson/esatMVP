@@ -1,0 +1,69 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_a9a3eea7",
+      "module": "physics",
+      "variation_mode": "FAR",
+      "target_difficulty": "Medium",
+      "task_signature": "compare_scenarios",
+      "primary_tag": "2",
+      "secondary_tags": [
+        "1"
+      ]
+    },
+    "question": {
+      "stem": "A small charged object falls through a fluid at its terminal speed.\n\nA constant upward electric force $F$ is then applied to the object. The object now rises through the fluid at the same terminal speed.\n\nThe upthrust on the object is $U$.\n\nWhich expression gives the weight $W$ of the object?",
+      "options": {
+        "A": "$W = \\frac{F}{2} - U$",
+        "B": "$W = \\frac{F}{2}$",
+        "C": "$W = \\frac{F + U}{2}$",
+        "D": "$W = \\frac{F}{2} + U$",
+        "E": "$W = F - U$",
+        "F": "$W = F + U$"
+      },
+      "correct_option": "D"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "The drag force has the same magnitude in both cases because the terminal speed is the same, but it acts upwards when falling and downwards when rising.",
+      "reasoning": "When falling at terminal speed, the forces are balanced: Weight acts down, upthrust and drag act up. So, $W = U + D$, which gives $D = W - U$.\n\nWhen rising at terminal speed, the forces are again balanced: Electric force and upthrust act up, weight and drag act down. So, $F + U = W + D$.\n\nSubstitute the expression for $D$ into the second equation:\n$F + U = W + (W - U)$\n$F + U = 2W - U$\n$2W = F + 2U$\n$W = \\frac{F}{2} + U$"
+    },
+    "distractor_map": {
+      "A": "Assumes upthrust acts downwards (like weight) in both cases, yielding $W + U = D$ and $F = W + U + D$.",
+      "B": "Ignores upthrust entirely, or incorrectly assumes upthrust flips direction and acts downwards when the object rises.",
+      "C": "Includes upthrust in one equation but forgets it in the other (e.g., $W = U + D$ for falling, but $F = W + D$ for rising).",
+      "D": "Correct. Sets up $W = U + D$ (falling) and $F + U = W + D$ (rising), then eliminates $D$.",
+      "E": "Ignores drag entirely, assuming the object is stationary and forces balance as $F = W + U$.",
+      "F": "Ignores drag entirely and incorrectly equates forces as $W = F + U$."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Recognising that drag flips direction but maintains the same magnitude, while upthrust remains constant and upwards.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 1,
+        "estimated_solution_steps": 3,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

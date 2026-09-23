@@ -1,0 +1,31 @@
+{
+  "questionId": 2637,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 68,
+  "stemBlocks": [
+    "A gene found on the X chromosome in humans has two alleles, dominant and recessive. Individuals who have only recessive alleles have a condition that affects their eyesight.",
+    "The inheritance of the condition in one family is shown in the family tree.",
+    "If one living skin cell from each member of this family were analysed, how many of the following alleles would be found?",
+    "|  | $\\textit{number of copies of the recessive allele}$ | $\\textit{number of copies of the dominant allele}$ |\n| --- | --- | --- |\n| A | 2 | 7 |\n| B | 2 | 12 |\n| C | 2 | 14 |\n| D | 4 | 7 |\n| E | 4 | 12 |\n| F | 4 | 14 |\n| G | 6 | 7 |\n| H | 6 | 12 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:19.042999+00:00",
+  "sourceImageHash": "22c0384121d5df60badbed34a33bc6c552eab9d50618a6973919f356a6fbd502",
+  "status": "ok"
+}

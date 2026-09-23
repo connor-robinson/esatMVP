@@ -1,0 +1,31 @@
+{
+  "questionId": 2375,
+  "examName": "NSAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 76,
+  "stemBlocks": [
+    "A shopper pushes a supermarket trolley a distance of 15 m in a straight line across a level, horizontal surface. The shopper applies a constant force of 50 N at an angle of $37^{\\circ}$ below the horizontal. The total weight of the trolley and its contents is 350 N.",
+    "What is the magnitude of the total vertical force that the surface exerts on the trolley and how much work is done by the pushing force?",
+    "(You may use the approximations $\\sin 37^{\\circ} = 0.60$; $\\cos 37^{\\circ} = 0.80$.)",
+    "|  | vertical force / N | work done / J |\n| --- | --- | --- |\n| A | 380 | 600 |\n| B | 380 | 750 |\n| C | 390 | 450 |\n| D | 390 | 750 |\n| E | 400 | 450 |\n| F | 400 | 600 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "[diagram not to scale]",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:25:34.753530+00:00",
+  "sourceImageHash": "4fb3be684374def0c6d25b4bef9a97f7ee06033f96b57d33a2e267ecf78a5e17",
+  "status": "ok"
+}

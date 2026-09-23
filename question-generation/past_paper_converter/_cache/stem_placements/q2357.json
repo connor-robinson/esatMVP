@@ -1,0 +1,30 @@
+{
+  "questionId": 2357,
+  "examName": "NSAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 58,
+  "stemBlocks": [
+    "A student carried out an experiment to investigate how temperature affects the rate of activity of an enzyme found in potatoes. This enzyme breaks down the substrate hydrogen peroxide to produce water and oxygen. The apparatus was set up as shown in the diagram and the experiment carried out at $30 \\, ^{\\circ}\\text{C}$. The student counted the number of bubbles of oxygen produced in one minute. The experiment was repeated at $40 \\, ^{\\circ}\\text{C}$, $50 \\, ^{\\circ}\\text{C}$, $60 \\, ^{\\circ}\\text{C}$, and $70 \\, ^{\\circ}\\text{C}$. The results collected by the student are shown in the first table below. A group of students were given these results and asked to calculate the percentage decrease in the number of bubbles produced between $30 \\, ^{\\circ}\\text{C}$ and $60 \\, ^{\\circ}\\text{C}$. Each student was also asked to write a conclusion to explain the results. These are shown in the second table below. Which student correctly calculated the percentage decrease in the number of bubbles between $30 \\, ^{\\circ}\\text{C}$ and $60 \\, ^{\\circ}\\text{C}$ and wrote an appropriate conclusion which explains the reason for this decrease?",
+    "Results collected by the student.\n| temperature/$^{\\circ}\\text{C}$ | number of bubbles of oxygen gas produced in one minute |\n| --- | --- |\n| 30 | 32 |\n| 40 | 27 |\n| 50 | 23 |\n| 60 | 8 |\n| 70 | 2 |",
+    "Student calculations and conclusions.\n|  | percentage decrease in the number of bubbles between $30 \\, ^{\\circ}\\text{C}$ and $60 \\, ^{\\circ}\\text{C}$ | conclusion |\n| --- | --- | --- |\n| A | 20 | the high temperature causes the bonds maintaining the structure of the enzyme to break |\n| B | 20 | the temperature of the environment is too hot and the enzyme dies |\n| C | 75 | the high temperature causes the bonds maintaining the structure of the enzyme to break |\n| D | 75 | the temperature of the environment is too hot and the enzyme dies |\n| E | 300 | the high temperature causes the bonds maintaining the structure of the enzyme to break |\n| F | 300 | the temperature of the environment is too hot and the enzyme dies |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:25:34.718874+00:00",
+  "sourceImageHash": "7d8b839858fefc76ab74e1594ee4fa9fb098db224d345048b7e34ca94ea44e09",
+  "status": "ok"
+}

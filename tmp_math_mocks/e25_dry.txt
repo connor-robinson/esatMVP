@@ -1,0 +1,7 @@
+﻿E25 current 495bda7b-6421-46e4-b46f-6a145f8ab5f3
+Let the function $f$ be defined by $f(x) = x^2 - 2$. The function $f^n(x)$ is defined by $f^1(x)=f(x)$ and $f^{n+1}(x) = f(f^n(x))$ for $n \ge 1$. Find the number of distinct real solutions to the equation $f^5(x) = 0$.
+
+Pick 79c08867-ddd7-4531-beda-517d107a1186 D=5 M4 ans=D
+The graph of a quadratic polynomial $y = P(x)$ is translated by the vector $\begin{pmatrix} 3 \\\\ -2 \end{pmatrix}$ to give the graph of $y = Q(x)$. The polynomial $Q(x)$ has roots at $x = 2$ and $x = 6$. Given that the graph of $y = P(x)$ touches the $x$ -axis exactly once, what is the $y$ -intercept of the graph of $y = P(x)$?
+(kept 4 of 8 candidates)
+dry-run (pass --apply)

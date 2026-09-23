@@ -1,0 +1,29 @@
+{
+  "questionId": 2159,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 4,
+  "stemBlocks": [
+    "The displacement/time graph shown represents a wave of wavelength 1.5 cm.",
+    "What is the speed of the wave?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:37:46.624892+00:00",
+  "sourceImageHash": "0098f4d1680e5defccf876ff75b20617ccbc7ef5c18f3e5f32b12c9e000e434b",
+  "status": "ok"
+}

@@ -1,0 +1,30 @@
+{
+  "questionId": 2415,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 26,
+  "stemBlocks": [
+    "An electric motor is connected to a constant $12\\text{V}$ d.c. supply. The motor is used to lift a mass of $20\\text{ kg}$ by means of a rope and pulley. The mass is lifted vertically through a height of $6.0\\text{ m}$ in a time of $5.0\\text{ s}$. The complete lifting system (motor, rope and pulley) is $80\\%$ efficient.",
+    "What is the current in the electric motor?",
+    "(gravitational field strength = $10\\text{ N kg}^{-1}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:49:16.082429+00:00",
+  "sourceImageHash": "5f039a5f2ed874bd4405e5c6d3c535707d87f47b1cb4fd313c2df9485a3d59b8",
+  "status": "ok"
+}

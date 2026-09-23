@@ -1,0 +1,30 @@
+{
+  "questionId": 2061,
+  "examName": "ENGAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 26,
+  "stemBlocks": [
+    "A resistor R is connected between terminals X and Y in the circuit shown.",
+    "The power transferred in the $4.0\\ \\Omega$ heater is $9.0\\ \\text{W}$.",
+    "What is the resistance of R?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:32:52.516597+00:00",
+  "sourceImageHash": "181a0fdc08b5a37b865dc5d522ead76d3eaf3de5439575d9797d881abfdb82cc",
+  "status": "ok"
+}

@@ -1,0 +1,30 @@
+{
+  "questionId": 3381,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 52,
+  "stemBlocks": [
+    "The properties of three biological membranes were investigated. It was found that:",
+    "* There is a positive correlation between the fluidity of a membrane and the rate of simple diffusion of substance X across it.\n* Cholesterol increases the fluidity of membranes at low temperatures, but decreases their fluidity at high temperatures.\n* The cell surface membrane has the highest percentage of cholesterol, and the lysosomal membrane has the second highest percentage of cholesterol.",
+    "Which of the following sketch graphs is consistent with this information?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Key: Dotted line represents Golgi apparatus membrane, dashed line represents inner mitochondrial membrane, solid line represents cell surface membrane.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 3,
+      "confidence": 1.0
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:10.865813+00:00",
+  "sourceImageHash": "7f1295eb1a55c589ff1335fac04329d63edde6338b0a18e1d0a1c31624bd4e24",
+  "status": "ok"
+}

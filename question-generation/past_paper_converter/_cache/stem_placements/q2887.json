@@ -1,0 +1,30 @@
+{
+  "questionId": 2887,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 68,
+  "stemBlocks": [
+    "Many different species of cichlid fish have evolved from a common ancestor.",
+    "Which of the following statements about evolution of the cichlid fish is/are correct?",
+    "1 Different food types being available caused mutations in the DNA of the ancestral population of fish.\n2 Natural selection was possible because there were multiple alleles of the genes affecting the traits shown in the diagram.\n3 Natural selection of individuals with phenotypes best suited to different parts of the environment took place."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "The drawing shows some of the species that have evolved in Lake Victoria in Africa.\nHaplochromis chilotes (feeds on insects)\nHaplochromis macrognathus (feeds on other fish)\nAstatotilapia elegans (generalised bottom feeder)\nMacropleurodus bicolor (feeds on snails and other molluscs)",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 2,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.394250+00:00",
+  "sourceImageHash": "b99dcf84962aa85ce4833764298fc6634479377bc9052d2ad2e28025a1262875",
+  "status": "ok"
+}

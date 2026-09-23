@@ -1,0 +1,29 @@
+{
+  "questionId": 3252,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 43,
+  "stemBlocks": [
+    "Graphs P and Q were plotted using data collected in an investigation into the effect of temperature from 0 to 60°C on an enzyme-controlled reaction. All other variables were controlled.\nWhich two rows correctly identify the variables plotted on the horizontal and vertical axes of these graphs?",
+    "| row | graph | horizontal axis | vertical axis |\n| --- | --- | --- | --- |\n| 1 | P | temperature | time taken for reaction |\n| 2 | P | temperature | rate of reaction |\n| 3 | P | time taken for reaction | temperature |\n| 4 | P | time taken for reaction | rate of reaction |\n| 5 | Q | temperature | time taken for reaction |\n| 6 | Q | temperature | rate of reaction |\n| 7 | Q | time taken for reaction | temperature |\n| 8 | Q | time taken for reaction | rate of reaction |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:13.927660+00:00",
+  "sourceImageHash": "0667814243e72ef538af82201961231ccbbf3f7147c920df1f1121e0a4e8354a",
+  "status": "ok"
+}

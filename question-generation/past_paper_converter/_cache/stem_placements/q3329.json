@@ -1,0 +1,30 @@
+{
+  "questionId": 3329,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 60,
+  "stemBlocks": [
+    "An investigation was carried out to discover the evolutionary relationships between three different species of mammal, a human, a monkey and a hedgehog, as shown in the flow diagram:\nWhen an antigen binds to an antibody, a precipitate is formed, which is measured in stage 3.\nSome of the results for stage 3 are shown in the table.\nP and Q each represent one of the non-human mammals.",
+    "Which row is correct for this investigation?",
+    "| species of mammal | amount of precipitate formed / arbitrary units |\n| --- | --- |\n| P | 58 |\n| Q | 17 |\n|  | biological molecules that form antibodies in stage 1 | the amount of precipitate formed for the sample with human blood in stage 3 / arbitrary units | species Q |\n| --- | --- | --- | --- |\n| A | amino acids | greater than 58 | monkey |\n| B | amino acids | greater than 58 | hedgehog |\n| C | amino acids | less than 17 | monkey |\n| D | amino acids | less than 17 | hedgehog |\n| E | nucleotides | greater than 58 | monkey |\n| F | nucleotides | greater than 58 | hedgehog |\n| G | nucleotides | less than 17 | monkey |\n| H | nucleotides | less than 17 | hedgehog |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:13.316260+00:00",
+  "sourceImageHash": "6d294bc9b37a87364b575c2563c9ba925b4e733ebc8fd3b4c449523810e761b9",
+  "status": "ok"
+}

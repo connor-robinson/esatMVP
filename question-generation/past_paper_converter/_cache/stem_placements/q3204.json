@@ -1,0 +1,39 @@
+{
+  "questionId": 3204,
+  "examName": "ENGAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 15,
+  "stemBlocks": [
+    "A sound wave travels through medium J, reaches a boundary, and then travels through medium K as shown. The thickness of each medium is $L$.\nThe wave travels a distance $q$ in medium J and a distance $y$ in medium K.\nThe horizontal distance travelled in medium J is $p$. The horizontal distance travelled in medium K is $x$.\nThe wave travels at speed $v$ in medium J. The graph shows how the speed of the wave varies with time $t$ as it travels distances $q$ and $y$, and that the wave leaves medium K at $t = 2.75 \\text{ ms}$.",
+    "What is the value of $\\frac{x}{p}$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    },
+    {
+      "id": "d2",
+      "alt": "Speed $v$ vs time $t$ graph",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    },
+    {
+      "assetId": "d2",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:48:58.247646+00:00",
+  "sourceImageHash": "cdd8945efca3626570a854ca3d77d2afcecb8cfc78cf20fec16aaddbb414afd2",
+  "status": "ok"
+}

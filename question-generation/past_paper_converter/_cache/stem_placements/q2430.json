@@ -1,0 +1,30 @@
+{
+  "questionId": 2430,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 41,
+  "stemBlocks": [
+    "Study the chromatogram below showing the spots obtained, labelled (i) to (v), from two sweets and pure samples of the food additives, labelled Q, R and S.",
+    "Which of the following statements about the chromatogram is/are correct?",
+    "1 Both sweet 1 and 2 contain additives R and S.\n2 The $R_f$ value for spot (iv) is half that for spot (iii).\n3 The $R_f$ value for spot (v) is 0.7."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Chromatogram showing spots (i) to (v) from two sweets and pure samples of food additives Q, R, and S, with a solvent front and baseline indicated.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:49:16.126437+00:00",
+  "sourceImageHash": "1019694a86c82683950c9f748b9f9d349a15e7701ba198165a36c9900147e7e9",
+  "status": "ok"
+}

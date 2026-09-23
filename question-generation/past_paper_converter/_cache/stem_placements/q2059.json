@@ -1,0 +1,30 @@
+{
+  "questionId": 2059,
+  "examName": "ENGAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 24,
+  "stemBlocks": [
+    "A sound wave is travelling from left to right in air. The diagram represents the wave at a particular instant, and a distance of $33 \\text{ cm}$ is labelled. The speed of sound in air is $330 \\text{ ms}^{-1}$.",
+    "What is the frequency of the sound and in which direction has the air at P been displaced from its mean position?",
+    "|  | frequency of sound / Hz | displacement of air at P |\n| --- | --- | --- |\n| A | 1000 | to the left |\n| B | 2500 | to the left |\n| C | 5000 | to the left |\n| D | 1000 | to the right |\n| E | 2500 | to the right |\n| F | 5000 | to the right |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:32:52.509673+00:00",
+  "sourceImageHash": "484ba7a9962ecf7db469e2e221a2a5da667bae1c9cf2b28e02b01b5fd2b11b58",
+  "status": "ok"
+}

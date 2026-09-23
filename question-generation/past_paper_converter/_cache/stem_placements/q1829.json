@@ -1,0 +1,29 @@
+{
+  "questionId": 1829,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 36,
+  "stemBlocks": [
+    "A plank of non-uniform density which has a mass of $15 \\text{ kg}$ is used to make a see-saw. A pivot is placed under the centre of the plank as shown on the diagram.\nA boy of mass $35 \\text{ kg}$ sits at one end of the plank with his centre of gravity $1.20 \\text{ m}$ from the pivot. The see-saw balances when a woman of mass $60 \\text{ kg}$ sits on the plank on the other side of the pivot. Her centre of gravity is $0.80 \\text{ m}$ from the pivot.\nWhere is the centre of gravity of the plank and what is the magnitude of the force between the pivot and the plank?\n(The gravitational field strength $g$ is $10 \\text{ N kg}^{-1}.)$",
+    "|  | distance from pivot | force / N |\n| --- | --- | --- |\n| A | $0.40 \\text{ m}$ on left of pivot | 100 |\n| B | $0.40 \\text{ m}$ on left of pivot | 1100 |\n| C | at the pivot | 100 |\n| D | at the pivot | 1100 |\n| E | $0.20 \\text{ m}$ on right of pivot | 100 |\n| F | $0.20 \\text{ m}$ on right of pivot | 1100 |\n| G | $0.40 \\text{ m}$ on right of pivot | 100 |\n| H | $0.40 \\text{ m}$ on right of pivot | 1100 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "[diagram not to scale]",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:23:52.640749+00:00",
+  "sourceImageHash": "6aa775070131e40b981277eb03b71c27857dbaf224e981bb7f5582dc940f2dfe",
+  "status": "ok"
+}

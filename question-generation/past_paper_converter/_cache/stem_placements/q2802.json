@@ -1,0 +1,30 @@
+{
+  "questionId": 2802,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 63,
+  "stemBlocks": [
+    "A cell is studied. The graph shows the concentration of a substance at different distances from the cell membrane. The concentrations shown are maintained over time.",
+    "Which of the following processes is/are responsible for maintaining the difference in the concentration of the substance across the membrane?",
+    "1 active transport\n2 diffusion\n3 osmosis"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing concentration of substance versus distance from cell membrane, indicating higher concentration inside the cell and lower outside, maintained over time.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.381302+00:00",
+  "sourceImageHash": "408c80203b49fe1d599855d4f442901720ca2ece8671a3c8a5c9a3ca06783142",
+  "status": "ok"
+}

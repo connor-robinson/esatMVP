@@ -1,0 +1,104 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_ad97dfb5",
+    "module": "physics",
+    "variation_mode": "FAR",
+    "target_difficulty": "Medium",
+    "idea_summary": "Calculate the ratio of power dissipated by two wires connected in parallel, where one wire has scaled dimensions (length and radius), requiring the application of the inverse-square law for resistance and the V²/R power law.",
+    "schema_invariant": {
+      "core_move": "Calculate the resultant ratio of a dependent physical quantity by applying scaling factors to independent variables in a power law relationship.",
+      "what_must_not_change": [
+        "The use of a multi-variable power law relationship.",
+        "The requirement to scale independent variables to find a ratio or new relative value."
+      ],
+      "what_can_change": [
+        "The physical domain (shifted from gravity/astrophysics to DC circuits).",
+        "The specific formulas used.",
+        "The addition of a model-selection step to determine which variable is held constant."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "tempting_wrong_model",
+      "reasoning_hinge": "Recognising that in a parallel circuit, voltage is the constant invariant, so power scales with 1/R (using P = V²/R) rather than R (using P = I²R).",
+      "why_top_students_win": "They correctly square the radius scaling factor to find the resistance ratio, and then correctly invert it because power in parallel is inversely proportional to resistance.",
+      "why_mid_students_miss": "They either forget to square the radius when scaling the cross-sectional area, or they use P = I²R and assume power scales directly with resistance, missing that current splits unevenly between the parallel branches."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Electrical resistance dependence on dimensions (R = ρL/A).",
+      "supporting_idea_if_any": "Electrical power in parallel circuits (P = V²/R).",
+      "estimated_solution_steps": 3,
+      "number_of_core_physics_principles": 2,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 3,
+      "must_include": [
+        "model_selection",
+        "proportional_reasoning",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "Matches the pace of standard ESAT proportional reasoning questions, but adds a conceptual physics hinge (parallel vs series) to elevate it from a pure math exercise to a physics reasoning task.",
+    "task_signature": "proportional_change",
+    "tool_footprint": [
+      "identify_invariant",
+      "apply_power_law",
+      "calculate_ratio"
+    ],
+    "primary_tag": "5",
+    "secondary_tags": [
+      "5.2",
+      "5.4"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "Shifting from the typical astrophysics or gravity contexts of this schema into DC circuits, introducing a model-selection hinge (which power formula to use) before the power-law scaling can be applied.",
+    "why_still_on_spec": "Calculating resistance from resistivity and dimensions, and calculating electrical power, are fundamental parts of the ESAT Electricity specification (Section 5).",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Using P = I²R and assuming current is constant despite the parallel connection.",
+        "distractor_role": "Yields a ratio that is the direct inverse of the correct answer (e.g., 8 instead of 1/8)."
+      },
+      {
+        "mistake": "Forgetting to square the radius scaling factor when calculating the resistance ratio.",
+        "distractor_role": "Yields a ratio based on a 1/r dependence rather than 1/r² (e.g., 1/4 instead of 1/8)."
+      },
+      {
+        "mistake": "Both forgetting to square the radius AND using the series power formula (P = I²R).",
+        "distractor_role": "Yields a linearly scaled direct ratio (e.g., 4)."
+      },
+      {
+        "mistake": "Assuming resistance is directly proportional to cross-sectional area rather than inversely proportional.",
+        "distractor_role": "Yields a ratio where the radius scaling factor is multiplied rather than divided."
+      }
+    ],
+    "difficulty_rationale": "It requires combining two well-known standard formulas (R=ρL/A and P=V²/R) through proportional reasoning. The math is simple enough to do mentally (e.g., 2 / (0.5)² = 8), but the multiple traps (squaring, inverse vs direct, parallel vs series) make it highly selective.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "The candidate must deduce which variable is constant (voltage) to select the correct proportional relationship (P ∝ 1/R) before they can apply the scaling factors. Blindly plugging into P = I²R will fail."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The discrete combinations of common errors (forgetting to square, picking the wrong power formula, inverting the area relationship) generate clean, distinct integer or simple fraction distractors."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

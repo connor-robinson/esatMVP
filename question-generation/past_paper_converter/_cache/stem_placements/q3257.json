@@ -1,0 +1,30 @@
+{
+  "questionId": 3257,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 48,
+  "stemBlocks": [
+    "The diagram shows the production of sperm cells in a healthy mammal. Cell P divides. One daughter cell goes on to replace cell P, and the other daughter cell is called Q in the diagram.\nEach mitotic cell cycle takes 14 hours.\nThe diploid number of chromosomes in this mammal is 68.",
+    "Which of the following statements is/are correct?",
+    "1 Cell P is a type of stem cell.\n2 Cells T, U, V and W each contain 23 chromosomes.\n3 In 112 hours, 128 replacements of cell P are made."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:13.933505+00:00",
+  "sourceImageHash": "f0a14c7e0d0d4355a63774a3b16d33ff81de32ee33fc584cb29cc5d8ea1c0b52",
+  "status": "ok"
+}

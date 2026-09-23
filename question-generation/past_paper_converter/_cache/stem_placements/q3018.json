@@ -1,0 +1,28 @@
+{
+  "questionId": 3018,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 39,
+  "stemBlocks": [
+    "The diagram shows a truck on a section of a roller coaster ride.\nThe truck is launched from position P as shown, and moves along frictionless rails towards position Q.\nThe values of the Earth's gravitational field strength and the initial speed of the truck are known.\nWhich single additional piece of information is needed to be able to calculate the speed of the truck at Q?\n(Assume air resistance is negligible and the truck has no internal power source.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:15.994838+00:00",
+  "sourceImageHash": "2655c39bea55829888513d49c34b75dc71851f9a2e49c48cb1cc319b0d2ea113",
+  "status": "ok"
+}

@@ -1,0 +1,68 @@
+{
+  "image_id": "img1",
+  "model_purpose": "concept_visual",
+  "answer_depends_on_image": false,
+  "recommended_model": "MODEL_IMAGE_HIGH_QUALITY",
+  "prompt": "### 1. Subject/content brief\nA professional, high-fidelity exam diagram illustrating two physics scenarios involving a mass and a vertical spring, presented side-by-side. The diagram is for illustrative purposes only.\n\n- **Right Diagram ('Case 1'):** A simple rectangular block rests in equilibrium on a vertically compressed coiled spring. The spring stands on a flat horizontal ground line.\n- **Left Diagram ('Case 2'):** The same setup, but the spring is uncompressed, and the block is positioned just touching the top of the spring. A small, simple downward arrow is drawn next to the block to indicate it is about to be dropped.\n\n### 2. Object relation brief\n- The two diagrams must be presented side-by-side with clear separation.\n- In both diagrams, a vertical coiled spring stands on a solid horizontal line representing a surface.\n- The mass is a simple, plain rectangular block, identical in both diagrams.\n- In the 'Case 2' diagram (left), the spring is uncompressed, and the bottom face of the block is in contact with the top of the spring.\n- In the 'Case 1' diagram (right), the spring is visibly shorter (compressed), and the block rests on top of it.\n\n### 3. Required labels / annotations\n- Above the left diagram, add the label 'Case 2' in an upright serif font.\n- Above the right diagram, add the label 'Case 1' in an upright serif font.\n- In the 'Case 1' diagram, draw a faint, thin horizontal dashed line to indicate the original, uncompressed height of the spring. This dashed line should be at the same height as the top of the spring in the 'Case 2' diagram.\n- In the 'Case 1' diagram, draw a vertical double-headed arrow to the side of the spring. This arrow must span the distance from the dashed line (original height) down to the top of the compressed spring. Label this arrow with the italic serif variable *x*<sub>1</sub>.\n- The block in the 'Case 1' diagram should be labelled with the italic serif variable *m*.\n- In the 'Case 2' diagram, a small, simple, solid downward-pointing arrow should be placed next to the block to signify motion.\n\n### 4. Measurement brief\n- The measurement arrow for *x*<sub>1</sub> must clearly show the compression of the spring in 'Case 1' relative to its original height. The label *x*<sub>1</sub> should be placed neatly beside the arrow, without touching it.\n\n### 5. Style block\n- **Style:** Strictly adhere to a high-fidelity TMUA / ENGAA / NSAA printed exam-diagram style. The image must look like a professional black-and-white vector illustration from a physics admissions test paper.\n- **Line Art:** Use crisp, thin, black or dark-charcoal strokes on a plain off-white or very light grey background.\n- **Typography:** All text must be in a Times New Roman-like serif font. Mathematical variables (*m*, *x*<sub>1</sub>) must be italic. Labels ('Case 1', 'Case 2') must be upright.\n- **Layout:** Ensure a clean, minimalist, and well-spaced layout with generous margins. There must be no overlapping labels, lines, or objects.\n- **Note:** The diagram is illustrative and not to scale.\n\n### 6. Negative block\n- **Forbidden Content:** Do not add any labels, numbers, or annotations not explicitly listed. Specifically, do not label or depict the compression *x*<sub>2</sub>. Do not show the final state of Case 2 (maximum compression). Do not add a '[diagram not to scale]' note.\n- **Forbidden Styles:** No colour, no photorealism, no 3D rendering, no gradients, no decorative shading, no sketchy or cartoonish lines. No sans-serif fonts.",
+  "negative_prompt": "No extra labels. No overlap. No sans-serif fonts. No decorative shading. No photorealism. No colour. No exact answer-bearing measurements. No clutter. No malformed symbols. Do not place objects in the wrong support/location relationship. Do not label x2. Do not show the final state of Case 2. Do not add a '[diagram not to scale]' text block.",
+  "required_labels": [
+    "Case 1",
+    "Case 2",
+    "m",
+    "x_1"
+  ],
+  "forbidden_labels": [
+    "x_2",
+    "mg",
+    "k",
+    "F"
+  ],
+  "layout_logic": {
+    "must_show_relations": [
+      "Two diagrams side-by-side, left is 'Case 2', right is 'Case 1'.",
+      "Spring stands on a horizontal surface in both diagrams.",
+      "Mass rests on compressed spring in 'Case 1'.",
+      "Mass touches uncompressed spring in 'Case 2'.",
+      "Spring in 'Case 1' is visibly shorter than spring in 'Case 2'.",
+      "A dashed line in 'Case 1' indicates the original height of the spring."
+    ],
+    "measurement_mapping": [
+      {
+        "label": "x_1",
+        "description": "A vertical double-headed arrow showing the compression distance of the spring in 'Case 1', from its original height (dashed line) to its compressed height."
+      }
+    ],
+    "relative_size_constraints": []
+  },
+  "hard_constraints": [
+    "Must be two side-by-side diagrams.",
+    "Left diagram must be labelled 'Case 2' and show an uncompressed spring.",
+    "Right diagram must be labelled 'Case 1' and show a compressed spring.",
+    "The label x_1 must correspond to the compression in Case 1.",
+    "The label x_2 must not appear anywhere in the image.",
+    "All text must be a serif font like Times New Roman.",
+    "No overlapping labels or lines."
+  ],
+  "style": {
+    "target_style": "tmua_engaa_exam_diagram",
+    "exam_style": true,
+    "black_and_white": true,
+    "serif_font": "Times New Roman-like",
+    "math_variables_italic": true,
+    "minimal": true,
+    "not_to_scale": true,
+    "no_overlap": true,
+    "logic_sensitive": true
+  },
+  "post_generation_checks": {
+    "run_concept_image_verifier": true,
+    "verify_no_overlap": true,
+    "verify_font_exam_like": true,
+    "verify_no_extra_labels": true,
+    "verify_not_answer_bearing": true,
+    "verify_object_relations": true,
+    "verify_measurement_clarity": true,
+    "verify_relative_size_plausibility": true,
+    "verify_simplification_level": true
+  }
+}

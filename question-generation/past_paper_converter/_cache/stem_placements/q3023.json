@@ -1,0 +1,29 @@
+{
+  "questionId": 3023,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 44,
+  "stemBlocks": [
+    "Chemicals A and B react to form products Y and Z. The reaction goes to completion. The equation for the reaction is: $2A(aq) + B(aq) \\rightarrow Y(aq) + Z(aq)$ Equimolar samples of A and B were mixed and the concentrations of A and Z were measured over time.",
+    "Which of the following graphs could represent this reaction?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:15.999100+00:00",
+  "sourceImageHash": "b76d9a1dd4f2b6bb974720e88ade081db0b61fb22e9df41b0984263285e8f1ce",
+  "status": "ok"
+}

@@ -1,0 +1,28 @@
+{
+  "questionId": 3013,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 34,
+  "stemBlocks": [
+    "Consider this graph.\nWhich one of the following could the graph not represent if all quantities are in SI units?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A graph showing a straight line passing through the origin (0,0) and (100,20). The y-axis is labeled 'y' and ranges from 0 to 20. The x-axis is labeled 'x' and ranges from 0 to 100.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:15.983413+00:00",
+  "sourceImageHash": "8c3a7357b9a215912018c3504b14c7b6563889fa19a7c38f54435b1fe43ddaee",
+  "status": "ok"
+}

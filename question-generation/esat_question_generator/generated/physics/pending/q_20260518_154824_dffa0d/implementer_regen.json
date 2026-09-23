@@ -1,0 +1,69 @@
+{
+  "stage": "implementer_regen",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_ad97dfb5",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Extreme",
+      "task_signature": "proportional_change",
+      "primary_tag": "1",
+      "secondary_tags": [
+        "2"
+      ]
+    },
+    "question": {
+      "stem": "Two solid spheres, P and Q, are made of the same material and fall through a highly viscous fluid. The drag force on a sphere of radius $r$ moving at velocity $v$ in this fluid is proportional to $r v$.\n\nSphere Q has $27$ times the mass of sphere P.\n\nWhat is the ratio of the terminal velocity of sphere Q to the terminal velocity of sphere P?",
+      "options": {
+        "A": "$1/9$",
+        "B": "$1/3$",
+        "C": "$3$",
+        "D": "$9$",
+        "E": "$27$",
+        "F": "$81$"
+      },
+      "correct_option": "D"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "At terminal velocity, weight (proportional to $r^3$) balances drag (proportional to $r v$), which simplifies to $v \\propto r^2$.",
+      "reasoning": "1. Since the spheres are made of the same material, they have the same density. Therefore, mass $m \\propto r^3$.\n2. Sphere Q has $27$ times the mass of P, meaning its radius is $\\sqrt[3]{27} = 3$ times larger ($r_Q = 3r_P$).\n3. At terminal velocity, the downward force (weight, proportional to $m$ and thus $r^3$) equals the upward drag force (given as proportional to $r v$).\n4. Equating the proportionalities gives $r^3 \\propto r v$, which simplifies to $v \\propto r^2$.\n5. Since the radius of Q is $3$ times that of P, its terminal velocity is $3^2 = 9$ times that of P."
+    },
+    "distractor_map": {
+      "A": "Incorrect. This results from inverting the relationship, assuming the larger mass falls slower ($v \\propto 1/r^2$).",
+      "B": "Incorrect. This results from assuming $v \\propto 1/r$ or making an inversion error on the radius ratio.",
+      "C": "Incorrect. This comes from correctly finding the radius ratio ($3$) but assuming $v \\propto r$ instead of $v \\propto r^2$.",
+      "D": "Correct. $m \\propto r^3$ means $r$ increases by a factor of 3. Weight balances drag ($r^3 \\propto r v \\implies v \\propto r^2$), so $v$ increases by $3^2 = 9$.",
+      "E": "Incorrect. This occurs if the candidate ignores the $r$ term in the drag proportionality, assuming drag $\\propto v$. This leads to $v \\propto m$, giving a ratio of $27$.",
+      "F": "Incorrect. This results from finding the radius ratio ($3$) but incorrectly assuming $v \\propto r^4$."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Equating the scaling of weight ($r^3$) with the scaling of drag ($r v$) to deduce that terminal velocity $v$ scales with $r^2$.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 1,
+        "estimated_solution_steps": 3,
+        "requires_derived_relationship": true,
+        "not_overstacked": true
+      }
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 3
+}

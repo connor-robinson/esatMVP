@@ -1,0 +1,29 @@
+{
+  "questionId": 1819,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 26,
+  "stemBlocks": [
+    "When a stationary uranium-238 nucleus decays by alpha emission it forms a nucleus of thorium-234. The total kinetic energy produced by the decay is $E$.",
+    "What is the kinetic energy of the alpha particle?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:23:52.622908+00:00",
+  "sourceImageHash": "5c2613bd76a71a3390d31f7e4655201a327bec73b30d88e2b8e1811cfaf41f7a",
+  "status": "ok"
+}

@@ -1,0 +1,411 @@
+{
+  "question_id": "q_20260518_133043_a99364",
+  "subject": "physics",
+  "schema_id": "P_b51132c8",
+  "difficulty": "Easy",
+  "status": "accepted",
+  "failure_gate": null,
+  "failure_reasons": [],
+  "has_visual": false,
+  "visual_type": "none",
+  "answer_depends_on_visual": false,
+  "assets": [],
+  "model_trace": {
+    "designer": "gemini-3.1-pro-preview",
+    "idea_judge": "gemini-3.1-flash-lite",
+    "implementer": "gemini-3.1-pro-preview",
+    "verifier": "gemini-3.1-flash-lite",
+    "style_checker": "gemini-3.1-flash-lite",
+    "visual_router": "gemini-3.1-flash-lite",
+    "tag_labeler": "gemini-2.5-flash"
+  },
+  "retry_counts": {
+    "implementer": 0
+  },
+  "stages": [
+    {
+      "stage": "designer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "schema_id": "P_b51132c8",
+        "module": "physics",
+        "variation_mode": "SIBLING",
+        "target_difficulty": "Easy",
+        "idea_summary": "Given an observed increase in the frequency of a microwave signal from a space probe, the candidate must deduce the relative direction of motion and identify that the speed of the microwaves remains exactly c.",
+        "schema_invariant": {
+          "core_move": "Deducing the relationship between relative motion, Doppler shift (frequency/wavelength), and the invariance of the speed of light in a vacuum.",
+          "what_must_not_change": [
+            "The use of an electromagnetic wave in a vacuum.",
+            "Testing the constancy of the speed of light.",
+            "Testing the qualitative direction of the Doppler shift."
+          ],
+          "what_can_change": [
+            "The specific region of the EM spectrum.",
+            "The direction of reasoning (e.g., from shift to motion, rather than motion to shift).",
+            "The physical setting (e.g., local spacecraft instead of distant galaxies)."
+          ]
+        },
+        "discrimination_mechanism": {
+          "type": "hidden_invariant",
+          "reasoning_hinge": "Recognising that while frequency and wavelength change due to relative motion, the wave speed (c) does not undergo classical Galilean velocity addition.",
+          "why_top_students_win": "They immediately associate a higher frequency with an approaching source (blueshift) and correctly apply the postulate that all EM waves travel at c in a vacuum regardless of source motion.",
+          "why_mid_students_miss": "They may correctly identify the probe is approaching but intuitively assume the waves are 'pushed' faster, concluding the speed is greater than c."
+        },
+        "goldilocks_complexity_audit": {
+          "main_physics_principle": "Qualitative Doppler effect for electromagnetic waves.",
+          "supporting_idea_if_any": "Constancy of the speed of light in a vacuum.",
+          "estimated_solution_steps": 2,
+          "number_of_core_physics_principles": 2,
+          "requires_derived_relationship": false,
+          "too_easy_risk": "low",
+          "too_hard_risk": "low",
+          "goldilocks_verdict": "good"
+        },
+        "minimum_reasoning_depth": {
+          "steps": 2,
+          "must_include": [
+            "non_obvious_inference",
+            "model_selection"
+          ]
+        },
+        "reference_alignment": "Maintains the classic table-style multiple-choice format of NSAA Q25, but flips the logic: instead of given motion -> find properties, it gives one property -> find motion and speed.",
+        "task_signature": "reverse_reasoning",
+        "tool_footprint": [
+          "qualitative_doppler",
+          "speed_of_light_invariance",
+          "reverse_inference"
+        ],
+        "primary_tag": "6",
+        "secondary_tags": [
+          "3"
+        ],
+        "visual_need": "none",
+        "visual_role": "none",
+        "visual_brief": "",
+        "surface_twist": "Uses a local space probe emitting microwaves and uses reverse reasoning (given the frequency shift, deduce the motion) rather than the standard cosmological redshift scenario.",
+        "why_still_on_spec": "The Doppler effect (qualitative) and the properties of EM waves (including their constant speed in a vacuum) are standard GCSE/A-level specification points.",
+        "constraints_used": [
+          "short condition descriptions only",
+          "no final numbers",
+          "no exact geometric diagram dependence"
+        ],
+        "intended_wrong_paths": [
+          {
+            "mistake": "Assuming that because the probe is approaching, the speed of the emitted microwaves is greater than c.",
+            "distractor_role": "Plausible distractor combining correct motion with incorrect classical velocity addition."
+          },
+          {
+            "mistake": "Associating an increase in frequency with the source moving away (confusing redshift and blueshift).",
+            "distractor_role": "Tests basic recall of the Doppler shift direction."
+          },
+          {
+            "mistake": "Believing that a change in frequency must be accompanied by a change in wave speed to keep wavelength constant (misapplying v = fλ by holding λ fixed instead of v).",
+            "distractor_role": "Tests understanding of how the wave equation variables interrelate during a Doppler shift."
+          }
+        ],
+        "difficulty_rationale": "It is an Easy question because it relies on two fundamental, qualitative facts (blueshift means approaching, c is constant). The difficulty is strictly conceptual (avoiding classical velocity addition), which is perfect for ESAT Section 1.",
+        "anti_plug_and_chug_check": {
+          "would_formula_substitution_alone_solve_it": false,
+          "why_not": "There are no numbers to substitute; the candidate must conceptually link frequency change to motion direction and recall a physical postulate about wave speed."
+        },
+        "mcq_viability": {
+          "viable": true,
+          "reason": "The combinations of motion (approaching/receding) and wave speed (<c, =c, >c) naturally form a clean set of multiple-choice options."
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-pro-preview",
+      "attempts": 1
+    },
+    {
+      "stage": "idea_judge",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "selectivity_score": 0,
+        "checks": {
+          "schema_preserved": "pass",
+          "on_spec": "pass",
+          "reasoning_hinge_present": "pass",
+          "not_direct_substitution": "pass",
+          "wrong_paths_specific": "pass",
+          "visual_feasible": "pass",
+          "mcq_viable": "pass",
+          "difficulty_match": "pass",
+          "goldilocks_complexity": "pass"
+        },
+        "complexity_audit": {
+          "number_of_core_physics_principles": 2,
+          "estimated_solution_steps": 2,
+          "requires_derived_relationship": false,
+          "uses_multi_topic_chain": false,
+          "goldilocks_verdict": "good"
+        },
+        "reasoning_hinge_summary": "The candidate must distinguish between the Doppler effect (which shifts frequency/wavelength) and the fundamental postulate of special relativity (that the speed of light in a vacuum is invariant regardless of source motion).",
+        "expected_mid_student_error": "Students will likely attempt to apply Galilean relativity, incorrectly concluding that the speed of the microwaves is c + v_source.",
+        "notes": [
+          "The question effectively targets the common misconception that light speed is additive in a classical sense.",
+          "The qualitative nature of the question keeps it firmly in the 'Easy' category while maintaining high conceptual discrimination."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "implementer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "metadata": {
+          "schema_id": "P_b51132c8",
+          "module": "physics",
+          "variation_mode": "SIBLING",
+          "target_difficulty": "Easy",
+          "task_signature": "reverse_reasoning",
+          "primary_tag": "6",
+          "secondary_tags": [
+            "3"
+          ]
+        },
+        "question": {
+          "stem": "A space probe in a vacuum transmits a microwave signal to a receiver on Earth. The receiver detects the signal at a higher frequency than the frequency at which it was emitted.\n\nLet $c$ be the speed of light in a vacuum.\n\nWhich of the following correctly describes the motion of the space probe relative to Earth, and the speed of the received microwaves as measured on Earth?",
+          "options": {
+            "A": "The probe is approaching Earth, and the speed of the microwaves is $c$.",
+            "B": "The probe is approaching Earth, and the speed of the microwaves is greater than $c$.",
+            "C": "The probe is approaching Earth, and the speed of the microwaves is less than $c$.",
+            "D": "The probe is moving away from Earth, and the speed of the microwaves is $c$.",
+            "E": "The probe is moving away from Earth, and the speed of the microwaves is greater than $c$.",
+            "F": "The probe is moving away from Earth, and the speed of the microwaves is less than $c$."
+          },
+          "correct_option": "A"
+        },
+        "visual_requirements": {
+          "visual_need": "none",
+          "visual_role": "none",
+          "answer_depends_on_visual": false,
+          "graph_request": null,
+          "schematic_request": null,
+          "concept_image_request": null
+        },
+        "solution": {
+          "key_insight": "An increase in observed frequency means the source is approaching, but the speed of all electromagnetic waves in a vacuum is always exactly $c$.",
+          "reasoning": "First, consider the change in frequency. The Doppler effect dictates that an observed frequency higher than the emitted frequency (a blueshift) occurs when the source is moving towards the observer. Therefore, the probe is approaching Earth.\n\nSecond, consider the wave speed. Microwaves are a type of electromagnetic radiation. A fundamental property of electromagnetic waves is that their speed in a vacuum is constant ($c$) for all observers, regardless of the relative motion of the source. The wave speed does not undergo classical Galilean velocity addition. Thus, the speed remains $c$."
+        },
+        "distractor_map": {
+          "A": "Correct. Higher frequency indicates an approaching source, and the speed of EM waves in a vacuum is invariant ($c$).",
+          "B": "Correctly identifies the probe is approaching, but incorrectly applies classical velocity addition to light, assuming the wave is 'pushed' faster.",
+          "C": "Correctly identifies the probe is approaching, but incorrectly assumes the wave speed decreases.",
+          "D": "Incorrectly associates a higher frequency with a receding source (confusing blueshift with redshift), but correctly identifies the speed is $c$.",
+          "E": "Incorrectly associates a higher frequency with a receding source, and incorrectly assumes the wave speed increases.",
+          "F": "Incorrectly associates a higher frequency with a receding source, and incorrectly applies classical velocity subtraction to light."
+        },
+        "quality_self_check": {
+          "reasoning_hinge_used": "Recognising that while frequency and wavelength change due to relative motion, the wave speed (c) does not undergo classical Galilean velocity addition.",
+          "not_direct_substitution": true,
+          "exactly_one_correct": true,
+          "no_calculator_friendly": true,
+          "on_spec": true,
+          "visual_dependency_safe": true,
+          "goldilocks_complexity": {
+            "number_of_core_physics_principles": 2,
+            "estimated_solution_steps": 2,
+            "requires_derived_relationship": false,
+            "not_overstacked": true
+          }
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-pro-preview",
+      "attempts": 1
+    },
+    {
+      "stage": "deterministic_validator",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "ok": true,
+        "errors": [],
+        "warnings": [],
+        "option_keys": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F"
+        ],
+        "summary": "ok"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": null,
+      "attempts": 1
+    },
+    {
+      "stage": "verifier",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "correct_option_verified": "A",
+        "independent_solution": {
+          "main_law_or_principle": "Doppler effect and the constancy of the speed of light in a vacuum.",
+          "calculation_or_logic": "1. The Doppler effect for waves states that an increase in observed frequency (blueshift) relative to the source frequency indicates that the source is moving towards the observer. 2. According to the second postulate of special relativity, the speed of electromagnetic waves (including microwaves) in a vacuum is a universal constant $c$, independent of the motion of the source.",
+          "verified_answer_value": "A",
+          "claimed_answer_value": "A",
+          "matches_claim": true
+        },
+        "spec_audit": {
+          "required_physics_moves": [
+            "Identify blueshift as motion towards observer",
+            "Recall invariance of speed of light in vacuum"
+          ],
+          "all_explicitly_on_spec": true,
+          "borderline_or_offspec_moves": []
+        },
+        "derived_relationship_audit": {
+          "requires_nontrivial_derivation": false,
+          "number_of_linked_relationships": 0,
+          "relationships_given_in_stem": [],
+          "safe_for_esat": true
+        },
+        "checks": {
+          "correctness": "pass",
+          "uniqueness": "pass",
+          "syllabus": "pass",
+          "no_calc_feasibility": "pass",
+          "ambiguity": "pass",
+          "diagram_dependency": "pass",
+          "distractor_safety": "pass",
+          "katex_formatting": "pass",
+          "graph_or_visual_validation": "n/a",
+          "derived_relationship_safety": "pass"
+        },
+        "notes": [
+          "The question correctly tests conceptual understanding of the Doppler effect and the fundamental postulate of the constancy of the speed of light."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "style_checker",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "style_score": {
+          "total": 40,
+          "breakdown": {
+            "stem_tone": 5,
+            "physics_authenticity": 5,
+            "reasoning_quality": 5,
+            "selectivity": 5,
+            "no_calc_engineering": 5,
+            "option_realism": 5,
+            "distractor_plausibility": 5,
+            "goldilocks_calibration": 5
+          }
+        },
+        "difficulty_calibration": {
+          "difficulty_vs_reference": "similar",
+          "length_feel_vs_reference": "shorter",
+          "notes": "Perfectly calibrated for an early-paper ESAT question. It tests conceptual foundations rather than calculation."
+        },
+        "selectivity_audit": {
+          "main_trap": "The 'Galilean intuition' trap: students often incorrectly assume that if a source is moving towards them, the wave speed must increase (v + v_source).",
+          "why_not_plug_and_chug": "There are no numbers and no formulas to manipulate; it is purely a test of conceptual understanding of wave properties.",
+          "expected_mid_student_error": "Selecting B, as they correctly identify the Doppler shift direction but fail to apply the postulate of the constancy of the speed of light.",
+          "verdict": "selective"
+        },
+        "complexity_audit": {
+          "estimated_core_principles": 2,
+          "estimated_solution_steps": 2,
+          "overstacked": false,
+          "goldilocks_verdict": "good"
+        },
+        "flags": {
+          "too_easy": false,
+          "too_hard": false,
+          "too_wordy": false,
+          "too_recall_heavy": false,
+          "too_plug_and_chug": false,
+          "over_advanced_chain": false,
+          "possible_verifier_miss": false
+        },
+        "notes": [
+          "This is an excellent example of an ESAT question. It is concise, conceptually deep, and targets a common misconception without requiring any calculation."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "visual_router",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "visual_route": "none",
+        "answer_depends_on_visual": false,
+        "required_files": [],
+        "reason": "The question is purely conceptual and relies on the qualitative understanding of the Doppler effect and the invariance of the speed of light. No diagram is required to convey the scenario.",
+        "next_prompt_file": null,
+        "style_target_if_image": null,
+        "blocking_issue": null,
+        "simplicity_audit": {
+          "visual_needed": false,
+          "can_be_described_in_one_sentence": true,
+          "estimated_object_types": 0,
+          "estimated_labels": 0,
+          "requires_unwanted_arrows_or_symbols": false,
+          "route_is_conservative": true
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "tag_labeler",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "primary_tag": "6",
+        "secondary_tags": [
+          "3"
+        ],
+        "primary_confidence": 0.95,
+        "reasoning": "The question primarily tests the Doppler effect for electromagnetic waves and the constancy of the speed of light in a vacuum, which are core concepts of Waves. It also requires understanding relative motion (approaching/receding) to interpret the Doppler shift, which is a concept from Mechanics.",
+        "_raw_text": "```json\n{\n  \"primary_tag\": \"6\",\n  \"secondary_tags\": [\"3\"],\n  \"primary_confidence\": 0.95,\n  \"reasoning\": \"The question primarily tests the Doppler effect for electromagnetic waves and the constancy of the speed of light in a vacuum, which are core concepts of Waves. It also requires understanding relative motion (approaching/receding) to interpret the Doppler shift, which is a concept from Mechanics.\"\n}\n```"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    }
+  ],
+  "pipeline": "v4",
+  "created_at": "2026-05-18T13:32:46+01:00"
+}

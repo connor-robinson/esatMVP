@@ -1,0 +1,29 @@
+{
+  "questionId": 3004,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 25,
+  "stemBlocks": [
+    "A radioactive isotope decays to a stable product. A sample of this isotope is placed near to a radiation detector in a laboratory.\nA graph of count rate against time was plotted to display the data from the detector.",
+    "What is the approximate count rate due to background radiation for this experiment?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:15.967861+00:00",
+  "sourceImageHash": "de35cfe9aaab4afe7028bca3609368c49bdd8e0208d7feadc00890231c08ae0c",
+  "status": "ok"
+}

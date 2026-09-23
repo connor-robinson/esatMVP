@@ -1,0 +1,28 @@
+{
+  "questionId": 2209,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 54,
+  "stemBlocks": [
+    "A train consists of a powered engine travelling horizontally pulling two unpowered carriages. The engine has a mass of $20000 \\text{ kg}$, and each carriage has a mass of $5000 \\text{ kg}$. When the engine accelerates from rest it develops a thrust (driving force) of $15000 \\text{ N}$ as shown. Ignoring resistive forces, what is the tension (pulling force) $T$ in the light and inextensible coupling between carriage 1 and carriage 2?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:37:46.658286+00:00",
+  "sourceImageHash": "6f23160c6a839d6df6cf69b47526736f4e383e72754255947c4a9941b18b2a43",
+  "status": "ok"
+}

@@ -1,0 +1,56 @@
+{
+  "stage": "verifier",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "A",
+    "independent_solution": {
+      "main_law_or_principle": "Conservation of Mass, Definition of Weight, Archimedes' Principle, Thermal Expansion",
+      "calculation_or_logic": "1. **Mass:** The 'parcel' refers to a fixed amount of liquid. Heating it does not change the number of particles or the amount of matter within this parcel. Therefore, its mass remains **unchanged**.\n2. **Weight:** Weight is defined as $W = mg$. Since the mass ($m$) of the parcel is unchanged and the gravitational field strength ($g$) is constant, its weight also remains **unchanged**.\n3. **Upthrust:** Upthrust (buoyant force) is given by Archimedes' Principle: $F_b = \\rho_{fluid} V_{displaced} g$. When the parcel of liquid is heated, it undergoes thermal expansion, meaning its volume ($V_{parcel}$) increases. Since the parcel is submerged, the volume of fluid it displaces ($V_{displaced}$) is equal to its own volume. The density of the *surrounding* (unheated) fluid ($\\rho_{fluid}$) remains constant. As $V_{displaced}$ increases due to thermal expansion, the upthrust ($F_b$) acting on the parcel **increases**.",
+      "verified_answer_value": "Mass: Unchanged, Weight: Unchanged, Upthrust: Increases",
+      "claimed_answer_value": "Mass: Unchanged, Weight: Unchanged, Upthrust: Increases",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Apply conservation of mass to a defined parcel of fluid.",
+        "Relate mass to weight using $W=mg$.",
+        "Understand thermal expansion causes volume increase.",
+        "Apply Archimedes' principle ($F_b = \\rho V g$) to relate increased volume to increased upthrust."
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "derived_relationship_audit": {
+      "requires_nontrivial_derivation": false,
+      "number_of_linked_relationships": 3,
+      "relationships_given_in_stem": [],
+      "safe_for_esat": true
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a",
+      "derived_relationship_safety": "pass"
+    },
+    "notes": [
+      "The question correctly tests fundamental concepts of thermal physics (thermal expansion, convection) and mechanics (mass, weight, upthrust).",
+      "It effectively targets a common misconception regarding the 'lightness' of heated fluids by requiring a precise understanding of mass vs. density and the definition of upthrust.",
+      "No calculations are required, making it suitable for a no-calculator exam.",
+      "All distractors are clearly incorrect based on fundamental physics principles."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

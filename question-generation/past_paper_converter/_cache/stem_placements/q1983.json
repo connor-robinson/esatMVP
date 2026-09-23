@@ -1,0 +1,30 @@
+{
+  "questionId": 1983,
+  "examName": "ENGAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 28,
+  "stemBlocks": [
+    "A uniform square trap door of side $0.80 \\text{ m}$ and mass $14 \\text{ kg}$ has a smooth hinge at one edge and is held open at an angle of $30^{\\circ}$ to the horizontal. It is supported by a single rigid rod placed so that it meets the surface of the trap door at $90^{\\circ}$ at a distance $0.10 \\text{ m}$ from the top edge of the trap door, as shown.",
+    "What is the normal contact force exerted on the trap door by the rod?",
+    "(gravitational field strength = $10 \\text{ N kg}^{-1}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "as shown.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 1.0
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:42.178936+00:00",
+  "sourceImageHash": "64e48ecdef584e6c61f4b7b5f35590009d99363db0d335e895768bef096f4f7f",
+  "status": "ok"
+}

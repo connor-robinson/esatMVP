@@ -1,0 +1,29 @@
+{
+  "questionId": 2074,
+  "examName": "ENGAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 39,
+  "stemBlocks": [
+    "$PQRS$ is a rectangle.\n$P$ and $Q$ lie on the $x$-axis.\n$Q$ and $R$ lie on the line $x = 15$\n$S$ lies on the curve $y = \\sqrt{x}$",
+    "What is the maximum possible area of the rectangle?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:32:52.529044+00:00",
+  "sourceImageHash": "06452e050fe07c8e7863ab7b6c208974677901d9a7dcd81ce4c20bc21ae337b0",
+  "status": "ok"
+}

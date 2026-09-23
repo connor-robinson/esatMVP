@@ -1,0 +1,28 @@
+{
+  "questionId": 2739,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 80,
+  "stemBlocks": [
+    "The three family trees show the inheritance of three different genetic conditions, each controlled by one gene with one dominant and one recessive allele.\nIn which of the family trees must the male parent be heterozygous?\n(Assume that no new mutations occur and that the genes are not found on the X chromosome.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Key: white square = male without condition, black square = male with condition, white circle = female without condition, black circle = female with condition. Three family trees (1, 2, 3) are shown.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:58.251559+00:00",
+  "sourceImageHash": "aa9f3dbbf098b36e9a57e7bfee8c3244aa06cdb3f8de01a72aa4645cd1a8612a",
+  "status": "ok"
+}

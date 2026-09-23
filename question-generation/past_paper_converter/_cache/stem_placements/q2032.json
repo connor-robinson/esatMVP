@@ -1,0 +1,29 @@
+{
+  "questionId": 2032,
+  "examName": "ENGAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 37,
+  "stemBlocks": [
+    "An object of mass $2.5 \\text{ kg}$ is at rest at time $= 0 \\text{ s}$. A resultant force acts on the object in a constant direction.\nThe magnitude of the resultant force acting on the object varies with time as shown by the graph.",
+    "What is the kinetic energy of the object at time $= 0.20 \\text{ s}$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 1.0
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:25.611893+00:00",
+  "sourceImageHash": "17895003355689f98258b0ac4e963a8baa9386d8fb38b85bcbb4c54ab5daa44f",
+  "status": "ok"
+}

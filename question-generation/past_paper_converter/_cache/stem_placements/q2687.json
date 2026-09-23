@@ -1,0 +1,31 @@
+{
+  "questionId": 2687,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 28,
+  "stemBlocks": [
+    "The primary coil of an ideal, 100% efficient transformer is connected to a 240 V mains supply. A lamp L that is connected to the secondary coil has a voltage of 12V across it. An identical lamp and a switch S are also connected to the transformer as shown in the diagram.",
+    "With the switch open, the current in the primary coil is 0.10A. The switch is now closed.",
+    "What is the current in the primary coil now and what is the current in lamp L?",
+    "|  | current in primary coil / A | current in lamp L / A |\n| --- | --- | --- |\n| A | 0.10 | 1.0 |\n| B | 0.10 | 2.0 |\n| C | 0.10 | 4.0 |\n| D | 0.20 | 1.0 |\n| E | 0.20 | 2.0 |\n| F | 0.20 | 4.0 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:58.195183+00:00",
+  "sourceImageHash": "5ba6dc199adaef16cfaa5473904ebf094e453eb9260c092e1eb37c618b9d0404",
+  "status": "ok"
+}

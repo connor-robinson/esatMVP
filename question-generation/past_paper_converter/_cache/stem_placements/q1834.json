@@ -1,0 +1,29 @@
+{
+  "questionId": 1834,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 41,
+  "stemBlocks": [
+    "The straight line with equation $y = mx + 3$, where $m > 0$, $m \\neq 1$, is perpendicular to the line with equation $y = px + 2$. The lines cut the $x$-axis at the points L and M respectively. The length of LM is 5 units.",
+    "What is the value of $m+p$ given that $m > 1$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:23:52.651602+00:00",
+  "sourceImageHash": "d57c44d494690e310364b8a5d800e420deae39cedece99df761a4e614e5cd147",
+  "status": "ok"
+}

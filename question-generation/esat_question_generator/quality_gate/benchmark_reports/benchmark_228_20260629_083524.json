@@ -1,0 +1,112 @@
+{
+  "generated_at": "2026-06-29T08:35:24.030648+00:00",
+  "mode": "read_only_benchmark",
+  "manual_file": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\data\\manual_overrides\\esat_228_manual_keep_reject.json",
+  "manual_checksum_sha256": "08346b04a98308d52c8d2ccec6a8343f4d0e3731188323b5104acbf7eafff9b8",
+  "validator_version": "v3_benchmark",
+  "model": "gemini-2.5-flash",
+  "evaluated_count": 3,
+  "error_count": 0,
+  "summary": {
+    "total": 3,
+    "correct": 3,
+    "accuracy": 1.0,
+    "critical_false_positive_count": 0,
+    "disagreement_count": 0,
+    "gold_in_syllabus": 0,
+    "gold_out_of_syllabus": 3,
+    "gold_invalid_question": 0
+  },
+  "confusion_matrix": {
+    "gold=out_of_syllabus|pred=out_of_syllabus": 3
+  },
+  "critical_false_positives": [],
+  "disagreements": [],
+  "errors": [],
+  "all_results": [
+    {
+      "id": "39f065de-41bc-4535-bbee-934dcb370c8c",
+      "id_prefix": "39f065de",
+      "subject": "Math 2",
+      "primary_tag": "M2-MM7",
+      "manual_decision": "reject",
+      "manual_category": "out_of_syllabus",
+      "manual_reason": "Requires integrating ln(x), normally by integration by parts. MM7 integration is limited to powers of x and related sums/differences.",
+      "gold": "out_of_syllabus",
+      "predicted_match": "out_of_syllabus",
+      "predicted_confidence": "high",
+      "syllabus_fit_score": 1,
+      "required_knowledge": [
+        "Logarithm properties: ln(AB) = ln A + ln B",
+        "Logarithm properties: ln(A^B) = B ln A",
+        "Logarithm properties: ln(A/B) = ln A - ln B",
+        "Logarithm properties: ln(e) = 1",
+        "Logarithm properties: ln(1) = 0",
+        "Algebraic simplification of expressions",
+        "Integration of a constant: ∫ k dx = kx + C",
+        "Integration of ln(x): ∫ ln(x) dx = x ln(x) - x + C",
+        "Evaluation of definite integrals using the Fundamental Theorem of Calculus: F(b) - F(a)"
+      ],
+      "borderline_or_external_knowledge": [],
+      "predicted_reason": "The question requires the integration of ln(x). The curriculum rules for 'mm7_integration' explicitly state that 'integrate ln x or require ln antiderivative' and 'antiderivatives arctan(x), ln x, e^x' are 'forbidden_unless_supplied'. The antiderivative of ln(x) is not supplied in the question. While logarithm properties (M2-MM4) and basic integration of constants (M2-MM7) are permitted, the core integration step for ln(x) is explicitly forbidden without being supplied.",
+      "correct": true,
+      "critical_false_positive": false,
+      "validator_version": "v3_benchmark",
+      "model": "gemini-2.5-flash"
+    },
+    {
+      "id": "3ab4ca8f-7259-4bdf-b829-98a13c1f1789",
+      "id_prefix": "3ab4ca8f",
+      "subject": "Math 2",
+      "primary_tag": "M2-MM7",
+      "manual_decision": "reject",
+      "manual_category": "out_of_syllabus",
+      "manual_reason": "Requires treating mass as the integral of linear density and integrating (x+a)^(-2) by a shift/substitution; neither is supplied or included in the stated Mathematics 2 integration methods.",
+      "gold": "out_of_syllabus",
+      "predicted_match": "out_of_syllabus",
+      "predicted_confidence": "high",
+      "syllabus_fit_score": 1,
+      "required_knowledge": [
+        "Definition of total mass as the integral of linear density (M = ∫ ρ(x) dx)",
+        "Integration by substitution for non-trivial substitutions (e.g., u = x+a for (x+a)^(-2))",
+        "Power rule for integration (∫ x^n dx = x^(n+1)/(n+1))",
+        "Evaluation of definite integrals (F(b) - F(a))",
+        "Algebraic manipulation to solve for a variable"
+      ],
+      "borderline_or_external_knowledge": [],
+      "predicted_reason": "The curriculum rules for M2-MM7 (integration) explicitly state two critical pieces of knowledge/methods as 'forbidden_unless_supplied':\n1. 'treating mass as integral of linear density without supplying the formula'. The question assumes this relationship without providing it.\n2. 'integration by substitution for non-trivial substitutions (e.g. shift to integrate (x+a)^(-2))'. The integral required, ∫ k/(x+a)^2 dx, falls under this forbidden category as it requires a substitution like u = x+a or knowledge of the generalized power rule for integration of (ax+b)^n forms, which is considered a 'non-trivial substitution' in the rules.\nSince these are not supplied in the question, the question is out of syllabus.",
+      "correct": true,
+      "critical_false_positive": false,
+      "validator_version": "v3_benchmark",
+      "model": "gemini-2.5-flash"
+    },
+    {
+      "id": "51f57eca-bf0c-4204-8f0e-643cf3ef2303",
+      "id_prefix": "51f57eca",
+      "subject": "Math 2",
+      "primary_tag": "M2-MM3",
+      "manual_decision": "reject",
+      "manual_category": "out_of_syllabus",
+      "manual_reason": "Requires the double-angle identity for cos(2x); the specification only lists tan x = sin x/cos x and sin^2 x + cos^2 x = 1.",
+      "gold": "out_of_syllabus",
+      "predicted_match": "out_of_syllabus",
+      "predicted_confidence": "high",
+      "syllabus_fit_score": 1,
+      "required_knowledge": [
+        "Definition of a geometric progression (for terms A, B, C, B^2 = AC)",
+        "Laws of exponents (e^a e^b = e^(a+b), (e^a)^b = e^(ab), if e^P = e^Q then P=Q)",
+        "Algebraic manipulation to solve linear and quadratic equations (e.g., factorisation)",
+        "Trigonometric identity for double angle: cos(2x) = 2cos^2 x - 1",
+        "Solving basic trigonometric equations of the form cos x = k within a specified interval (0 <= x < 2pi)"
+      ],
+      "borderline_or_external_knowledge": [
+        "Trigonometric identity for double angle: cos(2x) = 2cos^2 x - 1"
+      ],
+      "predicted_reason": "The solution path requires the use of the double-angle identity for cosine, specifically cos(2x) = 2cos^2 x - 1. The curriculum rules explicitly state that 'double-angle identities (sin 2x, cos 2x, tan 2x)' are 'forbidden_unless_supplied_in_question'. This identity is not supplied in the question stem, making it out of syllabus.",
+      "correct": true,
+      "critical_false_positive": false,
+      "validator_version": "v3_benchmark",
+      "model": "gemini-2.5-flash"
+    }
+  ]
+}

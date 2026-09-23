@@ -1,0 +1,29 @@
+{
+  "questionId": 1813,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 20,
+  "stemBlocks": [
+    "The diagram shows four solid steel balls P, Q, R and S which are of identical size. Balls P and R have shiny surfaces. Balls Q and S have dull surfaces. Balls P and Q are in a room at $20^{\\circ}\\text{C}$. Balls R and S are in a room at $40^{\\circ}\\text{C}$. The temperature of each ball at a given moment in time is shown on the diagram. Which two balls lose thermal energy by convection, and which ball emits thermal radiation at the greatest rate?",
+    "|  | lose thermal energy by convection | greatest rate of emission of thermal radiation |\n| --- | --- | --- |\n| A | P and Q | P |\n| B | P and Q | Q |\n| C | P and Q | R |\n| D | P and Q | S |\n| E | R and S | P |\n| F | R and S | Q |\n| G | R and S | R |\n| H | R and S | S |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:23:52.616277+00:00",
+  "sourceImageHash": "dd199b7a6fc13f61f60a2afbfb4f7fc88f73485e913d05691282ed4d1be6d836",
+  "status": "ok"
+}

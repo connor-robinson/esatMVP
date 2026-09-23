@@ -1,0 +1,29 @@
+{
+  "questionId": 2085,
+  "examName": "ENGAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 10,
+  "stemBlocks": [
+    "The graph shows potential difference plotted against current for a filament lamp and a resistor.\nThe lamp and the resistor are connected in parallel with each other to a 6.0 V power supply and the current in the lamp, $I$, is recorded.\nIn a second circuit, the lamp and the resistor are now connected in series with each other to the same power supply, and the current in the resistor is 0.18 A. The potential difference across the lamp, $V$, is recorded.\nWhat are the values of $I$ in the first circuit and $V$ in the second circuit?",
+    "|  | $I$/A | $V$/V |\n| --- | --- | --- |\n| A | 0.25 | 1.6 |\n| B | 0.25 | 3.0 |\n| C | 0.25 | 4.4 |\n| D | 0.35 | 1.6 |\n| E | 0.35 | 3.0 |\n| F | 0.35 | 4.4 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:34:34.957867+00:00",
+  "sourceImageHash": "14e6edd1787bcf6802eb891183c7b8cc63f2cbcf96c484a6794b1543694891ee",
+  "status": "ok"
+}

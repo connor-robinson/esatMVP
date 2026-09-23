@@ -1,0 +1,30 @@
+{
+  "questionId": 3399,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 10,
+  "stemBlocks": [
+    "A pipe of length $L$ open at both ends contains a stationary sound wave with 1 node, as shown in the diagram.",
+    "The frequency of the stationary wave in this pipe is $4f$.\nA second pipe is open at one end and closed at the other end. A stationary sound wave in this pipe contains one more node than the stationary wave shown in the diagram.\nThe frequency of the stationary wave in the second pipe is $f$.\nThe speed of sound is the same in both pipes.",
+    "What is the length of the second pipe?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A pipe of length L open at both ends with a stationary sound wave showing 1 node.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.045190+00:00",
+  "sourceImageHash": "88937de13f60e85b84639d2b72fc2fff3fd2de6a43d49fd7b4bb43c6f3b9391f",
+  "status": "ok"
+}

@@ -1,0 +1,19 @@
+{
+  "stage": "tag_labeler",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "primary_tag": "6",
+    "secondary_tags": [
+      "3"
+    ],
+    "primary_confidence": 0.95,
+    "reasoning": "The question primarily tests the Doppler effect for electromagnetic waves and the constancy of the speed of light in a vacuum, which are core concepts of Waves. It also requires understanding relative motion (approaching/receding) to interpret the Doppler shift, which is a concept from Mechanics.",
+    "_raw_text": "```json\n{\n  \"primary_tag\": \"6\",\n  \"secondary_tags\": [\"3\"],\n  \"primary_confidence\": 0.95,\n  \"reasoning\": \"The question primarily tests the Doppler effect for electromagnetic waves and the constancy of the speed of light in a vacuum, which are core concepts of Waves. It also requires understanding relative motion (approaching/receding) to interpret the Doppler shift, which is a concept from Mechanics.\"\n}\n```"
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

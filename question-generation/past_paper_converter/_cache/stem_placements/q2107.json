@@ -1,0 +1,30 @@
+{
+  "questionId": 2107,
+  "examName": "ENGAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 32,
+  "stemBlocks": [
+    "An empty bucket has a mass of $1.20 \\text{ kg}$ and an internal volume of $0.0150 \\text{ m}^3$. The bucket is used to lift water from a well.\nThe bucket is attached to a light, inextensible rope which winds onto a rotating cylinder of radius $0.200 \\text{ m}$ when a handle is turned.\nTo lift a bucket completely full of water at constant speed, it is necessary to apply a force of $250 \\text{ N}$ to the handle that acts along the tangent to the circle of radius $0.600 \\text{ m}$, in which the handle moves.\nThe energy required to lift the bucket is wasted energy.",
+    "What is the efficiency of the system in lifting water from the well?",
+    "(gravitational field strength = $10 \\text{ N kg}^{-1}$; density of water = $1000 \\text{ kg m}^{-3}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:34:34.994990+00:00",
+  "sourceImageHash": "43c80cedc583ab1fc5faabfe9ff8d3b9673b6df2fccd2b9763d8e0c9fc375553",
+  "status": "ok"
+}

@@ -1,0 +1,28 @@
+{
+  "questionId": 1883,
+  "examName": "ENGAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 36,
+  "stemBlocks": [
+    "A horizontal, uniform bar of mass 60 kg is 4.0 m long and is pivoted at one end. The bar is held in equilibrium by a force $F$ at the other end of the bar, acting at an angle of $60^{\\circ}$ to the horizontal. Which expression gives the magnitude of $F$ in newtons? (gravitational field strength = $10 \\text{ N kg}^{-1}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:26:26.111595+00:00",
+  "sourceImageHash": "bdd9d0d503353f3e6a3c08a954676991df0383d63052640fa578cec98382600b",
+  "status": "ok"
+}

@@ -1,0 +1,561 @@
+{
+  "question_id": "q_20260518_135729_8b67fb",
+  "subject": "physics",
+  "schema_id": "P_d4f05622",
+  "difficulty": "Medium",
+  "status": "rejected",
+  "failure_gate": "visual_linkage",
+  "failure_reasons": [
+    "visual_need=accurate_schematic_json but stem has no <DIAGRAM id=\"...\" /> placeholder."
+  ],
+  "has_visual": false,
+  "visual_type": "none",
+  "answer_depends_on_visual": false,
+  "assets": [],
+  "model_trace": {
+    "designer": "gemini-2.5-pro",
+    "idea_judge": "gemini-2.5-flash",
+    "implementer": "gemini-2.5-pro",
+    "verifier": "gemini-2.5-flash",
+    "style_checker": "gemini-2.5-flash",
+    "visual_router": "gemini-2.5-flash",
+    "schematic_spec": "gemini-2.5-flash"
+  },
+  "retry_counts": {
+    "implementer": 0
+  },
+  "stages": [
+    {
+      "stage": "designer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "schema_id": "P_d4f05622",
+        "module": "physics",
+        "variation_mode": "SIBLING",
+        "target_difficulty": "Medium",
+        "idea_summary": "A wire forming part of a simple circuit is placed in a magnetic field. To find the magnetic force on the wire, the candidate must first use Ohm's law to find the current in the circuit, and then use the magnetic force formula.",
+        "schema_invariant": {
+          "core_move": "Calculate magnetic force F=BIL where the current I is not given directly and must be inferred from other information.",
+          "what_must_not_change": [
+            "The final goal is to find the magnetic force on a wire.",
+            "The current (I) is not an explicitly given quantity.",
+            "The candidate must perform a preliminary calculation to find the current before using F=BIL."
+          ],
+          "what_can_change": [
+            "The method for finding the current (using I=V/R instead of I=Q/t).",
+            "The context (a simple DC circuit instead of abstract charge flow).",
+            "The given quantities (V and R instead of Q and t).",
+            "The use of a circuit diagram."
+          ]
+        },
+        "discrimination_mechanism": {
+          "type": "hidden_invariant",
+          "reasoning_hinge": "Realising that the current (I) must first be calculated from the given voltage (V) and resistance (R) using Ohm's Law (I=V/R) before it can be used in the magnetic force equation (F=BIL).",
+          "why_top_students_win": "They immediately identify the problem as a two-step process, linking the 'Circuits' part to the 'Magnetism' part via the current, I.",
+          "why_mid_students_miss": "They look for a single formula connecting all variables, or fail to connect the circuit parameters (V, R) to the need to find a current for the magnetic force calculation. They might try to incorrectly substitute V or R into the F=BIL formula."
+        },
+        "goldilocks_complexity_audit": {
+          "main_physics_principle": "Magnetic force on a current-carrying conductor (F=BIL).",
+          "supporting_idea_if_any": "Ohm's Law (I=V/R).",
+          "estimated_solution_steps": 2,
+          "number_of_core_physics_principles": 2,
+          "requires_derived_relationship": false,
+          "too_easy_risk": "low",
+          "too_hard_risk": "low",
+          "goldilocks_verdict": "good"
+        },
+        "minimum_reasoning_depth": {
+          "steps": 2,
+          "must_include": [
+            "model_selection",
+            "non_obvious_inference",
+            "short_calculation_or_comparison"
+          ]
+        },
+        "reference_alignment": "Matches the reference schema's core two-step nature (find I, then find F) but changes the context of the first step from using the definition of current (I=Q/t) to using Ohm's Law (I=V/R). This maintains a similar pace and cognitive load while feeling like a different problem.",
+        "task_signature": "law_application",
+        "tool_footprint": [
+          "two-step problem",
+          "linking models",
+          "circuits",
+          "magnetism"
+        ],
+        "primary_tag": "5",
+        "secondary_tags": [
+          "4"
+        ],
+        "visual_need": "accurate_schematic_json",
+        "visual_role": "supportive",
+        "visual_brief": "A simple circuit diagram. Show a cell (labelled with voltage V), a resistor (labelled with resistance R), and a straight wire segment (labelled with length L) connected in series. Add symbols (e.g., crosses or dots) to indicate a uniform magnetic field (labelled B) acting perpendicularly over the region of the straight wire segment.",
+        "surface_twist": "",
+        "why_still_on_spec": "The idea uses two fundamental, standard school physics principles: magnetic force on a wire (F=BIL, ESAT Physics tag 5.2) and Ohm's law (V=IR, ESAT Physics tag 4.1). Combining these two is a standard problem type that tests conceptual linkage rather than just formula recall, which is characteristic of ESAT.",
+        "constraints_used": [
+          "short condition descriptions only",
+          "no final numbers",
+          "no full equations unless the schema requires them",
+          "no exact geometric diagram dependence",
+          "no multi-law derivation chain"
+        ],
+        "intended_wrong_paths": [
+          {
+            "mistake": "Inverting Ohm's Law (using I=R/V) and then calculating F = B(R/V)L.",
+            "distractor_role": "A plausible distractor based on a common calculation slip."
+          },
+          {
+            "mistake": "Incorrectly substituting voltage or resistance directly into the force formula, e.g., attempting F=BVL or F=BRL.",
+            "distractor_role": "Catches students who are formula-hunting without understanding the physical roles of the variables."
+          },
+          {
+            "mistake": "Calculating the current correctly but then omitting a variable from the force equation, e.g. omitting L to get F = B(V/R).",
+            "distractor_role": "Tests for careful and complete application of the correct formula."
+          },
+          {
+            "mistake": "Confusing the roles of B and I, e.g. calculating F = I*L*I = I^2 * L.",
+            "distractor_role": "A conceptual error for students who are insecure with the F=BIL formula."
+          }
+        ],
+        "difficulty_rationale": "Medium difficulty is achieved because solving requires more than a single step of formula substitution. The candidate must recognise the need to bridge two topics (circuits and magnetism) by first calculating the current. This reasoning hinge is a mild, standard twist that effectively separates candidates who can connect concepts from those who can only apply isolated formulas. The calculation remains simple, ensuring the question is fast to solve once the method is clear.",
+        "anti_plug_and_chug_check": {
+          "would_formula_substitution_alone_solve_it": false,
+          "why_not": "The value for current (I) is not provided directly in the problem's givens. The candidate cannot solve the problem by substituting knowns into the target formula F=BIL. They must first derive the value of I using a different physical principle (Ohm's Law) and a different set of givens (V and R)."
+        },
+        "mcq_viability": {
+          "viable": true,
+          "reason": "The two-step calculation yields a single correct numerical answer. Common mistakes, such as inverting Ohm's law or substituting the wrong quantity into the force equation, lead to predictable and plausible incorrect answers, which can be used to create effective distractors."
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-pro",
+      "attempts": 1
+    },
+    {
+      "stage": "idea_judge",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "selectivity_score": 0,
+        "checks": {
+          "schema_preserved": "pass",
+          "on_spec": "pass",
+          "reasoning_hinge_present": "pass",
+          "not_direct_substitution": "pass",
+          "wrong_paths_specific": "pass",
+          "visual_feasible": "pass",
+          "mcq_viable": "pass",
+          "difficulty_match": "pass",
+          "goldilocks_complexity": "pass"
+        },
+        "complexity_audit": {
+          "number_of_core_physics_principles": 2,
+          "estimated_solution_steps": 2,
+          "requires_derived_relationship": false,
+          "uses_multi_topic_chain": false,
+          "goldilocks_verdict": "good"
+        },
+        "reasoning_hinge_summary": "The candidate must recognize the need to calculate current (I) using Ohm's Law (I=V/R) from given circuit parameters (V, R) before applying it to the magnetic force formula (F=BIL). This bridges the 'Circuits' and 'Magnetism' topics.",
+        "expected_mid_student_error": "Mid-performing students might attempt to substitute voltage (V) or resistance (R) directly into the magnetic force formula (F=BIL) instead of first calculating the current (I). They may also make calculation errors like inverting Ohm's Law.",
+        "notes": [
+          "The idea successfully modifies the method for finding current (from I=Q/t to I=V/R) while preserving the core schema invariant of calculating F=BIL with an inferred current.",
+          "The difficulty justification is sound, relying on conceptual linkage rather than complex arithmetic.",
+          "The proposed wrong paths are specific and target common misconceptions or calculation errors, making for effective distractors.",
+          "The visual requirement is simple and standard, posing no implementation challenges."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "implementer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "metadata": {
+          "schema_id": "P_d4f05622",
+          "module": "physics",
+          "variation_mode": "SIBLING",
+          "target_difficulty": "Medium",
+          "task_signature": "implement_P_d4f05622_medium",
+          "primary_tag": "5",
+          "secondary_tags": [
+            "4"
+          ]
+        },
+        "question": {
+          "stem": "A simple circuit consists of a 6.0 V cell, a 3.0 $\\Omega$ resistor, and a straight wire segment of length 20 cm, all connected in series. The straight wire segment is placed in a uniform magnetic field of flux density 0.50 T. The magnetic field is perpendicular to the wire.\n\n<DIAGRAM id=\"d1\" />\n\nWhat is the magnitude of the magnetic force on the wire segment?",
+          "options": {
+            "A": "0.050 N",
+            "B": "0.20 N",
+            "C": "0.30 N",
+            "D": "0.60 N",
+            "E": "1.0 N",
+            "F": "20 N"
+          },
+          "correct_option": "B"
+        },
+        "visual_requirements": {
+          "visual_need": "accurate_schematic_json",
+          "visual_role": "supportive",
+          "answer_depends_on_visual": false,
+          "graph_request": null,
+          "schematic_request": {
+            "style": "standard_physics",
+            "elements": [
+              {
+                "type": "circuit_series",
+                "components": [
+                  {
+                    "type": "dc_source",
+                    "label": "V = 6.0 V"
+                  },
+                  {
+                    "type": "resistor",
+                    "label": "R = 3.0 Ω"
+                  },
+                  {
+                    "type": "wire_segment",
+                    "id": "w1",
+                    "label": "L = 20 cm"
+                  }
+                ]
+              },
+              {
+                "type": "uniform_field",
+                "field_type": "magnetic",
+                "direction": "into_page",
+                "symbol": "cross",
+                "region": {
+                  "covers": "w1"
+                },
+                "label": "B = 0.50 T"
+              }
+            ],
+            "annotations": [
+              "The magnetic field B is perpendicular to the wire segment L."
+            ]
+          },
+          "concept_image_request": null
+        },
+        "solution": {
+          "key_insight": "The magnetic force depends on the current in the wire. This current is not given directly but can be found using Ohm's law with the provided voltage and resistance of the circuit.",
+          "reasoning": "This is a two-step problem. First, calculate the current ($I$) flowing through the circuit using Ohm's law, $V = IR$.\n\n1.  Rearrange Ohm's law to find the current: $I = V / R$.\n    $I = 6.0\\ \\text{V} / 3.0\\ \\Omega = 2.0\\ \\text{A}$.\n\n2.  Next, calculate the magnetic force ($F$) on the wire segment using the formula $F = BIL$, where $B$ is the magnetic field strength and $L$ is the length of the wire in the field. The field is perpendicular to the wire, so $\\sin(\\theta) = 1$.\n    Remember to convert the length from cm to m: $L = 20\\ \\text{cm} = 0.20\\ \\text{m}$.\n\n3.  Substitute the values into the force equation:\n    $F = (0.50\\ \\text{T}) \\times (2.0\\ \\text{A}) \\times (0.20\\ \\text{m})$\n    $F = 1.0 \\times 0.20\\ \\text{N} = 0.20\\ \\text{N}$.\n\nTherefore, the magnitude of the magnetic force is 0.20 N."
+        },
+        "distractor_map": {
+          "A": "This result is obtained by incorrectly inverting Ohm's law, calculating the current as $I = R/V = 3.0/6.0 = 0.5$ A, and then calculating the force as $F = 0.50 \\times 0.5 \\times 0.20 = 0.050$ N.",
+          "B": "Correct. The current is calculated as $I = V/R = 2.0$ A, and the force is calculated as $F = BIL = 0.50 \\times 2.0 \\times 0.20 = 0.20$ N.",
+          "C": "This result comes from incorrectly substituting the resistance for the current in the force formula: $F = BRL = 0.50 \\times 3.0 \\times 0.20 = 0.30$ N. This is a formula-mashing error.",
+          "D": "This result comes from incorrectly substituting the voltage for the current in the force formula: $F = BVL = 0.50 \\times 6.0 \\times 0.20 = 0.60$ N. This is a formula-mashing error.",
+          "E": "This result is obtained by correctly calculating the current ($I=2.0$ A) but then omitting the length from the force calculation: $F = BI = 0.50 \\times 2.0 = 1.0$ N. This is the force per unit length.",
+          "F": "This result is obtained by failing to convert the length from centimetres to metres: $F = BIL = 0.50 \\times 2.0 \\times 20 = 20$ N."
+        },
+        "quality_self_check": {
+          "reasoning_hinge_used": "The candidate must realise that the current (I) for the magnetic force equation (F=BIL) is not a given value and must be derived from the circuit's voltage and resistance using Ohm's Law (I=V/R).",
+          "not_direct_substitution": true,
+          "exactly_one_correct": true,
+          "no_calculator_friendly": true,
+          "on_spec": true,
+          "visual_dependency_safe": true,
+          "goldilocks_complexity": {
+            "number_of_core_physics_principles": 2,
+            "estimated_solution_steps": 2,
+            "requires_derived_relationship": false,
+            "not_overstacked": true
+          }
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-pro",
+      "attempts": 1
+    },
+    {
+      "stage": "deterministic_validator",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "ok": true,
+        "errors": [],
+        "warnings": [],
+        "option_keys": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F"
+        ],
+        "summary": "ok"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": null,
+      "attempts": 1
+    },
+    {
+      "stage": "verifier",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "correct_option_verified": "B",
+        "independent_solution": {
+          "main_law_or_principle": "Ohm's Law (V=IR) and Magnetic Force on a Current-Carrying Wire (F=BIL)",
+          "calculation_or_logic": "1. Calculate the current (I) using Ohm's Law: I = V/R = 6.0 V / 3.0 Ω = 2.0 A.\n2. Convert the length of the wire to meters: L = 20 cm = 0.20 m.\n3. Calculate the magnetic force (F) using F = BIL (since the field is perpendicular, sin(90°) = 1): F = (0.50 T) * (2.0 A) * (0.20 m) = 0.20 N.",
+          "verified_answer_value": "0.20 N",
+          "claimed_answer_value": "0.20 N",
+          "matches_claim": true
+        },
+        "spec_audit": {
+          "required_physics_moves": [
+            "Apply Ohm's Law to find current",
+            "Apply magnetic force formula (F=BIL)"
+          ],
+          "all_explicitly_on_spec": true,
+          "borderline_or_offspec_moves": []
+        },
+        "derived_relationship_audit": {
+          "requires_nontrivial_derivation": false,
+          "number_of_linked_relationships": 2,
+          "relationships_given_in_stem": [],
+          "safe_for_esat": true
+        },
+        "checks": {
+          "correctness": "pass",
+          "uniqueness": "pass",
+          "syllabus": "pass",
+          "no_calc_feasibility": "pass",
+          "ambiguity": "pass",
+          "diagram_dependency": "pass",
+          "distractor_safety": "pass",
+          "katex_formatting": "pass",
+          "graph_or_visual_validation": "n/a",
+          "derived_relationship_safety": "pass"
+        },
+        "notes": [
+          "The question correctly links two fundamental ESAT physics concepts (Ohm's Law and magnetic force on a wire) in a two-step problem.",
+          "Calculations are straightforward and suitable for a no-calculator environment.",
+          "Distractors are well-designed to target common misconceptions and calculation errors.",
+          "The visual dependency is correctly marked as supportive, as all necessary numerical information is provided in the text."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "style_checker",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "style_score": {
+          "total": 40,
+          "breakdown": {
+            "stem_tone": 5,
+            "physics_authenticity": 5,
+            "reasoning_quality": 5,
+            "selectivity": 5,
+            "no_calc_engineering": 5,
+            "option_realism": 5,
+            "distractor_plausibility": 5,
+            "goldilocks_calibration": 5
+          }
+        },
+        "difficulty_calibration": {
+          "difficulty_vs_reference": "similar",
+          "length_feel_vs_reference": "similar",
+          "notes": "The question aligns well with the 'Medium' target difficulty. It requires two distinct, but fundamental, physics principles to be applied sequentially, which is a standard approach for medium-difficulty ESAT questions. The calculation is simple and fast."
+        },
+        "selectivity_audit": {
+          "main_trap": "The primary trap is the need to first calculate the current (I) using Ohm's Law (I=V/R) before applying the magnetic force formula (F=BIL). Students might incorrectly try to substitute voltage (V) or resistance (R) directly into the force formula, or make an error in applying Ohm's Law (e.g., I=R/V).",
+          "why_not_plug_and_chug": "The current (I) is not explicitly given in the problem statement. A direct plug-and-chug into F=BIL is not possible. The candidate must infer the current from the given voltage and resistance, requiring the application of Ohm's Law.",
+          "expected_mid_student_error": "A mid-level student might correctly identify F=BIL but then struggle to find 'I', potentially substituting V or R, or inverting Ohm's Law. Another common error would be forgetting the unit conversion for length or omitting the length term entirely.",
+          "verdict": "selective"
+        },
+        "complexity_audit": {
+          "estimated_core_principles": 2,
+          "estimated_solution_steps": 3,
+          "overstacked": false,
+          "goldilocks_verdict": "good"
+        },
+        "flags": {
+          "too_easy": false,
+          "too_hard": false,
+          "too_wordy": false,
+          "too_recall_heavy": false,
+          "too_plug_and_chug": false,
+          "over_advanced_chain": false,
+          "possible_verifier_miss": false
+        },
+        "notes": [
+          "This question is an excellent example of an ESAT-authentic physics problem.",
+          "It is concise, clear, and tests the ability to link two fundamental school-level physics concepts (Ohm's Law and magnetic force on a current-carrying wire).",
+          "The arithmetic is simple and suitable for a no-calculator environment.",
+          "The distractors are well-engineered to target specific, common misconceptions and calculation errors, making the question highly selective.",
+          "The visual is supportive but not strictly necessary, as all numerical information is provided in the text, which is appropriate for ESAT."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "visual_router",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "visual_route": "accurate_schematic_json",
+        "answer_depends_on_visual": false,
+        "required_files": [],
+        "reason": "The question explicitly requests a diagram (`<DIAGRAM id=\"d1\" />`) and the `visual_requirements` specify an `accurate_schematic_json`. The requested schematic is a simple circuit diagram showing a cell, resistor, and wire segment in series, with a uniform magnetic field indicated over the wire. This fits the criteria for `accurate_schematic_json` as it involves a simple circuit and apparatus layout without requiring exact geometry. The visual is supportive and improves comprehension, but the answer does not strictly depend on reading values from it, as indicated by `answer_depends_on_visual: false`.",
+        "next_prompt_file": "Physics Accurate_Schematic_Spec.md",
+        "style_target_if_image": null,
+        "blocking_issue": null,
+        "simplicity_audit": {
+          "visual_needed": true,
+          "can_be_described_in_one_sentence": false,
+          "estimated_object_types": 4,
+          "estimated_labels": 4,
+          "requires_unwanted_arrows_or_symbols": false,
+          "route_is_conservative": true
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "schematic_spec",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "diagram_id": "d1",
+        "schematic_type": "simple_circuit",
+        "answer_depends_on_diagram": false,
+        "components": [
+          {
+            "id": "battery1",
+            "type": "battery",
+            "label": "6.0 V",
+            "position_hint": "left",
+            "properties": {}
+          },
+          {
+            "id": "resistor1",
+            "type": "resistor",
+            "label": "3.0 Ω",
+            "position_hint": "top",
+            "properties": {}
+          },
+          {
+            "id": "wire_segment1",
+            "type": "resistor",
+            "label": "20 cm",
+            "position_hint": "right",
+            "properties": {}
+          }
+        ],
+        "connections": [
+          {
+            "from": "battery1",
+            "to": "resistor1",
+            "type": "wire"
+          },
+          {
+            "from": "resistor1",
+            "to": "wire_segment1",
+            "type": "wire"
+          },
+          {
+            "from": "wire_segment1",
+            "to": "battery1",
+            "type": "wire"
+          }
+        ],
+        "labels": [
+          {
+            "text": "B = 0.50 T (into page)",
+            "target_id": "wire_segment1",
+            "placement": "above"
+          }
+        ],
+        "style": {
+          "exam_style": true,
+          "black_and_white": true,
+          "minimal": true,
+          "not_to_scale": true
+        },
+        "render_checks": {
+          "no_exact_geometry_required": true,
+          "all_answer_bearing_info_also_in_text": true,
+          "placeholder_id_matches_stem": true,
+          "not_complex_electromagnetism": true,
+          "not_multi_force_diagram": true
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "visual_linkage_validator",
+      "status": "fail",
+      "verdict": null,
+      "payload": {
+        "ok": false,
+        "errors": [
+          {
+            "field": "question.stem",
+            "kind": "missing_placeholder",
+            "message": "visual_need=accurate_schematic_json but stem has no <DIAGRAM id=\"...\" /> placeholder."
+          }
+        ],
+        "warnings": [],
+        "option_keys": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F"
+        ],
+        "summary": "1 error(s)"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": null,
+      "attempts": 1
+    }
+  ],
+  "pipeline": "v4",
+  "created_at": "2026-05-18T14:03:04+01:00",
+  "extra": {
+    "errors": [
+      {
+        "field": "question.stem",
+        "kind": "missing_placeholder",
+        "message": "visual_need=accurate_schematic_json but stem has no <DIAGRAM id=\"...\" /> placeholder."
+      }
+    ]
+  }
+}

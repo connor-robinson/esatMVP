@@ -1,0 +1,100 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_ad97dfb5",
+    "module": "physics",
+    "variation_mode": "FAR",
+    "target_difficulty": "Hard",
+    "idea_summary": "Candidates are given the ratio of kinetic energies and the ratio of momenta for two objects, and must use proportional reasoning to determine the ratio of their masses.",
+    "schema_invariant": {
+      "core_move": "Applying scaling factors to independent variables in a power-law relationship to find the ratio of a dependent variable.",
+      "what_must_not_change": [
+        "The requirement to use proportional reasoning with exponents.",
+        "The absence of absolute values to prevent direct calculation."
+      ],
+      "what_can_change": [
+        "The physical domain (mechanics instead of fields/waves/radiation).",
+        "The specific formula used.",
+        "The variable being isolated (finding a base property like mass rather than calculating the final energy)."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "proportional_reasoning",
+      "reasoning_hinge": "Deriving the relationship $m \\propto p^2 / E_k$ (or sequentially finding the velocity ratio then the mass ratio) and applying the square correctly to the momentum scaling factor.",
+      "why_top_students_win": "They immediately spot the invariant relationship $E_k = p^2 / 2m$, rearrange it to $m = p^2 / 2E_k$, and apply the scaling factors in one smooth step (e.g., $(1/2)^2 / 2 = 1/8$).",
+      "why_mid_students_miss": "They either fail to square the momentum ratio, attempt to invent absolute numbers but get tangled in the two equations, or invert the final ratio."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Definitions of kinetic energy and momentum.",
+      "supporting_idea_if_any": "Algebraic proportionality and scaling factors.",
+      "estimated_solution_steps": 3,
+      "number_of_core_physics_principles": 2,
+      "requires_derived_relationship": true,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 3,
+      "must_include": [
+        "model_selection",
+        "non_obvious_inference",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "Maintains the core scaling/ratio logic of the schema but disguises it by requiring the candidate to link two foundational formulas rather than just plugging into one given formula.",
+    "task_signature": "proportional_change",
+    "tool_footprint": [
+      "derive_proportionality",
+      "apply_scaling_factor",
+      "ratio_calculation"
+    ],
+    "primary_tag": "1",
+    "secondary_tags": [
+      "energy_reasoning",
+      "force_motion_reasoning"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "Shifts from the typical fields/radiation context into mechanics, and inverts the task by forcing the candidate to isolate a base quantity (mass) rather than calculating the energy or force.",
+    "why_still_on_spec": "Kinetic energy ($E_k = \\frac{1}{2}mv^2$) and momentum ($p = mv$) are fundamental GCSE/A-level topics. Combining them and using ratios is standard, expected ESAT reasoning.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Failing to square the momentum ratio, assuming $m \\propto p / E_k$.",
+        "distractor_role": "Produces a common incorrect ratio, e.g., 1/4 instead of 1/8."
+      },
+      {
+        "mistake": "Inverting the relationship or the ratios, effectively calculating $E_k / p^2$.",
+        "distractor_role": "Produces the reciprocal of the correct answer, e.g., 8 instead of 1/8."
+      },
+      {
+        "mistake": "Squaring both the momentum and the energy ratios.",
+        "distractor_role": "Produces an over-scaled incorrect ratio, e.g., 1/16."
+      }
+    ],
+    "difficulty_rationale": "It is selective because it requires combining two formulas algebraically before applying the scaling, stopping weaker candidates from guessing. Yet, it remains extremely fast for candidates who are comfortable with proportional reasoning.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "No absolute values are provided. Candidates must manipulate the algebraic proportionality and handle the exponent correctly without relying on a calculator or intermediate numerical values."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The fractional scaling steps produce distinct, predictable numerical errors (forgetting the square, inverting the ratio) which make for excellent, plausible distractors."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

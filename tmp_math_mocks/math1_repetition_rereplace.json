@@ -1,0 +1,45 @@
+{
+  "apply": true,
+  "changes": [
+    {
+      "slot": "B19",
+      "reason": "Repeats B3 dice→quadratic real-roots template",
+      "oldQuestionId": "6a9ae4a4-df82-4826-b963-05c7847d089c",
+      "newQuestionId": "2b78b239-81e0-4d8f-a136-b65e06e9044d",
+      "answer": "B",
+      "topic": "M5",
+      "difficulty": 4,
+      "newPreview": "The line $L_1$ passes through the point $A(1, 2)$ and is perpendicular to the line segment connecting $A$ and $B(5, 4)$. The line $L_2$ passes through $B$ and is perpendicular to the line $x + 3y = 0$"
+    },
+    {
+      "slot": "D13",
+      "reason": "Another three-dice probability; Mock D already probability-heavy",
+      "oldQuestionId": "ed241f47-8956-4552-a801-bc77353ee52f",
+      "newQuestionId": "48b903f6-39b9-402f-8882-141be4364828",
+      "answer": "A",
+      "topic": "M5",
+      "difficulty": 3,
+      "newPreview": "Let P be a quadrilateral that has rotational symmetry of order greater than 1, but no line symmetry. Let Q be a quadrilateral that has one or more lines of symmetry, but has rotational symmetry of ord"
+    },
+    {
+      "slot": "D22",
+      "reason": "Density overrepresented in Mock D",
+      "oldQuestionId": "88472cf2-548f-4060-8c35-f4812324fcea",
+      "newQuestionId": "45f9fb97-c401-413a-ac20-0f1289dd5b1d",
+      "answer": "D",
+      "topic": "M4",
+      "difficulty": 4,
+      "newPreview": "Which of the following describes the set of real values of $x$ that satisfy the inequality? $$\\frac{(x-1)^2 (2-x)}{(x+3)(x^2+1)} \\le 0$$"
+    },
+    {
+      "slot": "C21",
+      "reason": "Tank/pipe/flow/rate overrepresented across A–E",
+      "oldQuestionId": "c04ff38c-b943-4d56-8b98-3f6b6961f47d",
+      "newQuestionId": "6c0acc42-a201-407c-89f4-4ad65c98d025",
+      "answer": "A",
+      "topic": "M4",
+      "difficulty": 4,
+      "newPreview": "Find the set of values of $k$ for which the equation $$ k = \\frac{2x^2 + 3}{x^2 - 1} $$ has real solutions for $x$."
+    }
+  ]
+}

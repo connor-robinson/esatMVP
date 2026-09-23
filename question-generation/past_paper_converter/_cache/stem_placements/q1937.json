@@ -1,0 +1,30 @@
+{
+  "questionId": 1937,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 36,
+  "stemBlocks": [
+    "An object of mass 40 kg is placed on a uniform, horizontal plank of mass 10 kg between two supports X and Y as shown in the diagram.",
+    "What is the contact force at X?",
+    "(gravitational field strength = 10 N kg$^{-1}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A uniform horizontal plank is supported at points X and Y. An object is placed on the plank. Distances are indicated: 1.0 m from X to the object, 1.0 m from the object to the center of the plank, and 2.0 m from the center of the plank to Y.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:28:14.910507+00:00",
+  "sourceImageHash": "f3b752ded27b387de194599f2d300097e055aa1ad08eecc88228390a4d98aa90",
+  "status": "ok"
+}

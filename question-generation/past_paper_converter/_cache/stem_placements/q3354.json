@@ -1,0 +1,29 @@
+{
+  "questionId": 3354,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 25,
+  "stemBlocks": [
+    "When organic compounds are treated with an alkaline aqueous solution of iodine, a yellow precipitate is formed by those compounds that contain either of these structural fragments: $H_3C-C(=O)-\\text{{~~}}$ or $H_3C-CH(OH)-\\text{{~~}}$. There are 8 structurally isomeric alcohols with the molecular formula $C_5H_{12}O$. Each of these alcohols was heated under reflux with excess acidified potassium dichromate(VI).",
+    "How many of these alcohols gave a product that would form a yellow precipitate with an alkaline aqueous solution of iodine?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:10.833984+00:00",
+  "sourceImageHash": "e67bfa0fb5948194953abbbdbcdb55504a43c122aa5d38da89befbf93c4ffcb2",
+  "status": "ok"
+}

@@ -1,0 +1,441 @@
+{
+  "version": 1,
+  "purpose": "Fetch ESAT Camp's missing NSAA/ENGAA papers, answer keys/solutions, specimens and specifications.",
+  "important_notes": [
+    "NSAA Section 2 in 2016-2019 was long-form, so model/worked solutions are supplied instead of MCQ answer keys.",
+    "Some 2023 answer-key PDFs are combined Section 1 + Section 2 documents; the normalized target filename indicates the missing Section 2 use.",
+    "Some historical specification URLs have been retired. The downloader tries multiple candidates and can discover archived links for unresolved specs.",
+    "The downloader validates that a response begins with the PDF signature before saving it."
+  ],
+  "items": [
+    {
+      "exam": "NSAA",
+      "category": "past-paper",
+      "year": 2023,
+      "section": "2",
+      "kind": "paper",
+      "target": "NSAA/past-papers/2023/nsaa-2023-section-2-paper.pdf",
+      "urls": [
+        "https://www.verityprep.com/Pdf/FreeResources/OxfordCambridge/EsatFreeResources/NSAA_Section2/PastPaper/NSAA%202023%20Section%202%20-%20Question%20Paper.pdf"
+      ],
+      "note": "2023 Section 2 question paper."
+    },
+    {
+      "exam": "NSAA",
+      "category": "past-paper",
+      "year": 2023,
+      "section": "2",
+      "kind": "answer-key",
+      "target": "NSAA/past-papers/2023/nsaa-2023-section-2-answer-key.pdf",
+      "urls": [
+        "https://verityprep.com/Pdf/FreeResources/OxfordCambridge/EsatFreeResources/NSAA_Section2/AnswerKey/NSAA%202023%20Section%201%20and%202%20-%20Answer%20Key.pdf"
+      ],
+      "note": "Source PDF contains the combined 2023 Section 1 + Section 2 answer key."
+    },
+    {
+      "exam": "NSAA",
+      "category": "past-paper",
+      "year": 2016,
+      "section": "2",
+      "kind": "worked-solutions",
+      "target": "NSAA/past-papers/2016/nsaa-2016-section-2-worked-solutions.pdf",
+      "urls": [
+        "https://pmt.physicsandmathstutor.com/download/Admissions/NSAA/Solutions/NSAA-2016-Section-2-Solutions.pdf"
+      ],
+      "note": "NSAA Section 2 was long-form in 2016-2019; this is a model/worked-solutions document, not an MCQ answer key."
+    },
+    {
+      "exam": "NSAA",
+      "category": "past-paper",
+      "year": 2017,
+      "section": "2",
+      "kind": "worked-solutions",
+      "target": "NSAA/past-papers/2017/nsaa-2017-section-2-worked-solutions.pdf",
+      "urls": [
+        "https://pmt.physicsandmathstutor.com/download/Admissions/NSAA/Solutions/NSAA-2017-Section-2-Solutions.pdf"
+      ],
+      "note": "NSAA Section 2 was long-form in 2016-2019; this is a model/worked-solutions document, not an MCQ answer key."
+    },
+    {
+      "exam": "NSAA",
+      "category": "past-paper",
+      "year": 2018,
+      "section": "2",
+      "kind": "worked-solutions",
+      "target": "NSAA/past-papers/2018/nsaa-2018-section-2-worked-solutions.pdf",
+      "urls": [
+        "https://pmt.physicsandmathstutor.com/download/Admissions/NSAA/Solutions/NSAA-2018-Section-2-Solutions.pdf"
+      ],
+      "note": "NSAA Section 2 was long-form in 2016-2019; this is a model/worked-solutions document, not an MCQ answer key."
+    },
+    {
+      "exam": "NSAA",
+      "category": "past-paper",
+      "year": 2019,
+      "section": "2",
+      "kind": "worked-solutions",
+      "target": "NSAA/past-papers/2019/nsaa-2019-section-2-worked-solutions.pdf",
+      "urls": [
+        "https://pmt.physicsandmathstutor.com/download/Admissions/NSAA/Solutions/NSAA-2019-Section-2-Solutions.pdf"
+      ],
+      "note": "NSAA Section 2 was long-form in 2016-2019; this is a model/worked-solutions document, not an MCQ answer key."
+    },
+    {
+      "exam": "NSAA",
+      "category": "specimen",
+      "year": 2016,
+      "section": "1",
+      "kind": "paper",
+      "target": "NSAA/specimens/2016/nsaa-specimen-2016-section-1-paper.pdf",
+      "urls": [
+        "https://pmt.physicsandmathstutor.com/download/Admissions/NSAA/Papers/NSAA%20Specimen%202016%20Section%201.pdf"
+      ],
+      "note": "2016 Section 1 specimen paper."
+    },
+    {
+      "exam": "NSAA",
+      "category": "specimen",
+      "year": 2016,
+      "section": "1",
+      "kind": "answer-key",
+      "target": "NSAA/specimens/2016/nsaa-specimen-2016-section-1-answer-key.pdf",
+      "urls": [
+        "https://pmt.physicsandmathstutor.com/download/Admissions/NSAA/Answer-Keys/NSAA%20Specimen%202016%20Section%201%20Answer%20Key.pdf"
+      ],
+      "note": "2016 Section 1 specimen answer key."
+    },
+    {
+      "exam": "NSAA",
+      "category": "specimen",
+      "year": 2020,
+      "section": "1",
+      "kind": "paper",
+      "target": "NSAA/specimens/2020/nsaa-specimen-2020-section-1-paper.pdf",
+      "urls": [
+        "https://pmt.physicsandmathstutor.com/download/Admissions/NSAA/Papers/NSAA%20Specimen%202020%20Section%201.pdf"
+      ],
+      "note": "2020 Section 1 specimen paper."
+    },
+    {
+      "exam": "NSAA",
+      "category": "specimen",
+      "year": 2020,
+      "section": "1",
+      "kind": "answer-key",
+      "target": "NSAA/specimens/2020/nsaa-specimen-2020-section-1-answer-key.pdf",
+      "urls": [
+        "https://pmt.physicsandmathstutor.com/download/Admissions/NSAA/Answer-Keys/NSAA%20Specimen%202020%20Section%201%20Answer%20Key.pdf"
+      ],
+      "note": "2020 Section 1 specimen answer key."
+    },
+    {
+      "exam": "NSAA",
+      "category": "specimen",
+      "year": 2022,
+      "section": "2",
+      "kind": "paper",
+      "target": "NSAA/specimens/2022/nsaa-specimen-2022-section-2-paper.pdf",
+      "urls": [
+        "https://www.verityprep.com/Pdf/FreeResources/OxfordCambridge/EsatFreeResources/NSAA_Section2/PastPaper/NSAA%20Specimen%20%282022%29%20Section%202%20-%20Question%20Paper.pdf",
+        "https://www.verityprep.com/Pdf/FreeResources/OxfordCambridge//EsatFreeResources/NSAA_Section2/PastPaper/NSAA%20Specimen%20%282022%29%20Section%202%20-%20Question%20Paper.pdf"
+      ],
+      "note": "2022 Section 2 specimen paper."
+    },
+    {
+      "exam": "NSAA",
+      "category": "specimen",
+      "year": 2022,
+      "section": "2",
+      "kind": "answer-key",
+      "target": "NSAA/specimens/2022/nsaa-specimen-2022-section-2-answer-key.pdf",
+      "urls": [
+        "https://www.verityprep.com/Pdf/FreeResources/OxfordCambridge/EsatFreeResources/NSAA_Section2/AnswerKey/NSAA%20Specimen%20%282022%29%20Section%202%20-%20Answer%20Key.pdf",
+        "https://www.verityprep.com/Pdf/FreeResources/OxfordCambridge//EsatFreeResources/NSAA_Section2/AnswerKey/NSAA%20Specimen%20%282022%29%20Section%202%20-%20Answer%20Key.pdf"
+      ],
+      "note": "2022 Section 2 specimen answer key."
+    },
+    {
+      "exam": "NSAA",
+      "category": "specimen",
+      "year": 2016,
+      "section": "2",
+      "kind": "worked-solutions",
+      "target": "NSAA/specimens/2016/nsaa-specimen-2016-section-2-worked-solutions.pdf",
+      "urls": [
+        "https://pmt.physicsandmathstutor.com/download/Admissions/NSAA/Solutions/NSAA-Specimen-2016-Section-2-Solutions.pdf"
+      ],
+      "note": "2016 Section 2 specimen model solutions (long-form paper)."
+    },
+    {
+      "exam": "ENGAA",
+      "category": "past-paper",
+      "year": 2023,
+      "section": "2",
+      "kind": "paper",
+      "target": "ENGAA/past-papers/2023/engaa-2023-section-2-paper.pdf",
+      "urls": [
+        "https://www.verityprep.com/Pdf/FreeResources/OxfordCambridge/EsatFreeResources/ENGAA/EngaaPaper/ENGAA%202023%20Section%202%20-%20Question%20Paper.pdf",
+        "https://www.verityprep.com/Pdf/FreeResources/OxfordCambridge//EsatFreeResources/ENGAA/EngaaPaper/ENGAA%202023%20Section%202%20-%20Question%20Paper.pdf"
+      ],
+      "note": "2023 Section 2 question paper."
+    },
+    {
+      "exam": "ENGAA",
+      "category": "past-paper",
+      "year": 2023,
+      "section": "2",
+      "kind": "answer-key",
+      "target": "ENGAA/past-papers/2023/engaa-2023-section-2-answer-key.pdf",
+      "urls": [
+        "https://verityprep.com/Pdf/FreeResources/OxfordCambridge/EsatFreeResources/ENGAA/AnswerKey/ENGAA%202023%20Section%201%20and%202%20-%20Answer%20Key.pdf"
+      ],
+      "note": "Source PDF contains the combined 2023 Section 1 + Section 2 answer key."
+    },
+    {
+      "exam": "ENGAA",
+      "category": "past-paper",
+      "year": 2021,
+      "section": "2",
+      "kind": "answer-key",
+      "target": "ENGAA/past-papers/2021/engaa-2021-section-2-answer-key.pdf",
+      "urls": [
+        "https://www.verityprep.com/Pdf/FreeResources/OxfordCambridge/EsatFreeResources/ENGAA/AnswerKey/ENGAA%202021%20Section%202%20-%20Answer%20Key.pdf",
+        "https://www.verityprep.com/Pdf/FreeResources/OxfordCambridge//EsatFreeResources/ENGAA/AnswerKey/ENGAA%202021%20Section%202%20-%20Answer%20Key.pdf"
+      ],
+      "note": "2021 Section 2 answer key."
+    },
+    {
+      "exam": "ENGAA",
+      "category": "past-paper",
+      "year": 2022,
+      "section": "2",
+      "kind": "answer-key",
+      "target": "ENGAA/past-papers/2022/engaa-2022-section-2-answer-key.pdf",
+      "urls": [
+        "https://www.verityprep.com/Pdf/FreeResources/OxfordCambridge/EsatFreeResources/ENGAA/AnswerKey/ENGAA%202022%20Section%202%20-%20Answer%20Key.pdf",
+        "https://www.undergraduate.study.cam.ac.uk/sites/default/files/publications/engaa_2022.pdf"
+      ],
+      "note": "2022 Section 2 answer key; official Cambridge PDF is included as fallback."
+    },
+    {
+      "exam": "ENGAA",
+      "category": "specimen",
+      "year": null,
+      "section": "1",
+      "kind": "paper",
+      "target": "ENGAA/specimens/engaa-specimen-section-1-paper.pdf",
+      "urls": [
+        "https://pmt.physicsandmathstutor.com/download/Admissions/ENGAA/Papers/ENGAA%20Specimen%20Section%201.pdf"
+      ],
+      "note": "ENGAA Section 1 specimen paper."
+    },
+    {
+      "exam": "ENGAA",
+      "category": "specimen",
+      "year": null,
+      "section": "1",
+      "kind": "answer-key",
+      "target": "ENGAA/specimens/engaa-specimen-section-1-answer-key.pdf",
+      "urls": [
+        "https://pmt.physicsandmathstutor.com/download/Admissions/ENGAA/Answer-Keys/ENGAA%20Specimen%20Section%201%20Answer%20Key.pdf",
+        "https://www.verityprep.com/Pdf/FreeResources/OxfordCambridge/EsatFreeResources/ENGAA/AnswerKey/ENGAA%20Specimen%20Section%201%20-%20Answer%20Key.pdf"
+      ],
+      "note": "ENGAA Section 1 specimen answer key."
+    },
+    {
+      "exam": "NSAA",
+      "category": "specification",
+      "year": 2016,
+      "section": null,
+      "kind": "specification",
+      "target": "NSAA/specifications/nsaa-specification-2016.pdf",
+      "urls": [
+        "https://www.undergraduate.study.cam.ac.uk/files/publications/nsaa_specification_2016.pdf",
+        "https://www.undergraduate.study.cam.ac.uk/files/publications/natural_sciences_admissions_assessment_specification_2016.pdf"
+      ],
+      "note": "Historical specification. For the oldest years, live official URLs may have been retired; the downloader also attempts archive/source-page discovery if direct candidates fail."
+    },
+    {
+      "exam": "NSAA",
+      "category": "specification",
+      "year": 2017,
+      "section": null,
+      "kind": "specification",
+      "target": "NSAA/specifications/nsaa-specification-2017.pdf",
+      "urls": [
+        "https://www.undergraduate.study.cam.ac.uk/files/publications/nsaa_specification_2017.pdf",
+        "https://www.undergraduate.study.cam.ac.uk/files/publications/natural_sciences_admissions_assessment_specification_2017.pdf"
+      ],
+      "note": "Historical specification. For the oldest years, live official URLs may have been retired; the downloader also attempts archive/source-page discovery if direct candidates fail."
+    },
+    {
+      "exam": "NSAA",
+      "category": "specification",
+      "year": 2018,
+      "section": null,
+      "kind": "specification",
+      "target": "NSAA/specifications/nsaa-specification-2018.pdf",
+      "urls": [
+        "https://www.undergraduate.study.cam.ac.uk/files/publications/natural_sciences_admissions_assessment_specification_2018.pdf"
+      ],
+      "note": "Historical specification. For the oldest years, live official URLs may have been retired; the downloader also attempts archive/source-page discovery if direct candidates fail."
+    },
+    {
+      "exam": "NSAA",
+      "category": "specification",
+      "year": 2019,
+      "section": null,
+      "kind": "specification",
+      "target": "NSAA/specifications/nsaa-specification-2019.pdf",
+      "urls": [
+        "https://www.dropbox.com/scl/fi/94hyt54j6bb536omvp1eh/natural_sciences_admissions_assessment_specification_2019.pdf?dl=1&rlkey=nkwf0xp5n5jjdtgfe5wahuk47&st=7fhon4k0"
+      ],
+      "note": "Historical specification. For the oldest years, live official URLs may have been retired; the downloader also attempts archive/source-page discovery if direct candidates fail."
+    },
+    {
+      "exam": "NSAA",
+      "category": "specification",
+      "year": 2020,
+      "section": null,
+      "kind": "specification",
+      "target": "NSAA/specifications/nsaa-specification-2020.pdf",
+      "urls": [
+        "https://www.dropbox.com/s/k14ogdxumskh3ph/NSAA%20Specification%202020.pdf?dl=1"
+      ],
+      "note": "Historical specification. For the oldest years, live official URLs may have been retired; the downloader also attempts archive/source-page discovery if direct candidates fail."
+    },
+    {
+      "exam": "NSAA",
+      "category": "specification",
+      "year": 2021,
+      "section": null,
+      "kind": "specification",
+      "target": "NSAA/specifications/nsaa-specification-2021.pdf",
+      "urls": [
+        "https://www.dropbox.com/s/atred32z8getamr/nsaa_specification2021.pdf?dl=1"
+      ],
+      "note": "Historical specification. For the oldest years, live official URLs may have been retired; the downloader also attempts archive/source-page discovery if direct candidates fail."
+    },
+    {
+      "exam": "NSAA",
+      "category": "specification",
+      "year": 2022,
+      "section": null,
+      "kind": "specification",
+      "target": "NSAA/specifications/nsaa-specification-2022.pdf",
+      "urls": [
+        "https://www.dropbox.com/s/e7fl9u1tvxa01bg/nsaa_specification_2022.pdf?dl=1"
+      ],
+      "note": "Historical specification. For the oldest years, live official URLs may have been retired; the downloader also attempts archive/source-page discovery if direct candidates fail."
+    },
+    {
+      "exam": "NSAA",
+      "category": "specification",
+      "year": 2023,
+      "section": null,
+      "kind": "specification",
+      "target": "NSAA/specifications/nsaa-specification-2023.pdf",
+      "urls": [
+        "https://www.undergraduate.study.cam.ac.uk/files/publications/nsaa_specification_2023.pdf"
+      ],
+      "note": "Historical specification. For the oldest years, live official URLs may have been retired; the downloader also attempts archive/source-page discovery if direct candidates fail."
+    },
+    {
+      "exam": "ENGAA",
+      "category": "specification",
+      "year": 2016,
+      "section": null,
+      "kind": "specification",
+      "target": "ENGAA/specifications/engaa-specification-2016.pdf",
+      "urls": [
+        "https://www.undergraduate.study.cam.ac.uk/files/publications/engaa_specification_2016.pdf",
+        "https://www.undergraduate.study.cam.ac.uk/files/publications/engineering_admissions_assessment_specification_2016.pdf"
+      ],
+      "note": "Historical specification. For the oldest years, live official URLs may have been retired; the downloader also attempts archive/source-page discovery if direct candidates fail."
+    },
+    {
+      "exam": "ENGAA",
+      "category": "specification",
+      "year": 2017,
+      "section": null,
+      "kind": "specification",
+      "target": "ENGAA/specifications/engaa-specification-2017.pdf",
+      "urls": [
+        "https://www.dropbox.com/scl/fi/9lr8tecobfb095f07dkzr/engaa_specification2017.pdf?dl=1&rlkey=uyrbfrjzjw90cnd43zx793gcn&st=1b4m89lp"
+      ],
+      "note": "Historical specification. For the oldest years, live official URLs may have been retired; the downloader also attempts archive/source-page discovery if direct candidates fail."
+    },
+    {
+      "exam": "ENGAA",
+      "category": "specification",
+      "year": 2018,
+      "section": null,
+      "kind": "specification",
+      "target": "ENGAA/specifications/engaa-specification-2018.pdf",
+      "urls": [
+        "https://www.undergraduate.study.cam.ac.uk/files/publications/engineering_admissions_assessment_specification_2018.pdf"
+      ],
+      "note": "Historical specification. For the oldest years, live official URLs may have been retired; the downloader also attempts archive/source-page discovery if direct candidates fail."
+    },
+    {
+      "exam": "ENGAA",
+      "category": "specification",
+      "year": 2019,
+      "section": null,
+      "kind": "specification",
+      "target": "ENGAA/specifications/engaa-specification-2019.pdf",
+      "urls": [
+        "https://www.dropbox.com/scl/fi/xwcsqi41f1i0gvvo55en9/engaa_specification2019.pdf?dl=1&rlkey=1pvvjn8alurm5zw9xxsek3k14&st=2jrju7q3"
+      ],
+      "note": "Historical specification. For the oldest years, live official URLs may have been retired; the downloader also attempts archive/source-page discovery if direct candidates fail."
+    },
+    {
+      "exam": "ENGAA",
+      "category": "specification",
+      "year": 2020,
+      "section": null,
+      "kind": "specification",
+      "target": "ENGAA/specifications/engaa-specification-2020.pdf",
+      "urls": [
+        "https://www.dropbox.com/scl/fi/9c4km5lsop6prfvwn9lls/engaa_specification_2020.pdf?dl=1&rlkey=yabs0mw5uo6pomq9w8xifz6v4&st=7f4mi4hl"
+      ],
+      "note": "Historical specification. For the oldest years, live official URLs may have been retired; the downloader also attempts archive/source-page discovery if direct candidates fail."
+    },
+    {
+      "exam": "ENGAA",
+      "category": "specification",
+      "year": 2021,
+      "section": null,
+      "kind": "specification",
+      "target": "ENGAA/specifications/engaa-specification-2021.pdf",
+      "urls": [
+        "https://www.dropbox.com/scl/fi/j99bxikzpsh29oauypgmw/engaa_specification2021.pdf?dl=1&rlkey=1ey3lf5r1g5l25qp1v68l5k4e&st=3x5vgkx8"
+      ],
+      "note": "Historical specification. For the oldest years, live official URLs may have been retired; the downloader also attempts archive/source-page discovery if direct candidates fail."
+    },
+    {
+      "exam": "ENGAA",
+      "category": "specification",
+      "year": 2022,
+      "section": null,
+      "kind": "specification",
+      "target": "ENGAA/specifications/engaa-specification-2022.pdf",
+      "urls": [
+        "https://www.dropbox.com/scl/fi/6tg8tsedryieikpzklb1c/engaa_specification_2022.pdf?dl=1&rlkey=9or34pvpo3nb2136jzgpv8is7&st=1f09wptb"
+      ],
+      "note": "Historical specification. For the oldest years, live official URLs may have been retired; the downloader also attempts archive/source-page discovery if direct candidates fail."
+    },
+    {
+      "exam": "ENGAA",
+      "category": "specification",
+      "year": 2023,
+      "section": null,
+      "kind": "specification",
+      "target": "ENGAA/specifications/engaa-specification-2023.pdf",
+      "urls": [
+        "https://www.dropbox.com/scl/fi/pr1kcq89kvcgscwqbgr6l/engaa_specification_2023.pdf?dl=1&rlkey=5mb992m2edi6hapnmy1hrcyde&st=bxhnej2m"
+      ],
+      "note": "Historical specification. For the oldest years, live official URLs may have been retired; the downloader also attempts archive/source-page discovery if direct candidates fail."
+    }
+  ]
+}

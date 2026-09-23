@@ -1,0 +1,288 @@
+{
+  "id": "P_ad97dfb5-Medium-2f5a0ca5e0",
+  "schema_id": "P_ad97dfb5",
+  "difficulty": "Medium",
+  "idea_plan": {
+    "schema_id": "P_ad97dfb5",
+    "module": "physics",
+    "variation_mode": "FAR",
+    "target_difficulty": "Medium",
+    "idea_summary": "Calculate the ratio of power dissipated by two wires connected in parallel, where one wire has scaled dimensions (length and radius), requiring the application of the inverse-square law for resistance and the V²/R power law.",
+    "schema_invariant": {
+      "core_move": "Calculate the resultant ratio of a dependent physical quantity by applying scaling factors to independent variables in a power law relationship.",
+      "what_must_not_change": [
+        "The use of a multi-variable power law relationship.",
+        "The requirement to scale independent variables to find a ratio or new relative value."
+      ],
+      "what_can_change": [
+        "The physical domain (shifted from gravity/astrophysics to DC circuits).",
+        "The specific formulas used.",
+        "The addition of a model-selection step to determine which variable is held constant."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "tempting_wrong_model",
+      "reasoning_hinge": "Recognising that in a parallel circuit, voltage is the constant invariant, so power scales with 1/R (using P = V²/R) rather than R (using P = I²R).",
+      "why_top_students_win": "They correctly square the radius scaling factor to find the resistance ratio, and then correctly invert it because power in parallel is inversely proportional to resistance.",
+      "why_mid_students_miss": "They either forget to square the radius when scaling the cross-sectional area, or they use P = I²R and assume power scales directly with resistance, missing that current splits unevenly between the parallel branches."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Electrical resistance dependence on dimensions (R = ρL/A).",
+      "supporting_idea_if_any": "Electrical power in parallel circuits (P = V²/R).",
+      "estimated_solution_steps": 3,
+      "number_of_core_physics_principles": 2,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 3,
+      "must_include": [
+        "model_selection",
+        "proportional_reasoning",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "Matches the pace of standard ESAT proportional reasoning questions, but adds a conceptual physics hinge (parallel vs series) to elevate it from a pure math exercise to a physics reasoning task.",
+    "task_signature": "proportional_change",
+    "tool_footprint": [
+      "identify_invariant",
+      "apply_power_law",
+      "calculate_ratio"
+    ],
+    "primary_tag": "5",
+    "secondary_tags": [
+      "5.2",
+      "5.4"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "Shifting from the typical astrophysics or gravity contexts of this schema into DC circuits, introducing a model-selection hinge (which power formula to use) before the power-law scaling can be applied.",
+    "why_still_on_spec": "Calculating resistance from resistivity and dimensions, and calculating electrical power, are fundamental parts of the ESAT Electricity specification (Section 5).",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Using P = I²R and assuming current is constant despite the parallel connection.",
+        "distractor_role": "Yields a ratio that is the direct inverse of the correct answer (e.g., 8 instead of 1/8)."
+      },
+      {
+        "mistake": "Forgetting to square the radius scaling factor when calculating the resistance ratio.",
+        "distractor_role": "Yields a ratio based on a 1/r dependence rather than 1/r² (e.g., 1/4 instead of 1/8)."
+      },
+      {
+        "mistake": "Both forgetting to square the radius AND using the series power formula (P = I²R).",
+        "distractor_role": "Yields a linearly scaled direct ratio (e.g., 4)."
+      },
+      {
+        "mistake": "Assuming resistance is directly proportional to cross-sectional area rather than inversely proportional.",
+        "distractor_role": "Yields a ratio where the radius scaling factor is multiplied rather than divided."
+      }
+    ],
+    "difficulty_rationale": "It requires combining two well-known standard formulas (R=ρL/A and P=V²/R) through proportional reasoning. The math is simple enough to do mentally (e.g., 2 / (0.5)² = 8), but the multiple traps (squaring, inverse vs direct, parallel vs series) make it highly selective.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "The candidate must deduce which variable is constant (voltage) to select the correct proportional relationship (P ∝ 1/R) before they can apply the scaling factors. Blindly plugging into P = I²R will fail."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The discrete combinations of common errors (forgetting to square, picking the wrong power formula, inverting the area relationship) generate clean, distinct integer or simple fraction distractors."
+    }
+  },
+  "question_package": {
+    "metadata": {
+      "schema_id": "P_ad97dfb5",
+      "module": "physics",
+      "variation_mode": "FAR",
+      "target_difficulty": "Medium",
+      "task_signature": "proportional_change",
+      "primary_tag": "5",
+      "secondary_tags": [
+        "5.2",
+        "5.4"
+      ]
+    },
+    "question": {
+      "stem": "Two wires, X and Y, are made from the same material. Wire Y has twice the length and half the radius of wire X.\n\nThe two wires are connected in parallel to a DC power supply.\n\nWhat is the ratio of the power dissipated by wire Y to the power dissipated by wire X, $\\frac{P_Y}{P_X}$?\n\n<figure class=\"qg-diagram\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 600 420\" width=\"600\" height=\"420\" role=\"img\" aria-label=\"concept image\"><image href=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_154539_188b69/concept_image_v1.png\" x=\"0\" y=\"0\" width=\"600\" height=\"420\" preserveAspectRatio=\"xMidYMid meet\" /></svg><figcaption>concept image</figcaption></figure>\n",
+      "options": {
+        "A": "$\\frac{1}{8}$",
+        "B": "$\\frac{1}{4}$",
+        "C": "$\\frac{1}{2}$",
+        "D": "$2$",
+        "E": "$4$",
+        "F": "$8$"
+      },
+      "correct_option": "A",
+      "stem_before_visual": "Two wires, X and Y, are made from the same material. Wire Y has twice the length and half the radius of wire X.\n\nThe two wires are connected in parallel to a DC power supply.\n\nWhat is the ratio of the power dissipated by wire Y to the power dissipated by wire X, $\\frac{P_Y}{P_X}$?"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "In a parallel circuit, voltage is constant across branches, so power scales inversely with resistance ($P = \\frac{V^2}{R}$). Resistance itself scales directly with length and inversely with the square of the radius.",
+      "reasoning": "First, determine the resistance ratio. Resistance is given by $R = \\frac{\\rho L}{\\pi r^2}$.\nSince wire Y has twice the length ($L_Y = 2L_X$) and half the radius ($r_Y = 0.5r_X$), its resistance is:\n$R_Y = R_X \\times \\frac{2}{(0.5)^2} = R_X \\times \\frac{2}{0.25} = 8R_X$.\nBecause the wires are connected in parallel, they experience the same potential difference $V$.\nUsing the power formula $P = \\frac{V^2}{R}$, the power dissipated is inversely proportional to resistance.\nTherefore, the power ratio is $\\frac{P_Y}{P_X} = \\frac{R_X}{R_Y} = \\frac{1}{8}$."
+    },
+    "distractor_map": {
+      "A": "Correct. Resistance is 8 times greater, and since they are in parallel, power is 1/8th.",
+      "B": "Forgets to square the radius when calculating resistance ($R_Y = 4R_X$), leading to a power ratio of 1/4.",
+      "C": "Assumes resistance is directly proportional to cross-sectional area ($R_Y = 0.5R_X$) and uses the series power formula ($P \\propto R$), leading to 1/2.",
+      "D": "Assumes resistance is directly proportional to cross-sectional area ($R_Y = 0.5R_X$), leading to a power ratio of 2 in parallel.",
+      "E": "Forgets to square the radius ($R_Y = 4R_X$) AND uses the series power formula ($P \\propto R$), leading to 4.",
+      "F": "Correctly calculates $R_Y = 8R_X$ but uses the series power formula $P = I^2R$ assuming current is constant, leading to 8."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Recognising that in a parallel circuit, voltage is the constant invariant, so power scales with 1/R rather than R.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 2,
+        "estimated_solution_steps": 3,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "verifier_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "A",
+    "independent_solution": {
+      "main_law_or_principle": "Resistance of a wire $R = \\rho L / A$ and Power in parallel $P = V^2 / R$.",
+      "calculation_or_logic": "1. Resistance ratio: $R_Y / R_X = (L_Y / L_X) \\times (A_X / A_Y) = (2) \\times (r_X^2 / r_Y^2) = 2 \\times (1 / 0.5)^2 = 2 \\times 4 = 8$. Thus $R_Y = 8R_X$. 2. Power ratio: Since $V$ is constant in parallel, $P_Y / P_X = R_X / R_Y = 1 / 8$.",
+      "verified_answer_value": "1/8",
+      "claimed_answer_value": "1/8",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Identify constant voltage in parallel circuits",
+        "Apply resistance formula $R = \\rho L / A$",
+        "Apply power formula $P = V^2 / R$"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "derived_relationship_audit": {
+      "requires_nontrivial_derivation": false,
+      "number_of_linked_relationships": 0,
+      "relationships_given_in_stem": [],
+      "safe_for_esat": true
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a",
+      "derived_relationship_safety": "pass"
+    },
+    "notes": [
+      "The question is well-posed and tests fundamental understanding of electrical properties and circuit configurations."
+    ]
+  },
+  "style_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "shorter",
+      "notes": "The question is perfectly calibrated for ESAT. It avoids complex circuits while forcing the student to navigate the specific relationship between geometry, resistance, and power in a parallel configuration."
+    },
+    "selectivity_audit": {
+      "main_trap": "The 'parallel' vs 'series' power formula trap. Students often default to P=I²R, which would lead to the inverse of the correct answer (8 instead of 1/8).",
+      "why_not_plug_and_chug": "The student must first identify the invariant (voltage) to choose the correct power formula, then correctly scale the resistance based on the geometric factors (length and radius squared).",
+      "expected_mid_student_error": "Forgetting to square the radius factor (leading to 1/4) or using the wrong power formula (leading to 8).",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 2,
+      "estimated_solution_steps": 3,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "Excellent use of proportional reasoning. The distractors are well-constructed to catch common conceptual errors rather than just arithmetic slips."
+    ]
+  },
+  "models": {
+    "designer": "gemini-3.1-pro-preview",
+    "implementer": "gemini-3.1-pro-preview",
+    "verifier": "gemini-3.1-flash-lite",
+    "style_judge": "gemini-3.1-flash-lite"
+  },
+  "attempts": 1,
+  "created_at": "2026-05-18T15:51:02.038022",
+  "token_usage": {
+    "prompt_tokens": 36605,
+    "candidates_tokens": 5855,
+    "total_tokens": 51500
+  },
+  "tags": {
+    "primary_tag": "1",
+    "secondary_tags": [],
+    "primary_confidence": 1.0,
+    "reasoning": "The question primarily tests understanding of electrical resistance (how it depends on length and radius), properties of parallel circuits (constant voltage), and power dissipation in electrical circuits. All these concepts are fundamental to Electricity.",
+    "_raw_text": "```json\n{\n  \"primary_tag\": \"1\",\n  \"secondary_tags\": [],\n  \"primary_confidence\": 1.0,\n  \"reasoning\": \"The question primarily tests understanding of electrical resistance (how it depends on length and radius), properties of parallel circuits (constant voltage), and power dissipation in electrical circuits. All these concepts are fundamental to Electricity.\"\n}\n```"
+  },
+  "schema_block_snapshot": "## **P_ad97dfb5. Scaling quantities with power law relationships**\n\n**Core move:** Calculate the resultant value of a dependent physical quantity by applying given scaling factors to its independent variables in a power law relationship.\n\n**Seen in / context:**\n- Stefan-Boltzmann law (P = σAT⁴ or P = kR²T⁴)\nGravitational force/potential (F = Gm₁m₂/r²)\nElectric force/potential (F = kq₁q₂/r²)\nIntensity of waves (I ∝ 1/r²)\nAny physical law where a quantity depends on powers of other variables.\n\n**Possible wrong paths:**\n- Incorrectly applying the exponents to the scaling factors (e.g., multiplying by 2 for R² instead of 2²).\nMisinterpreting the scaling factor (e.g., 'decrease by a factor of two' means multiplying by 1/2, not subtracting 2).\nPerforming absolute calculations when a ratio-based approach would be simpler and less error-prone.\nErrors in manipulating scientific notation or powers of 10.\n\n**Notes for generation:**\n- Encourage the use of ratios (e.g., P_final/P_initial) to cancel out constants and original values, simplifying the calculation.\nEnsure the definition of 'factor of X' increase/decrease is consistent and clearly understood.\nCan involve multiple variables changing simultaneously, requiring careful application of all scaling factors and exponents.\n\n**Exemplar questions:**\n- `NSAA_2016_Section1_Q26_NSAA_Sec`: Initial exemplar for new schema.\n- `NSAA_2017_Section1_Q28_NSAA_Sec`: The question requires calculating the ratio of densities (a dependent physical quantity) by applying the given ratio of radii (an independent variable) using a power law relationship (density is inversely proportional to the cube of the radius, ρ ∝ r⁻³). This directly matches the core move of schema P_ad97dfb5.",
+  "pipeline": "v4",
+  "has_visual": true,
+  "visual_type": "concept_image",
+  "answer_depends_on_visual": false,
+  "question_stem_before_auto_diagram": "Two wires, X and Y, are made from the same material. Wire Y has twice the length and half the radius of wire X.\n\nThe two wires are connected in parallel to a DC power supply.\n\nWhat is the ratio of the power dissipated by wire Y to the power dissipated by wire X, $\\frac{P_Y}{P_X}$?",
+  "visual_assets": [
+    {
+      "kind": "concept_image",
+      "spec_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260518_154539_188b69\\concept_image_prompt.json",
+      "image_paths": [
+        "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_154539_188b69/concept_image_v1.png"
+      ],
+      "renderer": "gemini_image_v1",
+      "qc_status": "pass",
+      "qc_source": "concept_image_verifier.json",
+      "answer_bearing": false,
+      "checksum": null
+    }
+  ]
+}

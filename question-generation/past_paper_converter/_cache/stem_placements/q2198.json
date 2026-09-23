@@ -1,0 +1,29 @@
+{
+  "questionId": 2198,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 43,
+  "stemBlocks": [
+    "A box is a hollow pyramid. The base of the box is a square with sides 10 cm and all the slant edges of the box are 12 cm long.",
+    "What is the angle made by the slant edge TP with the base PQRS?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:37:46.656969+00:00",
+  "sourceImageHash": "02a204ebe4e3fdd266a14ea3893cb221c46002342d244934c1882226c7397c32",
+  "status": "ok"
+}

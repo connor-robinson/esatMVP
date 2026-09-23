@@ -1,0 +1,28 @@
+{
+  "questionId": 2885,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 66,
+  "stemBlocks": [
+    "When a person touches a hot object, they rapidly pull their hand away as a result of a reflex arc. The diagram shows a student's drawing of part of this reflex arc. Which label (A-E) is correct?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.394250+00:00",
+  "sourceImageHash": "5d40584944acc7945866298a27a7a34119de9093c08cbe0c6f9b2fc337a789cd",
+  "status": "ok"
+}

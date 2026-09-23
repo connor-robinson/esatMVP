@@ -1,0 +1,30 @@
+{
+  "questionId": 2167,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 12,
+  "stemBlocks": [
+    "A cyclist and a bike have a combined mass of $100 \\text{ kg}$. The cyclist free-wheels (rolls without pedalling) at a constant speed of $0.80 \\text{ ms}^{-1}$ down a slope where the cyclist descends $1.0 \\text{ m}$ for each $10 \\text{ m}$ travelled along the road, as shown in the diagram.",
+    "Calculate the loss in gravitational potential energy as the cyclist loses $100 \\text{ m}$ in vertical height and hence calculate the total resistive force on the cyclist and bike. (gravitational field strength = $10 \\text{ Nkg}^{-1}$)",
+    "|  | loss in gravitational potential energy/J | resistive force/N |\n| --- | --- | --- |\n| A | 3200 | $32/\\sqrt{101}$ |\n| B | 3200 | 3.2 |\n| C | 3200 | $32/\\sqrt{99}$ |\n| D | 100000 | $1000/\\sqrt{101}$ |\n| E | 100000 | 100 |\n| F | 100000 | $1000/\\sqrt{99}$ |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:37:46.624892+00:00",
+  "sourceImageHash": "f60cf58a2086f3df97878706a1e23a116cbc58173baa34bc309471f6571f54a6",
+  "status": "ok"
+}

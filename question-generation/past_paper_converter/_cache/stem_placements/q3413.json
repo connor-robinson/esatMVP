@@ -1,0 +1,30 @@
+{
+  "questionId": 3413,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 24,
+  "stemBlocks": [
+    "Ibuprofen is a common pain relief and anti-inflammatory drug. It is often sold in tablet form, each tablet containing 200 mg of the drug.\nIbuprofen can be synthesised from isobutylbenzene in a 3-stage process with the percentage yields for each step shown on the arrows:\n6.7 g of isobutylbenzene is converted to ibuprofen to trial this process.",
+    "What is the maximum number of 200 mg ibuprofen tablets that can be manufactured?",
+    "($A_r$ values: H = 1; C = 12; O = 16)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Synthesis pathway from isobutylbenzene to ibuprofen with percentage yields for each step.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.087651+00:00",
+  "sourceImageHash": "25dce598fd228cff024c9aacc2544de9353870a6cca1f4a70c2e262a682ad6a1",
+  "status": "ok"
+}

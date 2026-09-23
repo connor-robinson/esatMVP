@@ -1,0 +1,59 @@
+{
+  "stage": "implementer_regen",
+  "status": "error",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_30453dc9",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Medium",
+      "task_signature": "compare_scenarios",
+      "primary_tag": "4",
+      "secondary_tags": [
+        "5"
+      ]
+    },
+    "question": {
+      "stem": "Two identical electric kettles, A and B, are filled with the same amount of water. The exterior of kettle A is polished metal, while the exterior of kettle B is coated in matt black paint. Both kettles are placed in a room at 20°C and are switched on. Their internal thermostats are set to maintain the water at a constant temperature of 95°C.\n\nLet $P_A$ and $P_B$ be the average electrical power consumed by kettles A and B, respectively, to maintain this temperature.\n\nWhich of the following statements is correct?",
+      "options": {
+        "A": "$P_B > P_A$, because the matt black surface is a better emitter of thermal radiation.",
+        "B": "$P_A > P_B$, because the polished metal surface is a better conductor of heat.",
+        "C": "$P_A = P_B$, because both kettles maintain the same temperature and have the same surface area.",
+        "D": "$P_B > P_A$, because the matt black surface is better at absorbing energy from the surrounding air."
+      },
+      "correct_option": "A"
+    },
+    "visual_requirements": {
+      "visual_need": "concept_image_only",
+      "visual_role": "supportive",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": "A simple diagram showing two identical electric kettles side-by-side. One is shiny and metallic, labelled 'A'. The other is matt black, labelled 'B'. Each kettle has a power cord plugged into a socket. Arrows indicating heat loss point away from the kettles, with more/thicker arrows shown for kettle B to visually represent its higher rate of heat loss."
+    },
+    "solution": {
+      "key_insight": "To maintain a constant temperature, the electrical power supplied to the kettle must be equal to the rate at which the kettle loses thermal energy to its surroundings. The rate of heat loss depends on the surface properties of the kettle.",
+      "reasoning": "1. The problem states that the water in both kettles is maintained at a constant temperature (95°C). This implies a steady-state thermal equilibrium where the rate of energy input equals the rate of energy output.\n2. The energy input is the average electrical power consumed by the heater, $P_{in} = P_{electrical}$.\n3. The energy output is the rate of heat loss to the colder surroundings (20°C), $P_{out}$. Heat is lost from the kettle's surface primarily through convection and thermal radiation.\n4. Both kettles are identical in shape and size, and are at the same temperature. Therefore, the rate of heat loss due to convection will be approximately the same for both.\n5. However, the rate of heat loss due to thermal radiation is dependent on the surface's emissivity. A matt black surface (kettle B) has a high emissivity and is a good emitter of thermal radiation. A polished metal surface (kettle A) has a low emissivity and is a poor emitter.\n6. Consequently, kettle B loses heat via radiation at a higher rate than kettle A.\n7. Since the total rate of heat loss is the sum of convection and radiation losses ($P_{out} = P_{convection} + P_{radiation}$), the total rate of heat loss for kettle B is greater than for kettle A ($P_{out, B} > P_{out, A}$).\n8. To maintain the constant temperature, the power supplied must balance this loss. Therefore, the power required for kettle B must be greater than the power required for kettle A ($P_B > P_A$).\n9. Option A correctly states this relationship and provides the correct physical reason.",
+      "distractor_map": {
+        "A": "Correct. The matt black surface has a higher emissivity, leading to a greater rate of heat loss by radiation. To compensate for this greater loss and maintain a constant temperature, a greater input power is required.",
+        "B": "Incorrect. This states the wrong relationship ($P_A > P_B$) and gives a misleading reason. While metal is a good conductor, the dominant factor determining the difference in heat loss is the surface emissivity's effect on radiation. A polished surface loses less heat, so it requires less power.",
+        "C": "Incorrect. This is a common misconception. Although the temperatures and dimensions are identical, the different surface properties (emissivity) cause different rates of heat loss, which in turn require different amounts of power to maintain equilibrium.",
+        "D": "Incorrect. While the comparison $P_B > P_A$ is correct, the reason provided is physically wrong. The kettles are hotter than the surrounding air, so they are net emitters of thermal energy. They lose heat to the surroundings; they do not absorb energy from the colder air."
+      }
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": true,
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true
+    }
+  },
+  "notes": [],
+  "error": "Missing required keys: ['distractor_map']",
+  "raw_text": "```json\n{\n  \"metadata\": {\n    \"schema_id\": \"P_30453dc9\",\n    \"module\": \"physics\",\n    \"variation_mode\": \"SIBLING\",\n    \"target_difficulty\": \"Medium\",\n    \"task_signature\": \"compare_scenarios\",\n    \"primary_tag\": \"4\",\n    \"secondary_tags\": [\n      \"5\"\n    ]\n  },\n  \"question\": {\n    \"stem\": \"Two identical electric kettles, A and B, are filled with the same amount of water. The exterior of kettle A is polished metal, while the exterior of kettle B is coated in matt black paint. Both kettles are placed in a room at 20°C and are switched on. Their internal thermostats are set to maintain the water at a constant temperature of 95°C.\\n\\nLet $P_A$ and $P_B$ be the average electrical power consumed by kettles A and B, respectively, to maintain this temperature.\\n\\nWhich of the following statements is correct?\",\n    \"options\": {\n      \"A\": \"$P_B > P_A$, because the matt black surface is a better emitter of thermal radiation.\",\n      \"B\": \"$P_A > P_B$, because the polished metal surface is a better conductor of heat.\",\n      \"C\": \"$P_A = P_B$, because both kettles maintain the same temperature and have the same surface area.\",\n      \"D\": \"$P_B > P_A$, because the matt black surface is better at absorbing energy from the surrounding air.\"\n    },\n    \"correct_option\": \"A\"\n  },\n  \"visual_requirements\": {\n    \"visual_need\": \"concept_image_only\",\n    \"visual_role\": \"supportive\",\n    \"answer_depends_on_visual\": false,\n    \"graph_request\": null,\n    \"schematic_request\": null,\n    \"concept_image_request\": \"A simple diagram showing two identical electric kettles side-by-side. One is shiny and metallic, labelled 'A'. The other is matt black, labelled 'B'. Each kettle has a power cord plugged into a socket. Arrows indicating heat loss point away from the kettles, with more/thicker arrows shown for kettle B to visually represent its higher rate of heat loss.\"\n  },\n  \"solution\": {\n    \"key_insight\": \"To maintain a constant temperature, the electrical power supplied to the kettle must be equal to the rate at which the kettle loses thermal energy to its surroundings. The rate of heat loss depends on the surface properties of the kettle.\",\n    \"reasoning\": \"1. The problem states that the water in both kettles is maintained at a constant temperature (95°C). This implies a steady-state thermal equilibrium where the rate of energy input equals the rate of energy output.\\n2. The energy input is the average electrical power consumed by the heater, $P_{in} = P_{electrical}$.\\n3. The energy output is the rate of heat loss to the colder surroundings (20°C), $P_{out}$. Heat is lost from the kettle's surface primarily through convection and thermal radiation.\\n4. Both kettles are identical in shape and size, and are at the same temperature. Therefore, the rate of heat loss due to convection will be approximately the same for both.\\n5. However, the rate of heat loss due to thermal radiation is dependent on the surface's emissivity. A matt black surface (kettle B) has a high emissivity and is a good emitter of thermal radiation. A polished metal surface (kettle A) has a low emissivity and is a poor emitter.\\n6. Consequently, kettle B loses heat via radiation at a higher rate than kettle A.\\n7. Since the total rate of heat loss is the sum of convection and radiation losses ($P_{out} = P_{convection} + P_{radiation}$), the total rate of heat loss for kettle B is greater than for kettle A ($P_{out, B} > P_{out, A}$).\\n8. To maintain the constant temperature, the power supplied must balance this loss. Therefore, the power required for kettle B must be greater than the power required for kettle A ($P_B > P_A$).\\n9. Option A correctly states this relationship and provides the correct physical reason.\",\n    \"distractor_map\": {\n      \"A\": \"Correct. The matt black surface has a higher emissivity, leading to a greater rate of heat loss by radiation. To compensate for this greater loss and maintain a constant temperature, a greater input power is required.\",\n      \"B\": \"Incorrect. This states the wrong relationship ($P_A > P_B$) and gives a misleading reason. While metal is a good conductor, the dominant factor determining the difference in heat loss is the surface emissivity's effect on radiation. A polished surface loses less heat, so it requires less power.\",\n      \"C\": \"Incorrect. This is a common misconception. Although the temperatures and dimensions are identical, the different surface properties (emissivity) cause different rates of heat loss, which in turn require different amounts of power to maintain equilibrium.\",\n      \"D\": \"Incorrect. While the comparison $P_B > P_A$ is correct, the reason provided is physically wrong. The kettles are hotter than the surrounding air, so they are net emitters of thermal energy. They lose heat to the surroundings; they do not absorb energy from the colder air.\"\n    }\n  },\n  \"quality_self_check\": {\n    \"reasoning_hinge_used\": true,\n    \"not_direct_substitution\": true,\n    \"exactly_one_correct\": true,\n    \"no_calculator_friendly\": true,\n    \"on_spec\": true,\n    \"visual_dependency_safe\": true\n  }\n}\n```",
+  "model": "gemini-2.5-pro",
+  "attempts": 3
+}

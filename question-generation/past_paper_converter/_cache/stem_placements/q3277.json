@@ -1,0 +1,29 @@
+{
+  "questionId": 3277,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 8,
+  "stemBlocks": [
+    "A light spring is used to support a uniform rod horizontally against a wall as shown. The angle between the spring and the rod is $\\theta$. The spring constant of the spring is $20 \\text{ N m}^{-1}$ and the weight of the rod is $16 \\text{ N}$. The angle $\\theta$ is such that $\\cos \\theta = \\frac{3}{5}$ and $\\sin \\theta = \\frac{4}{5}$.",
+    "How much energy is stored in the spring?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:13.241832+00:00",
+  "sourceImageHash": "eda291a4d60095bf971ea03d61983cadede620b994fc96e60bcb2936feb5ebf9",
+  "status": "ok"
+}

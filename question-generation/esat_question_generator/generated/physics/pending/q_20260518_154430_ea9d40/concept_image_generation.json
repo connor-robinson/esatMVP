@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260518_154430_ea9d40\\assets\\concept_image_v1.png",
+    "bytes": 331764,
+    "model": "imagen-4.0-ultra-generate-001",
+    "aspect_ratio": "4:3",
+    "seed": null,
+    "duration_s": 12.894
+  },
+  "prompt_used": "A simple monochrome exam-style diagram showing two horizontal cylinders representing electrical wires, arranged one above the other. The top cylinder is Wire X. The bottom cylinder is Wire Y, and it must be drawn visibly longer and thicker (larger diameter) than Wire X. Label 'X' placed just outside to the left of the top cylinder. Label 'Y' placed just outside to the left of the bottom cylinder. Illustrative only, not answer-bearing. Simple monochrome exam diagram on a pure white #FFFFFF background. Clean black vector-like lines, flat 2D orthographic side-profiles (rectangles with slightly curved ends). Times New Roman-like serif font for labels. No measurement arrows, no extra labels, no shading, no unrequested arrows or symbols, no clutter.",
+  "public_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_154430_ea9d40/concept_image_v1.png"
+}

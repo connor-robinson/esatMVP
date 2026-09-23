@@ -1,0 +1,149 @@
+{
+  "style": "neutral-esat-inspired",
+  "diagrams": [
+    {
+      "questionId": "esat-m2-module-1-q10",
+      "id": "m1_q10_circle_tangent",
+      "svgPath": "/diagrams/svg/esat-m2-module-1-q10.svg",
+      "pngPath": "/diagrams/png/esat-m2-module-1-q10.png",
+      "alt": "Coordinate diagram of a circle centred at C(2,-1), an external point P(8,-1), and tangent PT.",
+      "notToScale": true
+    },
+    {
+      "questionId": "esat-m2-module-1-q13",
+      "id": "m1_q13_segment",
+      "svgPath": "/diagrams/svg/esat-m2-module-1-q13.svg",
+      "pngPath": "/diagrams/png/esat-m2-module-1-q13.png",
+      "alt": "Circle sector with central angle two pi over three and the minor segment shaded.",
+      "notToScale": true
+    },
+    {
+      "questionId": "esat-m2-module-1-q19",
+      "id": "m1_q19_normal",
+      "svgPath": "/diagrams/svg/esat-m2-module-1-q19.svg",
+      "pngPath": "/diagrams/png/esat-m2-module-1-q19.png",
+      "alt": "Graph of y equals x cubed minus 3x with tangent and normal at (2,2).",
+      "notToScale": true
+    },
+    {
+      "questionId": "esat-m2-module-1-q21",
+      "id": "m1_q21_box",
+      "svgPath": "/diagrams/svg/esat-m2-module-1-q21.svg",
+      "pngPath": "/diagrams/png/esat-m2-module-1-q21.png",
+      "alt": "Twelve by eight rectangular sheet with four corner squares of side x marked for removal.",
+      "notToScale": true
+    },
+    {
+      "questionId": "esat-m2-module-1-q22",
+      "id": "m1_q22_area_line",
+      "svgPath": "/diagrams/svg/esat-m2-module-1-q22.svg",
+      "pngPath": "/diagrams/png/esat-m2-module-1-q22.png",
+      "alt": "Graph of y equals x minus 1 from x equals zero to three with both regions to the x-axis shaded.",
+      "notToScale": true
+    },
+    {
+      "questionId": "esat-m2-module-1-q23",
+      "id": "m1_q23_trapezium",
+      "svgPath": "/diagrams/svg/esat-m2-module-1-q23.svg",
+      "pngPath": "/diagrams/png/esat-m2-module-1-q23.png",
+      "alt": "Graph of y equals x squared with two trapezia on intervals zero to one and one to two.",
+      "notToScale": true
+    },
+    {
+      "questionId": "esat-m2-module-1-q25",
+      "id": "m1_q25_transform",
+      "svgPath": "/diagrams/svg/esat-m2-module-1-q25.svg",
+      "pngPath": "/diagrams/png/esat-m2-module-1-q25.png",
+      "alt": "Downward parabola with roots (-4,0) and (0,0) and maximum (-2,3).",
+      "notToScale": true
+    },
+    {
+      "questionId": "esat-m2-module-1-q26",
+      "id": "m1_q26_intersections",
+      "svgPath": "/diagrams/svg/esat-m2-module-1-q26.svg",
+      "pngPath": "/diagrams/png/esat-m2-module-1-q26.png",
+      "alt": "Graph of y equals x cubed minus 3x and horizontal line y equals 2, tangent at x equals -1 and crossing at x equals 2.",
+      "notToScale": true
+    },
+    {
+      "questionId": "esat-m2-module-1-q27",
+      "id": "m1_q27_exponential",
+      "svgPath": "/diagrams/svg/esat-m2-module-1-q27.svg",
+      "pngPath": "/diagrams/png/esat-m2-module-1-q27.png",
+      "alt": "Decreasing exponential through (0,-1) with horizontal asymptote y equals -3.",
+      "notToScale": true
+    },
+    {
+      "questionId": "esat-m2-module-2-q09",
+      "id": "m2_q09_tangent",
+      "svgPath": "/diagrams/svg/esat-m2-module-2-q09.svg",
+      "pngPath": "/diagrams/png/esat-m2-module-2-q09.png",
+      "alt": "Circle centred at (1,-2) with radius to Q(4,2) and tangent at Q.",
+      "notToScale": true
+    },
+    {
+      "questionId": "esat-m2-module-2-q10",
+      "id": "m2_q10_chord",
+      "svgPath": "/diagrams/svg/esat-m2-module-2-q10.svg",
+      "pngPath": "/diagrams/png/esat-m2-module-2-q10.png",
+      "alt": "Circle centred at (2,-1) with vertical chord x equals 5 from y equals -5 to y equals 3.",
+      "notToScale": true
+    },
+    {
+      "questionId": "esat-m2-module-2-q11",
+      "id": "m2_q11_two_tangents",
+      "svgPath": "/diagrams/svg/esat-m2-module-2-q11.svg",
+      "pngPath": "/diagrams/png/esat-m2-module-2-q11.png",
+      "alt": "Circle centred at (4,0), radius two, with two tangents drawn from the origin.",
+      "notToScale": true
+    },
+    {
+      "questionId": "esat-m2-module-2-q12",
+      "id": "m2_q12_triangle",
+      "svgPath": "/diagrams/svg/esat-m2-module-2-q12.svg",
+      "pngPath": "/diagrams/png/esat-m2-module-2-q12.png",
+      "alt": "Right triangle with side lengths three, four and five, with angle theta between sides four and five.",
+      "notToScale": true
+    },
+    {
+      "questionId": "esat-m2-module-2-q15",
+      "id": "m2_q15_segment",
+      "svgPath": "/diagrams/svg/esat-m2-module-2-q15.svg",
+      "pngPath": "/diagrams/png/esat-m2-module-2-q15.png",
+      "alt": "Circle sector of radius three and angle two radians with its minor segment shaded.",
+      "notToScale": true
+    },
+    {
+      "questionId": "esat-m2-module-2-q23",
+      "id": "m2_q23_area_curve",
+      "svgPath": "/diagrams/svg/esat-m2-module-2-q23.svg",
+      "pngPath": "/diagrams/png/esat-m2-module-2-q23.png",
+      "alt": "Graph of y equals three halves x times x minus one from zero to two, with both axis regions shaded.",
+      "notToScale": true
+    },
+    {
+      "questionId": "esat-m2-module-2-q25",
+      "id": "m2_q25_rational_transform",
+      "svgPath": "/diagrams/svg/esat-m2-module-2-q25.svg",
+      "pngPath": "/diagrams/png/esat-m2-module-2-q25.png",
+      "alt": "Rational graph with vertical asymptote x equals 2 and root x equals 5.",
+      "notToScale": true
+    },
+    {
+      "questionId": "esat-m2-module-2-q26",
+      "id": "m2_q26_modulus",
+      "svgPath": "/diagrams/svg/esat-m2-module-2-q26.svg",
+      "pngPath": "/diagrams/png/esat-m2-module-2-q26.png",
+      "alt": "V-shaped modulus graph with vertex (2,-1) and point (0,3).",
+      "notToScale": true
+    },
+    {
+      "questionId": "esat-m2-module-2-q27",
+      "id": "m2_q27_intersections",
+      "svgPath": "/diagrams/svg/esat-m2-module-2-q27.svg",
+      "pngPath": "/diagrams/png/esat-m2-module-2-q27.png",
+      "alt": "Graphs of y equals absolute x squared minus one and y equals x plus one, meeting at three labelled points.",
+      "notToScale": true
+    }
+  ]
+}

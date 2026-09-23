@@ -1,0 +1,5583 @@
+{
+  "generated_at": "2026-06-29T14:11:23.493254+00:00",
+  "mode": "apply",
+  "candidates_human_review": 384,
+  "counts": {
+    "skip_not_answer_key": 145,
+    "already_correct": 122,
+    "skip_other_blockers": 117
+  },
+  "will_apply": 122,
+  "applied": 122,
+  "errors": [],
+  "sample_verification": [
+    {
+      "id": "0598f025-1c8d-42ee-a8d1-4b442953fd6a",
+      "id_prefix": "0598f025",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "08f00865-3de2-4d61-ad13-1cc604b33ec0",
+      "id_prefix": "08f00865",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "09d04e55-9bc0-434d-abf3-9de708f5eeb7",
+      "id_prefix": "09d04e55",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "0ced3c4e-da0e-43fb-9119-d27f62f181a0",
+      "id_prefix": "0ced3c4e",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "0f398d63-cbf2-4099-b685-dfccb4163c17",
+      "id_prefix": "0f398d63",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "0f3d9f1b-7583-4496-9a82-06e6eff30a9c",
+      "id_prefix": "0f3d9f1b",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "122e506c-99bd-4852-a7f8-12e984c9ebe1",
+      "id_prefix": "122e506c",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "15bbdced-0205-40d2-939b-1955e212700e",
+      "id_prefix": "15bbdced",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "F",
+      "inferred_option": null,
+      "llm_true_option": "F",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    }
+  ],
+  "all_results": [
+    {
+      "id": "013f26a7-9799-4c4c-87f5-db475086b2c9",
+      "id_prefix": "013f26a7",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:deterministic_conflict",
+        "human_blocking:deterministic flag conflict"
+      ]
+    },
+    {
+      "id": "014e953f-cc75-431f-b2ac-34f5a9279e76",
+      "id_prefix": "014e953f",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": []
+    },
+    {
+      "id": "02576200-82ab-489c-8ceb-bed81f531ed6",
+      "id_prefix": "02576200",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "028bf253-ff4c-4ae2-bdd0-8443eadab027",
+      "id_prefix": "028bf253",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "solution_quality_low",
+        "label:off_syllabus",
+        "label:solution_error",
+        "human_blocking:off-syllabus solution method",
+        "human_blocking:solution needs rewrite"
+      ]
+    },
+    {
+      "id": "038b6cd6-f3f0-414e-8db9-92908d2076d6",
+      "id_prefix": "038b6cd6",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:deterministic_conflict",
+        "human_blocking:deterministic flag conflict (false positive for 'advanced_polynomial_roots')"
+      ]
+    },
+    {
+      "id": "03e8f6ff-6b63-43c2-a8c6-99da8ea428a0",
+      "id_prefix": "03e8f6ff",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:deterministic_conflict",
+        "human_blocking:deterministic flag conflict (false positive for quadratic roots)"
+      ]
+    },
+    {
+      "id": "0598f025-1c8d-42ee-a8d1-4b442953fd6a",
+      "id_prefix": "0598f025",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "0682cedd-e0ae-4ebf-90aa-5a249c60b9d2",
+      "id_prefix": "0682cedd",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": []
+    },
+    {
+      "id": "08892cbf-d4d1-40d1-9bd1-8532e60f401d",
+      "id_prefix": "08892cbf",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:too_long",
+        "human_blocking:pacing is tight for an MCQ"
+      ]
+    },
+    {
+      "id": "08f00865-3de2-4d61-ad13-1cc604b33ec0",
+      "id_prefix": "08f00865",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "093e98b4-cccf-42c4-8882-ad818a7408dc",
+      "id_prefix": "093e98b4",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:deterministic_conflict",
+        "human_blocking:deterministic flag conflict (false positive for nCr)"
+      ]
+    },
+    {
+      "id": "09d04e55-9bc0-434d-abf3-9de708f5eeb7",
+      "id_prefix": "09d04e55",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "0cd91928-cfcb-4b72-be2c-435b61e18bcb",
+      "id_prefix": "0cd91928",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "pacing_low",
+        "label:needs_diagram",
+        "human_blocking:missing diagram"
+      ]
+    },
+    {
+      "id": "0ced3c4e-da0e-43fb-9119-d27f62f181a0",
+      "id_prefix": "0ced3c4e",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "0d793ed4-c0c0-4c44-899b-defaf6325581",
+      "id_prefix": "0d793ed4",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:deterministic_conflict",
+        "human_blocking:deterministic flag conflict (differentiation)"
+      ]
+    },
+    {
+      "id": "0ee40f82-556a-4854-a946-505043c9e035",
+      "id_prefix": "0ee40f82",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "deterministic_conflict",
+        "label:deterministic_conflict"
+      ]
+    },
+    {
+      "id": "0f398d63-cbf2-4099-b685-dfccb4163c17",
+      "id_prefix": "0f398d63",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "0f3d9f1b-7583-4496-9a82-06e6eff30a9c",
+      "id_prefix": "0f3d9f1b",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "0fbff00a-def0-43d9-a284-d3e17e3aaabd",
+      "id_prefix": "0fbff00a",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "disposition_move_paper",
+        "label:off_syllabus",
+        "label:wrong_paper",
+        "label:math2_content_on_math1",
+        "human_blocking:off-syllabus for Math 1 (requires Math 2 calculus)"
+      ]
+    },
+    {
+      "id": "122e506c-99bd-4852-a7f8-12e984c9ebe1",
+      "id_prefix": "122e506c",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "128db179-5b43-4ac7-8bf0-2ebdc420b434",
+      "id_prefix": "128db179",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "14d1a85e-47bc-468f-9f46-29f2342f2f27",
+      "id_prefix": "14d1a85e",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:deterministic_conflict",
+        "human_blocking:deterministic flag conflict"
+      ]
+    },
+    {
+      "id": "15121dc0-3870-448e-94f1-1fcdcb88a2eb",
+      "id_prefix": "15121dc0",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline",
+        "human_blocking:deterministic flag conflict (pacing warning)"
+      ]
+    },
+    {
+      "id": "15bbdced-0205-40d2-939b-1955e212700e",
+      "id_prefix": "15bbdced",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "F",
+      "inferred_option": null,
+      "llm_true_option": "F",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "16c216e0-cb2c-4122-b093-286224b149a1",
+      "id_prefix": "16c216e0",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:too_long",
+        "label:unrealistic_pacing",
+        "human_blocking:unrealistic pacing due to high number of calculations"
+      ]
+    },
+    {
+      "id": "172b6ed7-1bc6-4a9c-997a-129baa36fd32",
+      "id_prefix": "172b6ed7",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "176aae59-551d-48c5-a97f-b12c78a60c3c",
+      "id_prefix": "176aae59",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "17c1fe11-8340-455b-a537-e48bad0be5b0",
+      "id_prefix": "17c1fe11",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:deterministic_conflict",
+        "human_blocking:deterministic flag conflict"
+      ]
+    },
+    {
+      "id": "17ce6b7f-feb4-44c9-a62a-686b9fb060a4",
+      "id_prefix": "17ce6b7f",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:deterministic_conflict",
+        "human_blocking:deterministic flag conflict (false positive for nCr)"
+      ]
+    },
+    {
+      "id": "181c9842-e295-4d02-8b4f-f8c87f59dfd6",
+      "id_prefix": "181c9842",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": []
+    },
+    {
+      "id": "185b8db8-ce61-4b74-95dc-839ca427f3c4",
+      "id_prefix": "185b8db8",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "18f355eb-d756-47ac-bdb9-732ec5ccc2ad",
+      "id_prefix": "18f355eb",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "19af46d8-5333-4689-a907-b97c73b71cf5",
+      "id_prefix": "19af46d8",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:deterministic_conflict",
+        "human_blocking:deterministic flag conflict"
+      ]
+    },
+    {
+      "id": "1a244628-35ad-4384-866f-c3c9ae5655e1",
+      "id_prefix": "1a244628",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": []
+    },
+    {
+      "id": "1a61be33-dca1-48c4-a50a-c42f61f64a25",
+      "id_prefix": "1a61be33",
+      "subject": "Chemistry",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "disposition_move_paper",
+        "label:off_syllabus",
+        "label:wrong_paper",
+        "human_blocking:off-syllabus for Chemistry"
+      ]
+    },
+    {
+      "id": "1b656f21-dfa5-4d75-a7d3-ce2ee520b1e5",
+      "id_prefix": "1b656f21",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "1bfe9dac-3056-4e56-87e9-3c38edf0e616",
+      "id_prefix": "1bfe9dac",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "1c7ac856-4084-4ff2-91d7-4a6594360fcc",
+      "id_prefix": "1c7ac856",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "1d46377f-2f7d-4e77-9991-4df731b081dd",
+      "id_prefix": "1d46377f",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "1f211562-b7b0-4630-a729-3890d962a80d",
+      "id_prefix": "1f211562",
+      "subject": "Chemistry",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "label:off_syllabus",
+        "label:wrong_paper",
+        "human_blocking:off-syllabus content for Chemistry (belongs in Biology)"
+      ]
+    },
+    {
+      "id": "1f32445a-d30a-4a6a-bab7-11598ea24719",
+      "id_prefix": "1f32445a",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:unrealistic_pacing",
+        "human_blocking:pacing is slightly long"
+      ]
+    },
+    {
+      "id": "1f86c63d-2995-4576-b437-9759995fa360",
+      "id_prefix": "1f86c63d",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:deterministic_conflict",
+        "human_blocking:deterministic flag conflict (false positive)"
+      ]
+    },
+    {
+      "id": "206b9471-2242-4ddb-9102-e825fb4f7ff9",
+      "id_prefix": "206b9471",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "20c970bb-b8c6-4b85-8c4c-422a26251ca8",
+      "id_prefix": "20c970bb",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "F",
+      "inferred_option": null,
+      "llm_true_option": "F",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "213ee782-a599-4d07-8f06-6cd3b719f674",
+      "id_prefix": "213ee782",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:deterministic_conflict",
+        "human_blocking:deterministic flag conflict"
+      ]
+    },
+    {
+      "id": "21c15153-1a09-41d3-9a15-31eb45413187",
+      "id_prefix": "21c15153",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:deterministic_conflict",
+        "human_blocking:deterministic flag conflict (false positive for complex numbers)"
+      ]
+    },
+    {
+      "id": "21e58c12-a4cb-45fe-809a-19852ad3b48b",
+      "id_prefix": "21e58c12",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "F",
+      "inferred_option": null,
+      "llm_true_option": "F",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "23afd0c3-9906-4ab3-b4ab-0387aa91362a",
+      "id_prefix": "23afd0c3",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "24763306-d05f-4d2a-9f63-b9ca21aa2611",
+      "id_prefix": "24763306",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": []
+    },
+    {
+      "id": "2497b60a-dc96-4564-b483-f1b45ebeed80",
+      "id_prefix": "2497b60a",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "24c37bf9-c642-4cf4-b076-717cf4d5ea29",
+      "id_prefix": "24c37bf9",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:needs_diagram",
+        "human_blocking:missing diagram"
+      ]
+    },
+    {
+      "id": "2535e394-e59f-47d9-bf3b-c38671d0da09",
+      "id_prefix": "2535e394",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "25566564-628d-40e7-b0ed-5504bbee3950",
+      "id_prefix": "25566564",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "disposition_move_paper",
+        "label:off_syllabus",
+        "label:math2_content_on_math1",
+        "label:unrealistic_pacing",
+        "human_blocking:off-syllabus for Math 1",
+        "human_blocking:unrealistic pacing"
+      ]
+    },
+    {
+      "id": "2666666c-9889-4f15-be12-9235e7e1a049",
+      "id_prefix": "2666666c",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "label:off_syllabus",
+        "human_blocking:off-syllabus for Math 1 (requires Math 2 content)"
+      ]
+    },
+    {
+      "id": "26908ef9-1b1b-4557-802e-67cb677f211d",
+      "id_prefix": "26908ef9",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "disposition_move_paper",
+        "label:wrong_paper",
+        "label:math2_content_on_math1"
+      ]
+    },
+    {
+      "id": "26b40f25-d9fb-4226-9b0f-971b74c58bbf",
+      "id_prefix": "26b40f25",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "26ed1c4f-d6d5-4ff4-9fc8-1a0ccd294cad",
+      "id_prefix": "26ed1c4f",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "26fe7f76-f890-424e-a265-4cded737337f",
+      "id_prefix": "26fe7f76",
+      "subject": "Biology",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:needs_diagram",
+        "human_blocking:missing graph"
+      ]
+    },
+    {
+      "id": "271f326e-a4d8-46d5-81f6-45352fe6a5e3",
+      "id_prefix": "271f326e",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:unrealistic_pacing",
+        "human_blocking:pacing is tight for the number of steps"
+      ]
+    },
+    {
+      "id": "276e85ed-f011-4dd8-8bf6-9ffc0c008556",
+      "id_prefix": "276e85ed",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline",
+        "label:unrealistic_pacing",
+        "human_blocking:pacing might be tight"
+      ]
+    },
+    {
+      "id": "2775fb6f-767e-4dfd-b788-50ef73102642",
+      "id_prefix": "2775fb6f",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:deterministic_conflict",
+        "human_blocking:deterministic flag conflict"
+      ]
+    },
+    {
+      "id": "286f6730-2933-4e24-8a30-6c4d9487c6e3",
+      "id_prefix": "286f6730",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "pacing_low",
+        "disposition_move_paper",
+        "label:wrong_paper",
+        "label:math2_content_on_math1",
+        "label:unrealistic_pacing",
+        "human_blocking:off-syllabus for Math 1 (logarithms)",
+        "human_blocking:unrealistic pacing (too many systems to solve)"
+      ]
+    },
+    {
+      "id": "28d618cd-6f0b-42a9-afd6-5504057e6664",
+      "id_prefix": "28d618cd",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "2a31a4f7-ee11-4909-b3b3-baa0109b996e",
+      "id_prefix": "2a31a4f7",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "2ae75d23-b9ab-4a63-bda2-b0d6165ea230",
+      "id_prefix": "2ae75d23",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": []
+    },
+    {
+      "id": "2c4a590a-0518-41fa-bc80-3b7fa7fde0ac",
+      "id_prefix": "2c4a590a",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:unrealistic_pacing",
+        "human_blocking:pacing concern if shortcut not seen"
+      ]
+    },
+    {
+      "id": "2ccce388-a47c-412a-a208-1fab14fb2a5f",
+      "id_prefix": "2ccce388",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "2ce9a89a-b9c5-4bd9-a8c6-26be22381b88",
+      "id_prefix": "2ce9a89a",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:needs_diagram",
+        "human_blocking:missing diagram"
+      ]
+    },
+    {
+      "id": "2d56227a-829d-4119-9db2-1d0419c6dff5",
+      "id_prefix": "2d56227a",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:unrealistic_pacing",
+        "human_blocking:unrealistic pacing"
+      ]
+    },
+    {
+      "id": "2dabdac1-deb8-4406-9f0b-c4069a123322",
+      "id_prefix": "2dabdac1",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "2fc373b6-cc42-4000-a003-8aa1975647a9",
+      "id_prefix": "2fc373b6",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "F",
+      "inferred_option": null,
+      "llm_true_option": "F",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:too_easy",
+        "human_blocking:item is too easy"
+      ]
+    },
+    {
+      "id": "2fd5de11-39c6-42aa-a101-d0d7003dfd22",
+      "id_prefix": "2fd5de11",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "3013c37c-c3ef-4c64-9c46-dc224b05f142",
+      "id_prefix": "3013c37c",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "30bc4554-1f3d-44c5-9085-779eca81a58b",
+      "id_prefix": "30bc4554",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "label:off_syllabus",
+        "human_blocking:off-syllabus for Math 1 (requires Math 2 calculus)"
+      ]
+    },
+    {
+      "id": "3203fceb-9290-45a9-b779-ff9fe8bb99f4",
+      "id_prefix": "3203fceb",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:needs_diagram",
+        "human_blocking:missing graph mentioned in stem"
+      ]
+    },
+    {
+      "id": "326e08ca-e860-4c33-84b2-e96fd97b9839",
+      "id_prefix": "326e08ca",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "32795c89-bb07-4790-b338-83da93997211",
+      "id_prefix": "32795c89",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "32f70901-88f7-4adc-88a6-36027d8c65de",
+      "id_prefix": "32f70901",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:needs_diagram",
+        "human_blocking:Missing graph referenced in stem"
+      ]
+    },
+    {
+      "id": "34038350-5634-4c8f-a2d9-036f069f59f4",
+      "id_prefix": "34038350",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "361b90b1-f3c5-4b9c-843e-d867944f8216",
+      "id_prefix": "361b90b1",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "36d46482-a255-4e0b-8d8b-83bbcb8bfb02",
+      "id_prefix": "36d46482",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "381fd45b-5cbe-4dc2-a6e7-bdcb0e5030cb",
+      "id_prefix": "381fd45b",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "3c67d790-a11c-4f19-ad61-0a0bdfde601a",
+      "id_prefix": "3c67d790",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "3c708b02-0103-45b1-bcc2-14659da8689c",
+      "id_prefix": "3c708b02",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "F",
+      "inferred_option": null,
+      "llm_true_option": "F",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "3ca97a83-6977-4b74-8af9-a3b85813fa3b",
+      "id_prefix": "3ca97a83",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:deterministic_conflict",
+        "human_blocking:deterministic flag conflict (false positive)"
+      ]
+    },
+    {
+      "id": "3d5d185b-807e-46cf-a6c3-2fcf8d2f5d6c",
+      "id_prefix": "3d5d185b",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:unrealistic_pacing",
+        "human_blocking:pacing for difficulty tag"
+      ]
+    },
+    {
+      "id": "3d9700f6-9bf6-4778-ad9d-baaaed4dc74f",
+      "id_prefix": "3d9700f6",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "3e8cfa6b-973d-4d8d-bb54-37144995ddd4",
+      "id_prefix": "3e8cfa6b",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "3ed2ed58-fcab-4dae-88a7-fec878f3ce43",
+      "id_prefix": "3ed2ed58",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "3ed36d2b-772d-43df-aa82-3a1cfc2fcddf",
+      "id_prefix": "3ed36d2b",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_out_of_syllabus",
+        "disposition_move_paper",
+        "label:math2_content_on_math1",
+        "human_blocking:off-syllabus for Math 1 (requires Math 2 content)"
+      ]
+    },
+    {
+      "id": "3eff7526-cbec-4429-b2af-241c5384dbf7",
+      "id_prefix": "3eff7526",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "pacing_low",
+        "label:off_syllabus",
+        "label:unrealistic_pacing",
+        "label:wrong_paper",
+        "label:math2_content_on_math1",
+        "human_blocking:off-syllabus for Math 1 (differentiation)",
+        "human_blocking:too long for an MCQ"
+      ]
+    },
+    {
+      "id": "3f4889b6-9335-47bd-b0bc-1eda6ebd4748",
+      "id_prefix": "3f4889b6",
+      "subject": "Chemistry",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "disposition_move_paper",
+        "label:off_syllabus",
+        "label:wrong_paper",
+        "human_blocking:off-syllabus content for Chemistry"
+      ]
+    },
+    {
+      "id": "3f7beae1-b985-488d-9884-84a280c27e39",
+      "id_prefix": "3f7beae1",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "4069e2f3-300b-4b1e-b3cd-7b4cbc6761b9",
+      "id_prefix": "4069e2f3",
+      "subject": "Chemistry",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:solution_error",
+        "human_blocking:solution_error"
+      ]
+    },
+    {
+      "id": "40d704fe-5e50-4359-b0cb-9bb7521ae315",
+      "id_prefix": "40d704fe",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "41465690-d217-43a2-89cb-0eca32686574",
+      "id_prefix": "41465690",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "pacing_low",
+        "label:unrealistic_pacing",
+        "human_blocking:unrealistic pacing"
+      ]
+    },
+    {
+      "id": "4343cd5e-2f45-43ca-a778-e8cfd1d516af",
+      "id_prefix": "4343cd5e",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "4386afc2-a4dd-4505-b9af-b65434c7502f",
+      "id_prefix": "4386afc2",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_out_of_syllabus"
+      ]
+    },
+    {
+      "id": "43c9b7a4-e965-4072-8e78-d91774bab1f7",
+      "id_prefix": "43c9b7a4",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "454a6011-e11e-4722-9086-7a96a8578c82",
+      "id_prefix": "454a6011",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "4583f1eb-5f57-4acf-a060-0c54af8c8cb3",
+      "id_prefix": "4583f1eb",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "45b52520-fda3-413e-a419-591de42b8416",
+      "id_prefix": "45b52520",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "F",
+      "inferred_option": null,
+      "llm_true_option": "F",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "470856d0-d724-4197-9ac7-ee668df6936d",
+      "id_prefix": "470856d0",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major"
+      ]
+    },
+    {
+      "id": "4737733b-d4d3-4837-a95e-d32c9c597178",
+      "id_prefix": "4737733b",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:unrealistic_pacing",
+        "human_blocking:pacing is tight"
+      ]
+    },
+    {
+      "id": "48446bf1-5edb-42e9-b852-cfe25b41b070",
+      "id_prefix": "48446bf1",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "label:off_syllabus",
+        "label:math2_content_on_math1",
+        "human_blocking:off-syllabus math content (requires Math 2 calculus for direct solution)"
+      ]
+    },
+    {
+      "id": "4b3a981a-f9ab-4fee-b7d1-c9f8e5192e01",
+      "id_prefix": "4b3a981a",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "4be37e6b-5b42-4329-a7db-26f0fc77b776",
+      "id_prefix": "4be37e6b",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "4bfc29ac-e6c0-4da6-a4f2-c44ed3c14864",
+      "id_prefix": "4bfc29ac",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline",
+        "label:unrealistic_pacing",
+        "human_blocking:unrealistic pacing"
+      ]
+    },
+    {
+      "id": "4c2ff8db-d51d-49d8-ab67-20c444b166de",
+      "id_prefix": "4c2ff8db",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:deterministic_conflict",
+        "human_blocking:deterministic flag conflict (false positive for nCr)"
+      ]
+    },
+    {
+      "id": "4d28440a-7959-489a-85e1-ef7c18d89a22",
+      "id_prefix": "4d28440a",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline",
+        "deterministic_conflict",
+        "label:deterministic_conflict",
+        "human_blocking:deterministic flag conflict (optimisation_calculus)"
+      ]
+    },
+    {
+      "id": "4d8026e1-7f24-4dec-9653-d490719ef7c0",
+      "id_prefix": "4d8026e1",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:off_syllabus",
+        "label:deterministic_conflict",
+        "human_blocking:Off-syllabus mathematical prerequisite (differentiation) based on provided Math 1 curriculum codes for Physics subject",
+        "human_blocking:Deterministic conflict: absence of curriculum flag for differentiation despite it being Math 2 content for a Physics item with only Math 1 codes listed"
+      ]
+    },
+    {
+      "id": "4e06f6df-1aae-4d98-9f70-ca3190e6afc2",
+      "id_prefix": "4e06f6df",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "4eb26dba-e570-4f2a-9ccb-8ef0eed777a0",
+      "id_prefix": "4eb26dba",
+      "subject": "Biology",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:other"
+      ]
+    },
+    {
+      "id": "4f894964-d4b8-465c-8c52-5acc69823b1f",
+      "id_prefix": "4f894964",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "5009b8b0-062a-4a6b-86c3-c95f959c441c",
+      "id_prefix": "5009b8b0",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "517a99dd-304e-4a59-ada6-c9a5e107eafa",
+      "id_prefix": "517a99dd",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "51b69891-4eff-47cd-bdd7-22f172623cc5",
+      "id_prefix": "51b69891",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "51b879e1-5895-4d16-91c2-81ddea266282",
+      "id_prefix": "51b879e1",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "51e75a56-5f76-4e09-b0e4-f7a8e2c1e80f",
+      "id_prefix": "51e75a56",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "52267343-8575-44cc-9dd4-539ed67bb68c",
+      "id_prefix": "52267343",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline",
+        "human_blocking:distractor_explanation_error"
+      ]
+    },
+    {
+      "id": "528ed2bf-57b0-4af1-8191-9c3feeeb1a08",
+      "id_prefix": "528ed2bf",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "label:off_syllabus",
+        "human_blocking:off-syllabus for Physics"
+      ]
+    },
+    {
+      "id": "52e5d16a-e539-427c-8dae-2967856060cb",
+      "id_prefix": "52e5d16a",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "5441487a-6101-4818-9968-afc59f553368",
+      "id_prefix": "5441487a",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_out_of_syllabus",
+        "label:too_easy",
+        "human_blocking:deterministic flag conflict (false positive for complex numbers)"
+      ]
+    },
+    {
+      "id": "5574f23c-73bd-4299-9f74-5727843b0e02",
+      "id_prefix": "5574f23c",
+      "subject": "Biology",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:needs_diagram"
+      ]
+    },
+    {
+      "id": "558f6bcf-003b-47f4-87f6-9277095b5a64",
+      "id_prefix": "558f6bcf",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "559b58eb-b337-46c2-9f64-f5a166ed212c",
+      "id_prefix": "559b58eb",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "579bcab2-9f5f-4476-a943-1d4759c0e604",
+      "id_prefix": "579bcab2",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "57e852d7-97ff-46e3-b01f-1b9d984200c8",
+      "id_prefix": "57e852d7",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:solution_error",
+        "human_blocking:solution uses off-syllabus method unnecessarily"
+      ]
+    },
+    {
+      "id": "581ebd83-ecfe-4b4a-823b-a44a0c2c6b78",
+      "id_prefix": "581ebd83",
+      "subject": "Chemistry",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "label:off_syllabus",
+        "label:wrong_paper",
+        "human_blocking:off-syllabus for Chemistry (requires Physics concepts)"
+      ]
+    },
+    {
+      "id": "589e281a-f161-456a-86b6-b0e2e2cfa0cb",
+      "id_prefix": "589e281a",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "59b8e891-d32c-4393-a003-92ed903d08b6",
+      "id_prefix": "59b8e891",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": []
+    },
+    {
+      "id": "5c30c972-b2c1-44c9-b34a-582a48a7ec57",
+      "id_prefix": "5c30c972",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": []
+    },
+    {
+      "id": "5c9901cd-4a00-41e6-b43b-777dc9ca323e",
+      "id_prefix": "5c9901cd",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "F",
+      "inferred_option": null,
+      "llm_true_option": "F",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:too_easy"
+      ]
+    },
+    {
+      "id": "5d3c12f2-4188-48fa-b80b-3a3ab40991eb",
+      "id_prefix": "5d3c12f2",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "5d7669ee-bce9-46bf-b474-35c6b7f39fe7",
+      "id_prefix": "5d7669ee",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "5da250a7-e5b9-4297-9599-8ddab1c349d5",
+      "id_prefix": "5da250a7",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:too_long",
+        "label:unrealistic_pacing",
+        "human_blocking:too long for ESAT pacing",
+        "human_blocking:unrealistic pacing"
+      ]
+    },
+    {
+      "id": "60e34c4c-9c38-429f-a8f6-32b197f85c0c",
+      "id_prefix": "60e34c4c",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:deterministic_conflict",
+        "human_blocking:deterministic flag conflict (advanced_polynomial_roots)"
+      ]
+    },
+    {
+      "id": "616e1f1e-523d-49b7-be67-8481a9a0d21d",
+      "id_prefix": "616e1f1e",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "label:off_syllabus",
+        "human_blocking:off-syllabus topic"
+      ]
+    },
+    {
+      "id": "61cbb323-e27f-4c09-847f-78e83e3b1b69",
+      "id_prefix": "61cbb323",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "645ab761-76af-4b9c-b120-1c9c81093df6",
+      "id_prefix": "645ab761",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "6557bf32-9113-41fd-ad30-d53e24374613",
+      "id_prefix": "6557bf32",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "68899fe8-f625-4e15-9af3-7faede24e07d",
+      "id_prefix": "68899fe8",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "label:wrong_paper",
+        "label:math2_content_on_math1",
+        "human_blocking:off-syllabus for Math 1 (requires Math 2 content)"
+      ]
+    },
+    {
+      "id": "69c80e23-912d-4bfe-833a-df6346182cb2",
+      "id_prefix": "69c80e23",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "6a3111fe-a667-40e3-8ef7-8f61d2e43dfe",
+      "id_prefix": "6a3111fe",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "6a55c603-998f-4778-b262-01d2cee21508",
+      "id_prefix": "6a55c603",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:unrealistic_pacing",
+        "human_blocking:unrealistic pacing"
+      ]
+    },
+    {
+      "id": "6a7f912f-cbbd-47ec-b96b-66a30797295a",
+      "id_prefix": "6a7f912f",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "6c63bb2b-f443-47b0-a629-5491401412ef",
+      "id_prefix": "6c63bb2b",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:deterministic_conflict",
+        "human_blocking:deterministic flag conflict (determinant vs. coordinate geometry area formula)"
+      ]
+    },
+    {
+      "id": "6c76c215-f4d2-4962-b7f8-f32c2625bcb0",
+      "id_prefix": "6c76c215",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:off_syllabus",
+        "label:deterministic_conflict",
+        "human_blocking:off-syllabus for Math 1, fits Math 2",
+        "human_blocking:deterministic flag conflict (flag suggests delete, but item is good for Math 2)"
+      ]
+    },
+    {
+      "id": "6c878606-f10b-4d31-95f6-bc2288ec39bd",
+      "id_prefix": "6c878606",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:too_easy"
+      ]
+    },
+    {
+      "id": "6c9a8059-5c40-44e0-95aa-0db8ed7cdac7",
+      "id_prefix": "6c9a8059",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "label:off_syllabus",
+        "human_blocking:off-syllabus topic (integration) for listed Math 1 codes"
+      ]
+    },
+    {
+      "id": "6cc8a1e3-cd24-451c-9bb1-1efa9fd8f859",
+      "id_prefix": "6cc8a1e3",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "6d2ea3bf-c73f-441e-82fe-738ec383a1f7",
+      "id_prefix": "6d2ea3bf",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "pacing_low",
+        "label:too_long",
+        "label:unrealistic_pacing"
+      ]
+    },
+    {
+      "id": "6d4b65db-33ee-4b3c-a7fe-319a98297622",
+      "id_prefix": "6d4b65db",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "A",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "6d922b3b-c284-4afd-8c33-3b5ba4235a91",
+      "id_prefix": "6d922b3b",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:too_long",
+        "label:unrealistic_pacing"
+      ]
+    },
+    {
+      "id": "6d94b03e-e614-4e45-a74d-cdc772ab6db5",
+      "id_prefix": "6d94b03e",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "label:off_syllabus",
+        "label:math2_content_on_math1",
+        "human_blocking:off-syllabus for Math 1 (fits Math 2)"
+      ]
+    },
+    {
+      "id": "6db37c31-f8f4-4e37-9aa3-d3a56b820b64",
+      "id_prefix": "6db37c31",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "6ef367fe-97b0-451d-b699-7931bebe1209",
+      "id_prefix": "6ef367fe",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "disposition_move_paper",
+        "label:off_syllabus",
+        "label:wrong_paper",
+        "label:math2_content_on_math1",
+        "human_blocking:off-syllabus for Math 1 (fits Math 2)"
+      ]
+    },
+    {
+      "id": "6f02ab15-a18f-492c-ab61-5f573ea01ce7",
+      "id_prefix": "6f02ab15",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline",
+        "human_blocking:distractor_map_needs_update"
+      ]
+    },
+    {
+      "id": "6f8b3aec-80aa-422e-ac5a-71c21c902b6c",
+      "id_prefix": "6f8b3aec",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": []
+    },
+    {
+      "id": "708bc65f-686f-417d-90b2-973c86921578",
+      "id_prefix": "708bc65f",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "disposition_move_paper",
+        "label:wrong_paper",
+        "label:math2_content_on_math1",
+        "human_blocking:off-syllabus for Math 1 (requires Math 2 differentiation)"
+      ]
+    },
+    {
+      "id": "708dab85-62a2-44f9-93ed-4a0271a80b31",
+      "id_prefix": "708dab85",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "70aaccd1-a71c-45b7-91ea-1fbe90e5f8b2",
+      "id_prefix": "70aaccd1",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "label:off_syllabus",
+        "human_blocking:off-syllabus for Math 1 (fits Math 2)"
+      ]
+    },
+    {
+      "id": "72237a0a-11ef-4d63-a686-60b6ae547188",
+      "id_prefix": "72237a0a",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "722a31b3-02cc-4537-91b0-a1d5205f3475",
+      "id_prefix": "722a31b3",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_borderline",
+        "pacing_low",
+        "deterministic_conflict",
+        "label:unrealistic_pacing",
+        "label:deterministic_conflict",
+        "human_blocking:Too long/time-consuming for ESAT",
+        "human_blocking:Deterministic curriculum flag conflict (combinatorics)"
+      ]
+    },
+    {
+      "id": "7254d569-f599-469e-8cdd-f738a4d5df12",
+      "id_prefix": "7254d569",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "label:off_syllabus",
+        "human_blocking:off-syllabus for Math 1 (Math 2 content)"
+      ]
+    },
+    {
+      "id": "725b5860-3876-437b-87d5-1e80aeb9df19",
+      "id_prefix": "725b5860",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "73308c65-7c35-492b-baeb-54e1f4d4d11d",
+      "id_prefix": "73308c65",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "7358057e-4b89-4b79-bf8f-168b59417d5f",
+      "id_prefix": "7358057e",
+      "subject": "Biology",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "735e6187-b1ac-4058-b077-70c66895ea4f",
+      "id_prefix": "735e6187",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "73760b77-2c6b-469e-93d5-dfaf268a5f5a",
+      "id_prefix": "73760b77",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "740e39c2-77a8-484d-bab7-d0b50478f2ab",
+      "id_prefix": "740e39c2",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "745da894-59ae-421f-be79-217f09b5a1d1",
+      "id_prefix": "745da894",
+      "subject": "Chemistry",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "74987ebb-acf6-4d9e-955c-5ddcd2e6c64b",
+      "id_prefix": "74987ebb",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "74bf31d2-ee65-4441-ae89-5270411db054",
+      "id_prefix": "74bf31d2",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "F",
+      "inferred_option": null,
+      "llm_true_option": "F",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "7554c400-0743-4246-a361-34395745d76e",
+      "id_prefix": "7554c400",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "label:off_syllabus",
+        "human_blocking:off-syllabus topic (calculus)"
+      ]
+    },
+    {
+      "id": "75953465-46e7-4ce0-8d07-662c0581b246",
+      "id_prefix": "75953465",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:too_easy",
+        "human_blocking:difficulty tag mismatch (too easy for 'Hard')"
+      ]
+    },
+    {
+      "id": "76610b7d-e942-4824-8e75-dcbe2f72bf01",
+      "id_prefix": "76610b7d",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "disposition_move_paper",
+        "label:off_syllabus",
+        "label:math2_content_on_math1",
+        "label:wrong_paper",
+        "human_blocking:off-syllabus for Math 1"
+      ]
+    },
+    {
+      "id": "776b5f23-837d-4f10-b2e1-823be69493cd",
+      "id_prefix": "776b5f23",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "77ca0c26-341b-4545-93b8-368671c13e0f",
+      "id_prefix": "77ca0c26",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "disposition_move_paper",
+        "label:off_syllabus",
+        "label:math2_content_on_math1",
+        "label:wrong_paper",
+        "human_blocking:off-syllabus for Math 1 (requires Math 2 content)"
+      ]
+    },
+    {
+      "id": "780cc9ad-4654-4585-95d1-b507ac1cf382",
+      "id_prefix": "780cc9ad",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "label:off_syllabus",
+        "human_blocking:off-syllabus content"
+      ]
+    },
+    {
+      "id": "78471bd5-cef2-45ba-bffe-2a9b2f59220a",
+      "id_prefix": "78471bd5",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "disposition_move_paper",
+        "label:off_syllabus",
+        "label:math2_content_on_math1",
+        "label:wrong_paper",
+        "human_blocking:off-syllabus for Math 1 (logarithm laws)"
+      ]
+    },
+    {
+      "id": "78b20e30-b595-42cc-a92d-2be7841a5fe6",
+      "id_prefix": "78b20e30",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "79614815-f253-4cca-b762-d12b84ca7272",
+      "id_prefix": "79614815",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": []
+    },
+    {
+      "id": "79c87be8-bb76-4db7-9b90-02c7b2b0493d",
+      "id_prefix": "79c87be8",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "79d79966-a4cf-4c2d-8798-58bbb27c2d1e",
+      "id_prefix": "79d79966",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "79e20035-a555-4637-ad17-b5f2db6d32ed",
+      "id_prefix": "79e20035",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "7a87e5ec-1dd5-4e84-b1d5-5d680a42ba91",
+      "id_prefix": "7a87e5ec",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "7a8a9a01-0a4b-4963-a8ca-052a5a1cedaf",
+      "id_prefix": "7a8a9a01",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "7b1be0be-eb2e-4a9e-8bad-185a8cf1f97a",
+      "id_prefix": "7b1be0be",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "7c4d2fef-3fac-4aea-a60c-b9477aba60cd",
+      "id_prefix": "7c4d2fef",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "7c510b6c-ef8f-4f54-a503-5093d056c502",
+      "id_prefix": "7c510b6c",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus"
+      ]
+    },
+    {
+      "id": "7c7bf436-c77b-4d03-a385-f43ffcdb77a9",
+      "id_prefix": "7c7bf436",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "7cfc85a6-6304-46c6-81fd-1e68bf7f585d",
+      "id_prefix": "7cfc85a6",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:needs_diagram",
+        "human_blocking:missing diagram"
+      ]
+    },
+    {
+      "id": "7ec30b4f-0fcc-439f-ab18-0f38a7895da0",
+      "id_prefix": "7ec30b4f",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "7ec89f69-fc4e-4292-99ab-b14553898fda",
+      "id_prefix": "7ec89f69",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "label:off_syllabus",
+        "label:math2_content_on_math1",
+        "label:wrong_paper",
+        "human_blocking:off-syllabus for Math 1 (requires Math 2 content)"
+      ]
+    },
+    {
+      "id": "7ed4b963-9ca3-4013-a938-2ef6eda27f3f",
+      "id_prefix": "7ed4b963",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "7f039ebe-1516-4388-a4c2-487618dde56e",
+      "id_prefix": "7f039ebe",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:needs_diagram",
+        "human_blocking:missing graph"
+      ]
+    },
+    {
+      "id": "7f647261-154b-4c6f-8b1b-5f5cc22a1d13",
+      "id_prefix": "7f647261",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "7f9ad9a0-8e16-4610-bae6-8da8a41e62bf",
+      "id_prefix": "7f9ad9a0",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "7f9d4b30-73b3-404d-aa8f-f1f1190453ab",
+      "id_prefix": "7f9d4b30",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline",
+        "human_blocking:off_syllabus_for_paper"
+      ]
+    },
+    {
+      "id": "7fcd18e9-429a-4678-ab2b-608602541f65",
+      "id_prefix": "7fcd18e9",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "801c3d9a-a7ef-4d1b-89f5-2f1a357744e9",
+      "id_prefix": "801c3d9a",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:unrealistic_pacing",
+        "human_blocking:pacing is on the longer side"
+      ]
+    },
+    {
+      "id": "80cbf2f1-d125-4af0-8b13-f7ad4c9f6809",
+      "id_prefix": "80cbf2f1",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "816697c1-c830-4afe-bf2e-f13b62aae9d8",
+      "id_prefix": "816697c1",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "label:off_syllabus",
+        "human_blocking:off-syllabus math requirement"
+      ]
+    },
+    {
+      "id": "818d9976-dd6a-4ce3-b544-2aa28d59c78e",
+      "id_prefix": "818d9976",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "8254afb4-539b-48e2-b2bb-e3ea573389b1",
+      "id_prefix": "8254afb4",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "solution_quality_low",
+        "pacing_low",
+        "label:off_syllabus",
+        "label:unrealistic_pacing",
+        "label:solution_error",
+        "human_blocking:off-syllabus solution method",
+        "human_blocking:unrealistic pacing for Math 1"
+      ]
+    },
+    {
+      "id": "827279a0-ceb7-47bf-9f1f-0a53d31f1ffe",
+      "id_prefix": "827279a0",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "F",
+      "inferred_option": null,
+      "llm_true_option": "F",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "pacing_low",
+        "deterministic_conflict",
+        "label:off_syllabus",
+        "label:unrealistic_pacing",
+        "label:deterministic_conflict",
+        "human_blocking:off-syllabus for Math 1 (requires Math 2 differentiation)",
+        "human_blocking:unrealistic pacing for MCQ",
+        "human_blocking:deterministic flag conflict (differentiation)"
+      ]
+    },
+    {
+      "id": "837cb35b-6a7a-4bfd-8b55-fbb7d9162c85",
+      "id_prefix": "837cb35b",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "83dbcaab-a0d9-42f6-95f6-eedb70f86c6f",
+      "id_prefix": "83dbcaab",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "83f9fea2-7aa4-422e-b282-a47bbac72bcb",
+      "id_prefix": "83f9fea2",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "8494ae14-d7ce-4edb-85de-2a130aa77d83",
+      "id_prefix": "8494ae14",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "861c71cf-af61-4ea3-8340-640e0792c2d2",
+      "id_prefix": "861c71cf",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "label:off_syllabus",
+        "label:wrong_paper",
+        "human_blocking:off-syllabus for Math 1 (requires Math 2 content)"
+      ]
+    },
+    {
+      "id": "86248555-5e15-4d9d-8168-4b10c7bc6d51",
+      "id_prefix": "86248555",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "86263f5b-9a85-4010-b840-e0fe5fb70723",
+      "id_prefix": "86263f5b",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "8708682e-10b1-4db6-b882-63fc648d942d",
+      "id_prefix": "8708682e",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "873d44b8-97d5-4c0c-9178-e2afee0980c2",
+      "id_prefix": "873d44b8",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "label:off_syllabus",
+        "label:math2_content_on_math1",
+        "label:wrong_paper",
+        "human_blocking:off-syllabus for Math 1 (requires Math 2 content)"
+      ]
+    },
+    {
+      "id": "88e27b42-8714-4062-b92c-2672b2aae603",
+      "id_prefix": "88e27b42",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "8a9d3ee8-9c02-402e-9c1c-76cf195aa47f",
+      "id_prefix": "8a9d3ee8",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "8d33d666-f83b-45dd-941a-a94e39fb4913",
+      "id_prefix": "8d33d666",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:too_long",
+        "label:unrealistic_pacing",
+        "human_blocking:unrealistic pacing due to heavy arithmetic"
+      ]
+    },
+    {
+      "id": "8de61e71-990c-4fbc-b03b-a4423953dea2",
+      "id_prefix": "8de61e71",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "8e30db90-1f8d-4918-9a58-a0a35d37f663",
+      "id_prefix": "8e30db90",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "8f268708-99ea-4a46-bf88-01bbca2bd195",
+      "id_prefix": "8f268708",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "8fd12d33-bba6-4fe7-a0b8-3dc4253a98db",
+      "id_prefix": "8fd12d33",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "90183f48-c498-4711-9760-21ef66022334",
+      "id_prefix": "90183f48",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "90b43f77-1b56-4715-a097-c923b9b661f9",
+      "id_prefix": "90b43f77",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "90d26e98-c4a7-49a4-9497-02bbd2ce25a8",
+      "id_prefix": "90d26e98",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:off_syllabus",
+        "label:deterministic_conflict",
+        "human_blocking:off-syllabus for Math 1 (but fits Math 2)",
+        "human_blocking:deterministic flag conflict (flag is correct, but action should be move, not delete)"
+      ]
+    },
+    {
+      "id": "90d53b08-938c-40c9-a055-9b8f136de9f8",
+      "id_prefix": "90d53b08",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": []
+    },
+    {
+      "id": "9144f5a7-80c1-4a15-8645-8a301d18720f",
+      "id_prefix": "9144f5a7",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "9168ecc1-2494-488e-8f2e-e7fb89fec26c",
+      "id_prefix": "9168ecc1",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "91b56f98-04b6-4040-835a-44be9c1c3d84",
+      "id_prefix": "91b56f98",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:deterministic_conflict",
+        "human_blocking:deterministic flag conflict (false positive)"
+      ]
+    },
+    {
+      "id": "9231a5a7-cd7a-41fa-8880-0f24f96054e4",
+      "id_prefix": "9231a5a7",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "95339fa8-70d8-4951-a934-f26c16f1f0aa",
+      "id_prefix": "95339fa8",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "F",
+      "inferred_option": null,
+      "llm_true_option": "F",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "9550587e-7d00-4dcc-b9db-5c43c5190134",
+      "id_prefix": "9550587e",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "disposition_move_paper",
+        "label:off_syllabus",
+        "label:math2_content_on_math1",
+        "human_blocking:off-syllabus for Math 1"
+      ]
+    },
+    {
+      "id": "95803361-55d4-4412-8eb4-488b72576c21",
+      "id_prefix": "95803361",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "95806574-42b4-4dc4-9e60-5327fe10a0cd",
+      "id_prefix": "95806574",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "label:off_syllabus",
+        "label:math2_content_on_math1",
+        "human_blocking:off-syllabus for Math 1, suitable for Math 2"
+      ]
+    },
+    {
+      "id": "95c12e9f-3003-4393-b928-467a3c645148",
+      "id_prefix": "95c12e9f",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "pacing_low",
+        "label:needs_diagram",
+        "label:unrealistic_pacing",
+        "human_blocking:Missing diagram essential for solving the question"
+      ]
+    },
+    {
+      "id": "95daef2b-980f-413f-842f-d9e50b12fae0",
+      "id_prefix": "95daef2b",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "95e4a183-a9f6-41c9-9145-c21acd0febe8",
+      "id_prefix": "95e4a183",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "F",
+      "inferred_option": null,
+      "llm_true_option": "F",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "961ee135-3e6f-4941-b8d9-a21a4f914a64",
+      "id_prefix": "961ee135",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "96e8129a-3b8d-468e-a4f6-c22bcad9a18e",
+      "id_prefix": "96e8129a",
+      "subject": "Chemistry",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": []
+    },
+    {
+      "id": "96fa5c2d-5098-4a60-911e-0ebf91b57b37",
+      "id_prefix": "96fa5c2d",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:deterministic_conflict",
+        "human_blocking:deterministic flag conflict"
+      ]
+    },
+    {
+      "id": "97f82763-e98e-4a8d-86ee-2bd826ce161e",
+      "id_prefix": "97f82763",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "995ee038-b3e0-46b2-9583-fb1ef70c3f8f",
+      "id_prefix": "995ee038",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "997eb4d2-457f-4c7f-9240-2613a43f533a",
+      "id_prefix": "997eb4d2",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "9aeabc05-4c81-4c90-baab-662f9280a7bd",
+      "id_prefix": "9aeabc05",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "9dbf28e2-fa25-4966-9b46-94db8f8adc46",
+      "id_prefix": "9dbf28e2",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "9df57fac-b8ce-4b49-8ca6-38367ebeda7a",
+      "id_prefix": "9df57fac",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "label:off_syllabus",
+        "label:math2_content_on_math1",
+        "label:wrong_paper",
+        "human_blocking:off-syllabus for Math 1 (fits Math 2)"
+      ]
+    },
+    {
+      "id": "9eedf306-9d2c-445f-b163-362d2ddf03d6",
+      "id_prefix": "9eedf306",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "9f1896f9-acfd-4e47-8987-947dbe813364",
+      "id_prefix": "9f1896f9",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "9f1df6b6-38d0-4c93-af9f-62961b308e12",
+      "id_prefix": "9f1df6b6",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": []
+    },
+    {
+      "id": "9f296f90-6e5d-4165-afce-71d4f817284c",
+      "id_prefix": "9f296f90",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_out_of_syllabus",
+        "deterministic_conflict",
+        "label:solution_error",
+        "label:unclear_wording",
+        "label:weak_distractors",
+        "label:deterministic_conflict",
+        "human_blocking:solution reasoning inconsistency",
+        "human_blocking:distractor map errors",
+        "human_blocking:deterministic curriculum flag conflict"
+      ]
+    },
+    {
+      "id": "9f2e10f2-8363-4ef9-bbe3-53905cdfe81a",
+      "id_prefix": "9f2e10f2",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "label:unrealistic_pacing"
+      ]
+    },
+    {
+      "id": "a0f0becd-8075-4611-8460-08ffab8ab3da",
+      "id_prefix": "a0f0becd",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "a14d8610-58a0-4125-9002-38dee5d3136b",
+      "id_prefix": "a14d8610",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "a16bb41f-bbc5-4105-9ac6-df016219860c",
+      "id_prefix": "a16bb41f",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "a2db084c-1df6-4175-a5c4-3324b48291eb",
+      "id_prefix": "a2db084c",
+      "subject": "Chemistry",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "a3c8242b-11d6-407a-bca2-df6f47a92354",
+      "id_prefix": "a3c8242b",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "a40c571a-1e35-4eb6-b65b-1482551cfe7b",
+      "id_prefix": "a40c571a",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "a410d839-4eaf-4972-992f-b298e837dbe2",
+      "id_prefix": "a410d839",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "F",
+      "inferred_option": null,
+      "llm_true_option": "F",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "a4260807-8f65-4735-b7f3-c689a1767f56",
+      "id_prefix": "a4260807",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "a49ef18a-50da-4884-9b8b-4038e9070ea4",
+      "id_prefix": "a49ef18a",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "a4b82f5c-b5ec-4dc5-ac7f-749198ca1a99",
+      "id_prefix": "a4b82f5c",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "a51f2ca7-f20b-4be2-a186-1ee018f933d4",
+      "id_prefix": "a51f2ca7",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "a5248f57-0438-4845-b7b3-9b8f2887893d",
+      "id_prefix": "a5248f57",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "a5391b53-fe29-4397-aa35-74c390da4b81",
+      "id_prefix": "a5391b53",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "disposition_move_paper",
+        "human_blocking:off_syllabus_for_subject"
+      ]
+    },
+    {
+      "id": "a58e26a2-a8b0-4d50-9362-4134868b1d9a",
+      "id_prefix": "a58e26a2",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "a5b0b9bf-c866-4ecc-a1b1-3e734d4c9665",
+      "id_prefix": "a5b0b9bf",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "a65d776b-1b99-45e7-85b1-84fc56ba8816",
+      "id_prefix": "a65d776b",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "disposition_move_paper",
+        "human_blocking:Off-syllabus for Math 1 (requires human decision to move to Math 2)"
+      ]
+    },
+    {
+      "id": "a671606a-e3d3-4a47-a908-ca0b3d8e7290",
+      "id_prefix": "a671606a",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "a67d9587-2268-47d4-ba6f-fe4db62004b6",
+      "id_prefix": "a67d9587",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "a72538ab-81b8-4eb3-aea2-99cba405804f",
+      "id_prefix": "a72538ab",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "a85f3c11-7b2f-4e22-9de1-e80936faea3e",
+      "id_prefix": "a85f3c11",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline",
+        "pacing_low",
+        "human_blocking:pacing_too_long"
+      ]
+    },
+    {
+      "id": "aa6262cc-be13-4da2-b70c-ad05a25a3def",
+      "id_prefix": "aa6262cc",
+      "subject": "Chemistry",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "aec15155-0970-401b-ad53-8f82f557ffb6",
+      "id_prefix": "aec15155",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "af92b566-88ce-4fb3-a1ba-cf3e10998853",
+      "id_prefix": "af92b566",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "afb8345a-6b82-4022-9b04-f43565170b7f",
+      "id_prefix": "afb8345a",
+      "subject": "Biology",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "b0a26f12-68f2-4fa9-873c-1c1720ff9155",
+      "id_prefix": "b0a26f12",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "b0e4d67a-935a-4b98-a692-9a25c705b752",
+      "id_prefix": "b0e4d67a",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "b12524f2-6749-420d-a511-d7d93a4f1503",
+      "id_prefix": "b12524f2",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "b20a9b77-29c0-42b2-a5a7-938e37d688d5",
+      "id_prefix": "b20a9b77",
+      "subject": "Chemistry",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "b2498673-fbc8-4bff-9932-669ff2bb5260",
+      "id_prefix": "b2498673",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "b274407e-fa5d-4d84-b1d3-5fe8f394d866",
+      "id_prefix": "b274407e",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "b29ead6a-593b-4b8f-98f7-a275d132e81e",
+      "id_prefix": "b29ead6a",
+      "subject": "Biology",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "b2b44f22-eb5e-4750-9b15-b8029f978787",
+      "id_prefix": "b2b44f22",
+      "subject": "Chemistry",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "b3064f51-1180-487d-a1f9-ffa14f0c2ac1",
+      "id_prefix": "b3064f51",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "b3284525-5694-421b-8ca5-4bfdb59add96",
+      "id_prefix": "b3284525",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "b33819e4-2570-4676-ad42-2d90de99b262",
+      "id_prefix": "b33819e4",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "b3663069-7d41-4911-a682-764faceade34",
+      "id_prefix": "b3663069",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline",
+        "pacing_low",
+        "human_blocking:Pacing is too long"
+      ]
+    },
+    {
+      "id": "b36a75e2-dc03-4e41-8362-45e32e64730e",
+      "id_prefix": "b36a75e2",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "b36c569e-fbb6-4d77-a2a3-dada2e6f41ff",
+      "id_prefix": "b36c569e",
+      "subject": "Chemistry",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "b4d5d866-5fa6-4409-8a0d-b781f8977824",
+      "id_prefix": "b4d5d866",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "b50cf89e-15c3-45e9-a2ea-e6a693d35024",
+      "id_prefix": "b50cf89e",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "b55ec016-4eec-4fbc-a0de-5ad86e2bd8c1",
+      "id_prefix": "b55ec016",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "b56213dc-327e-472b-9648-56791f014f16",
+      "id_prefix": "b56213dc",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "human_blocking:off_syllabus_concept"
+      ]
+    },
+    {
+      "id": "b781c5c8-63f3-4873-b0b2-732791a9f584",
+      "id_prefix": "b781c5c8",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "bb1bf6ee-e0f7-4ef6-9a27-3a444a844c38",
+      "id_prefix": "bb1bf6ee",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "bc16c9ff-0995-4b55-85ea-6ce1f4a8fe26",
+      "id_prefix": "bc16c9ff",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "bc55fe1e-8947-453f-9532-fd0ce2927aae",
+      "id_prefix": "bc55fe1e",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "bccb5577-f289-4e58-9c0a-d923eac0d9b7",
+      "id_prefix": "bccb5577",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "bd7eaf5d-0a8b-49f4-979f-fd7b20c83185",
+      "id_prefix": "bd7eaf5d",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "bdd995fb-2fcd-4ccd-93b4-d6c2b372dd93",
+      "id_prefix": "bdd995fb",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_out_of_syllabus"
+      ]
+    },
+    {
+      "id": "bdecb8c9-03d8-4cbd-bfd7-7ea9000b73b3",
+      "id_prefix": "bdecb8c9",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline",
+        "human_blocking:Solution clarity issue (physical inaccuracy in explanation)",
+        "human_blocking:Missing diagram"
+      ]
+    },
+    {
+      "id": "be717c89-dadd-4e5d-ab98-ec7ad3040a9d",
+      "id_prefix": "be717c89",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "bf040862-3979-4800-846a-eafc7bc96052",
+      "id_prefix": "bf040862",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "F",
+      "inferred_option": null,
+      "llm_true_option": "F",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "bf0d1ca7-6f68-41f4-a034-a446926d2442",
+      "id_prefix": "bf0d1ca7",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "c00cc909-16d4-4215-91e0-6f85fa4745d8",
+      "id_prefix": "c00cc909",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major"
+      ]
+    },
+    {
+      "id": "c07c4283-c2b3-4bf4-82ff-48790e9d97fc",
+      "id_prefix": "c07c4283",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "c0b5fe8d-47f6-466e-b291-88a888dcab27",
+      "id_prefix": "c0b5fe8d",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major"
+      ]
+    },
+    {
+      "id": "c237d0de-acf0-433d-a6d2-2d17bd839dd3",
+      "id_prefix": "c237d0de",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": []
+    },
+    {
+      "id": "c31bf9d6-372b-43f4-b6d0-54829c0a8433",
+      "id_prefix": "c31bf9d6",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "c355e359-8a8e-4d41-8240-1d3266f810f3",
+      "id_prefix": "c355e359",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "c40d7baf-ff05-4b09-b19e-dc5579376cf2",
+      "id_prefix": "c40d7baf",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "c7f20358-b5b2-4c27-9203-3122597876e6",
+      "id_prefix": "c7f20358",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major"
+      ]
+    },
+    {
+      "id": "c8519dab-a147-4659-ad7b-99f62eb37282",
+      "id_prefix": "c8519dab",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "c8811468-ca84-41b2-b31a-ea052b5c08f0",
+      "id_prefix": "c8811468",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "c8d3635c-3285-404d-bf8a-ee79fff75aeb",
+      "id_prefix": "c8d3635c",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "c91c6943-d783-4b90-b0ec-61333864a77c",
+      "id_prefix": "c91c6943",
+      "subject": "Physics",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "c94ec90a-1b7a-477f-93f2-01e47081737d",
+      "id_prefix": "c94ec90a",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "disposition_move_paper",
+        "human_blocking:off_syllabus_for_math1",
+        "human_blocking:belongs_in_math2"
+      ]
+    },
+    {
+      "id": "ca9b9880-78ee-433e-ace5-845fae205404",
+      "id_prefix": "ca9b9880",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "cb024731-3f6e-43cc-91c1-737caee97d35",
+      "id_prefix": "cb024731",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_borderline",
+        "disposition_move_paper"
+      ]
+    },
+    {
+      "id": "cc3aa9b0-4825-4ddd-8fba-e1acd20fbb05",
+      "id_prefix": "cc3aa9b0",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "cc4e4db7-53c0-4b7b-b9e8-1991af355a60",
+      "id_prefix": "cc4e4db7",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "cc57a57a-e948-4a3f-85e1-dd25e59a0d2b",
+      "id_prefix": "cc57a57a",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "ce4da1cd-010f-4f98-acd6-2ecfec0dab3a",
+      "id_prefix": "ce4da1cd",
+      "subject": "Chemistry",
+      "bucket": "skip_other_blockers",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_borderline",
+        "solution_quality_low",
+        "human_blocking:distractor_map_inaccurate"
+      ]
+    },
+    {
+      "id": "cecb9387-c1b8-4afb-81c3-7774898e73c4",
+      "id_prefix": "cecb9387",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "cfdc1ac4-afa3-40aa-89cd-924f58f4b636",
+      "id_prefix": "cfdc1ac4",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "cffe5fc2-5ca2-44b4-a3d8-caf664e56cc3",
+      "id_prefix": "cffe5fc2",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "d03f1d9e-e8ab-47b7-a049-ac396e418700",
+      "id_prefix": "d03f1d9e",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline",
+        "human_blocking:pacing_too_long"
+      ]
+    },
+    {
+      "id": "d5c87ee1-258d-453b-a84c-09d1b84b421c",
+      "id_prefix": "d5c87ee1",
+      "subject": "Biology",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "pacing_low"
+      ]
+    },
+    {
+      "id": "d635f4c2-cbae-4e95-953e-ecb70958cb5d",
+      "id_prefix": "d635f4c2",
+      "subject": "Biology",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "d64f4e06-7620-4818-97af-1d0f55dbd978",
+      "id_prefix": "d64f4e06",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "d6e63880-cda4-4f37-937a-ac735dda912f",
+      "id_prefix": "d6e63880",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "d76a504e-0fc2-41e2-b25a-82190a2a0938",
+      "id_prefix": "d76a504e",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major"
+      ]
+    },
+    {
+      "id": "d76f0ca9-74e1-4a05-8f80-b58eb7ce0759",
+      "id_prefix": "d76f0ca9",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "d77f74ab-c311-433a-8e73-efdc7bf77c60",
+      "id_prefix": "d77f74ab",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "d7c02085-592d-49e5-b8e6-e63de8f72be0",
+      "id_prefix": "d7c02085",
+      "subject": "Chemistry",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": []
+    },
+    {
+      "id": "d7da03cd-88f5-4d07-b9c0-57a742549084",
+      "id_prefix": "d7da03cd",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "d8b443e3-2a74-4931-8b31-55058907ce76",
+      "id_prefix": "d8b443e3",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "d92c1583-c112-444f-8155-e086fe387997",
+      "id_prefix": "d92c1583",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "da38bf2f-c64c-4fd8-85ec-defe85f23338",
+      "id_prefix": "da38bf2f",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_borderline",
+        "disposition_move_paper"
+      ]
+    },
+    {
+      "id": "da5231fc-8934-4b17-9c94-b0565c4f4dc4",
+      "id_prefix": "da5231fc",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "da8367e4-baf1-43bd-9c98-1c22d0b578b1",
+      "id_prefix": "da8367e4",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "db5d904d-77da-4200-b8ef-ad7de4d2109b",
+      "id_prefix": "db5d904d",
+      "subject": "Chemistry",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "db9bd227-2cc5-4aa1-9f29-7431aec62204",
+      "id_prefix": "db9bd227",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "dcacc5a7-6760-42d9-b0f0-db38e077c11f",
+      "id_prefix": "dcacc5a7",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "dd20d29a-39cc-48c2-9c4b-04110bc61da1",
+      "id_prefix": "dd20d29a",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "ddb28c06-8246-47a1-8532-951d03b8072e",
+      "id_prefix": "ddb28c06",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "ddde46ef-53a4-40fb-b430-8e2a661a63e6",
+      "id_prefix": "ddde46ef",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "de2975ce-03d4-4733-8582-872067ff6f12",
+      "id_prefix": "de2975ce",
+      "subject": "Chemistry",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "e2101c9d-90db-4ce9-8f68-885459734a3c",
+      "id_prefix": "e2101c9d",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "e2b538b5-823c-4440-90e9-70ecf3210514",
+      "id_prefix": "e2b538b5",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "e3495e4f-c610-4dd6-b2c9-c890e7262b11",
+      "id_prefix": "e3495e4f",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "e3919770-9761-4cf0-93c9-0176a9ca89ca",
+      "id_prefix": "e3919770",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "e46fcb99-9f62-47a5-b346-d4c5b99e57e9",
+      "id_prefix": "e46fcb99",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": []
+    },
+    {
+      "id": "e48a32e9-2ca7-49a7-958c-69bd776cd9f4",
+      "id_prefix": "e48a32e9",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "e5f0b8ab-d717-4b05-9bc2-7a8dbf96c647",
+      "id_prefix": "e5f0b8ab",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "human_blocking:Missing diagram"
+      ]
+    },
+    {
+      "id": "e75a750a-164d-4a15-a9f9-e551b31a4e1f",
+      "id_prefix": "e75a750a",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "e7ee9695-a2cf-4bf7-8b02-de401d13fe19",
+      "id_prefix": "e7ee9695",
+      "subject": "Biology",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "e9883e29-d69c-41e7-9611-054c68c18cab",
+      "id_prefix": "e9883e29",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "disposition_move_paper",
+        "human_blocking:off_syllabus_for_math1",
+        "human_blocking:belongs_in_math2"
+      ]
+    },
+    {
+      "id": "ed5ec571-0165-4ab4-a514-c5492394dc2a",
+      "id_prefix": "ed5ec571",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "edaff3cd-d469-4f58-b476-068a24d9ac8d",
+      "id_prefix": "edaff3cd",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "ee9c113a-ebd2-4bde-8636-670bf74ca051",
+      "id_prefix": "ee9c113a",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "eed65c14-11ce-4b88-84c2-7f779f4f9d6c",
+      "id_prefix": "eed65c14",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major",
+        "curriculum_out_of_syllabus",
+        "pacing_low",
+        "disposition_move_paper",
+        "human_blocking:off_syllabus_for_subject",
+        "human_blocking:pacing_too_long"
+      ]
+    },
+    {
+      "id": "eedf32dc-06b8-46e6-b1d0-f90898e02ee7",
+      "id_prefix": "eedf32dc",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "ef3ba186-9e6c-410d-a641-501c6f6be663",
+      "id_prefix": "ef3ba186",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "efe787b1-bd09-4bcb-baa5-ff01ec1b5ad7",
+      "id_prefix": "efe787b1",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "E",
+      "inferred_option": null,
+      "llm_true_option": "E",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "f0796116-cf54-46e6-a5c1-0db79d2a874e",
+      "id_prefix": "f0796116",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "f0a4c221-8bda-4396-8c11-53390a83169a",
+      "id_prefix": "f0a4c221",
+      "subject": "Physics",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": []
+    },
+    {
+      "id": "f0c623f0-c899-4483-95ef-35838e90dea5",
+      "id_prefix": "f0c623f0",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "f1426eb2-c6fb-400c-954a-4399ebb8b05f",
+      "id_prefix": "f1426eb2",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "f1aecdc8-5d34-45db-a088-6ab797edbd48",
+      "id_prefix": "f1aecdc8",
+      "subject": "Math 1",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "f2973297-d503-4263-b399-6caa755cf1bc",
+      "id_prefix": "f2973297",
+      "subject": "Physics",
+      "bucket": "already_correct",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "f47605d6-5576-4e58-bb7c-dec8e4907f22",
+      "id_prefix": "f47605d6",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "f48200a9-e3c1-416c-ad08-3fed5977d5c6",
+      "id_prefix": "f48200a9",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "B",
+      "inferred_option": null,
+      "llm_true_option": "B",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "f55fa52e-6eda-4706-867f-600ea0bb260c",
+      "id_prefix": "f55fa52e",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "f5f7fba0-ba6f-4e59-a4f5-03ab670cdc41",
+      "id_prefix": "f5f7fba0",
+      "subject": "Math 1",
+      "bucket": "skip_other_blockers",
+      "stored_option": "F",
+      "inferred_option": null,
+      "llm_true_option": "F",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "verdict_major"
+      ]
+    },
+    {
+      "id": "f60ad2ea-f4f5-4c49-b047-15987a6fa3a7",
+      "id_prefix": "f60ad2ea",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "f640cb8e-7a28-40a9-b7b9-78869c1199a5",
+      "id_prefix": "f640cb8e",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "f6866e25-bdf9-4850-a3f7-74ab9a6660c1",
+      "id_prefix": "f6866e25",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "f6f581b0-5891-4899-ac5e-edff7417f49a",
+      "id_prefix": "f6f581b0",
+      "subject": "Math 2",
+      "bucket": "already_correct",
+      "stored_option": "D",
+      "inferred_option": null,
+      "llm_true_option": "D",
+      "content_patch": {},
+      "note": "Deterministic reconcile agrees with stored key; LLM false alarm.",
+      "other_blockers": []
+    },
+    {
+      "id": "fc29e3d7-0e49-44b7-b62a-617d0a3a3181",
+      "id_prefix": "fc29e3d7",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "fc76bcb3-e37c-4219-8c2a-6145161b5209",
+      "id_prefix": "fc76bcb3",
+      "subject": "Math 2",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "fd088886-da16-4547-aa95-6053e13990f9",
+      "id_prefix": "fd088886",
+      "subject": "Math 2",
+      "bucket": "skip_other_blockers",
+      "stored_option": "C",
+      "inferred_option": null,
+      "llm_true_option": "C",
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    },
+    {
+      "id": "fdae62e2-2ba9-4c46-964f-f5752de4388a",
+      "id_prefix": "fdae62e2",
+      "subject": "Math 1",
+      "bucket": "skip_not_answer_key",
+      "stored_option": null,
+      "inferred_option": null,
+      "llm_true_option": null,
+      "content_patch": {},
+      "note": null,
+      "other_blockers": [
+        "curriculum_borderline"
+      ]
+    }
+  ]
+}

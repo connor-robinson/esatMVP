@@ -1,0 +1,95 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_ad97dfb5",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Easy",
+    "idea_summary": "Compare the electrical resistance of two wires made of the same material, where one has a different length and a different diameter than the other.",
+    "schema_invariant": {
+      "core_move": "Calculate the dependent quantity (resistance) by applying scaling factors to independent variables (length, diameter) in a formula where one variable has a power law relationship (diameter squared).",
+      "what_must_not_change": [
+        "The requirement to scale a dependent variable based on changes to independent variables.",
+        "The presence of an exponent (power law) on at least one of the scaled variables."
+      ],
+      "what_can_change": [
+        "The specific physical context (e.g., electricity instead of gravity or thermal radiation).",
+        "The specific formula used.",
+        "The exact scaling factors."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "proportional_reasoning",
+      "reasoning_hinge": "Recognising that resistance is inversely proportional to the square of the diameter, not just the diameter itself.",
+      "why_top_students_win": "They immediately use proportional scaling (R ∝ L / d²) rather than calculating intermediate cross-sectional areas, correctly squaring the diameter's scaling factor.",
+      "why_mid_students_miss": "They either forget to square the diameter scaling factor (treating R ∝ L / d), or they misapply the inverse relationship (e.g., multiplying by the diameter factor instead of dividing)."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Electrical resistance depends on resistivity, length, and cross-sectional area (R = ρL/A).",
+      "supporting_idea_if_any": "Cross-sectional area is proportional to the square of the diameter (A ∝ d²).",
+      "estimated_solution_steps": 2,
+      "number_of_core_physics_principles": 1,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 2,
+      "must_include": [
+        "model_selection",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "Matches the cognitive load of a standard ESAT proportional scaling question by requiring the combination of two simple scaling factors, one of which is non-linear.",
+    "task_signature": "proportional_change",
+    "tool_footprint": [
+      "proportional_scaling",
+      "geometry_substitution"
+    ],
+    "primary_tag": "4",
+    "secondary_tags": [
+      "7"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "",
+    "why_still_on_spec": "Calculating resistance from length and area, and knowing the area of a circle, are foundational GCSE/A-level physics requirements.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no exact geometric diagram dependence"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Failing to square the diameter scaling factor (e.g., if diameter is halved, assuming area is halved rather than quartered).",
+        "distractor_role": "Produces a ratio off by a factor of 2 or 1/2 compared to the correct answer."
+      },
+      {
+        "mistake": "Applying the diameter scaling factor in the numerator rather than the denominator (assuming R is directly proportional to A or d²).",
+        "distractor_role": "Produces an inverted or completely incorrect ratio."
+      },
+      {
+        "mistake": "Inverting the final ratio (calculating R_Y / R_X instead of R_X / R_Y).",
+        "distractor_role": "Provides the reciprocal of the correct answer."
+      }
+    ],
+    "difficulty_rationale": "It is an Easy question because it relies on one very familiar formula and a simple geometric substitution. The difficulty is purely in avoiding the careless error of forgetting the square on the diameter, which is a classic, fast discriminator.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "Because absolute values for length, diameter, and resistivity are not provided. The candidate is forced to use proportional reasoning or invent dummy variables, making pure substitution impossible without algebraic abstraction."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The common algebraic mistakes (forgetting the square, inverting the fraction) generate a neat, predictable set of integer or simple fraction distractors."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

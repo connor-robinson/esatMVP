@@ -1,0 +1,29 @@
+{
+  "questionId": 3071,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 2",
+  "questionNumber": 12,
+  "stemBlocks": [
+    "A stunt cyclist is preparing a new trick. The track on which he will perform the trick is shown schematically in the figure below. As shown, most of the track is sloped at an angle $\\theta$ to the horizontal.\nThe cyclist starts riding from rest at A. In riding down the slope from A to B he transfers an amount of energy $E$ from his muscles to provide kinetic energy to the rider-bicycle system and descends through a vertical distance $h$. The cyclist leaves the track at B, travelling horizontally initially. He lands on the track at C, a distance $L$ down the slope.\nAssume that the rider-bicycle system can be modeled as a point mass of mass $M$, that frictional forces and air resistance can be neglected, and that the gravitational field strength is $g$.",
+    "What is $V_a$, the component of the velocity of the rider-bicycle system along (parallel to) the slope, immediately after the cyclist has left the track at B?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:38:20.011498+00:00",
+  "sourceImageHash": "18deebf68c092f312dae164c0a3942f0161244654c854805321980cc88fd0ad6",
+  "status": "ok"
+}

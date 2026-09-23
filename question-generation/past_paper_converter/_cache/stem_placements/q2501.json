@@ -1,0 +1,28 @@
+{
+  "questionId": 2501,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 22,
+  "stemBlocks": [
+    "What is the average speed of the bus during this time?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "The graph is the speed-time graph for a bus travelling in a straight line between two stops.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.795586+00:00",
+  "sourceImageHash": "3dd05b14f2d4013d4b371e858a216b2c832e07e57830149b338551bbad396962",
+  "status": "ok"
+}

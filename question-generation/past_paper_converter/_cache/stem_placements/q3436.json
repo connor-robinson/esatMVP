@@ -1,0 +1,28 @@
+{
+  "questionId": 3436,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 47,
+  "stemBlocks": [
+    "The diagram shows information about cell membranes. Which option correctly identifies the following information? \\begin{itemize} \\item the solubility in water of the different parts of a cell membrane \\item the effect of cholesterol on membrane fluidity as temperature decreases \\item the units for the horizontal axis \\end{itemize}"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "The diagram shows information about cell membranes.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.137027+00:00",
+  "sourceImageHash": "129c219a1a6b796b2fb06758ce3885670857d71b107383681cd5f4a7ccebdf53",
+  "status": "ok"
+}

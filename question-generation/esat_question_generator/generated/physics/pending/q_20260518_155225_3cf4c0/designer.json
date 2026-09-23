@@ -1,0 +1,93 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_ad97dfb5",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Easy",
+    "idea_summary": "Compare the electrical resistance of two wires made of the same material, where one wire has a scaled length and a scaled diameter compared to the other.",
+    "schema_invariant": {
+      "core_move": "Calculate a resultant ratio by applying scaling factors to independent variables in a formula containing a power law.",
+      "what_must_not_change": [
+        "The requirement to scale variables proportionally.",
+        "The presence of an exponent on at least one of the scaled variables (creating the trap of forgetting to apply the exponent to the factor)."
+      ],
+      "what_can_change": [
+        "The physical context (e.g., electricity instead of density or gravity).",
+        "The specific variables being scaled.",
+        "The exact scaling factors used."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "proportional_reasoning",
+      "reasoning_hinge": "Recognising that cross-sectional area is proportional to the square of the diameter, so the scaling factor for diameter must be squared when determining the new resistance.",
+      "why_top_students_win": "They immediately write R ∝ L / d², apply the scaling factors (e.g., 3L and 3d), and correctly square the denominator factor to find the new ratio.",
+      "why_mid_students_miss": "They forget to square the scaling factor for the diameter, assuming R ∝ L / d, which leads them to think the resistance remains unchanged if both length and diameter scale by the same factor."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Electrical resistance depends on length and cross-sectional area (R = ρL/A).",
+      "supporting_idea_if_any": "Area of a circle is proportional to the square of its diameter.",
+      "estimated_solution_steps": 2,
+      "number_of_core_physics_principles": 1,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 2,
+      "must_include": [
+        "model_selection",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "Matches the cognitive demand of the density/radius exemplar by asking for a ratio based on a hidden power-law dependency (area from diameter), but moves the context to standard electricity.",
+    "task_signature": "proportional_change",
+    "tool_footprint": [
+      "proportional_reasoning",
+      "power_law_scaling"
+    ],
+    "primary_tag": "5",
+    "secondary_tags": [],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "",
+    "why_still_on_spec": "Calculating resistance from resistivity, length, and area is a core specification point. Proportional reasoning with these variables is a standard expectation in ESAT Section 1.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no exact geometric diagram dependence"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Failing to square the diameter's scaling factor (e.g., thinking a wire 3 times as long and 3 times as thick has the same resistance).",
+        "distractor_role": "Provides a highly tempting 'ratio of 1' distractor."
+      },
+      {
+        "mistake": "Squaring both the length and the diameter scaling factors.",
+        "distractor_role": "Provides an incorrect ratio based on a misremembered formula."
+      },
+      {
+        "mistake": "Applying the diameter scaling factor as a direct proportion rather than inverse square (multiplying instead of dividing).",
+        "distractor_role": "Provides an inverted ratio distractor."
+      }
+    ],
+    "difficulty_rationale": "It is an Easy question because it relies entirely on one fundamental formula and one geometric relationship. The trap is common and well-known, testing basic proportional discipline without requiring multi-step algebraic manipulation.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "Absolute values are not provided; the candidate must construct a ratio and correctly apply the power law to the scaling factors themselves."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The predictable errors in handling the exponent (forgetting it, putting it on the wrong variable, inverting the ratio) naturally generate a clean set of multiple-choice options."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

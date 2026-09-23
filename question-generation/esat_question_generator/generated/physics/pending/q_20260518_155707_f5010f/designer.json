@@ -1,0 +1,96 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_ae6afb3b",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Easy",
+    "idea_summary": "A hot block is placed in a cold liquid. The candidate must determine the liquid's temperature rise in terms of the block's temperature drop, given the relative masses and specific heat capacities as simple multiples.",
+    "schema_invariant": {
+      "core_move": "Equating thermal energy lost by the hot object to thermal energy gained by the cold object (m_1 c_1 \\Delta T_1 = m_2 c_2 \\Delta T_2).",
+      "what_must_not_change": [
+        "The underlying principle of conservation of thermal energy in an isolated mixture.",
+        "The use of mass, specific heat capacity, and temperature change."
+      ],
+      "what_can_change": [
+        "The physical objects involved.",
+        "Asking for a proportional temperature change rather than an exact final equilibrium temperature.",
+        "Using algebraic multiples instead of numerical values for mass and specific heat."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "proportional_reasoning",
+      "reasoning_hinge": "Recognizing that the temperature change is inversely proportional to the product of mass and specific heat capacity (m*c) when the exchanged heat Q is equal.",
+      "why_top_students_win": "They immediately set up the equality m_b * c_b * \\Delta T_b = m_l * c_l * \\Delta T_l and substitute the multiples to find the ratio of temperature changes.",
+      "why_mid_students_miss": "They may assume temperature change is directly proportional to mass or specific heat, or they might get confused by the absence of initial temperature values."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Conservation of thermal energy (Q_lost = Q_gained)",
+      "supporting_idea_if_any": "Specific heat capacity equation (Q = mc\\Delta T)",
+      "estimated_solution_steps": 2,
+      "number_of_core_physics_principles": 1,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 2,
+      "must_include": [
+        "model_selection",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "Shifts the focus from calculating a final numerical temperature to evaluating a proportional change, maintaining an easy cognitive load but feeling distinct from standard textbook numerical problems.",
+    "task_signature": "proportional_change",
+    "tool_footprint": [
+      "equate_energy",
+      "proportional_reasoning",
+      "isolate_variable"
+    ],
+    "primary_tag": "3",
+    "secondary_tags": [],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "Instead of providing temperatures (e.g., 80°C and 20°C) and asking for the final equilibrium temperature, the question provides relative masses and specific heat capacities (e.g., mass 2m, specific heat 3c) and asks for the temperature rise of the liquid in terms of the block's temperature drop (\\Delta T).",
+    "why_still_on_spec": "Thermal energy transfer and the specific heat capacity equation Q = mc\\Delta T are fundamental parts of the ESAT Thermal Physics specification.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Assuming temperature change is directly proportional to the product of mass and specific heat capacity, leading to a multiplier instead of a fraction.",
+        "distractor_role": "Inverted ratio distractor (e.g., 6\\Delta T instead of \\Delta T / 6)."
+      },
+      {
+        "mistake": "Only accounting for the ratio of specific heat capacities and ignoring the mass ratio.",
+        "distractor_role": "Partial ratio distractor (e.g., \\Delta T / 3)."
+      },
+      {
+        "mistake": "Only accounting for the mass ratio and ignoring the specific heat capacity ratio.",
+        "distractor_role": "Partial ratio distractor (e.g., \\Delta T / 2)."
+      }
+    ],
+    "difficulty_rationale": "It is an Easy question because it tests a single core relationship (Q = mc\\Delta T) with a straightforward proportionality. However, using abstract multiples instead of concrete numbers prevents pure, unthinking calculator plug-and-chug, making it highly suitable for ESAT Section 1.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "Because no explicit initial or final temperatures are given, the candidate must actively construct the proportionality algebraically rather than just typing numbers into a formula."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The algebraic fractions (e.g., \\Delta T/6, \\Delta T/3, 2\\Delta T, 6\\Delta T) make for clean, unambiguous multiple-choice options that directly map to common proportional reasoning errors."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

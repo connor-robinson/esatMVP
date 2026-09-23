@@ -1,0 +1,576 @@
+{
+  "question_id": "q_20260517_221048_e03db4",
+  "subject": "physics",
+  "schema_id": "P_a9a3eea7",
+  "difficulty": "Hard",
+  "status": "accepted",
+  "failure_gate": null,
+  "failure_reasons": [],
+  "has_visual": true,
+  "visual_type": "concept_image",
+  "answer_depends_on_visual": false,
+  "assets": [
+    {
+      "kind": "concept_image",
+      "spec_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260517_221048_e03db4\\concept_image_prompt.json",
+      "image_paths": [
+        "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260517_221048_e03db4/concept_image_v1.png",
+        "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260517_221048_e03db4/concept_image_v2.png"
+      ],
+      "renderer": "gemini_image_v1",
+      "qc_status": "pass",
+      "qc_source": "concept_image_verifier.json",
+      "answer_bearing": false,
+      "checksum": null
+    }
+  ],
+  "model_trace": {
+    "designer": "gemini-2.5-pro",
+    "idea_judge": "gemini-2.5-flash",
+    "implementer": "gemini-2.5-pro",
+    "verifier": "gemini-2.5-flash",
+    "style_checker": "gemini-2.5-flash",
+    "visual_router": "gemini-2.5-flash",
+    "concept_image_prompt": "gemini-2.5-pro",
+    "concept_image_verifier": "gemini-2.5-flash",
+    "concept_image_regen": "gemini-2.5-flash"
+  },
+  "retry_counts": {
+    "implementer": 0,
+    "concept_image_regen": 1
+  },
+  "stages": [
+    {
+      "stage": "designer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "schema_id": "P_a9a3eea7",
+        "module": "physics",
+        "variation_mode": "FAR",
+        "target_difficulty": "Hard",
+        "idea_summary": "A conducting rod slides at terminal velocity down rails in a magnetic field. The question asks how the power dissipated as heat changes when the magnetic field is altered. This disguises a terminal velocity force-balance problem within an electromagnetic context.",
+        "schema_invariant": {
+          "core_move": "The core reasoning is to establish a steady-state condition (terminal velocity) by balancing a constant driving force (gravity) against a velocity-dependent resistive force (magnetic braking force). This is equivalent to the original schema's balance of weight, buoyancy, and drag.",
+          "what_must_not_change": [
+            "An object reaches a terminal velocity.",
+            "The terminal velocity is determined by the balance of a constant driving force and a velocity-dependent resistive force.",
+            "The question requires calculating how a parameter change affects this steady state."
+          ],
+          "what_can_change": [
+            "The physical context is changed from fluid dynamics to electromagnetism.",
+            "The forces are gravity and magnetic braking, not weight, buoyancy, and fluid drag.",
+            "The question is framed in terms of power dissipated, not velocity itself."
+          ]
+        },
+        "discrimination_mechanism": {
+          "type": "tempting_wrong_model",
+          "reasoning_hinge": "The candidate must realise that at terminal velocity, the dissipated electrical power is exactly equal to the rate of loss of gravitational potential energy (P = mgv_t). This avoids the trap of focusing only on the electrical power formula P = (BLv)²/R.",
+          "why_top_students_win": "They will use the energy conservation principle (P_dissipated = mgv_t), correctly deduce how v_t depends on B from the force balance equation (v_t ∝ 1/B²), and combine these two insights to find the new power.",
+          "why_mid_students_miss": "They will focus on the formula for power dissipated by the induced current, P = ε²/R = (BLv)²/R. Seeing P ∝ B² and P ∝ v², they might assume P ∝ B² and conclude the power quadruples, forgetting that v is not independent and will change significantly."
+        },
+        "minimum_reasoning_depth": {
+          "steps": 3,
+          "must_include": [
+            "model_selection",
+            "non_obvious_inference",
+            "short_calculation_or_comparison"
+          ]
+        },
+        "reference_alignment": "The question combines standard physics principles (mechanics, EM) in a way that requires conceptual clarity, similar to how difficult ESAT questions test fundamental understanding rather than calculation. The solution is fast once the correct physical model is chosen.",
+        "task_signature": "compare_scenarios",
+        "tool_footprint": [
+          "energy conservation",
+          "force equilibrium",
+          "proportional reasoning",
+          "electromagnetic induction"
+        ],
+        "primary_tag": "4",
+        "secondary_tags": [
+          "1",
+          "5"
+        ],
+        "visual_need": "concept_image_only",
+        "visual_role": "supportive",
+        "visual_brief": "A simple schematic showing two parallel vertical conducting rails. A horizontal conducting rod rests on the rails, free to slide. Arrows indicate a uniform magnetic field perpendicular to the plane of the rails (e.g., into the page).",
+        "surface_twist": "The problem is presented as one about electromagnetic induction and power, completely hiding the fluid dynamics context of the original schema. The collapse moment occurs when the student realizes it's fundamentally a terminal velocity problem governed by F_net = 0, and that at this steady state, P_in (gravitational) = P_out (electrical).",
+        "why_still_on_spec": "All concepts are from standard ESAT/A-Level physics. Specifically: force balance (Newton's Laws, Tag 1), gravitational potential energy and power (Tag 5), and electromagnetic induction (ε=Blv, F=BIL, Tag 4). The question combines them but does not introduce new laws or require derivations beyond this scope.",
+        "constraints_used": [
+          "short condition descriptions only",
+          "no final numbers",
+          "no full equations unless the schema requires them",
+          "no exact geometric diagram dependence"
+        ],
+        "intended_wrong_paths": [
+          {
+            "mistake": "Assuming P ∝ B² from the formula P = (BLv)²/R while ignoring the fact that v changes. If B doubles, this leads to the conclusion that power becomes 4 times greater.",
+            "distractor_role": "This is the most tempting distractor, based on a plausible but incomplete application of a formula."
+          },
+          {
+            "mistake": "Incorrectly deriving the relationship between v_t and B, for example by finding v_t ∝ 1/B instead of v_t ∝ 1/B². This would lead to concluding power is halved if B is doubled.",
+            "distractor_role": "A calculation error in the proportional reasoning step."
+          },
+          {
+            "mistake": "Confusing the force and power relationships. For example, knowing that F_drag ∝ B², and incorrectly assuming P ∝ B².",
+            "distractor_role": "A conceptual confusion between force, energy and power dependencies."
+          },
+          {
+            "mistake": "Thinking that because the system reaches a new equilibrium, the power dissipated must be the same as before. A misunderstanding of 'steady state'.",
+            "distractor_role": "A distractor corresponding to 'no change'."
+          }
+        ],
+        "difficulty_rationale": "The problem is 'Hard' because it requires navigating a conceptual trap. The surface-level formula (P ∝ B²) points to the wrong answer. The correct solution requires a deeper insight: either by applying the energy conservation principle P_dissipated = mgv_t, or by carefully carrying through the full algebraic substitution. The former path is much faster and demonstrates superior physical intuition, which is what makes the question selective.",
+        "anti_plug_and_chug_check": {
+          "would_formula_substitution_alone_solve_it": false,
+          "why_not": "Directly substituting a single formula, like P = (BLv)²/R, without understanding that 'v' is also a function of 'B', will lead to the wrong answer. The candidate must first reason about the physical system to establish the relationship between v and B before they can determine the effect on P. This is a conceptual step, not a substitution step."
+        },
+        "mcq_viability": {
+          "viable": true,
+          "reason": "The proportional reasoning nature of the problem generates a clear set of possible answers (e.g., if the original power is P and a parameter is doubled, the new power could be P/4, P/2, P, 2P, 4P). Each of these options corresponds to a specific, plausible line of correct or incorrect reasoning."
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-pro",
+      "attempts": 1
+    },
+    {
+      "stage": "idea_judge",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "selectivity_score": 0,
+        "checks": {
+          "schema_preserved": "pass",
+          "on_spec": "pass",
+          "reasoning_hinge_present": "pass",
+          "not_direct_substitution": "pass",
+          "wrong_paths_specific": "pass",
+          "visual_feasible": "pass",
+          "mcq_viable": "pass",
+          "difficulty_match": "pass"
+        },
+        "reasoning_hinge_summary": "The core reasoning hinge is the realization that at terminal velocity, the power dissipated as heat in the resistor is equal to the rate at which gravitational potential energy is lost (P = mgv_t). This allows for a more elegant and less error-prone solution than directly manipulating the electrical power formula P = (BLv)²/R, where 'v' itself is dependent on 'B'.",
+        "expected_mid_student_error": "Mid-performing students are likely to focus on the formula for electrical power dissipated, P = (BLv)²/R. They might incorrectly assume that 'v' is independent of 'B' or make an incorrect proportional deduction, leading them to conclude that if B doubles, P quadruples (P ∝ B²). They will miss the crucial step of first determining how terminal velocity (v_t) depends on B from the force balance.",
+        "notes": [
+          "The FAR mode is executed effectively, transforming a fluid dynamics terminal velocity problem into an electromagnetic one while preserving the core reasoning of balancing a constant driving force against a velocity-dependent resistive force.",
+          "The 'Hard' difficulty is well-justified by the conceptual trap and the need for a non-obvious insight (P = mgv_t) to solve it efficiently and correctly.",
+          "The visual brief is appropriate and supportive, not critical for the answer itself.",
+          "The intended wrong paths are specific and plausible, targeting common misconceptions in this type of problem."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "implementer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "metadata": {
+          "schema_id": "P_a9a3eea7",
+          "module": "physics",
+          "variation_mode": "FAR",
+          "target_difficulty": "Hard",
+          "task_signature": "p_a9a3eea7_far_hard_1",
+          "primary_tag": "4",
+          "secondary_tags": [
+            "1",
+            "5"
+          ]
+        },
+        "question": {
+          "stem": "A conducting rod slides without friction down two parallel conducting rails, which are inclined at a fixed angle to the horizontal. The entire setup is in a uniform magnetic field, perpendicular to the plane of the rails. The rod falls and reaches a terminal velocity, at which point the power dissipated as heat in the rod is $P$. The experiment is repeated, but with the magnetic field strength doubled. What is the new power dissipated in the rod when it reaches its new terminal velocity?",
+          "options": {
+            "A": "$P/16$",
+            "B": "$P/4$",
+            "C": "$P/2$",
+            "D": "$P$",
+            "E": "$2P$",
+            "F": "$4P$"
+          },
+          "correct_option": "B"
+        },
+        "visual_requirements": {
+          "visual_need": "concept_image_only",
+          "visual_role": "supportive",
+          "answer_depends_on_visual": false,
+          "graph_request": null,
+          "schematic_request": {
+            "description": "A simple schematic showing two parallel conducting rails inclined at an angle. A horizontal conducting rod rests on the rails, free to slide down. Arrows indicate a uniform magnetic field perpendicular to the plane of the rails (e.g., into the page). An arrow should indicate the direction of gravity acting on the rod."
+          },
+          "concept_image_request": null
+        },
+        "solution": {
+          "key_insight": "At terminal velocity, the system is in a steady state where the power input from gravity equals the power dissipated as heat. To find how the power changes, one must first determine how the terminal velocity depends on the magnetic field strength.",
+          "reasoning": "Let the angle of inclination be $\\theta$ and the mass of the rod be $m$. The component of the gravitational force pulling the rod down the rails is constant: $F_g = mg \\sin\\theta$.\n\nAt terminal velocity $v_t$, this driving force is balanced by the magnetic braking force, $F_m$. The induced emf is $\\varepsilon = BLv_t$, where $L$ is the length of the rod and $B$ is the magnetic field strength. The induced current is $I = \\varepsilon/R = BLv_t/R$, where $R$ is the resistance.\nThe magnetic force is $F_m = BIL = B(BLv_t/R)L = \\frac{B^2L^2v_t}{R}$.\n\nAt terminal velocity, $F_g = F_m$: \n$$mg \\sin\\theta = \\frac{B^2L^2v_t}{R}$$\nSolving for $v_t$: \n$$v_t = \\frac{mgR\\sin\\theta}{B^2L^2}$$\nThis shows that the terminal velocity is inversely proportional to the square of the magnetic field strength: $v_t \\propto 1/B^2$.\n\nThe power dissipated as heat, $P$, must equal the rate of loss of gravitational potential energy at terminal velocity. This is given by $P = F_g \\times v_t = (mg \\sin\\theta) v_t$.\n\nSince $F_g$ is constant, the power $P$ is directly proportional to the terminal velocity $v_t$. Therefore, $P \\propto v_t$.\n\nCombining the two proportionalities, we find $P \\propto 1/B^2$.\n\nIf the magnetic field strength is doubled ($B' = 2B$), the new power $P'$ will be:\n$$P' = P \\times \\left(\\frac{B}{B'}\\right)^2 = P \\times \\left(\\frac{B}{2B}\\right)^2 = P \\times \\left(\\frac{1}{2}\\right)^2 = \\frac{P}{4}$$"
+        },
+        "distractor_map": {
+          "A": "This would be correct if $P \\propto 1/B^4$. This might arise from incorrectly using $P \\propto v_t^2$ (e.g. from $P=I^2R$ and $I \\propto v_t$) combined with the correct $v_t \\propto 1/B^2$, leading to $P \\propto (1/B^2)^2 = 1/B^4$.",
+          "B": "Correct. The power dissipated equals the rate of GPE loss, $P = F_g v_t$. Since $F_g$ is constant, $P \\propto v_t$. The force balance shows $v_t \\propto 1/B^2$, so $P \\propto 1/B^2$. Doubling $B$ reduces $P$ by a factor of 4.",
+          "C": "This would be correct if $P \\propto 1/B$. This mistake arises from incorrectly deriving the velocity dependence as $v_t \\propto 1/B$ (e.g. by assuming $F_m \\propto Bv_t$) and then correctly relating power to velocity, $P \\propto v_t$.",
+          "D": "This implies the power is unchanged. This is incorrect. While the system reaches a new steady state (terminal velocity), the value of that velocity changes, and so does the associated power dissipation.",
+          "E": "This would be correct if $P \\propto B$. This could be an inversion of the correct logic, or some other combination of errors.",
+          "F": "This is the most common trap. It comes from using the formula $P = \\varepsilon^2/R = (BLv_t)^2/R$ and incorrectly assuming $v_t$ is constant. This leads to the false conclusion that $P \\propto B^2$. If $B$ doubles, this suggests power quadruples."
+        },
+        "quality_self_check": {
+          "reasoning_hinge_used": "Yes, the hinge is recognising that P_dissipated = P_gravitational and that terminal velocity changes. This avoids the trap of using P = (BLv)²/R and assuming v is constant.",
+          "not_direct_substitution": true,
+          "exactly_one_correct": true,
+          "no_calculator_friendly": true,
+          "on_spec": true,
+          "visual_dependency_safe": true
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-pro",
+      "attempts": 1
+    },
+    {
+      "stage": "deterministic_validator",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "ok": true,
+        "errors": [],
+        "warnings": [],
+        "option_keys": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F"
+        ],
+        "summary": "ok"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": null,
+      "attempts": 1
+    },
+    {
+      "stage": "verifier",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "correct_option_verified": "B",
+        "independent_solution": {
+          "main_law_or_principle": "Force equilibrium at terminal velocity (Newton's First Law) and conservation of energy (power input equals power dissipated).",
+          "calculation_or_logic": "1. Identify the constant driving force: The component of gravity along the incline, $F_g = mg \\sin\\theta$. This force is constant.\n2. Identify the resistive magnetic force: The induced EMF is $\\varepsilon = BLv_t$. The induced current is $I = \\varepsilon/R = BLv_t/R$. The magnetic force is $F_m = BIL = B(BLv_t/R)L = B^2L^2v_t/R$.\n3. Apply force equilibrium at terminal velocity: $F_g = F_m \\implies mg \\sin\\theta = B^2L^2v_t/R$.\n4. Determine the relationship between terminal velocity and magnetic field strength: From the equilibrium equation, $v_t = \\frac{mgR\\sin\\theta}{B^2L^2}$. Thus, $v_t \\propto 1/B^2$.\n5. Determine the power dissipated: At terminal velocity, the power dissipated as heat must equal the rate at which gravitational potential energy is lost, which is $P = F_g v_t$. Since $F_g$ is constant, $P \\propto v_t$.\n6. Combine the proportionalities: Since $P \\propto v_t$ and $v_t \\propto 1/B^2$, it follows that $P \\propto 1/B^2$.\n7. Calculate the new power when B is doubled: If $B' = 2B$, then $P' = P \\times (B/B')^2 = P \\times (B/2B)^2 = P \\times (1/2)^2 = P/4$.",
+          "verified_answer_value": "P/4",
+          "claimed_answer_value": "P/4",
+          "matches_claim": true
+        },
+        "spec_audit": {
+          "required_physics_moves": [
+            "Force balance (Newton's Laws)",
+            "Electromagnetic induction (Faraday's Law, Lorentz force)",
+            "Power dissipation (Joule heating, work-energy theorem)",
+            "Proportional reasoning"
+          ],
+          "all_explicitly_on_spec": true,
+          "borderline_or_offspec_moves": []
+        },
+        "checks": {
+          "correctness": "pass",
+          "uniqueness": "pass",
+          "syllabus": "pass",
+          "no_calc_feasibility": "pass",
+          "ambiguity": "pass",
+          "diagram_dependency": "pass",
+          "distractor_safety": "pass",
+          "katex_formatting": "pass",
+          "graph_or_visual_validation": "n/a"
+        },
+        "notes": [
+          "The question correctly identifies the core concept of terminal velocity and power balance in an electromagnetic context.",
+          "The distractors are well-designed to target common misconceptions, particularly assuming constant velocity when B changes, or incorrect proportional relationships.",
+          "The solution is concise and relies on fundamental principles, making it suitable for a no-calculator, conceptual-heavy exam."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "style_checker",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "style_score": {
+          "total": 35,
+          "breakdown": {
+            "stem_tone": 5,
+            "physics_authenticity": 5,
+            "reasoning_quality": 5,
+            "selectivity": 5,
+            "no_calc_engineering": 5,
+            "option_realism": 5,
+            "distractor_plausibility": 5
+          }
+        },
+        "difficulty_calibration": {
+          "difficulty_vs_reference": "similar",
+          "length_feel_vs_reference": "similar",
+          "notes": "The question is appropriately calibrated for a 'Hard' ESAT question. It requires combining multiple physics principles (mechanics, electromagnetism, energy conservation) and proportional reasoning, with a significant conceptual trap. This aligns well with the demands of a challenging ESAT problem."
+        },
+        "selectivity_audit": {
+          "main_trap": "The primary trap is to incorrectly assume that the terminal velocity ($v$) remains constant when the magnetic field strength ($B$) is doubled. Students might use the formula for electrical power dissipation, $P = (BLv)^2/R$, and conclude that $P \\propto B^2$, leading to an answer of $4P$ (option F). This ignores the crucial fact that $v$ is dependent on $B$ due to the terminal velocity condition.",
+          "why_not_plug_and_chug": "The question cannot be solved by simple formula substitution. It requires a multi-step reasoning process: 1) establishing force balance at terminal velocity to find the relationship between $v_t$ and $B$, and 2) understanding that at terminal velocity, the dissipated electrical power equals the rate of gravitational potential energy loss ($P = F_g v_t$). Failing to connect these ideas or assuming $v$ is independent of $B$ leads to incorrect answers.",
+          "expected_mid_student_error": "A mid-level student is highly likely to fall for the trap of assuming $v$ is constant and selecting option F ($4P$). They might correctly recall the formula for power dissipation in a magnetic field but miss the deeper implication of the terminal velocity condition, which links $v$ to $B$. Other errors could include incorrect derivation of the $v_t$ dependence on $B$ (e.g., $v_t \\propto 1/B$ instead of $1/B^2$).",
+          "verdict": "selective"
+        },
+        "flags": {
+          "too_easy": false,
+          "too_hard": false,
+          "too_wordy": false,
+          "too_recall_heavy": false,
+          "too_plug_and_chug": false,
+          "possible_verifier_miss": false
+        },
+        "notes": [
+          "The question is an excellent example of ESAT style. It is concise, uses school-level physics, and demands conceptual understanding and proportional reasoning rather than complex calculations.",
+          "The core idea of balancing forces at terminal velocity and relating power dissipated to power input from gravity is a strong reasoning hinge.",
+          "The distractors are well-engineered to target common misconceptions and errors in proportional reasoning, making the question highly selective."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "visual_router",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "visual_route": "concept_image_prompt",
+        "answer_depends_on_visual": false,
+        "required_files": [],
+        "reason": "The `designer_plan_json` and `implemented_question_json` both explicitly state `visual_need: \"concept_image_only\"` and `answer_depends_on_visual: false`. The visual is intended to be illustrative and supportive, not critical for answering the question, which aligns with the definition of `concept_image_prompt`. The detailed `schematic_request` provides a clear description for an image generation model to create an exam-style diagram.",
+        "next_prompt_file": "Physics Concept_Image_Prompt.md",
+        "style_target_if_image": "tmua_engaa_exam_diagram",
+        "blocking_issue": null
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "concept_image_prompt",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "image_id": "img1",
+        "model_purpose": "concept_visual",
+        "answer_depends_on_image": false,
+        "recommended_model": "MODEL_IMAGE_HIGH_QUALITY",
+        "prompt": "### Prompt for a High-Fidelity Exam Diagram\n\n**1. Subject/Content Brief:**\nA 2D schematic diagram for a physics exam, illustrating a conducting rod on a pair of parallel conducting rails inclined at an angle. This is an illustrative diagram to support a question about electromagnetic induction and forces.\n\n**2. Object Relation Brief:**\n- Draw two straight, parallel conducting rails. The rails should be shown in a simple 2D perspective, inclined downwards from left to right across the page.\n- A single, straight conducting rod lies horizontally across the two rails, perpendicular to them.\n- The entire area containing the rails and rod is filled with a uniform magnetic field directed into the page. This field must be represented by a grid of evenly spaced, small 'x' symbols (crosses).\n- An arrow representing the force of gravity must be drawn originating from the center of the rod and pointing vertically downwards.\n- To show the incline, draw a horizontal dashed line from the upper end of one rail, and an arc between this line and the rail to indicate the angle of inclination.\n\n**3. Required Labels/Annotations:**\n- Absolutely no text, labels, variables (like *B*, *v*, *θ*), or numbers are to be present on the diagram. The angle arc must be unlabelled.\n\n**4. Measurement Brief:**\n- No measurement arrows or values are needed.\n\n**5. Style Block:**\n- The image must strictly adhere to the style of a professional TMUA / ENGAA / NSAA printed exam diagram.\n- It must be a monochrome image using crisp, clean, thin black or dark-charcoal vector-like lines on a plain, off-white or very light grey paper background.\n- The layout must be clean with generous whitespace. All elements must be clearly defined with no ambiguity and no overlapping lines or symbols.\n- The style must be minimalist, functional, and schematic.\n\n**6. Negative Block:**\n- Do not add any text, labels, or numbers whatsoever.\n- Avoid 3D rendering, shading, gradients, or textures.\n- No colours.\n- Ensure the gravity arrow is perfectly vertical and not perpendicular to the inclined rails.\n- Do not make the diagram look like a sketch, cartoon, or a casual drawing.",
+        "negative_prompt": "No extra labels. No overlap. No sans-serif fonts. No decorative shading. No photorealism. No colour unless explicitly requested. No exact answer-bearing measurements. No clutter. No malformed symbols. Do not place objects in the wrong support/location relationship. No text. No numbers. No variables.",
+        "required_labels": [],
+        "forbidden_labels": [
+          "B",
+          "v",
+          "F",
+          "g",
+          "m",
+          "L",
+          "R",
+          "theta",
+          "θ"
+        ],
+        "layout_logic": {
+          "must_show_relations": [
+            "The rod rests perpendicularly on two parallel rails.",
+            "The rails are inclined relative to the horizontal.",
+            "A uniform magnetic field (represented by 'x' symbols) covers the area and is perpendicular to the plane of the rails.",
+            "A gravity arrow points vertically downwards from the rod."
+          ],
+          "measurement_mapping": [],
+          "relative_size_constraints": []
+        },
+        "hard_constraints": [
+          "Rails must be parallel.",
+          "Rod must be perpendicular to the rails.",
+          "Magnetic field must be represented by a grid of 'x' symbols, indicating it is into the page.",
+          "Gravity arrow must be perfectly vertical, not perpendicular to the incline.",
+          "No text labels, variables, or numbers are allowed on the diagram.",
+          "The image must be monochrome (black and white/grayscale)."
+        ],
+        "style": {
+          "target_style": "tmua_engaa_exam_diagram",
+          "exam_style": true,
+          "black_and_white": true,
+          "serif_font": "Times New Roman-like",
+          "math_variables_italic": true,
+          "minimal": true,
+          "not_to_scale": true,
+          "no_overlap": true,
+          "logic_sensitive": true
+        },
+        "post_generation_checks": {
+          "run_concept_image_verifier": true,
+          "verify_no_overlap": true,
+          "verify_font_exam_like": true,
+          "verify_no_extra_labels": true,
+          "verify_not_answer_bearing": true,
+          "verify_object_relations": true,
+          "verify_measurement_clarity": true,
+          "verify_relative_size_plausibility": true,
+          "verify_simplification_level": true
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-pro",
+      "attempts": 1
+    },
+    {
+      "stage": "concept_image_verifier",
+      "status": "fail",
+      "verdict": "REGENERATE",
+      "payload": {
+        "verdict": "REGENERATE",
+        "confidence": "high",
+        "checks": {
+          "exam_style_match": "minor_issue",
+          "serif_font_match": "fail",
+          "math_label_quality": "fail",
+          "no_overlap": "minor_issue",
+          "label_accuracy": "fail",
+          "no_extra_labels": "fail",
+          "monochrome_style": "pass",
+          "layout_cleanliness": "minor_issue",
+          "illustrative_only_safety": "pass",
+          "professionalism": "minor_issue",
+          "object_relation_accuracy": "pass",
+          "measurement_anchor_clarity": "pass",
+          "relative_magnitude_plausibility": "pass",
+          "simplification_level": "minor_issue"
+        },
+        "reasons": [
+          "The image contains labels (e.g., 'B', 'θ', 'mg') which were explicitly forbidden in the prompt's 'Required Labels/Annotations' and 'Negative Block' sections.",
+          "The font used for the labels is not a Times New Roman-like serif font, and mathematical variables are not italic as required for exam diagrams.",
+          "The presence of labels detracts from the minimalist and schematic style requested."
+        ],
+        "regen_feedback": "Remove all text, labels, variables, and numbers from the diagram. Ensure no labels are present whatsoever. The diagram must be purely schematic without any textual annotations.",
+        "delete_reason": ""
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "concept_image_regen",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "image_id": "img1",
+        "recommended_model": "MODEL_IMAGE_HIGH_QUALITY",
+        "prompt": "### Prompt for a High-Fidelity Exam Diagram\n\n**1. Subject/Content Brief:**\nA 2D schematic diagram for a physics exam, illustrating a conducting rod on a pair of parallel conducting rails inclined at an angle. This is an illustrative diagram to support a question about electromagnetic induction and forces.\n\n**2. Object Relation Brief:**\n- Draw two straight, parallel conducting rails. The rails should be shown in a simple 2D perspective, inclined downwards from left to right across the page.\n- A single, straight conducting rod lies horizontally across the two rails, perpendicular to them.\n- The entire area containing the rails and rod is filled with a uniform magnetic field directed into the page. This field must be represented by a grid of evenly spaced, small 'x' symbols (crosses).\n- An arrow representing the force of gravity must be drawn originating from the center of the rod and pointing vertically downwards.\n- To show the incline, draw a horizontal dashed line from the upper end of one rail, and an arc between this line and the rail to indicate the angle of inclination.\n\n**3. Required Labels/Annotations:**\n- ABSOLUTELY NO TEXT, LABELS, VARIABLES, OR NUMBERS ARE TO BE PRESENT ON THE DIAGRAM WHATSOEVER. This includes, but is not limited to, any symbols for magnetic field (B), velocity (v), force (F), gravity (g), mass (m), length (L), resistance (R), or angle (theta/θ). The angle arc must remain completely unlabelled. The diagram must be purely schematic and illustrative, devoid of any textual or numerical annotations.\n\n**4. Measurement Brief:**\n- No measurement arrows or values are needed.\n\n**5. Style Block:**\n- The image must strictly adhere to the style of a professional TMUA / ENGAA / NSAA printed exam diagram.\n- It must be a monochrome image using crisp, clean, thin black or dark-charcoal vector-like lines on a plain, off-white or very light grey paper background.\n- The layout must be clean with generous whitespace. All elements must be clearly defined with no ambiguity and no overlapping lines or symbols.\n- The diagram must be entirely free of any text or numerical annotations.\n- The style must be minimalist, functional, and schematic.\n\n**6. Negative Block:**\n- Do not add ANY text, labels, variables, or numbers whatsoever. Ensure the diagram is completely free of all textual annotations.\n- Avoid 3D rendering, shading, gradients, or textures.\n- No colours.\n- Ensure the gravity arrow is perfectly vertical and not perpendicular to the inclined rails.\n- Do not make the diagram look like a sketch, cartoon, or a casual drawing.",
+        "negative_prompt": "ABSOLUTELY NO TEXT. NO LABELS. NO VARIABLES. NO NUMBERS. No annotations whatsoever. No extra labels. No overlap. No fonts of any kind. No decorative shading. No photorealism. No colour unless explicitly requested. No exact answer-bearing measurements. No clutter. No malformed symbols. Do not place objects in the wrong support/location relationship.",
+        "layout_logic": {
+          "must_show_relations": [
+            "The rod rests perpendicularly on two parallel rails.",
+            "The rails are inclined relative to the horizontal.",
+            "A uniform magnetic field (represented by 'x' symbols) covers the area and is perpendicular to the plane of the rails.",
+            "A gravity arrow points vertically downwards from the rod."
+          ],
+          "measurement_mapping": [],
+          "relative_size_constraints": []
+        },
+        "hard_constraints": [
+          "Rails must be parallel.",
+          "Rod must be perpendicular to the rails.",
+          "Magnetic field must be represented by a grid of 'x' symbols, indicating it is into the page.",
+          "Gravity arrow must be perfectly vertical, not perpendicular to the incline.",
+          "ABSOLUTELY NO TEXT, LABELS, VARIABLES, OR NUMBERS ARE ALLOWED ON THE DIAGRAM WHATSOEVER. The diagram must be entirely free of any textual or numerical annotations.",
+          "The image must be monochrome (black and white/grayscale)."
+        ],
+        "style": {
+          "target_style": "tmua_engaa_exam_diagram",
+          "exam_style": true,
+          "black_and_white": true,
+          "minimal": true,
+          "not_to_scale": true,
+          "no_overlap": true,
+          "logic_sensitive": true
+        },
+        "changes_made": [
+          "Strengthened the 'Required Labels/Annotations' section to explicitly forbid ALL text, labels, variables, and numbers, using emphatic language.",
+          "Updated the 'Negative Block' in the prompt to reiterate the absolute prohibition of any textual annotations.",
+          "Modified the main `negative_prompt` to include 'ABSOLUTELY NO TEXT. NO LABELS. NO VARIABLES. NO NUMBERS. No annotations whatsoever.' and removed 'No sans-serif fonts' as no fonts should be present.",
+          "Strengthened the 'hard_constraints' to explicitly state 'ABSOLUTELY NO TEXT, LABELS, VARIABLES, OR NUMBERS ARE ALLOWED ON THE DIAGRAM WHATSOEVER'.",
+          "Removed 'serif_font' and 'math_variables_italic' from the `style` block as they are irrelevant if no labels are present."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "concept_image_verifier",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "checks": {
+          "exam_style_match": "pass",
+          "serif_font_match": "pass",
+          "math_label_quality": "pass",
+          "no_overlap": "pass",
+          "label_accuracy": "pass",
+          "no_extra_labels": "pass",
+          "monochrome_style": "pass",
+          "layout_cleanliness": "pass",
+          "illustrative_only_safety": "pass",
+          "professionalism": "pass",
+          "object_relation_accuracy": "pass",
+          "measurement_anchor_clarity": "pass",
+          "relative_magnitude_plausibility": "pass",
+          "simplification_level": "pass"
+        },
+        "reasons": [
+          "The image successfully removed all text, labels, variables, and numbers, addressing the primary issue from the previous generation.",
+          "The diagram adheres to the requested monochrome, schematic, and minimalist exam style.",
+          "All specified objects (inclined rails, rod, magnetic field 'x's, vertical gravity arrow, incline indicator) are present and correctly depicted with appropriate relationships.",
+          "The layout is clean, professional, and free of clutter or ambiguity."
+        ],
+        "regen_feedback": "",
+        "delete_reason": ""
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    }
+  ],
+  "pipeline": "v4",
+  "created_at": "2026-05-17T22:16:18+01:00"
+}

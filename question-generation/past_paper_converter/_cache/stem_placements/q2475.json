@@ -1,0 +1,29 @@
+{
+  "questionId": 2475,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 86,
+  "stemBlocks": [
+    "An archer fires an arrow of mass $0.024 \\text{ kg}$ vertically upwards from a bow.\nThe graph shows how the force of the bowstring on the arrow varies with distance as the arrow moves upwards.\nThe work done by the force of the bowstring is given by the area under the force-distance graph.\nWhen the arrow leaves the bow, what is the kinetic energy of the arrow, and what is the maximum height that it gains from this point?\n(Air resistance can be ignored. The effect of gravity as the arrow is fired is negligible compared to the force of the bowstring. The gravitational field strength $= 10 \\text{ N kg}^{-1}.)$",
+    "|  | kinetic energy $/ \\text{J}$ | height $/ \\text{m}$ |\n| --- | --- | --- |\n| A | 38.4 | 16 |\n| B | 38.4 | 160 |\n| C | 38.4 | 1600 |\n| D | 38.4 | 16000 |\n| E | 76.8 | 32 |\n| F | 76.8 | 320 |\n| G | 76.8 | 3200 |\n| H | 76.8 | 32000 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:49:16.405825+00:00",
+  "sourceImageHash": "853ab7c6f7d1dce14538e57e971bac0a3c098b2c6700a0a54f583906f7505643",
+  "status": "ok"
+}

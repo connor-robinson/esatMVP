@@ -1,0 +1,29 @@
+{
+  "questionId": 2856,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 37,
+  "stemBlocks": [
+    "A small slider of mass $30 \\text{ g}$ is at rest near the bottom of a frictionless slope and in contact with a light uncompressed spring as shown.",
+    "The spring is compressed by $5.0 \\text{ cm}$ and the slider remains in contact with it.\nThe spring is released and causes the slider to rise up the slope to a maximum vertical height of $20 \\text{ cm}$.\nThe slider is replaced with one of mass $20 \\text{ g}$.\nThe spring is now compressed by $15 \\text{ cm}$, and the new slider remains in contact with it.\nTo what maximum vertical height does this new slider rise after it is released?\n(the spring obeys Hooke's law; assume that air resistance is negligible)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.376328+00:00",
+  "sourceImageHash": "29bf52b745907b3c4f9b6073b72c9099745764288d3b5999d690686b6da3c4c8",
+  "status": "ok"
+}

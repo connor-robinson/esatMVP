@@ -1,0 +1,39 @@
+{
+  "stage": "idea_judge",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "selectivity_score": 0,
+    "checks": {
+      "schema_preserved": "pass",
+      "on_spec": "pass",
+      "reasoning_hinge_present": "pass",
+      "not_direct_substitution": "pass",
+      "wrong_paths_specific": "pass",
+      "visual_feasible": "pass",
+      "mcq_viable": "pass",
+      "difficulty_match": "pass",
+      "goldilocks_complexity": "pass"
+    },
+    "complexity_audit": {
+      "number_of_core_physics_principles": 1,
+      "estimated_solution_steps": 2,
+      "requires_derived_relationship": false,
+      "uses_multi_topic_chain": false,
+      "goldilocks_verdict": "good"
+    },
+    "reasoning_hinge_summary": "The candidate must recognize that resistance depends on the cross-sectional area (A ∝ d²), meaning the scaling factor for diameter must be squared in the denominator of the resistance ratio.",
+    "expected_mid_student_error": "Assuming that because both length and diameter scale by the same factor (e.g., 3), the resistance remains unchanged (forgetting to square the diameter factor).",
+    "notes": [
+      "The idea is a classic, robust test of proportional reasoning within the ESAT syllabus.",
+      "It avoids the 'too easy' trap by requiring the student to identify the hidden square relationship between diameter and area, rather than just plugging numbers into R=ρL/A."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

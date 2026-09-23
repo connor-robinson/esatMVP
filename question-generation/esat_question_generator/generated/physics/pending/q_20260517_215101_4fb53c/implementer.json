@@ -1,0 +1,66 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_f4c1e46f",
+      "module": "physics",
+      "variation_mode": "FAR",
+      "target_difficulty": "Medium",
+      "task_signature": "P_f4c1e46f-2",
+      "primary_tag": "5",
+      "secondary_tags": [
+        "4"
+      ]
+    },
+    "question": {
+      "stem": "A fluid system is constructed from pipes and an ideal pump. For any pipe, the pressure drop $\\Delta P$ across it is proportional to the volumetric flow rate $Q$ through it, according to $\\Delta P = Q R_f$, where $R_f$ is the pipe's flow resistance. The power dissipated by the fluid in a pipe is given by $P = Q \\Delta P$.\n\nThe system is configured as shown in the diagram, with an ideal pump providing a constant pressure increase $P_0$. Pipe A has resistance $R$, and pipes B and C both have resistance $2R$.\n\n<DIAGRAM id=\"d1\" />\n\nWhat is the power dissipated in pipe C?",
+      "options": {
+        "A": "$\\frac{1}{18} \\frac{P_0^2}{R}$",
+        "B": "$\\frac{1}{8} \\frac{P_0^2}{R}$",
+        "C": "$\\frac{1}{6} \\frac{P_0^2}{R}$",
+        "D": "$\\frac{2}{9} \\frac{P_0^2}{R}$",
+        "E": "$\\frac{9}{32} \\frac{P_0^2}{R}$",
+        "F": "$\\frac{1}{2} \\frac{P_0^2}{R}$"
+      },
+      "correct_option": "B"
+    },
+    "visual_requirements": {
+      "visual_need": "accurate_schematic_json",
+      "visual_role": "answer_bearing",
+      "answer_depends_on_visual": true,
+      "graph_request": null,
+      "schematic_request": {
+        "description": "A schematic diagram representing a fluid circuit, analogous to a DC electrical circuit. An ideal pump (pressure source) is at the top, represented by a circle with an arrow inside pointing upwards, labelled P_0. The positive terminal is at the top. From the positive terminal, a line goes down to a resistor symbol, labelled 'Pipe A, R'. This connects to a node. From this node, the path splits into two parallel branches. The left branch contains a resistor symbol labelled 'Pipe B, 2R'. The right branch contains a resistor symbol labelled 'Pipe C, 2R'. Both parallel branches connect at a bottom node. This bottom node is connected by a line back to the negative terminal of the pump at the top, completing the circuit.",
+        "style": "standard_circuit_diagram"
+      },
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "The fluid network is analogous to a DC electrical circuit. The most efficient way to find the power in pipe C is to replace the rest of the circuit (the 'source') with its simpler Thévenin equivalent.",
+      "reasoning": "This problem is a direct analogue of a DC circuit problem, where pressure ($P$) is like voltage ($V$), flow rate ($Q$) is like current ($I$), and flow resistance ($R_f$) is like electrical resistance ($R$). The given laws are analogous to Ohm's law ($V=IR$) and the power law ($P=IV=I^2R$).\n\nWe want to find the power in pipe C. The rest of the circuit (pump, pipe A, pipe B) can be simplified into a Thévenin equivalent source as seen by pipe C.\n\n1.  **Find the Thévenin equivalent pressure ($P_{Th}$):** This is the pressure across the terminals of pipe C if it were removed (an 'open circuit'). Without pipe C, pipes A and B are in series. The total resistance is $R_A + R_B = R + 2R = 3R$. The total flow is $Q_{tot} = P_0 / (3R)$. The pressure across pipe B (which is where C would connect) is $P_{Th} = Q_{tot} \\times R_B = (P_0 / (3R)) \\times (2R) = \\frac{2}{3}P_0$.\n\n2.  **Find the Thévenin equivalent resistance ($R_{f,Th}$):** This is the resistance looking into the terminals for C, with the ideal pressure source $P_0$ 'shorted' (i.e., replaced by a zero-resistance wire). From the perspective of C's terminals, pipes A and B are in parallel. So, $R_{f,Th} = \\frac{R_A \\times R_B}{R_A + R_B} = \\frac{R \\times 2R}{R + 2R} = \\frac{2R^2}{3R} = \\frac{2}{3}R$.\n\n3.  **Solve the simplified circuit:** Now, pipe C (resistance $R_C = 2R$) is connected to the equivalent source, which is a pump of pressure $P_{Th} = \\frac{2}{3}P_0$ in series with an equivalent pipe of resistance $R_{f,Th} = \\frac{2}{3}R$. The total resistance of this new circuit is $R_{total} = R_{f,Th} + R_C = \\frac{2}{3}R + 2R = \\frac{8}{3}R$.\n\n4.  **Calculate flow and power in C:** The flow through pipe C is $Q_C = \\frac{P_{Th}}{R_{total}} = \\frac{2/3 P_0}{8/3 R} = \\frac{2}{8} \\frac{P_0}{R} = \\frac{1}{4} \\frac{P_0}{R}$.\nThe power dissipated in pipe C is $P_C = Q_C^2 R_C = \\left(\\frac{1}{4} \\frac{P_0}{R}\\right)^2 \\times (2R) = \\frac{1}{16} \\frac{P_0^2}{R^2} \\times 2R = \\frac{2}{16} \\frac{P_0^2}{R} = \\frac{1}{8} \\frac{P_0^2}{R}$."
+    },
+    "distractor_map": {
+      "A": "This result is obtained if the Thévenin resistance is incorrectly taken as just the resistance of the pipe in parallel, $R_{f,Th} = R_B = 2R$, while using the correct Thévenin pressure.",
+      "B": "Correct. This is found by correctly calculating the Thévenin equivalent of the source network and then finding the power in the load pipe C.",
+      "C": "This is the maximum power that could be delivered by the source network if pipe C had a resistance equal to the Thévenin resistance ($R_C = R_{f,Th} = 2R/3$). This misapplies the maximum power transfer theorem to a fixed-load problem.",
+      "D": "This is the power that would be dissipated in pipe B if pipe C were not connected at all. It ignores the presence and effect of pipe C.",
+      "E": "This result is obtained if the Thévenin pressure is incorrectly taken as the full pump pressure, $P_{Th} = P_0$, while using the correct Thévenin resistance.",
+      "F": "This result is obtained by incorrectly assuming the full pump pressure $P_0$ is applied directly across pipe C, ignoring the pressure drop across pipe A."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Recognising the fluid dynamics problem is isomorphic to a DC circuit and can be simplified using a Thévenin equivalent model.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-pro",
+  "attempts": 1
+}

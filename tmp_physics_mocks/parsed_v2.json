@@ -1,0 +1,2607 @@
+{
+  "candidateA": [
+    {
+      "number": 1,
+      "stem": "A tracking sensor draws a current of 0.30 A for the first 20 s of every minute. For the remaining 40 s, it draws 0.050 A. What total charge passes through the sensor in 10 minutes?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "1.\nA tracking sensor draws a current of 0.30 A for the first 20 s of every minute. For the remaining 40 s, it draws 0.050 A. What total charge passes through the sensor in 10 minutes?"
+    },
+    {
+      "number": 2,
+      "stem": "A robot moves 60 m east in 20 s, then 20 m west in 5 s. It remains stationary for the next 5 s. Which row gives its average speed and its average velocity over the full 30 s?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "2.\nA robot moves 60 m east in 20 s, then 20 m west in 5 s. It remains stationary for the next 5 s. Which row gives its average speed and its average velocity over the full 30 s?"
+    },
+    {
+      "number": 3,
+      "stem": "A 0.20 kg aluminium block is heated by a 60 W heater for 90 s. Its temperature rises by 25 °C. How much energy is transferred from the block to the surroundings during the heating? (specific heat capacity of aluminium = 900 J kg⁻¹ °C⁻¹)",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "3.\nA 0.20 kg aluminium block is heated by a 60 W heater for 90 s. Its temperature rises by 25 °C. How much energy is transferred from the block to the surroundings during the heating? (specific heat capacity of aluminium = 900 J kg⁻¹ °C⁻¹)"
+    },
+    {
+      "number": 4,
+      "stem": "A small float oscillates vertically as water waves pass. The waves have amplitude 4.0 cm, frequency 2.5 Hz and wavelength 0.80 m. What is the average speed of the float over many complete oscillations?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "4.\nA small float oscillates vertically as water waves pass. The waves have amplitude 4.0 cm, frequency 2.5 Hz and wavelength 0.80 m. What is the average speed of the float over many complete oscillations?"
+    },
+    {
+      "number": 5,
+      "stem": "A nucleus X has mass number 226 and atomic number 88. It decays by emitting four alpha particles and three beta-minus particles. What are the mass number and atomic number of the final nucleus?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "5.\nA nucleus X has mass number 226 and atomic number 88. It decays by emitting four alpha particles and three beta-minus particles. What are the mass number and atomic number of the final nucleus?"
+    },
+    {
+      "number": 6,
+      "stem": "A diver seals a syringe containing ideal gas at the bottom of a lake. The gas volume is 60 cm³. At the surface, its volume is 240 cm³. The piston moves freely and the gas temperature is constant. What is the gas volume when the syringe is halfway from the surface to the bottom?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "6.\nA diver seals a syringe containing ideal gas at the bottom of a lake. The gas volume is 60 cm³. At the surface, its volume is 240 cm³. The piston moves freely and the gas temperature is constant. What is the gas volume when the syringe is halfway from the surface to the bottom?"
+    },
+    {
+      "number": 7,
+      "stem": "A metal rod of mass 0.060 kg lies on horizontal rails. A 0.15 m section carries a current of 2.5 A upwards through a uniform magnetic field of 0.80 T directed into the page. A constant resistive force of 0.10 N opposes the motion. What is the rod's initial acceleration and direction?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "7.\nA metal rod of mass 0.060 kg lies on horizontal rails. A 0.15 m section carries a current of 2.5 A upwards through a uniform magnetic field of 0.80 T directed into the page. A constant resistive force of 0.10 N opposes the motion. What is the rod's initial acceleration and direction?"
+    },
+    {
+      "number": 8,
+      "stem": "Blocks P and Q, of masses 2.0 kg and 3.0 kg, are in contact on a horizontal surface. A 20 N force pushes P to the right. Friction on P is 2.0 N and friction on Q is 3.0 N. What force does P exert on Q?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "8.\nBlocks P and Q, of masses 2.0 kg and 3.0 kg, are in contact on a horizontal surface. A 20 N force pushes P to the right. Friction on P is 2.0 N and friction on Q is 3.0 N. What force does P exert on Q?"
+    },
+    {
+      "number": 9,
+      "stem": "A 200 Ω fixed resistor and an NTC thermistor are connected in series across a 12 V battery. A voltmeter is connected across the fixed resistor. The thermistor resistance is 400 Ω at 20 °C and 100 Ω at 80 °C. What are the voltmeter readings at these temperatures?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "9.\nA 200 Ω fixed resistor and an NTC thermistor are connected in series across a 12 V battery. A voltmeter is connected across the fixed resistor. The thermistor resistance is 400 Ω at 20 °C and 100 Ω at 80 °C. What are the voltmeter readings at these temperatures?"
+    },
+    {
+      "number": 10,
+      "stem": "A motor takes an electrical input power of 5.0 kW and is 72% efficient. It lifts a 240 kg load vertically at constant speed. What is the speed of the load? (g = 10 N kg⁻¹)",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "10.\nA motor takes an electrical input power of 5.0 kW and is 72% efficient. It lifts a 240 kg load vertically at constant speed. What is the speed of the load? (g = 10 N kg⁻¹)"
+    },
+    {
+      "number": 11,
+      "stem": "An ultrasound probe sends a short pulse into a metal block. Reflections return from a crack after 0.12 ms and from the far surface after 0.20 ms. The speed of ultrasound in the metal is 4800 m s⁻¹. What is the distance between the crack and the far surface?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "11.\nAn ultrasound probe sends a short pulse into a metal block. Reflections return from a crack after 0.12 ms and from the far surface after 0.20 ms. The speed of ultrasound in the metal is 4800 m s⁻¹. What is the distance between the crack and the far surface?"
+    },
+    {
+      "number": 12,
+      "stem": "Three cylindrical rods are made from the same material and connect the same hot and cold reservoirs. Rod A has length L and cross-sectional area S. Rod B has length 2L and area 3S. Rod C has length L/2 and area S/2. Which ordering gives their conduction rates from lowest to highest?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "12.\nThree cylindrical rods are made from the same material and connect the same hot and cold reservoirs. Rod A has length L and cross-sectional area S. Rod B has length 2L and area 3S. Rod C has length L/2 and area S/2. Which ordering gives their conduction rates from lowest to highest?"
+    },
+    {
+      "number": 13,
+      "stem": "Two branches are connected in parallel across a 12 V battery. One branch contains a 6.0 Ω resistor and an ideal diode that is forward biased. The other contains a 3.0 Ω resistor and an ideal diode that is reverse biased. What is the total current supplied by the battery?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "13.\nTwo branches are connected in parallel across a 12 V battery. One branch contains a 6.0 Ω resistor and an ideal diode that is forward biased. The other contains a 3.0 Ω resistor and an ideal diode that is reverse biased. What is the total current supplied by the battery?"
+    },
+    {
+      "number": 14,
+      "stem": "A sealed hollow metal object has an external volume of 100 cm³ and a mass of 540 g. It is fully submerged in water of density 1000 kg m⁻³. What is the downward resultant force on it? (g = 10 N kg⁻¹)",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "14.\nA sealed hollow metal object has an external volume of 100 cm³ and a mass of 540 g. It is fully submerged in water of density 1000 kg m⁻³. What is the downward resultant force on it? (g = 10 N kg⁻¹)"
+    },
+    {
+      "number": 15,
+      "stem": "A 0.20 kg ball is moving vertically downward at 6.0 m s⁻¹ just before it strikes a bat. It leaves the bat moving vertically upward at 4.0 m s⁻¹. Contact lasts 0.10 s. What is the average upward contact force exerted by the bat? (g = 10 N kg⁻¹)",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "15.\nA 0.20 kg ball is moving vertically downward at 6.0 m s⁻¹ just before it strikes a bat. It leaves the bat moving vertically upward at 4.0 m s⁻¹. Contact lasts 0.10 s. What is the average upward contact force exerted by the bat? (g = 10 N kg⁻¹)"
+    },
+    {
+      "number": 16,
+      "stem": "An ideal transformer has 1200 turns on its 240 V primary coil and 60 turns on its secondary coil. Three identical lamps are connected in parallel across the secondary. Each lamp takes a current of 1.5 A. What current is drawn from the primary supply?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "16.\nAn ideal transformer has 1200 turns on its 240 V primary coil and 60 turns on its secondary coil. Three identical lamps are connected in parallel across the secondary. Each lamp takes a current of 1.5 A. What current is drawn from the primary supply?"
+    },
+    {
+      "number": 17,
+      "stem": "Straight water waves pass from region X into region Y. Their wavelength changes from 6.0 cm in X to 4.0 cm in Y. The frequency is 5.0 Hz. Which row correctly gives the wave speeds and the change in direction for a ray that is not normal to the boundary?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "17.\nStraight water waves pass from region X into region Y. Their wavelength changes from 6.0 cm in X to 4.0 cm in Y. The frequency is 5.0 Hz. Which row correctly gives the wave speeds and the change in direction for a ray that is not normal to the boundary?"
+    },
+    {
+      "number": 18,
+      "stem": "Two springs with spring constants 100 N m⁻¹ and 300 N m⁻¹ are joined in series. Their combined extension is 0.40 m and both remain within their limits of proportionality. What is the total elastic energy stored?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "18.\nTwo springs with spring constants 100 N m⁻¹ and 300 N m⁻¹ are joined in series. Their combined extension is 0.40 m and both remain within their limits of proportionality. What is the total elastic energy stored?"
+    },
+    {
+      "number": 19,
+      "stem": "Four identical hot metal plates are placed in identical sealed containers. Which plate loses thermal energy at the greatest initial rate?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "19.\nFour identical hot metal plates are placed in identical sealed containers. Which plate loses thermal energy at the greatest initial rate?"
+    },
+    {
+      "number": 20,
+      "stem": "The graph shows the current-voltage characteristic of a filament lamp. The lamp is connected in series with a 5.0 Ω resistor across a 10 V supply. What current flows?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "20.\nThe graph shows the current-voltage characteristic of a filament lamp. The lamp is connected in series with a 5.0 Ω resistor across a 10 V supply. What current flows?"
+    },
+    {
+      "number": 21,
+      "stem": "A 0.20 kg block of ice at 0 °C is placed in 0.60 kg of water at 30 °C. No energy is transferred to the surroundings. What is the final temperature? (specific heat capacity of water = 4200 J kg⁻¹ °C⁻¹; specific latent heat of fusion of ice = 3.3 × 10^5 J kg⁻¹)",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "21.\nA 0.20 kg block of ice at 0 °C is placed in 0.60 kg of water at 30 °C. No energy is transferred to the surroundings. What is the final temperature? (specific heat capacity of water = 4200 J kg⁻¹ °C⁻¹; specific latent heat of fusion of ice = 3.3 × 10^5 J kg⁻¹)"
+    },
+    {
+      "number": 22,
+      "stem": "Two solid spheres are made from the same material and fall through the same liquid. Sphere B has twice the radius of sphere A. At speed v, the drag is D = kr²v², where r is radius and k is constant. Upthrust may be ignored. What is the ratio of their terminal speeds vB/vA?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "22.\nTwo solid spheres are made from the same material and fall through the same liquid. Sphere B has twice the radius of sphere A. At speed v, the drag is D = kr²v², where r is radius and k is constant. Upthrust may be ignored. What is the ratio of their terminal speeds vB/vA?"
+    },
+    {
+      "number": 23,
+      "stem": "A bar magnet moves from X towards the centre of a coil at constant speed v, stops there, then returns from the centre to X at speed 2v. The first motion produces an induced pulse of peak magnitude E lasting time t. Which description fits the return pulse?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "23.\nA bar magnet moves from X towards the centre of a coil at constant speed v, stops there, then returns from the centre to X at speed 2v. The first motion produces an induced pulse of peak magnitude E lasting time t. Which description fits the return pulse?"
+    },
+    {
+      "number": 24,
+      "stem": "Radio wave P has wavelength 3.0 m. X-ray Q has frequency 1.0 × 10^18 Hz. Both travel through a vacuum. Which row gives speed(Q)/speed(P) and frequency(Q)/frequency(P)? (speed of light = 3.0 × 10^8 m s⁻¹)",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "24.\nRadio wave P has wavelength 3.0 m. X-ray Q has frequency 1.0 × 10^18 Hz. Both travel through a vacuum. Which row gives speed(Q)/speed(P) and frequency(Q)/frequency(P)? (speed of light = 3.0 × 10^8 m s⁻¹)"
+    },
+    {
+      "number": 25,
+      "stem": "The velocity-time graph shows the motion of a 500 kg vehicle. Its velocity rises uniformly from 0 to 12 m s⁻¹ in 4 s, then falls uniformly to 4 m s⁻¹ at 8 s. Which row gives the total distance travelled and the average resultant force over the full 8 s?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "25.\nThe velocity-time graph shows the motion of a 500 kg vehicle. Its velocity rises uniformly from 0 to 12 m s⁻¹ in 4 s, then falls uniformly to 4 m s⁻¹ at 8 s. Which row gives the total distance travelled and the average resultant force over the full 8 s?"
+    },
+    {
+      "number": 26,
+      "stem": "A 12 V battery is connected to a 6.0 Ω resistor P in series with a branch containing a 6.0 Ω resistor Q. Closing a switch adds another 6.0 Ω resistor R in parallel with Q. With the switch closed, what is the total power supplied by the battery and the current in Q?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "26.\nA 12 V battery is connected to a 6.0 Ω resistor P in series with a branch containing a 6.0 Ω resistor Q. Closing a switch adds another 6.0 Ω resistor R in parallel with Q. With the switch closed, what is the total power supplied by the battery and the current in Q?"
+    },
+    {
+      "number": 27,
+      "stem": "A detector records 620 counts per minute from a radioactive source and background radiation. Two half-lives later it records 170 counts per minute. What is the background count rate, and what reading is expected after a further three half-lives?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "27.\nA detector records 620 counts per minute from a radioactive source and background radiation. Two half-lives later it records 170 counts per minute. What is the background count rate, and what reading is expected after a further three half-lives?"
+    }
+  ],
+  "candidateB": [
+    {
+      "number": 1,
+      "stem": "A solid cuboid has side lengths x, 2x and 4x and density 2500 kg m⁻³. It rests on its largest face and produces a pressure of 5000 Pa. What pressure does it produce when resting on its smallest face? (g = 10 N kg⁻¹)",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "1.\nA solid cuboid has side lengths x, 2x and 4x and density 2500 kg m⁻³. It rests on its largest face and produces a pressure of 5000 Pa. What pressure does it produce when resting on its smallest face? (g = 10 N kg⁻¹)"
+    },
+    {
+      "number": 2,
+      "stem": "A rechargeable battery stores 54 kJ of energy. It is charged from a 9.0 V supply that provides a current of 2.0 A. Only 75% of the electrical energy supplied is stored. How long does charging take?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "2.\nA rechargeable battery stores 54 kJ of energy. It is charged from a 9.0 V supply that provides a current of 2.0 A. Only 75% of the electrical energy supplied is stored. How long does charging take?"
+    },
+    {
+      "number": 3,
+      "stem": "A 300 kg cart starts from rest. Its distance-time graph curves smoothly to the point (4 s, 24 m), then becomes a straight line ending at (10 s, 60 m). What is the average resultant force on the cart during the first 4 s?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "3.\nA 300 kg cart starts from rest. Its distance-time graph curves smoothly to the point (4 s, 24 m), then becomes a straight line ending at (10 s, 60 m). What is the average resultant force on the cart during the first 4 s?"
+    },
+    {
+      "number": 4,
+      "stem": "A cyclist rides directly towards a wall at 10 m s⁻¹. When 175 m from the wall, the cyclist sounds a horn. The speed of sound is 350 m s⁻¹. How long after sounding the horn does the cyclist hear the echo?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "4.\nA cyclist rides directly towards a wall at 10 m s⁻¹. When 175 m from the wall, the cyclist sounds a horn. The speed of sound is 350 m s⁻¹. How long after sounding the horn does the cyclist hear the echo?"
+    },
+    {
+      "number": 5,
+      "stem": "Two long parallel wires carry currents upwards. The current in the right-hand wire is twice the current in the left-hand wire. Point M is halfway between them. What is the direction of the resultant magnetic field at M?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "5.\nTwo long parallel wires carry currents upwards. The current in the right-hand wire is twice the current in the left-hand wire. Point M is halfway between them. What is the direction of the resultant magnetic field at M?"
+    },
+    {
+      "number": 6,
+      "stem": "A 0.30 kg metal block at 140 °C is placed in 0.20 kg of water at 20 °C. The final temperature is reached with no energy loss. What is the final temperature? (cmetal = 500 J kg⁻¹ °C⁻¹; cwater = 4200 J kg⁻¹ °C⁻¹)",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "6.\nA 0.30 kg metal block at 140 °C is placed in 0.20 kg of water at 20 °C. The final temperature is reached with no energy loss. What is the final temperature? (cmetal = 500 J kg⁻¹ °C⁻¹; cwater = 4200 J kg⁻¹ °C⁻¹)"
+    },
+    {
+      "number": 7,
+      "stem": "A neutral atom Q has 8 protons and 9 neutrons. Which option represents a positive ion of a different isotope of the same element?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "7.\nA neutral atom Q has 8 protons and 9 neutrons. Which option represents a positive ion of a different isotope of the same element?"
+    },
+    {
+      "number": 8,
+      "stem": "A 3.0 kg trolley moves right at 6.0 m s⁻¹ and collides with a 1.0 kg trolley moving left at 2.0 m s⁻¹. They stick together. How much kinetic energy is transferred to other forms?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "8.\nA 3.0 kg trolley moves right at 6.0 m s⁻¹ and collides with a 1.0 kg trolley moving left at 2.0 m s⁻¹. They stick together. How much kinetic energy is transferred to other forms?"
+    },
+    {
+      "number": 9,
+      "stem": "Two identical resistors are connected in parallel across a 6.0 V battery and dissipate a total power of 12 W. One resistor is then connected alone across a 9.0 V battery for 20 s. What charge passes through it?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "9.\nTwo identical resistors are connected in parallel across a 6.0 V battery and dissipate a total power of 12 W. One resistor is then connected alone across a 9.0 V battery for 20 s. What charge passes through it?"
+    },
+    {
+      "number": 10,
+      "stem": "Air at pressure 1.00 × 10^5 Pa and density 1.20 kg m⁻³ is trapped beneath a freely moving piston. The piston has mass 40 kg and area 0.010 m². It settles slowly and the air remains at constant temperature. What is the final air density? (g = 10 N kg⁻¹)",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "10.\nAir at pressure 1.00 × 10^5 Pa and density 1.20 kg m⁻³ is trapped beneath a freely moving piston. The piston has mass 40 kg and area 0.010 m². It settles slowly and the air remains at constant temperature. What is the final air density? (g = 10 N kg⁻¹)"
+    },
+    {
+      "number": 11,
+      "stem": "A transverse wave travels to the right at 200 m s⁻¹. Its wavelength is 4.0 m. At t = 0, point P is at equilibrium on a section of the wave that rises as position increases. What is P's displacement 5.0 ms later if the amplitude is A?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "11.\nA transverse wave travels to the right at 200 m s⁻¹. Its wavelength is 4.0 m. At t = 0, point P is at equilibrium on a section of the wave that rises as position increases. What is P's displacement 5.0 ms later if the amplitude is A?"
+    },
+    {
+      "number": 12,
+      "stem": "A power station supplies 1.2 MW at 12 kV to the primary of an ideal step-up transformer. The secondary has five times as many turns as the primary and feeds transmission cables of total resistance 5.0 Ω. What power is dissipated in the cables?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "12.\nA power station supplies 1.2 MW at 12 kV to the primary of an ideal step-up transformer. The secondary has five times as many turns as the primary and feeds transmission cables of total resistance 5.0 Ω. What power is dissipated in the cables?"
+    },
+    {
+      "number": 13,
+      "stem": "A 500 kg rollercoaster car starts from rest 20 m above the bottom of a track. It reaches the bottom at 16 m s⁻¹ after travelling 60 m along the track. What is the average resistive force during the descent? (g = 10 N kg⁻¹)",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "13.\nA 500 kg rollercoaster car starts from rest 20 m above the bottom of a track. It reaches the bottom at 16 m s⁻¹ after travelling 60 m along the track. What is the average resistive force during the descent? (g = 10 N kg⁻¹)"
+    },
+    {
+      "number": 14,
+      "stem": "A radiator is below a window in a closed room. Which description gives the main convection current in the room?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "14.\nA radiator is below a window in a closed room. Which description gives the main convection current in the room?"
+    },
+    {
+      "number": 15,
+      "stem": "Five identical resistors form two parallel branches across a battery. The top branch contains two resistors in series; the bottom branch contains three in series. A voltmeter across one top resistor reads 3.0 V. What is the battery voltage?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "15.\nFive identical resistors form two parallel branches across a battery. The top branch contains two resistors in series; the bottom branch contains three in series. A voltmeter across one top resistor reads 3.0 V. What is the battery voltage?"
+    },
+    {
+      "number": 16,
+      "stem": "For a spring obeying Hooke's law, a graph of stored energy E against extension squared x² passes through E = 0.040 J when x² = 16 cm². What force stretches the spring to this point?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "16.\nFor a spring obeying Hooke's law, a graph of stored energy E against extension squared x² passes through E = 0.040 J when x² = 16 cm². What force stretches the spring to this point?"
+    },
+    {
+      "number": 17,
+      "stem": "A rider moves rapidly towards a rigid wall while sounding a horn. The rider hears the reflected sound. Compared with the sound emitted at the horn, how do the amplitude and frequency of the echo heard by the rider compare?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "17.\nA rider moves rapidly towards a rigid wall while sounding a horn. The rider hears the reflected sound. Compared with the sound emitted at the horn, how do the amplitude and frequency of the echo heard by the rider compare?"
+    },
+    {
+      "number": 18,
+      "stem": "A simple ac generator produces a sinusoidal output with peak voltage 6.0 V and period 20 ms. The coil's rotation speed is doubled while the magnetic field strength is halved. What are the new peak voltage and period?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "18.\nA simple ac generator produces a sinusoidal output with peak voltage 6.0 V and period 20 ms. The coil's rotation speed is doubled while the magnetic field strength is halved. What are the new peak voltage and period?"
+    },
+    {
+      "number": 19,
+      "stem": "A 2.0 kW heater boils water for 5.0 minutes. During this time, 80% of the electrical energy reaches the water. What mass of water is vaporised? (specific latent heat of vaporisation = 2.4 × 10⁶ J kg⁻¹)",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "19.\nA 2.0 kW heater boils water for 5.0 minutes. During this time, 80% of the electrical energy reaches the water. What mass of water is vaporised? (specific latent heat of vaporisation = 2.4 × 10⁶ J kg⁻¹)"
+    },
+    {
+      "number": 20,
+      "stem": "A cart is pulled by a constant horizontal resultant force while ballast leaks out at a constant mass per second. Each piece of ballast leaves with the cart's horizontal velocity, so it gives no extra horizontal push. How does the cart's acceleration change as time passes?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "20.\nA cart is pulled by a constant horizontal resultant force while ballast leaks out at a constant mass per second. Each piece of ballast leaves with the cart's horizontal velocity, so it gives no extra horizontal push. How does the cart's acceleration change as time passes?"
+    },
+    {
+      "number": 21,
+      "stem": "A negatively charged rod is brought close to the left side of a neutral metal sphere on an insulating stand. While the rod remains, the right side of the sphere is briefly earthed. The earth connection is removed before the rod is taken away. What is the sphere's final charge, and which way did electrons move during earthing?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "21.\nA negatively charged rod is brought close to the left side of a neutral metal sphere on an insulating stand. While the rod remains, the right side of the sphere is briefly earthed. The earth connection is removed before the rod is taken away. What is the sphere's final charge, and which way did electrons move during earthing?"
+    },
+    {
+      "number": 22,
+      "stem": "A person stands 2.0 m in front of a plane mirror. The person walks 0.75 m towards the mirror while the mirror moves 0.25 m towards the person. What is the final distance between the person and their image?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "22.\nA person stands 2.0 m in front of a plane mirror. The person walks 0.75 m towards the mirror while the mirror moves 0.25 m towards the person. What is the final distance between the person and their image?"
+    },
+    {
+      "number": 23,
+      "stem": "A 0.050 kg bar can slide without friction on horizontal rails in a 0.40 T magnetic field. A 0.20 m section is perpendicular to the field. A current of 1.0 A drives it to the right for 2.0 s. The current is then reversed and reduced to 0.50 A for 4.0 s. Starting from rest, what are its final speed and total distance travelled?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "23.\nA 0.050 kg bar can slide without friction on horizontal rails in a 0.40 T magnetic field. A 0.20 m section is perpendicular to the field. A current of 1.0 A drives it to the right for 2.0 s. The current is then reversed and reduced to 0.50 A for 4.0 s. Starting from rest, what are its final speed and total distance travelled?"
+    },
+    {
+      "number": 24,
+      "stem": "A parachutist is falling at terminal velocity. Immediately after the parachute opens, the drag force is greater than the parachutist's weight. Which statement describes the motion immediately after opening and later at the new terminal velocity?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "24.\nA parachutist is falling at terminal velocity. Immediately after the parachute opens, the drag force is greater than the parachutist's weight. Which statement describes the motion immediately after opening and later at the new terminal velocity?"
+    },
+    {
+      "number": 25,
+      "stem": "A composite conductor has two sections in series, made from the same material. Section X has length L and area 2A. Section Y has length 2L and area A. Its hot end is at 80 °C and cold end at 30 °C. At steady state, what is the temperature at the boundary between X and Y? (conduction rate is proportional to area × temperature difference / length)",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "25.\nA composite conductor has two sections in series, made from the same material. Section X has length L and area 2A. Section Y has length 2L and area A. Its hot end is at 80 °C and cold end at 30 °C. At steady state, what is the temperature at the boundary between X and Y? (conduction rate is proportional to area × temperature difference / length)"
+    },
+    {
+      "number": 26,
+      "stem": "The graph shows the amount of stable isotope Y in a sample as radioactive isotope X decays to Y. Initially the sample contains 60 units of X and 20 units of Y. After 6 minutes it contains 65 units of Y. What is the half-life of X?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "26.\nThe graph shows the amount of stable isotope Y in a sample as radioactive isotope X decays to Y. Initially the sample contains 60 units of X and 20 units of Y. After 6 minutes it contains 65 units of Y. What is the half-life of X?"
+    },
+    {
+      "number": 27,
+      "stem": "A slider of mass 0.30 kg is launched up a frictionless slope by a spring compressed 4.0 cm and reaches vertical height h. The same spring is then compressed 6.0 cm to launch a 0.20 kg slider. What maximum vertical height does the second slider reach?",
+      "options": {},
+      "hasDiagram": true,
+      "rawFirstCell": "27.\nA slider of mass 0.30 kg is launched up a frictionless slope by a spring compressed 4.0 cm and reaches vertical height h. The same spring is then compressed 6.0 cm to launch a 0.20 kg slider. What maximum vertical height does the second slider reach?"
+    }
+  ],
+  "editorA": [
+    {
+      "editorPick": false,
+      "answerLetter": "E",
+      "answerText": "80 C",
+      "answerRaw": "E  80 C",
+      "topic": null,
+      "difficulty": "Standard   |   Suggested target: 70 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q21: short multi-unit current calculation.",
+      "target": null,
+      "tip": "Find the charge used in one complete minute before multiplying by 10.",
+      "solution": "In one minute, Q = It = (0.30 × 20) + (0.050 × 40) = 6 + 2 = 8 C. In 10 minutes, the charge is 10 × 8 = 80 C.\nDifficulty: Standard   |   Suggested target: 70 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2022 Q21: short multi-unit current calculation.",
+      "raw": [
+        "Answer  E  80 C\nTip  Find the charge used in one complete minute before multiplying by 10.\nSolution  In one minute, Q = It = (0.30 × 20) + (0.050 × 40) = 6 + 2 = 8 C. In 10 minutes, the charge is 10 × 8 = 80 C.\nDifficulty: Standard   |   Suggested target: 70 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q21: short multi-unit current calculation."
+      ],
+      "module": "A",
+      "number": 1,
+      "overviewCells": [
+        "A1",
+        "E",
+        "P1.2 Electric circuits",
+        "2/4",
+        "70 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "B",
+      "answerText": "speed 2.7 m s⁻¹; velocity 1.3 m s⁻¹ east",
+      "answerRaw": "B  speed 2.7 m s⁻¹; velocity 1.3 m s⁻¹ east",
+      "topic": null,
+      "difficulty": "Standard   |   Suggested target: 75 seconds\nDistractor map\n\nBenchmark note  ENGAA and NSAA kinematics style: distinguish scalar and vector quantities.",
+      "target": null,
+      "tip": "Average speed uses distance. Average velocity uses displacement.",
+      "solution": "The robot travels 80 m, so average speed = 80/30 = 2.7 m s⁻¹. Its displacement is 40 m east, so average velocity = 40/30 = 1.3 m s⁻¹ east.\nDifficulty: Standard   |   Suggested target: 75 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ENGAA and NSAA kinematics style: distinguish scalar and vector quantities.",
+      "raw": [
+        "Answer  B  speed 2.7 m s⁻¹; velocity 1.3 m s⁻¹ east\nTip  Average speed uses distance. Average velocity uses displacement.\nSolution  The robot travels 80 m, so average speed = 80/30 = 2.7 m s⁻¹. Its displacement is 40 m east, so average velocity = 40/30 = 1.3 m s⁻¹ east.\nDifficulty: Standard   |   Suggested target: 75 seconds\nDistractor map\n\nBenchmark note  ENGAA and NSAA kinematics style: distinguish scalar and vector quantities."
+      ],
+      "module": "A",
+      "number": 2,
+      "overviewCells": [
+        "A2",
+        "B",
+        "P3.1 Kinematics",
+        "2/4",
+        "75 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "F",
+      "answerText": "900 J",
+      "answerRaw": "F  900 J",
+      "topic": null,
+      "difficulty": "Standard   |   Suggested target: 70 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q21: heater input compared with thermal energy gained.",
+      "target": null,
+      "tip": "Compare the heater's total input with the increase in the block's thermal energy.",
+      "solution": "The heater supplies Pt = 60 × 90 = 5400 J. The block gains mc ΔT = 0.20 × 900 × 25 = 4500 J. The remaining 900 J is transferred to the surroundings.\nDifficulty: Standard   |   Suggested target: 70 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2020 Q21: heater input compared with thermal energy gained.",
+      "raw": [
+        "Answer  F  900 J\nTip  Compare the heater's total input with the increase in the block's thermal energy.\nSolution  The heater supplies Pt = 60 × 90 = 5400 J. The block gains mc ΔT = 0.20 × 900 × 25 = 4500 J. The remaining 900 J is transferred to the surroundings.\nDifficulty: Standard   |   Suggested target: 70 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q21: heater input compared with thermal energy gained."
+      ],
+      "module": "A",
+      "number": 3,
+      "overviewCells": [
+        "A3",
+        "F",
+        "P4.4 Heat capacity",
+        "2/4",
+        "70 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "C",
+      "answerText": "0.40 m s⁻¹",
+      "answerRaw": "C  0.40 m s⁻¹",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 80 seconds\nDistractor map\n\nBenchmark note  ENGAA 2023 Q16: distinguish wave speed from the motion of a particle in the medium.",
+      "target": null,
+      "tip": "In one cycle, the float travels four times the amplitude.",
+      "solution": "The float travels 4A = 16 cm = 0.16 m in each cycle. It completes 2.5 cycles per second, so its average speed is 0.16 × 2.5 = 0.40 m s⁻¹.\nDifficulty: Challenging   |   Suggested target: 80 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ENGAA 2023 Q16: distinguish wave speed from the motion of a particle in the medium.",
+      "raw": [
+        "Answer  C  0.40 m s⁻¹\nTip  In one cycle, the float travels four times the amplitude.\nSolution  The float travels 4A = 16 cm = 0.16 m in each cycle. It completes 2.5 cycles per second, so its average speed is 0.16 × 2.5 = 0.40 m s⁻¹.\nDifficulty: Challenging   |   Suggested target: 80 seconds\nDistractor map\n\nBenchmark note  ENGAA 2023 Q16: distinguish wave speed from the motion of a particle in the medium."
+      ],
+      "module": "A",
+      "number": 4,
+      "overviewCells": [
+        "A4",
+        "C",
+        "P6.1 Wave properties",
+        "3/4",
+        "80 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "A",
+      "answerText": "mass 210; atomic number 83",
+      "answerRaw": "A  mass 210; atomic number 83",
+      "topic": null,
+      "difficulty": "Standard   |   Suggested target: 70 seconds\nDistractor map\n\nBenchmark note  ENGAA 2019 Q12 and NSAA 2020 Q25: multi-step alpha and beta decay bookkeeping.",
+      "target": null,
+      "tip": "Each alpha changes A by -4 and Z by -2. Each beta-minus changes Z by +1 only.",
+      "solution": "Four alpha decays give A = 226 - 16 = 210 and Z = 88 - 8 = 80. Three beta-minus decays then give Z = 80 + 3 = 83.\nDifficulty: Standard   |   Suggested target: 70 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ENGAA 2019 Q12 and NSAA 2020 Q25: multi-step alpha and beta decay bookkeeping.",
+      "raw": [
+        "Answer  A  mass 210; atomic number 83\nTip  Each alpha changes A by -4 and Z by -2. Each beta-minus changes Z by +1 only.\nSolution  Four alpha decays give A = 226 - 16 = 210 and Z = 88 - 8 = 80. Three beta-minus decays then give Z = 80 + 3 = 83.\nDifficulty: Standard   |   Suggested target: 70 seconds\nDistractor map\n\nBenchmark note  ENGAA 2019 Q12 and NSAA 2020 Q25: multi-step alpha and beta decay bookkeeping."
+      ],
+      "module": "A",
+      "number": 5,
+      "overviewCells": [
+        "A5",
+        "A",
+        "P7.2 Radioactive decay",
+        "2/4",
+        "70 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "D",
+      "answerText": "96 cm³",
+      "answerRaw": "D  96 cm³",
+      "topic": null,
+      "difficulty": "Very challenging   |   Suggested target: 100 seconds\nDistractor map\n\nBenchmark note  ENGAA 2023 Q20 and ENGAA 2019 Q6: ideal gas under atmospheric plus hydrostatic pressure.",
+      "target": null,
+      "tip": "Hydrostatic pressure halves with depth, but atmospheric pressure does not.",
+      "solution": "At the surface the pressure is P and PV = P × 240. At the bottom, the volume is one quarter as large, so total pressure is 4P. The water contributes 3P. Halfway down it contributes 1.5P, giving total pressure 2.5P. Hence V = 240/2.5 = 96 cm³.\nDifficulty: Very challenging   |   Suggested target: 100 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ENGAA 2023 Q20 and ENGAA 2019 Q6: ideal gas under atmospheric plus hydrostatic pressure.",
+      "raw": [
+        "Answer  D  96 cm³\nTip  Hydrostatic pressure halves with depth, but atmospheric pressure does not.\nSolution  At the surface the pressure is P and PV = P × 240. At the bottom, the volume is one quarter as large, so total pressure is 4P. The water contributes 3P. Halfway down it contributes 1.5P, giving total pressure 2.5P. Hence V = 240/2.5 = 96 cm³.\nDifficulty: Very challenging   |   Suggested target: 100 seconds\nDistractor map\n\nBenchmark note  ENGAA 2023 Q20 and ENGAA 2019 Q6: ideal gas under atmospheric plus hydrostatic pressure."
+      ],
+      "module": "A",
+      "number": 6,
+      "overviewCells": [
+        "A6",
+        "D",
+        "P5.2 Ideal gases",
+        "4/4",
+        "100 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "E",
+      "answerText": "3.3 m s⁻² to the left",
+      "answerRaw": "E  3.3 m s⁻² to the left",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q30 and NSAA 2022 Q21: combine F = BIL with mechanics and direction.",
+      "target": null,
+      "tip": "Use F = BIL, then subtract the resistive force before using F = ma.",
+      "solution": "The magnetic force is 0.80 × 2.5 × 0.15 = 0.30 N. The left-hand rule gives a force to the left. The resultant is 0.30 - 0.10 = 0.20 N, so a = 0.20/0.060 = 3.3 m s⁻² to the left.\nDifficulty: Challenging   |   Suggested target: 85 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2020 Q30 and NSAA 2022 Q21: combine F = BIL with mechanics and direction.",
+      "raw": [
+        "Answer  E  3.3 m s⁻² to the left\nTip  Use F = BIL, then subtract the resistive force before using F = ma.\nSolution  The magnetic force is 0.80 × 2.5 × 0.15 = 0.30 N. The left-hand rule gives a force to the left. The resultant is 0.30 - 0.10 = 0.20 N, so a = 0.20/0.060 = 3.3 m s⁻² to the left.\nDifficulty: Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q30 and NSAA 2022 Q21: combine F = BIL with mechanics and direction."
+      ],
+      "module": "A",
+      "number": 7,
+      "overviewCells": [
+        "A7",
+        "E",
+        "P2.3 The motor effect",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "C",
+      "answerText": "12 N",
+      "answerRaw": "C  12 N",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  ENGAA 2023 Q32: contact force inside an accelerating multi-block system.",
+      "target": null,
+      "tip": "Find the acceleration of both blocks, then consider Q by itself.",
+      "solution": "The total resultant force is 20 - 2 - 3 = 15 N on 5.0 kg, so a = 3.0 m s⁻². For Q, the contact force must provide ma plus its 3 N friction: F = 3.0 × 3.0 + 3.0 = 12 N.\nDifficulty: Challenging   |   Suggested target: 85 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ENGAA 2023 Q32: contact force inside an accelerating multi-block system.",
+      "raw": [
+        "Answer  C  12 N\nTip  Find the acceleration of both blocks, then consider Q by itself.\nSolution  The total resultant force is 20 - 2 - 3 = 15 N on 5.0 kg, so a = 3.0 m s⁻². For Q, the contact force must provide ma plus its 3 N friction: F = 3.0 × 3.0 + 3.0 = 12 N.\nDifficulty: Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  ENGAA 2023 Q32: contact force inside an accelerating multi-block system."
+      ],
+      "module": "A",
+      "number": 8,
+      "overviewCells": [
+        "A8",
+        "C",
+        "P3.4 Newton's laws",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "B",
+      "answerText": "4 V at 20 °C; 8 V at 80 °C",
+      "answerRaw": "B  4 V at 20 °C; 8 V at 80 °C",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 80 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q29: thermistor characteristic embedded in a series circuit.",
+      "target": null,
+      "tip": "The fixed resistor's voltage is its fraction of the total series resistance.",
+      "solution": "At 20 °C, V = 12 × 200/(200 + 400) = 4 V. At 80 °C, V = 12 × 200/(200 + 100) = 8 V.\nDifficulty: Challenging   |   Suggested target: 80 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2020 Q29: thermistor characteristic embedded in a series circuit.",
+      "raw": [
+        "Answer  B  4 V at 20 °C; 8 V at 80 °C\nTip  The fixed resistor's voltage is its fraction of the total series resistance.\nSolution  At 20 °C, V = 12 × 200/(200 + 400) = 4 V. At 80 °C, V = 12 × 200/(200 + 100) = 8 V.\nDifficulty: Challenging   |   Suggested target: 80 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q29: thermistor characteristic embedded in a series circuit."
+      ],
+      "module": "A",
+      "number": 9,
+      "overviewCells": [
+        "A9",
+        "B",
+        "P1.2 Electric circuits",
+        "3/4",
+        "80 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "F",
+      "answerText": "1.5 m s⁻¹",
+      "answerRaw": "F  1.5 m s⁻¹",
+      "topic": null,
+      "difficulty": "Standard   |   Suggested target: 70 seconds\nDistractor map\n\nBenchmark note  ENGAA 2019 Q22 and ENGAA 2023 Q26: power, efficiency and motion in one short chain.",
+      "target": null,
+      "tip": "Useful power is mgv.",
+      "solution": "Useful power = 0.72 × 5000 = 3600 W. Since P = mgv, v = 3600/(240 × 10) = 1.5 m s⁻¹.\nDifficulty: Standard   |   Suggested target: 70 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ENGAA 2019 Q22 and ENGAA 2023 Q26: power, efficiency and motion in one short chain.",
+      "raw": [
+        "Answer  F  1.5 m s⁻¹\nTip  Useful power is mgv.\nSolution  Useful power = 0.72 × 5000 = 3600 W. Since P = mgv, v = 3600/(240 × 10) = 1.5 m s⁻¹.\nDifficulty: Standard   |   Suggested target: 70 seconds\nDistractor map\n\nBenchmark note  ENGAA 2019 Q22 and ENGAA 2023 Q26: power, efficiency and motion in one short chain."
+      ],
+      "module": "A",
+      "number": 10,
+      "overviewCells": [
+        "A10",
+        "F",
+        "P3.7 Energy",
+        "2/4",
+        "70 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "A",
+      "answerText": "0.192 m",
+      "answerRaw": "A  0.192 m",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q27 and ENGAA 2021 echo questions: infer an internal distance from reflected pulses.",
+      "target": null,
+      "tip": "The time difference still represents a return journey.",
+      "solution": "The extra return time from crack to far surface is 0.20 - 0.12 = 0.08 ms. The one-way separation is vt/2 = 4800 × 0.000080 / 2 = 0.192 m.\nDifficulty: Challenging   |   Suggested target: 85 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2022 Q27 and ENGAA 2021 echo questions: infer an internal distance from reflected pulses.",
+      "raw": [
+        "Answer  A  0.192 m\nTip  The time difference still represents a return journey.\nSolution  The extra return time from crack to far surface is 0.20 - 0.12 = 0.08 ms. The one-way separation is vt/2 = 4800 × 0.000080 / 2 = 0.192 m.\nDifficulty: Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q27 and ENGAA 2021 echo questions: infer an internal distance from reflected pulses."
+      ],
+      "module": "A",
+      "number": 11,
+      "overviewCells": [
+        "A11",
+        "A",
+        "P6.4 Sound waves",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "D",
+      "answerText": "A = C < B",
+      "answerRaw": "D  A = C < B",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 80 seconds\nDistractor map\n\nBenchmark note  ENGAA 2019 Q10 and NSAA 2022 Q23: compare conduction using length, area and temperature difference.",
+      "target": null,
+      "tip": "For the same material and temperature difference, rate is proportional to area/length.",
+      "solution": "The relative rates are A: S/L = 1; B: 3S/(2L) = 1.5; C: (S/2)/(L/2) = 1. Therefore A and C are equal, and B is faster.\nDifficulty: Challenging   |   Suggested target: 80 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ENGAA 2019 Q10 and NSAA 2022 Q23: compare conduction using length, area and temperature difference.",
+      "raw": [
+        "Answer  D  A = C < B\nTip  For the same material and temperature difference, rate is proportional to area/length.\nSolution  The relative rates are A: S/L = 1; B: 3S/(2L) = 1.5; C: (S/2)/(L/2) = 1. Therefore A and C are equal, and B is faster.\nDifficulty: Challenging   |   Suggested target: 80 seconds\nDistractor map\n\nBenchmark note  ENGAA 2019 Q10 and NSAA 2022 Q23: compare conduction using length, area and temperature difference."
+      ],
+      "module": "A",
+      "number": 12,
+      "overviewCells": [
+        "A12",
+        "D",
+        "P4.1 Conduction",
+        "3/4",
+        "80 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "F",
+      "answerText": "2 A",
+      "answerRaw": "F  2 A",
+      "topic": null,
+      "difficulty": "Standard   |   Suggested target: 65 seconds\nDistractor map\n\nBenchmark note  ENGAA 2019 Q2: diode behaviour combined with a short circuit calculation.",
+      "target": null,
+      "tip": "An ideal reverse-biased diode blocks its entire branch.",
+      "solution": "Only the 6.0 Ω branch conducts. Its current is I = V/R = 12/6.0 = 2 A.\nDifficulty: Standard   |   Suggested target: 65 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ENGAA 2019 Q2: diode behaviour combined with a short circuit calculation.",
+      "raw": [
+        "Answer  F  2 A\nTip  An ideal reverse-biased diode blocks its entire branch.\nSolution  Only the 6.0 Ω branch conducts. Its current is I = V/R = 12/6.0 = 2 A.\nDifficulty: Standard   |   Suggested target: 65 seconds\nDistractor map\n\nBenchmark note  ENGAA 2019 Q2: diode behaviour combined with a short circuit calculation."
+      ],
+      "module": "A",
+      "number": 13,
+      "overviewCells": [
+        "A13",
+        "F",
+        "P1.2 Electric circuits",
+        "2/4",
+        "65 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "C",
+      "answerText": "4.4 N",
+      "answerRaw": "C  4.4 N",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  ENGAA 2023 Q8 and NSAA density/pressure questions: use geometry and density before a force balance.",
+      "target": null,
+      "tip": "Use the external volume for displaced water, not the volume of metal present.",
+      "solution": "The weight is 0.540 × 10 = 5.4 N. The displaced water has mass 1000 × 100 × 10^-6 = 0.10 kg, so upthrust is 1.0 N. The downward resultant is 5.4 - 1.0 = 4.4 N.\nDifficulty: Challenging   |   Suggested target: 85 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ENGAA 2023 Q8 and NSAA density/pressure questions: use geometry and density before a force balance.",
+      "raw": [
+        "Answer  C  4.4 N\nTip  Use the external volume for displaced water, not the volume of metal present.\nSolution  The weight is 0.540 × 10 = 5.4 N. The displaced water has mass 1000 × 100 × 10^-6 = 0.10 kg, so upthrust is 1.0 N. The downward resultant is 5.4 - 1.0 = 4.4 N.\nDifficulty: Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  ENGAA 2023 Q8 and NSAA density/pressure questions: use geometry and density before a force balance."
+      ],
+      "module": "A",
+      "number": 14,
+      "overviewCells": [
+        "A14",
+        "C",
+        "P5.4 Density",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "E",
+      "answerText": "22 N",
+      "answerRaw": "E  22 N",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q31: rebound momentum with weight acting during a finite contact time.",
+      "target": null,
+      "tip": "Momentum gives the resultant force. The bat's contact force must also overcome weight.",
+      "solution": "Taking upward as positive, delta p = 0.20[4 - (-6)] = 2.0 N s. The average resultant force is 2.0/0.10 = 20 N upward. Since weight is 2 N downward, the contact force is 22 N upward.\nDifficulty: Challenging   |   Suggested target: 85 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2022 Q31: rebound momentum with weight acting during a finite contact time.",
+      "raw": [
+        "Answer  E  22 N\nTip  Momentum gives the resultant force. The bat's contact force must also overcome weight.\nSolution  Taking upward as positive, delta p = 0.20[4 - (-6)] = 2.0 N s. The average resultant force is 2.0/0.10 = 20 N upward. Since weight is 2 N downward, the contact force is 22 N upward.\nDifficulty: Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q31: rebound momentum with weight acting during a finite contact time."
+      ],
+      "module": "A",
+      "number": 15,
+      "overviewCells": [
+        "A15",
+        "E",
+        "P3.6 Momentum",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "B",
+      "answerText": "0.225 A",
+      "answerRaw": "B  0.225 A",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q27 and ENGAA 2023 Q14: ideal-transformer power across a multi-load circuit.",
+      "target": null,
+      "tip": "First find the secondary voltage and total secondary current, then conserve power.",
+      "solution": "The secondary voltage is 240 × 60/1200 = 12 V. Its total current is 3 × 1.5 = 4.5 A, so output power is 54 W. For an ideal transformer, primary current = 54/240 = 0.225 A.\nDifficulty: Challenging   |   Suggested target: 85 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2020 Q27 and ENGAA 2023 Q14: ideal-transformer power across a multi-load circuit.",
+      "raw": [
+        "Answer  B  0.225 A\nTip  First find the secondary voltage and total secondary current, then conserve power.\nSolution  The secondary voltage is 240 × 60/1200 = 12 V. Its total current is 3 × 1.5 = 4.5 A, so output power is 54 W. For an ideal transformer, primary current = 54/240 = 0.225 A.\nDifficulty: Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q27 and ENGAA 2023 Q14: ideal-transformer power across a multi-load circuit."
+      ],
+      "module": "A",
+      "number": 16,
+      "overviewCells": [
+        "A16",
+        "B",
+        "P2.5 Transformers",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "A",
+      "answerText": "X: 0.30 m s⁻¹; Y: 0.20 m s⁻¹; towards the normal",
+      "answerRaw": "A  X: 0.30 m s⁻¹; Y: 0.20 m s⁻¹; towards the normal",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 80 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q24: connect wavefront spacing, speed and refraction direction.",
+      "target": null,
+      "tip": "Frequency stays constant at the boundary. A slower wave bends towards the normal.",
+      "solution": "Using v = f λ, vX = 5.0 × 0.060 = 0.30 m s⁻¹ and vY = 5.0 × 0.040 = 0.20 m s⁻¹. The wave slows, so its direction bends towards the normal.\nDifficulty: Challenging   |   Suggested target: 80 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2020 Q24: connect wavefront spacing, speed and refraction direction.",
+      "raw": [
+        "Answer  A  X: 0.30 m s⁻¹; Y: 0.20 m s⁻¹; towards the normal\nTip  Frequency stays constant at the boundary. A slower wave bends towards the normal.\nSolution  Using v = f λ, vX = 5.0 × 0.060 = 0.30 m s⁻¹ and vY = 5.0 × 0.040 = 0.20 m s⁻¹. The wave slows, so its direction bends towards the normal.\nDifficulty: Challenging   |   Suggested target: 80 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q24: connect wavefront spacing, speed and refraction direction."
+      ],
+      "module": "A",
+      "number": 17,
+      "overviewCells": [
+        "A17",
+        "A",
+        "P6.2 Wave behaviour",
+        "3/4",
+        "80 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "D",
+      "answerText": "6 J",
+      "answerRaw": "D  6 J",
+      "topic": null,
+      "difficulty": "Very challenging   |   Suggested target: 95 seconds\nDistractor map\n\nBenchmark note  ENGAA 2023 Q40 and the 2026 ESAT Physics Guide P3.3: springs in combination and stored energy.",
+      "target": null,
+      "tip": "In series, both springs carry the same force, but their extensions are different.",
+      "solution": "For springs in series, 1/k = 1/100 + 1/300, so the effective spring constant is 75 N m⁻¹. The energy is 1/2 kx² = 0.5 × 75 × 0.40² = 6 J.\nDifficulty: Very challenging   |   Suggested target: 95 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ENGAA 2023 Q40 and the 2026 ESAT Physics Guide P3.3: springs in combination and stored energy.",
+      "raw": [
+        "Answer  D  6 J\nTip  In series, both springs carry the same force, but their extensions are different.\nSolution  For springs in series, 1/k = 1/100 + 1/300, so the effective spring constant is 75 N m⁻¹. The energy is 1/2 kx² = 0.5 × 75 × 0.40² = 6 J.\nDifficulty: Very challenging   |   Suggested target: 95 seconds\nDistractor map\n\nBenchmark note  ENGAA 2023 Q40 and the 2026 ESAT Physics Guide P3.3: springs in combination and stored energy."
+      ],
+      "module": "A",
+      "number": 18,
+      "overviewCells": [
+        "A18",
+        "D",
+        "P3.3 Force and extension",
+        "4/4",
+        "95 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "C",
+      "answerText": "A matt black plate in air",
+      "answerRaw": "C  A matt black plate in air",
+      "topic": null,
+      "difficulty": "Foundation   |   Suggested target: 55 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q26: combine surface finish with conduction, convection and radiation.",
+      "target": null,
+      "tip": "Compare both radiation from the surface and energy transfer through the gas.",
+      "solution": "A matt black surface is the best emitter of thermal radiation, while air also allows conduction and convection. The matt black plate in air therefore loses energy fastest.\nDifficulty: Foundation   |   Suggested target: 55 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2020 Q26: combine surface finish with conduction, convection and radiation.",
+      "raw": [
+        "Answer  C  A matt black plate in air\nTip  Compare both radiation from the surface and energy transfer through the gas.\nSolution  A matt black surface is the best emitter of thermal radiation, while air also allows conduction and convection. The matt black plate in air therefore loses energy fastest.\nDifficulty: Foundation   |   Suggested target: 55 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q26: combine surface finish with conduction, convection and radiation."
+      ],
+      "module": "A",
+      "number": 19,
+      "overviewCells": [
+        "A19",
+        "C",
+        "P4.3 Thermal radiation",
+        "1/4",
+        "55 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "F",
+      "answerText": "0.80 A",
+      "answerRaw": "F  0.80 A",
+      "topic": null,
+      "difficulty": "Very challenging   |   Suggested target: 100 seconds\nDistractor map\n\nBenchmark note  ENGAA 2019 Q2 and NSAA 2022 Q30: use a non-Ωic graph inside a circuit constraint.",
+      "target": null,
+      "tip": "For any trial current, the lamp voltage plus the resistor voltage must equal 10 V.",
+      "solution": "From the graph, at 0.80 A the lamp voltage is about 6.0 V. The resistor then has V = IR = 0.80 × 5.0 = 4.0 V. These add to the 10 V supply, so the current is 0.80 A.\nDifficulty: Very challenging   |   Suggested target: 100 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ENGAA 2019 Q2 and NSAA 2022 Q30: use a non-Ωic graph inside a circuit constraint.",
+      "raw": [
+        "Answer  F  0.80 A\nTip  For any trial current, the lamp voltage plus the resistor voltage must equal 10 V.\nSolution  From the graph, at 0.80 A the lamp voltage is about 6.0 V. The resistor then has V = IR = 0.80 × 5.0 = 4.0 V. These add to the 10 V supply, so the current is 0.80 A.\nDifficulty: Very challenging   |   Suggested target: 100 seconds\nDistractor map\n\nBenchmark note  ENGAA 2019 Q2 and NSAA 2022 Q30: use a non-Ωic graph inside a circuit constraint."
+      ],
+      "module": "A",
+      "number": 20,
+      "overviewCells": [
+        "A20",
+        "F",
+        "P1.2 Electric circuits",
+        "4/4",
+        "100 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "B",
+      "answerText": "2.9 °C",
+      "answerRaw": "B  2.9 °C",
+      "topic": null,
+      "difficulty": "Very challenging   |   Suggested target: 105 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q35 and ESAT Guide P5.3: two-stage energy balance with a state change.",
+      "target": null,
+      "tip": "First check whether the warm water can melt all the ice.",
+      "solution": "Cooling the water to 0 °C releases 0.60 × 4200 × 30 = 75,600 J. Melting the ice needs 0.20 × 3.3 × 10^5 = 66,000 J, leaving 9600 J. This warms 0.80 kg of water by 9600/(0.80 × 4200) = 2.9 °C.\nDifficulty: Very challenging   |   Suggested target: 105 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2022 Q35 and ESAT Guide P5.3: two-stage energy balance with a state change.",
+      "raw": [
+        "Answer  B  2.9 °C\nTip  First check whether the warm water can melt all the ice.\nSolution  Cooling the water to 0 °C releases 0.60 × 4200 × 30 = 75,600 J. Melting the ice needs 0.20 × 3.3 × 10^5 = 66,000 J, leaving 9600 J. This warms 0.80 kg of water by 9600/(0.80 × 4200) = 2.9 °C.\nDifficulty: Very challenging   |   Suggested target: 105 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q35 and ESAT Guide P5.3: two-stage energy balance with a state change."
+      ],
+      "module": "A",
+      "number": 21,
+      "overviewCells": [
+        "A21",
+        "B",
+        "P5.3 State changes",
+        "4/4",
+        "105 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "E",
+      "answerText": "sqrt(2)",
+      "answerRaw": "E  sqrt(2)",
+      "topic": null,
+      "difficulty": "Very challenging   |   Suggested target: 95 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q37: derive a terminal-speed scaling from a supplied drag model.",
+      "target": null,
+      "tip": "At terminal speed, drag equals weight. Remember how mass scales with radius.",
+      "solution": "Weight is proportional to volume, so it scales as r³. At terminal speed, kr²v² is proportional to r³, giving v² proportional to r. Doubling r therefore multiplies terminal speed by sqrt(2).\nDifficulty: Very challenging   |   Suggested target: 95 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2020 Q37: derive a terminal-speed scaling from a supplied drag model.",
+      "raw": [
+        "Answer  E  sqrt(2)\nTip  At terminal speed, drag equals weight. Remember how mass scales with radius.\nSolution  Weight is proportional to volume, so it scales as r³. At terminal speed, kr²v² is proportional to r³, giving v² proportional to r. Doubling r therefore multiplies terminal speed by sqrt(2).\nDifficulty: Very challenging   |   Suggested target: 95 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q37: derive a terminal-speed scaling from a supplied drag model."
+      ],
+      "module": "A",
+      "number": 22,
+      "overviewCells": [
+        "A22",
+        "E",
+        "P3.5 Mass and weight",
+        "4/4",
+        "95 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "A",
+      "answerText": "opposite polarity, peak 2E, duration t/2",
+      "answerRaw": "A  opposite polarity, peak 2E, duration t/2",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 80 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q36: link magnet velocity, pulse polarity, magnitude and duration.",
+      "target": null,
+      "tip": "Reverse the motion for polarity. Double the speed for rate and time.",
+      "solution": "Moving away reverses the change in magnetic field, so the pulse polarity reverses. At twice the speed, the field changes twice as quickly, giving peak 2E, and the journey takes half as long, giving duration t/2.\nDifficulty: Challenging   |   Suggested target: 80 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2022 Q36: link magnet velocity, pulse polarity, magnitude and duration.",
+      "raw": [
+        "Answer  A  opposite polarity, peak 2E, duration t/2\nTip  Reverse the motion for polarity. Double the speed for rate and time.\nSolution  Moving away reverses the change in magnetic field, so the pulse polarity reverses. At twice the speed, the field changes twice as quickly, giving peak 2E, and the journey takes half as long, giving duration t/2.\nDifficulty: Challenging   |   Suggested target: 80 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q36: link magnet velocity, pulse polarity, magnitude and duration."
+      ],
+      "module": "A",
+      "number": 23,
+      "overviewCells": [
+        "A23",
+        "A",
+        "P2.4 Electromagnetic induction",
+        "3/4",
+        "80 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "D",
+      "answerText": "1; 10^10",
+      "answerRaw": "D  1; 10^10",
+      "topic": null,
+      "difficulty": "Standard   |   Suggested target: 70 seconds\nDistractor map\n\nBenchmark note  ENGAA 2019 Q4: electromagnetic-wave speed and frequency ratios across the spectrum.",
+      "target": null,
+      "tip": "All electromagnetic waves have the same vacuum speed. Find P's frequency from c/λ.",
+      "solution": "Both speed ratios equal 1. For P, f = 3.0 × 10^8 / 3.0 = 1.0 × 10^8 Hz. Therefore fQ/fP = 10^18/10^8 = 10^10.\nDifficulty: Standard   |   Suggested target: 70 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ENGAA 2019 Q4: electromagnetic-wave speed and frequency ratios across the spectrum.",
+      "raw": [
+        "Answer  D  1; 10^10\nTip  All electromagnetic waves have the same vacuum speed. Find P's frequency from c/λ.\nSolution  Both speed ratios equal 1. For P, f = 3.0 × 10^8 / 3.0 = 1.0 × 10^8 Hz. Therefore fQ/fP = 10^18/10^8 = 10^10.\nDifficulty: Standard   |   Suggested target: 70 seconds\nDistractor map\n\nBenchmark note  ENGAA 2019 Q4: electromagnetic-wave speed and frequency ratios across the spectrum."
+      ],
+      "module": "A",
+      "number": 24,
+      "overviewCells": [
+        "A24",
+        "D",
+        "P6.5 Electromagnetic spectrum",
+        "2/4",
+        "70 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "B",
+      "answerText": "56 m; 250 N",
+      "answerRaw": "B  56 m; 250 N",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 90 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q33: extract motion and average force from a graph.",
+      "target": null,
+      "tip": "Distance is area under the graph. Average force over the whole interval uses total momentum change.",
+      "solution": "Distance = 1/2 × 4 × 12 + 1/2(12 + 4) × 4 = 24 + 32 = 56 m. Average force = delta p/delta t = 500(4 - 0)/8 = 250 N.\nDifficulty: Challenging   |   Suggested target: 90 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2020 Q33: extract motion and average force from a graph.",
+      "raw": [
+        "Answer  B  56 m; 250 N\nTip  Distance is area under the graph. Average force over the whole interval uses total momentum change.\nSolution  Distance = 1/2 × 4 × 12 + 1/2(12 + 4) × 4 = 24 + 32 = 56 m. Average force = delta p/delta t = 500(4 - 0)/8 = 250 N.\nDifficulty: Challenging   |   Suggested target: 90 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q33: extract motion and average force from a graph."
+      ],
+      "module": "A",
+      "number": 25,
+      "overviewCells": [
+        "A25",
+        "B",
+        "P3.1 Kinematics",
+        "3/4",
+        "90 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "F",
+      "answerText": "16 W; 0.67 A",
+      "answerRaw": "F  16 W; 0.67 A",
+      "topic": null,
+      "difficulty": "Very challenging   |   Suggested target: 100 seconds\nDistractor map\n\nBenchmark note  ENGAA 2023 Q4 and Q28: a switch changes a network's current and power.",
+      "target": null,
+      "tip": "The parallel pair has equal branch currents, but P carries their sum.",
+      "solution": "Q and R in parallel have equivalent resistance 3.0 Ω. Total resistance is 9.0 Ω, so battery current is 12/9 = 4/3 A and total power is 12 × 4/3 = 16 W. The parallel current splits equally, so IQ = 2/3 A = 0.67 A.\nDifficulty: Very challenging   |   Suggested target: 100 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ENGAA 2023 Q4 and Q28: a switch changes a network's current and power.",
+      "raw": [
+        "Answer  F  16 W; 0.67 A\nTip  The parallel pair has equal branch currents, but P carries their sum.\nSolution  Q and R in parallel have equivalent resistance 3.0 Ω. Total resistance is 9.0 Ω, so battery current is 12/9 = 4/3 A and total power is 12 × 4/3 = 16 W. The parallel current splits equally, so IQ = 2/3 A = 0.67 A.\nDifficulty: Very challenging   |   Suggested target: 100 seconds\nDistractor map\n\nBenchmark note  ENGAA 2023 Q4 and Q28: a switch changes a network's current and power."
+      ],
+      "module": "A",
+      "number": 26,
+      "overviewCells": [
+        "A26",
+        "F",
+        "P1.2 Electric circuits",
+        "4/4",
+        "100 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "C",
+      "answerText": "20 cpm; 39 cpm",
+      "answerRaw": "C  20 cpm; 39 cpm",
+      "topic": null,
+      "difficulty": "Very challenging   |   Suggested target: 100 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q36: extract background count and predict a later reading.",
+      "target": null,
+      "tip": "Background does not halve. Subtract the two readings to isolate the source change.",
+      "solution": "Let the initial source count be S and background be B. S + B = 620 and S/4 + B = 170, so 3S/4 = 450 and S = 600. Thus B = 20. After five half-lives in total, the reading is 600/32 + 20 = 38.75, about 39 cpm.\nDifficulty: Very challenging   |   Suggested target: 100 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2020 Q36: extract background count and predict a later reading.",
+      "raw": [
+        "Answer  C  20 cpm; 39 cpm\nTip  Background does not halve. Subtract the two readings to isolate the source change.\nSolution  Let the initial source count be S and background be B. S + B = 620 and S/4 + B = 170, so 3S/4 = 450 and S = 600. Thus B = 20. After five half-lives in total, the reading is 600/32 + 20 = 38.75, about 39 cpm.\nDifficulty: Very challenging   |   Suggested target: 100 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q36: extract background count and predict a later reading."
+      ],
+      "module": "A",
+      "number": 27,
+      "overviewCells": [
+        "A27",
+        "C",
+        "P7.4 Half-life",
+        "4/4",
+        "100 s"
+      ]
+    }
+  ],
+  "editorB": [
+    {
+      "editorPick": false,
+      "answerLetter": "B",
+      "answerText": "20,000 Pa",
+      "answerRaw": "B  20,000 Pa",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q40 and ENGAA 2023 Q8: connect cuboid geometry with pressure.",
+      "target": null,
+      "tip": "The weight is unchanged. Compare the largest and smallest face areas.",
+      "solution": "The largest face has area 8x² and the smallest has area 2x². The smallest area is one quarter as large, so the pressure is four times greater: 4 × 5000 = 20,000 Pa.\nDifficulty: Challenging   |   Suggested target: 85 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2022 Q40 and ENGAA 2023 Q8: connect cuboid geometry with pressure.",
+      "raw": [
+        "Answer  B  20,000 Pa\nTip  The weight is unchanged. Compare the largest and smallest face areas.\nSolution  The largest face has area 8x² and the smallest has area 2x². The smallest area is one quarter as large, so the pressure is four times greater: 4 × 5000 = 20,000 Pa.\nDifficulty: Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q40 and ENGAA 2023 Q8: connect cuboid geometry with pressure."
+      ],
+      "module": "B",
+      "number": 1,
+      "overviewCells": [
+        "B1",
+        "B",
+        "P5.5 Pressure",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "F",
+      "answerText": "67 min",
+      "answerRaw": "F  67 min",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  ESAT Physics Guide P1.2 and NSAA circuit-energy style: link E = VIt with efficiency.",
+      "target": null,
+      "tip": "The stored energy is the useful output, not the electrical input.",
+      "solution": "Input power is VI = 9.0 × 2.0 = 18 W. The required input energy is 54,000/0.75 = 72,000 J. Time = 72,000/18 = 4000 s = 66.7 min, about 67 min.\nDifficulty: Challenging   |   Suggested target: 85 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ESAT Physics Guide P1.2 and NSAA circuit-energy style: link E = VIt with efficiency.",
+      "raw": [
+        "Answer  F  67 min\nTip  The stored energy is the useful output, not the electrical input.\nSolution  Input power is VI = 9.0 × 2.0 = 18 W. The required input energy is 54,000/0.75 = 72,000 J. Time = 72,000/18 = 4000 s = 66.7 min, about 67 min.\nDifficulty: Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  ESAT Physics Guide P1.2 and NSAA circuit-energy style: link E = VIt with efficiency."
+      ],
+      "module": "B",
+      "number": 2,
+      "overviewCells": [
+        "B2",
+        "F",
+        "P1.2 Electric circuits",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "C",
+      "answerText": "450 N",
+      "answerRaw": "C  450 N",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q33: infer final speed from a distance-time graph before finding average force.",
+      "target": null,
+      "tip": "The gradient of the straight section gives the speed reached at 4 s.",
+      "solution": "From 4 s to 10 s, the speed is the graph gradient: (60 - 24)/(10 - 4) = 6 m s⁻¹. The cart reaches this speed at 4 s. Average force = m delta v/delta t = 300 × 6/4 = 450 N.\nDifficulty: Challenging   |   Suggested target: 85 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2020 Q33: infer final speed from a distance-time graph before finding average force.",
+      "raw": [
+        "Answer  C  450 N\nTip  The gradient of the straight section gives the speed reached at 4 s.\nSolution  From 4 s to 10 s, the speed is the graph gradient: (60 - 24)/(10 - 4) = 6 m s⁻¹. The cart reaches this speed at 4 s. Average force = m delta v/delta t = 300 × 6/4 = 450 N.\nDifficulty: Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q33: infer final speed from a distance-time graph before finding average force."
+      ],
+      "module": "B",
+      "number": 3,
+      "overviewCells": [
+        "B3",
+        "C",
+        "P3.1 Kinematics",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "E",
+      "answerText": "0.97 s",
+      "answerRaw": "E  0.97 s",
+      "topic": null,
+      "difficulty": "Very challenging   |   Suggested target: 100 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q22 and ESAT-style kinematics: an echo with a moving listener.",
+      "target": null,
+      "tip": "Treat the outward and return journeys separately because the cyclist moves.",
+      "solution": "The sound reaches the wall in 175/350 = 0.50 s. The cyclist has then moved 5 m, leaving 170 m. On return, sound and cyclist approach at 350 + 10 = 360 m s⁻¹, so this takes 170/360 = 0.472 s. Total time is 0.972 s, about 0.97 s.\nDifficulty: Very challenging   |   Suggested target: 100 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2022 Q22 and ESAT-style kinematics: an echo with a moving listener.",
+      "raw": [
+        "Answer  E  0.97 s\nTip  Treat the outward and return journeys separately because the cyclist moves.\nSolution  The sound reaches the wall in 175/350 = 0.50 s. The cyclist has then moved 5 m, leaving 170 m. On return, sound and cyclist approach at 350 + 10 = 360 m s⁻¹, so this takes 170/360 = 0.472 s. Total time is 0.972 s, about 0.97 s.\nDifficulty: Very challenging   |   Suggested target: 100 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q22 and ESAT-style kinematics: an echo with a moving listener."
+      ],
+      "module": "B",
+      "number": 4,
+      "overviewCells": [
+        "B4",
+        "E",
+        "P6.4 Sound waves",
+        "4/4",
+        "100 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "A",
+      "answerText": "out of the page",
+      "answerRaw": "A  out of the page",
+      "topic": null,
+      "difficulty": "Standard   |   Suggested target: 70 seconds\nDistractor map\n\nBenchmark note  ESAT Physics Guide P2.2 and historic ENGAA field-pattern questions.",
+      "target": null,
+      "tip": "Use the right-hand grip rule for each wire separately.",
+      "solution": "At M, the left wire produces a field into the page. The right wire produces a field out of the page. The distances are equal, but the right-hand current is twice as large, so its out-of-page field wins.\nDifficulty: Standard   |   Suggested target: 70 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ESAT Physics Guide P2.2 and historic ENGAA field-pattern questions.",
+      "raw": [
+        "Answer  A  out of the page\nTip  Use the right-hand grip rule for each wire separately.\nSolution  At M, the left wire produces a field into the page. The right wire produces a field out of the page. The distances are equal, but the right-hand current is twice as large, so its out-of-page field wins.\nDifficulty: Standard   |   Suggested target: 70 seconds\nDistractor map\n\nBenchmark note  ESAT Physics Guide P2.2 and historic ENGAA field-pattern questions."
+      ],
+      "module": "B",
+      "number": 5,
+      "overviewCells": [
+        "B5",
+        "A",
+        "P2.2 Magnetic field due to a current",
+        "2/4",
+        "70 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "D",
+      "answerText": "38 °C",
+      "answerRaw": "D  38 °C",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 90 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q35: calorimetry with unequal masses and specific heat capacities.",
+      "target": null,
+      "tip": "Energy lost by the metal equals energy gained by the water.",
+      "solution": "Let the final temperature be T. Then 0.30 × 500(140 - T) = 0.20 × 4200(T - 20). This gives 21,000 - 150T = 840T - 16,800, so T = 38.2 °C, closest to 38 °C.\nDifficulty: Challenging   |   Suggested target: 90 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2022 Q35: calorimetry with unequal masses and specific heat capacities.",
+      "raw": [
+        "Answer  D  38 °C\nTip  Energy lost by the metal equals energy gained by the water.\nSolution  Let the final temperature be T. Then 0.30 × 500(140 - T) = 0.20 × 4200(T - 20). This gives 21,000 - 150T = 840T - 16,800, so T = 38.2 °C, closest to 38 °C.\nDifficulty: Challenging   |   Suggested target: 90 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q35: calorimetry with unequal masses and specific heat capacities."
+      ],
+      "module": "B",
+      "number": 6,
+      "overviewCells": [
+        "B6",
+        "D",
+        "P4.4 Heat capacity",
+        "3/4",
+        "90 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "E",
+      "answerText": "8 protons, 10 neutrons, 7 electrons",
+      "answerRaw": "E  8 protons, 10 neutrons, 7 electrons",
+      "topic": null,
+      "difficulty": "Standard   |   Suggested target: 65 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q22 and NSAA 2022 Q33: combine isotope identity with ionic charge.",
+      "target": null,
+      "tip": "Same element means same protons. Different isotope means different neutrons. Positive means fewer electrons than protons.",
+      "solution": "Option B has 8 protons, so it is the same element; 10 neutrons, so it is a different isotope; and 7 electrons, so its charge is +1.\nDifficulty: Standard   |   Suggested target: 65 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2020 Q22 and NSAA 2022 Q33: combine isotope identity with ionic charge.",
+      "raw": [
+        "Answer  E  8 protons, 10 neutrons, 7 electrons\nTip  Same element means same protons. Different isotope means different neutrons. Positive means fewer electrons than protons.\nSolution  Option B has 8 protons, so it is the same element; 10 neutrons, so it is a different isotope; and 7 electrons, so its charge is +1.\nDifficulty: Standard   |   Suggested target: 65 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q22 and NSAA 2022 Q33: combine isotope identity with ionic charge."
+      ],
+      "module": "B",
+      "number": 7,
+      "overviewCells": [
+        "B7",
+        "E",
+        "P7.1 Atomic structure",
+        "2/4",
+        "65 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "B",
+      "answerText": "24 J",
+      "answerRaw": "B  24 J",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q32: inelastic collision followed by an energy comparison.",
+      "target": null,
+      "tip": "Use momentum to find the shared final speed before comparing kinetic energies.",
+      "solution": "Taking right as positive, total momentum is 3 × 6 - 1 × 2 = 16 kg m s⁻¹, so final speed is 16/4 = 4 m s⁻¹. Initial kinetic energy is 54 + 2 = 56 J; final kinetic energy is 1/2 × 4 × 4² = 32 J. The loss is 24 J.\nDifficulty: Challenging   |   Suggested target: 85 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2020 Q32: inelastic collision followed by an energy comparison.",
+      "raw": [
+        "Answer  B  24 J\nTip  Use momentum to find the shared final speed before comparing kinetic energies.\nSolution  Taking right as positive, total momentum is 3 × 6 - 1 × 2 = 16 kg m s⁻¹, so final speed is 16/4 = 4 m s⁻¹. Initial kinetic energy is 54 + 2 = 56 J; final kinetic energy is 1/2 × 4 × 4² = 32 J. The loss is 24 J.\nDifficulty: Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q32: inelastic collision followed by an energy comparison."
+      ],
+      "module": "B",
+      "number": 8,
+      "overviewCells": [
+        "B8",
+        "B",
+        "P3.6 Momentum",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "F",
+      "answerText": "30 C",
+      "answerRaw": "F  30 C",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 80 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q24: infer resistance from a parallel-power condition, then find charge.",
+      "target": null,
+      "tip": "The original total power is shared equally between identical parallel resistors.",
+      "solution": "Each resistor dissipates 6 W at 6 V, so R = V²/P = 36/6 = 6 Ω. At 9 V, I = 9/6 = 1.5 A. Thus Q = It = 1.5 × 20 = 30 C.\nDifficulty: Challenging   |   Suggested target: 80 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2022 Q24: infer resistance from a parallel-power condition, then find charge.",
+      "raw": [
+        "Answer  F  30 C\nTip  The original total power is shared equally between identical parallel resistors.\nSolution  Each resistor dissipates 6 W at 6 V, so R = V²/P = 36/6 = 6 Ω. At 9 V, I = 9/6 = 1.5 A. Thus Q = It = 1.5 × 20 = 30 C.\nDifficulty: Challenging   |   Suggested target: 80 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q24: infer resistance from a parallel-power condition, then find charge."
+      ],
+      "module": "B",
+      "number": 9,
+      "overviewCells": [
+        "B9",
+        "F",
+        "P1.2 Electric circuits",
+        "3/4",
+        "80 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "C",
+      "answerText": "1.68 kg m⁻³",
+      "answerRaw": "C  1.68 kg m⁻³",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q38: piston equilibrium, Boyle's law and density scaling.",
+      "target": null,
+      "tip": "The final gas pressure includes atmospheric pressure as well as the piston's pressure.",
+      "solution": "The piston adds mg/A = 40 × 10/0.010 = 4.0 × 10⁴ Pa. Final pressure is 1.40 × 10^5 Pa. At constant temperature, density is proportional to pressure, so rho = 1.20 × 1.40 = 1.68 kg m⁻³.\nDifficulty: Challenging   |   Suggested target: 85 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2022 Q38: piston equilibrium, Boyle's law and density scaling.",
+      "raw": [
+        "Answer  C  1.68 kg m⁻³\nTip  The final gas pressure includes atmospheric pressure as well as the piston's pressure.\nSolution  The piston adds mg/A = 40 × 10/0.010 = 4.0 × 10⁴ Pa. Final pressure is 1.40 × 10^5 Pa. At constant temperature, density is proportional to pressure, so rho = 1.20 × 1.40 = 1.68 kg m⁻³.\nDifficulty: Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q38: piston equilibrium, Boyle's law and density scaling."
+      ],
+      "module": "B",
+      "number": 10,
+      "overviewCells": [
+        "B10",
+        "C",
+        "P5.2 Ideal gases",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "A",
+      "answerText": "-A",
+      "answerRaw": "A  -A",
+      "topic": null,
+      "difficulty": "Very challenging   |   Suggested target: 95 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q32: combine the spatial wave profile, propagation direction and elapsed time.",
+      "target": null,
+      "tip": "A right-moving wave shifts its existing shape to the right. Track what lies just to the left of P.",
+      "solution": "The period is T = λ/v = 4.0/200 = 0.020 s. Five milliseconds is T/4. Because the wave rises with position at P and travels right, P initially moves downward. After a quarter-cycle it reaches -A.\nDifficulty: Very challenging   |   Suggested target: 95 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2022 Q32: combine the spatial wave profile, propagation direction and elapsed time.",
+      "raw": [
+        "Answer  A  -A\nTip  A right-moving wave shifts its existing shape to the right. Track what lies just to the left of P.\nSolution  The period is T = λ/v = 4.0/200 = 0.020 s. Five milliseconds is T/4. Because the wave rises with position at P and travels right, P initially moves downward. After a quarter-cycle it reaches -A.\nDifficulty: Very challenging   |   Suggested target: 95 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q32: combine the spatial wave profile, propagation direction and elapsed time."
+      ],
+      "module": "B",
+      "number": 11,
+      "overviewCells": [
+        "B11",
+        "A",
+        "P6.1 Wave properties",
+        "4/4",
+        "95 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "D",
+      "answerText": "2.0 kW",
+      "answerRaw": "D  2.0 kW",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 90 seconds\nDistractor map\n\nBenchmark note  ENGAA 2019 Q8 and ENGAA 2023 Q14: transformer ratio followed by transmission loss.",
+      "target": null,
+      "tip": "Step up the voltage, use P = VI for cable current, then I²R for loss.",
+      "solution": "The transmission voltage is 5 × 12 kV = 60 kV. Current is 1.2 MW/60 kV = 20 A. Cable loss is I²R = 20² × 5.0 = 2000 W = 2.0 kW.\nDifficulty: Challenging   |   Suggested target: 90 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ENGAA 2019 Q8 and ENGAA 2023 Q14: transformer ratio followed by transmission loss.",
+      "raw": [
+        "Answer  D  2.0 kW\nTip  Step up the voltage, use P = VI for cable current, then I²R for loss.\nSolution  The transmission voltage is 5 × 12 kV = 60 kV. Current is 1.2 MW/60 kV = 20 A. Cable loss is I²R = 20² × 5.0 = 2000 W = 2.0 kW.\nDifficulty: Challenging   |   Suggested target: 90 seconds\nDistractor map\n\nBenchmark note  ENGAA 2019 Q8 and ENGAA 2023 Q14: transformer ratio followed by transmission loss."
+      ],
+      "module": "B",
+      "number": 12,
+      "overviewCells": [
+        "B12",
+        "D",
+        "P2.5 Transformers",
+        "3/4",
+        "90 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "F",
+      "answerText": "600 N",
+      "answerRaw": "F  600 N",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 80 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q38 and ENGAA 2023 Q26: infer work against resistance from an energy shortfall.",
+      "target": null,
+      "tip": "The energy not appearing as kinetic energy is work done against resistance.",
+      "solution": "The car loses mgh = 500 × 10 × 20 = 100,000 J of gravitational energy. It gains 1/2 mv² = 64,000 J of kinetic energy, so 36,000 J is dissipated. Average resistance = 36,000/60 = 600 N.\nDifficulty: Challenging   |   Suggested target: 80 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2020 Q38 and ENGAA 2023 Q26: infer work against resistance from an energy shortfall.",
+      "raw": [
+        "Answer  F  600 N\nTip  The energy not appearing as kinetic energy is work done against resistance.\nSolution  The car loses mgh = 500 × 10 × 20 = 100,000 J of gravitational energy. It gains 1/2 mv² = 64,000 J of kinetic energy, so 36,000 J is dissipated. Average resistance = 36,000/60 = 600 N.\nDifficulty: Challenging   |   Suggested target: 80 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q38 and ENGAA 2023 Q26: infer work against resistance from an energy shortfall."
+      ],
+      "module": "B",
+      "number": 13,
+      "overviewCells": [
+        "B13",
+        "F",
+        "P3.7 Energy",
+        "3/4",
+        "80 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "E",
+      "answerText": "Air rises at the radiator, crosses the ceiling, sinks at the window and returns along the floor",
+      "answerRaw": "E  Air rises at the radiator, crosses the ceiling, sinks at the window and returns along the floor",
+      "topic": null,
+      "difficulty": "Foundation   |   Suggested target: 55 seconds\nDistractor map\n\nBenchmark note  ESAT Physics Guide P4.2: explain convection through temperature-dependent density.",
+      "target": null,
+      "tip": "Heating reduces air density; cooling increases it.",
+      "solution": "Air heated by the radiator expands, becomes less dense and rises. It moves across the ceiling, cools near the window, becomes denser and sinks, then returns along the floor.\nDifficulty: Foundation   |   Suggested target: 55 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ESAT Physics Guide P4.2: explain convection through temperature-dependent density.",
+      "raw": [
+        "Answer  E  Air rises at the radiator, crosses the ceiling, sinks at the window and returns along the floor\nTip  Heating reduces air density; cooling increases it.\nSolution  Air heated by the radiator expands, becomes less dense and rises. It moves across the ceiling, cools near the window, becomes denser and sinks, then returns along the floor.\nDifficulty: Foundation   |   Suggested target: 55 seconds\nDistractor map\n\nBenchmark note  ESAT Physics Guide P4.2: explain convection through temperature-dependent density."
+      ],
+      "module": "B",
+      "number": 14,
+      "overviewCells": [
+        "B14",
+        "E",
+        "P4.2 Convection",
+        "1/4",
+        "55 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "B",
+      "answerText": "6.0 V",
+      "answerRaw": "B  6.0 V",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  ENGAA 2019 Q16 and ENGAA 2023 Q28: identical-resistor networks solved by symmetry and voltage rules.",
+      "target": null,
+      "tip": "Each parallel branch has the full battery voltage.",
+      "solution": "The two identical top resistors share that branch's voltage equally. One has 3.0 V, so the complete top branch, and therefore the battery, has 6.0 V.\nDifficulty: Challenging   |   Suggested target: 85 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ENGAA 2019 Q16 and ENGAA 2023 Q28: identical-resistor networks solved by symmetry and voltage rules.",
+      "raw": [
+        "Answer  B  6.0 V\nTip  Each parallel branch has the full battery voltage.\nSolution  The two identical top resistors share that branch's voltage equally. One has 3.0 V, so the complete top branch, and therefore the battery, has 6.0 V.\nDifficulty: Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  ENGAA 2019 Q16 and ENGAA 2023 Q28: identical-resistor networks solved by symmetry and voltage rules."
+      ],
+      "module": "B",
+      "number": 15,
+      "overviewCells": [
+        "B15",
+        "B",
+        "P1.2 Electric circuits",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "A",
+      "answerText": "2.0 N",
+      "answerRaw": "A  2.0 N",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 80 seconds\nDistractor map\n\nBenchmark note  ENGAA 2023 Q6: read an energy-versus-extension-squared graph and recover force.",
+      "target": null,
+      "tip": "Convert × from centimetres before using E = 1/2 kx², then use F = kx.",
+      "solution": "Here × = 4.0 cm = 0.040 m. From 0.040 = 1/2 k(0.040)², k = 50 N m⁻¹. Hence F = kx = 50 × 0.040 = 2.0 N.\nDifficulty: Challenging   |   Suggested target: 80 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ENGAA 2023 Q6: read an energy-versus-extension-squared graph and recover force.",
+      "raw": [
+        "Answer  A  2.0 N\nTip  Convert × from centimetres before using E = 1/2 kx², then use F = kx.\nSolution  Here × = 4.0 cm = 0.040 m. From 0.040 = 1/2 k(0.040)², k = 50 N m⁻¹. Hence F = kx = 50 × 0.040 = 2.0 N.\nDifficulty: Challenging   |   Suggested target: 80 seconds\nDistractor map\n\nBenchmark note  ENGAA 2023 Q6: read an energy-versus-extension-squared graph and recover force."
+      ],
+      "module": "B",
+      "number": 16,
+      "overviewCells": [
+        "B16",
+        "A",
+        "P3.3 Force and extension",
+        "3/4",
+        "80 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "C",
+      "answerText": "lower amplitude; higher frequency",
+      "answerRaw": "C  lower amplitude; higher frequency",
+      "topic": null,
+      "difficulty": "Standard   |   Suggested target: 65 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q22: combine reflection loss with the qualitative Doppler effect.",
+      "target": null,
+      "tip": "Reflection weakens the wave. Motion towards the wall compresses the arriving wavefronts.",
+      "solution": "Some energy is lost or spreads before the echo returns, so its amplitude is lower. The rider and wall approach one another during emission and the rider then moves towards the reflected wave, so the heard frequency is higher.\nDifficulty: Standard   |   Suggested target: 65 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2022 Q22: combine reflection loss with the qualitative Doppler effect.",
+      "raw": [
+        "Answer  C  lower amplitude; higher frequency\nTip  Reflection weakens the wave. Motion towards the wall compresses the arriving wavefronts.\nSolution  Some energy is lost or spreads before the echo returns, so its amplitude is lower. The rider and wall approach one another during emission and the rider then moves towards the reflected wave, so the heard frequency is higher.\nDifficulty: Standard   |   Suggested target: 65 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q22: combine reflection loss with the qualitative Doppler effect."
+      ],
+      "module": "B",
+      "number": 17,
+      "overviewCells": [
+        "B17",
+        "C",
+        "P6.2 Wave behaviour",
+        "2/4",
+        "65 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "D",
+      "answerText": "6.0 V; 10 ms",
+      "answerRaw": "D  6.0 V; 10 ms",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q36 and ESAT Guide P2.4: interpret how generator changes affect amplitude and period.",
+      "target": null,
+      "tip": "Peak voltage depends on both field strength and rotation speed. Period depends only on rotation speed here.",
+      "solution": "Doubling speed doubles the induced peak voltage, while halving field strength halves it, so the effects cancel and the peak remains 6.0 V. Doubling rotation frequency halves the period to 10 ms.\nDifficulty: Challenging   |   Suggested target: 85 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2022 Q36 and ESAT Guide P2.4: interpret how generator changes affect amplitude and period.",
+      "raw": [
+        "Answer  D  6.0 V; 10 ms\nTip  Peak voltage depends on both field strength and rotation speed. Period depends only on rotation speed here.\nSolution  Doubling speed doubles the induced peak voltage, while halving field strength halves it, so the effects cancel and the peak remains 6.0 V. Doubling rotation frequency halves the period to 10 ms.\nDifficulty: Challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q36 and ESAT Guide P2.4: interpret how generator changes affect amplitude and period."
+      ],
+      "module": "B",
+      "number": 18,
+      "overviewCells": [
+        "B18",
+        "D",
+        "P2.4 Electromagnetic induction",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "B",
+      "answerText": "0.20 kg",
+      "answerRaw": "B  0.20 kg",
+      "topic": null,
+      "difficulty": "Standard   |   Suggested target: 70 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q28 and ESAT Guide P5.3: electrical input, efficiency and latent heat.",
+      "target": null,
+      "tip": "Convert minutes to seconds and use only the useful fraction of the heater energy.",
+      "solution": "Useful energy = 0.80 × 2000 × 300 = 480,000 J. Thus m = E/L = 480,000/(2.4 × 10⁶) = 0.20 kg.\nDifficulty: Standard   |   Suggested target: 70 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2022 Q28 and ESAT Guide P5.3: electrical input, efficiency and latent heat.",
+      "raw": [
+        "Answer  B  0.20 kg\nTip  Convert minutes to seconds and use only the useful fraction of the heater energy.\nSolution  Useful energy = 0.80 × 2000 × 300 = 480,000 J. Thus m = E/L = 480,000/(2.4 × 10⁶) = 0.20 kg.\nDifficulty: Standard   |   Suggested target: 70 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q28 and ESAT Guide P5.3: electrical input, efficiency and latent heat."
+      ],
+      "module": "B",
+      "number": 19,
+      "overviewCells": [
+        "B19",
+        "B",
+        "P5.3 State changes",
+        "2/4",
+        "70 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "E",
+      "answerText": "It increases at an increasing rate",
+      "answerRaw": "E  It increases at an increasing rate",
+      "topic": null,
+      "difficulty": "Very challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q40: constant force acting on a steadily decreasing mass, spun into a cart context.",
+      "target": null,
+      "tip": "The force is constant but a = F/m, and equal mass losses matter more when little mass remains.",
+      "solution": "As ballast leaks, the mass decreases, so F/m increases. Removing the same mass from a smaller remaining mass produces a larger fractional change than before, so the acceleration increases at an increasing rate.\nDifficulty: Very challenging   |   Suggested target: 85 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2020 Q40: constant force acting on a steadily decreasing mass, spun into a cart context.",
+      "raw": [
+        "Answer  E  It increases at an increasing rate\nTip  The force is constant but a = F/m, and equal mass losses matter more when little mass remains.\nSolution  As ballast leaks, the mass decreases, so F/m increases. Removing the same mass from a smaller remaining mass produces a larger fractional change than before, so the acceleration increases at an increasing rate.\nDifficulty: Very challenging   |   Suggested target: 85 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q40: constant force acting on a steadily decreasing mass, spun into a cart context."
+      ],
+      "module": "B",
+      "number": 20,
+      "overviewCells": [
+        "B20",
+        "E",
+        "P3.4 Newton's laws",
+        "4/4",
+        "85 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "A",
+      "answerText": "positive; from sphere to Earth",
+      "answerRaw": "A  positive; from sphere to Earth",
+      "topic": null,
+      "difficulty": "Standard   |   Suggested target: 65 seconds\nDistractor map\n\nBenchmark note  ESAT Physics Guide P1.1: charging a conductor by induction and earthing.",
+      "target": null,
+      "tip": "The negative rod repels mobile electrons away from the near side of the sphere.",
+      "solution": "The rod pushes electrons towards the earthed side, so some leave the sphere for Earth. Removing the earth first traps an electron deficit. Once the rod is removed, the sphere remains positively charged.\nDifficulty: Standard   |   Suggested target: 65 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ESAT Physics Guide P1.1: charging a conductor by induction and earthing.",
+      "raw": [
+        "Answer  A  positive; from sphere to Earth\nTip  The negative rod repels mobile electrons away from the near side of the sphere.\nSolution  The rod pushes electrons towards the earthed side, so some leave the sphere for Earth. Removing the earth first traps an electron deficit. Once the rod is removed, the sphere remains positively charged.\nDifficulty: Standard   |   Suggested target: 65 seconds\nDistractor map\n\nBenchmark note  ESAT Physics Guide P1.1: charging a conductor by induction and earthing."
+      ],
+      "module": "B",
+      "number": 21,
+      "overviewCells": [
+        "B21",
+        "A",
+        "P1.1 Electrostatics",
+        "2/4",
+        "65 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "F",
+      "answerText": "2.0 m",
+      "answerRaw": "F  2.0 m",
+      "topic": null,
+      "difficulty": "Standard   |   Suggested target: 65 seconds\nDistractor map\n\nBenchmark note  ESAT Physics Guide P6.3: plane-mirror geometry with a changing object-mirror separation.",
+      "target": null,
+      "tip": "The image is as far behind the mirror as the person is in front.",
+      "solution": "The person-mirror separation falls by 0.75 + 0.25 = 1.0 m, from 2.0 m to 1.0 m. The image is 1.0 m behind the mirror, so the person-image distance is 2.0 m.\nDifficulty: Standard   |   Suggested target: 65 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ESAT Physics Guide P6.3: plane-mirror geometry with a changing object-mirror separation.",
+      "raw": [
+        "Answer  F  2.0 m\nTip  The image is as far behind the mirror as the person is in front.\nSolution  The person-mirror separation falls by 0.75 + 0.25 = 1.0 m, from 2.0 m to 1.0 m. The image is 1.0 m behind the mirror, so the person-image distance is 2.0 m.\nDifficulty: Standard   |   Suggested target: 65 seconds\nDistractor map\n\nBenchmark note  ESAT Physics Guide P6.3: plane-mirror geometry with a changing object-mirror separation."
+      ],
+      "module": "B",
+      "number": 22,
+      "overviewCells": [
+        "B22",
+        "F",
+        "P6.3 Optics",
+        "2/4",
+        "65 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "C",
+      "answerText": "0 m s⁻¹; 9.6 m",
+      "answerRaw": "C  0 m s⁻¹; 9.6 m",
+      "topic": null,
+      "difficulty": "Very challenging   |   Suggested target: 105 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q30: motor force combined with a two-stage motion problem.",
+      "target": null,
+      "tip": "Find each magnetic acceleration, then treat the two constant-acceleration stages separately.",
+      "solution": "First, F = BIL = 0.40 × 1.0 × 0.20 = 0.080 N, so a = 1.6 m s⁻². After 2.0 s, v = 3.2 m s⁻¹ and distance is 3.2 m. Reversing a 0.50 A current gives acceleration 0.80 m s⁻² left for 4.0 s, exactly bringing the bar to rest. Its average speed in this stage is 1.6 m s⁻¹, so it travels 6.4 m. Total distance is 9.6 m.\nDifficulty: Very challenging   |   Suggested target: 105 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2020 Q30: motor force combined with a two-stage motion problem.",
+      "raw": [
+        "Answer  C  0 m s⁻¹; 9.6 m\nTip  Find each magnetic acceleration, then treat the two constant-acceleration stages separately.\nSolution  First, F = BIL = 0.40 × 1.0 × 0.20 = 0.080 N, so a = 1.6 m s⁻². After 2.0 s, v = 3.2 m s⁻¹ and distance is 3.2 m. Reversing a 0.50 A current gives acceleration 0.80 m s⁻² left for 4.0 s, exactly bringing the bar to rest. Its average speed in this stage is 1.6 m s⁻¹, so it travels 6.4 m. Total distance is 9.6 m.\nDifficulty: Very challenging   |   Suggested target: 105 seconds\nDistractor map\n\nBenchmark note  NSAA 2020 Q30: motor force combined with a two-stage motion problem."
+      ],
+      "module": "B",
+      "number": 23,
+      "overviewCells": [
+        "B23",
+        "C",
+        "P2.3 The motor effect",
+        "4/4",
+        "105 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "D",
+      "answerText": "Initially accelerates upward and slows; later drag equals weight",
+      "answerRaw": "D  Initially accelerates upward and slows; later drag equals weight",
+      "topic": null,
+      "difficulty": "Foundation   |   Suggested target: 55 seconds\nDistractor map\n\nBenchmark note  ESAT Physics Guide P3.5: force balance and acceleration during a terminal-speed transition.",
+      "target": null,
+      "tip": "Acceleration follows resultant force, not necessarily velocity.",
+      "solution": "The parachutist is still moving downward, but the resultant force is upward, so the downward speed decreases. At the new lower terminal velocity, acceleration is zero and drag again equals weight.\nDifficulty: Foundation   |   Suggested target: 55 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ESAT Physics Guide P3.5: force balance and acceleration during a terminal-speed transition.",
+      "raw": [
+        "Answer  D  Initially accelerates upward and slows; later drag equals weight\nTip  Acceleration follows resultant force, not necessarily velocity.\nSolution  The parachutist is still moving downward, but the resultant force is upward, so the downward speed decreases. At the new lower terminal velocity, acceleration is zero and drag again equals weight.\nDifficulty: Foundation   |   Suggested target: 55 seconds\nDistractor map\n\nBenchmark note  ESAT Physics Guide P3.5: force balance and acceleration during a terminal-speed transition."
+      ],
+      "module": "B",
+      "number": 24,
+      "overviewCells": [
+        "B24",
+        "D",
+        "P3.5 Mass and weight",
+        "1/4",
+        "55 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "B",
+      "answerText": "70 °C",
+      "answerRaw": "B  70 °C",
+      "topic": null,
+      "difficulty": "Very challenging   |   Suggested target: 100 seconds\nDistractor map\n\nBenchmark note  ENGAA 2023 Q12: infer a temperature profile across materials with different conduction resistance.",
+      "target": null,
+      "tip": "The same rate passes through both sections, so compare their length/area values.",
+      "solution": "For the same rate, temperature drop is proportional to L/A. X has relative thermal resistance L/(2A) = 0.5, while Y has 2L/A = 2, a ratio 1:4. The total 50-degree drop therefore splits 10 degrees across X and 40 degrees across Y. The boundary is 80 - 10 = 70 °C.\nDifficulty: Very challenging   |   Suggested target: 100 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  ENGAA 2023 Q12: infer a temperature profile across materials with different conduction resistance.",
+      "raw": [
+        "Answer  B  70 °C\nTip  The same rate passes through both sections, so compare their length/area values.\nSolution  For the same rate, temperature drop is proportional to L/A. X has relative thermal resistance L/(2A) = 0.5, while Y has 2L/A = 2, a ratio 1:4. The total 50-degree drop therefore splits 10 degrees across X and 40 degrees across Y. The boundary is 80 - 10 = 70 °C.\nDifficulty: Very challenging   |   Suggested target: 100 seconds\nDistractor map\n\nBenchmark note  ENGAA 2023 Q12: infer a temperature profile across materials with different conduction resistance."
+      ],
+      "module": "B",
+      "number": 25,
+      "overviewCells": [
+        "B25",
+        "B",
+        "P4.1 Conduction",
+        "4/4",
+        "100 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "E",
+      "answerText": "3.0 min",
+      "answerRaw": "E  3.0 min",
+      "topic": null,
+      "difficulty": "Challenging   |   Suggested target: 80 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q34 and ENGAA 2019 Q20: infer half-life from growth of a stable daughter product.",
+      "target": null,
+      "tip": "Use the increase in Y to find how much X remains.",
+      "solution": "Y has increased by 45 units, so X has fallen from 60 to 15 units. This is one quarter of the original amount, corresponding to two half-lives. Two half-lives take 6 minutes, so one half-life is 3.0 minutes.\nDifficulty: Challenging   |   Suggested target: 80 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2022 Q34 and ENGAA 2019 Q20: infer half-life from growth of a stable daughter product.",
+      "raw": [
+        "Answer  E  3.0 min\nTip  Use the increase in Y to find how much X remains.\nSolution  Y has increased by 45 units, so X has fallen from 60 to 15 units. This is one quarter of the original amount, corresponding to two half-lives. Two half-lives take 6 minutes, so one half-life is 3.0 minutes.\nDifficulty: Challenging   |   Suggested target: 80 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q34 and ENGAA 2019 Q20: infer half-life from growth of a stable daughter product."
+      ],
+      "module": "B",
+      "number": 26,
+      "overviewCells": [
+        "B26",
+        "E",
+        "P7.4 Half-life",
+        "3/4",
+        "80 s"
+      ]
+    },
+    {
+      "editorPick": false,
+      "answerLetter": "C",
+      "answerText": "27h/8",
+      "answerRaw": "C  27h/8",
+      "topic": null,
+      "difficulty": "Very challenging   |   Suggested target: 95 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q37: scale a spring launch using energy, mass and compression.",
+      "target": null,
+      "tip": "Spring energy scales with compression squared, while gravitational energy scales with mass and height.",
+      "solution": "Since 1/2 kx² = mgh, height is proportional to x²/m. The ratio is (6/4)² × (0.30/0.20) = 9/4 × 3/2 = 27/8. The new height is 27h/8.\nDifficulty: Very challenging   |   Suggested target: 95 seconds",
+      "distractors": {},
+      "distractorRaw": "",
+      "benchmarkNote": "note  NSAA 2022 Q37: scale a spring launch using energy, mass and compression.",
+      "raw": [
+        "Answer  C  27h/8\nTip  Spring energy scales with compression squared, while gravitational energy scales with mass and height.\nSolution  Since 1/2 kx² = mgh, height is proportional to x²/m. The ratio is (6/4)² × (0.30/0.20) = 9/4 × 3/2 = 27/8. The new height is 27h/8.\nDifficulty: Very challenging   |   Suggested target: 95 seconds\nDistractor map\n\nBenchmark note  NSAA 2022 Q37: scale a spring launch using energy, mass and compression."
+      ],
+      "module": "B",
+      "number": 27,
+      "overviewCells": [
+        "B27",
+        "C",
+        "P3.7 Energy",
+        "4/4",
+        "95 s"
+      ]
+    }
+  ],
+  "overviewA": [
+    {
+      "label": "A1",
+      "module": "A",
+      "number": 1,
+      "cells": [
+        "A1",
+        "E",
+        "P1.2 Electric circuits",
+        "2/4",
+        "70 s"
+      ]
+    },
+    {
+      "label": "A2",
+      "module": "A",
+      "number": 2,
+      "cells": [
+        "A2",
+        "B",
+        "P3.1 Kinematics",
+        "2/4",
+        "75 s"
+      ]
+    },
+    {
+      "label": "A3",
+      "module": "A",
+      "number": 3,
+      "cells": [
+        "A3",
+        "F",
+        "P4.4 Heat capacity",
+        "2/4",
+        "70 s"
+      ]
+    },
+    {
+      "label": "A4",
+      "module": "A",
+      "number": 4,
+      "cells": [
+        "A4",
+        "C",
+        "P6.1 Wave properties",
+        "3/4",
+        "80 s"
+      ]
+    },
+    {
+      "label": "A5",
+      "module": "A",
+      "number": 5,
+      "cells": [
+        "A5",
+        "A",
+        "P7.2 Radioactive decay",
+        "2/4",
+        "70 s"
+      ]
+    },
+    {
+      "label": "A6",
+      "module": "A",
+      "number": 6,
+      "cells": [
+        "A6",
+        "D",
+        "P5.2 Ideal gases",
+        "4/4",
+        "100 s"
+      ]
+    },
+    {
+      "label": "A7",
+      "module": "A",
+      "number": 7,
+      "cells": [
+        "A7",
+        "E",
+        "P2.3 The motor effect",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "label": "A8",
+      "module": "A",
+      "number": 8,
+      "cells": [
+        "A8",
+        "C",
+        "P3.4 Newton's laws",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "label": "A9",
+      "module": "A",
+      "number": 9,
+      "cells": [
+        "A9",
+        "B",
+        "P1.2 Electric circuits",
+        "3/4",
+        "80 s"
+      ]
+    },
+    {
+      "label": "A10",
+      "module": "A",
+      "number": 10,
+      "cells": [
+        "A10",
+        "F",
+        "P3.7 Energy",
+        "2/4",
+        "70 s"
+      ]
+    },
+    {
+      "label": "A11",
+      "module": "A",
+      "number": 11,
+      "cells": [
+        "A11",
+        "A",
+        "P6.4 Sound waves",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "label": "A12",
+      "module": "A",
+      "number": 12,
+      "cells": [
+        "A12",
+        "D",
+        "P4.1 Conduction",
+        "3/4",
+        "80 s"
+      ]
+    },
+    {
+      "label": "A13",
+      "module": "A",
+      "number": 13,
+      "cells": [
+        "A13",
+        "F",
+        "P1.2 Electric circuits",
+        "2/4",
+        "65 s"
+      ]
+    },
+    {
+      "label": "A14",
+      "module": "A",
+      "number": 14,
+      "cells": [
+        "A14",
+        "C",
+        "P5.4 Density",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "label": "A15",
+      "module": "A",
+      "number": 15,
+      "cells": [
+        "A15",
+        "E",
+        "P3.6 Momentum",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "label": "A16",
+      "module": "A",
+      "number": 16,
+      "cells": [
+        "A16",
+        "B",
+        "P2.5 Transformers",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "label": "A17",
+      "module": "A",
+      "number": 17,
+      "cells": [
+        "A17",
+        "A",
+        "P6.2 Wave behaviour",
+        "3/4",
+        "80 s"
+      ]
+    },
+    {
+      "label": "A18",
+      "module": "A",
+      "number": 18,
+      "cells": [
+        "A18",
+        "D",
+        "P3.3 Force and extension",
+        "4/4",
+        "95 s"
+      ]
+    },
+    {
+      "label": "A19",
+      "module": "A",
+      "number": 19,
+      "cells": [
+        "A19",
+        "C",
+        "P4.3 Thermal radiation",
+        "1/4",
+        "55 s"
+      ]
+    },
+    {
+      "label": "A20",
+      "module": "A",
+      "number": 20,
+      "cells": [
+        "A20",
+        "F",
+        "P1.2 Electric circuits",
+        "4/4",
+        "100 s"
+      ]
+    },
+    {
+      "label": "A21",
+      "module": "A",
+      "number": 21,
+      "cells": [
+        "A21",
+        "B",
+        "P5.3 State changes",
+        "4/4",
+        "105 s"
+      ]
+    },
+    {
+      "label": "A22",
+      "module": "A",
+      "number": 22,
+      "cells": [
+        "A22",
+        "E",
+        "P3.5 Mass and weight",
+        "4/4",
+        "95 s"
+      ]
+    },
+    {
+      "label": "A23",
+      "module": "A",
+      "number": 23,
+      "cells": [
+        "A23",
+        "A",
+        "P2.4 Electromagnetic induction",
+        "3/4",
+        "80 s"
+      ]
+    },
+    {
+      "label": "A24",
+      "module": "A",
+      "number": 24,
+      "cells": [
+        "A24",
+        "D",
+        "P6.5 Electromagnetic spectrum",
+        "2/4",
+        "70 s"
+      ]
+    },
+    {
+      "label": "A25",
+      "module": "A",
+      "number": 25,
+      "cells": [
+        "A25",
+        "B",
+        "P3.1 Kinematics",
+        "3/4",
+        "90 s"
+      ]
+    },
+    {
+      "label": "A26",
+      "module": "A",
+      "number": 26,
+      "cells": [
+        "A26",
+        "F",
+        "P1.2 Electric circuits",
+        "4/4",
+        "100 s"
+      ]
+    },
+    {
+      "label": "A27",
+      "module": "A",
+      "number": 27,
+      "cells": [
+        "A27",
+        "C",
+        "P7.4 Half-life",
+        "4/4",
+        "100 s"
+      ]
+    }
+  ],
+  "overviewB": [
+    {
+      "label": "B1",
+      "module": "B",
+      "number": 1,
+      "cells": [
+        "B1",
+        "B",
+        "P5.5 Pressure",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "label": "B2",
+      "module": "B",
+      "number": 2,
+      "cells": [
+        "B2",
+        "F",
+        "P1.2 Electric circuits",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "label": "B3",
+      "module": "B",
+      "number": 3,
+      "cells": [
+        "B3",
+        "C",
+        "P3.1 Kinematics",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "label": "B4",
+      "module": "B",
+      "number": 4,
+      "cells": [
+        "B4",
+        "E",
+        "P6.4 Sound waves",
+        "4/4",
+        "100 s"
+      ]
+    },
+    {
+      "label": "B5",
+      "module": "B",
+      "number": 5,
+      "cells": [
+        "B5",
+        "A",
+        "P2.2 Magnetic field due to a current",
+        "2/4",
+        "70 s"
+      ]
+    },
+    {
+      "label": "B6",
+      "module": "B",
+      "number": 6,
+      "cells": [
+        "B6",
+        "D",
+        "P4.4 Heat capacity",
+        "3/4",
+        "90 s"
+      ]
+    },
+    {
+      "label": "B7",
+      "module": "B",
+      "number": 7,
+      "cells": [
+        "B7",
+        "E",
+        "P7.1 Atomic structure",
+        "2/4",
+        "65 s"
+      ]
+    },
+    {
+      "label": "B8",
+      "module": "B",
+      "number": 8,
+      "cells": [
+        "B8",
+        "B",
+        "P3.6 Momentum",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "label": "B9",
+      "module": "B",
+      "number": 9,
+      "cells": [
+        "B9",
+        "F",
+        "P1.2 Electric circuits",
+        "3/4",
+        "80 s"
+      ]
+    },
+    {
+      "label": "B10",
+      "module": "B",
+      "number": 10,
+      "cells": [
+        "B10",
+        "C",
+        "P5.2 Ideal gases",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "label": "B11",
+      "module": "B",
+      "number": 11,
+      "cells": [
+        "B11",
+        "A",
+        "P6.1 Wave properties",
+        "4/4",
+        "95 s"
+      ]
+    },
+    {
+      "label": "B12",
+      "module": "B",
+      "number": 12,
+      "cells": [
+        "B12",
+        "D",
+        "P2.5 Transformers",
+        "3/4",
+        "90 s"
+      ]
+    },
+    {
+      "label": "B13",
+      "module": "B",
+      "number": 13,
+      "cells": [
+        "B13",
+        "F",
+        "P3.7 Energy",
+        "3/4",
+        "80 s"
+      ]
+    },
+    {
+      "label": "B14",
+      "module": "B",
+      "number": 14,
+      "cells": [
+        "B14",
+        "E",
+        "P4.2 Convection",
+        "1/4",
+        "55 s"
+      ]
+    },
+    {
+      "label": "B15",
+      "module": "B",
+      "number": 15,
+      "cells": [
+        "B15",
+        "B",
+        "P1.2 Electric circuits",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "label": "B16",
+      "module": "B",
+      "number": 16,
+      "cells": [
+        "B16",
+        "A",
+        "P3.3 Force and extension",
+        "3/4",
+        "80 s"
+      ]
+    },
+    {
+      "label": "B17",
+      "module": "B",
+      "number": 17,
+      "cells": [
+        "B17",
+        "C",
+        "P6.2 Wave behaviour",
+        "2/4",
+        "65 s"
+      ]
+    },
+    {
+      "label": "B18",
+      "module": "B",
+      "number": 18,
+      "cells": [
+        "B18",
+        "D",
+        "P2.4 Electromagnetic induction",
+        "3/4",
+        "85 s"
+      ]
+    },
+    {
+      "label": "B19",
+      "module": "B",
+      "number": 19,
+      "cells": [
+        "B19",
+        "B",
+        "P5.3 State changes",
+        "2/4",
+        "70 s"
+      ]
+    },
+    {
+      "label": "B20",
+      "module": "B",
+      "number": 20,
+      "cells": [
+        "B20",
+        "E",
+        "P3.4 Newton's laws",
+        "4/4",
+        "85 s"
+      ]
+    },
+    {
+      "label": "B21",
+      "module": "B",
+      "number": 21,
+      "cells": [
+        "B21",
+        "A",
+        "P1.1 Electrostatics",
+        "2/4",
+        "65 s"
+      ]
+    },
+    {
+      "label": "B22",
+      "module": "B",
+      "number": 22,
+      "cells": [
+        "B22",
+        "F",
+        "P6.3 Optics",
+        "2/4",
+        "65 s"
+      ]
+    },
+    {
+      "label": "B23",
+      "module": "B",
+      "number": 23,
+      "cells": [
+        "B23",
+        "C",
+        "P2.3 The motor effect",
+        "4/4",
+        "105 s"
+      ]
+    },
+    {
+      "label": "B24",
+      "module": "B",
+      "number": 24,
+      "cells": [
+        "B24",
+        "D",
+        "P3.5 Mass and weight",
+        "1/4",
+        "55 s"
+      ]
+    },
+    {
+      "label": "B25",
+      "module": "B",
+      "number": 25,
+      "cells": [
+        "B25",
+        "B",
+        "P4.1 Conduction",
+        "4/4",
+        "100 s"
+      ]
+    },
+    {
+      "label": "B26",
+      "module": "B",
+      "number": 26,
+      "cells": [
+        "B26",
+        "E",
+        "P7.4 Half-life",
+        "3/4",
+        "80 s"
+      ]
+    },
+    {
+      "label": "B27",
+      "module": "B",
+      "number": 27,
+      "cells": [
+        "B27",
+        "C",
+        "P3.7 Energy",
+        "4/4",
+        "95 s"
+      ]
+    }
+  ],
+  "overviewARaw": [
+    "Question",
+    "Answer",
+    "Topic",
+    "Difficulty",
+    "Target",
+    "A1",
+    "E",
+    "P1.2 Electric circuits",
+    "2/4",
+    "70 s",
+    "A2",
+    "B",
+    "P3.1 Kinematics",
+    "75 s",
+    "A3",
+    "F",
+    "P4.4 Heat capacity",
+    "A4",
+    "C",
+    "P6.1 Wave properties",
+    "3/4",
+    "80 s",
+    "A5",
+    "A",
+    "P7.2 Radioactive decay",
+    "A6",
+    "D",
+    "P5.2 Ideal gases",
+    "4/4",
+    "100 s",
+    "A7",
+    "P2.3 The motor effect",
+    "85 s",
+    "A8",
+    "P3.4 Newton's laws",
+    "A9",
+    "A10",
+    "P3.7 Energy",
+    "A11",
+    "P6.4 Sound waves",
+    "A12",
+    "P4.1 Conduction",
+    "A13",
+    "65 s",
+    "A14",
+    "P5.4 Density",
+    "A15",
+    "P3.6 Momentum",
+    "A16",
+    "P2.5 Transformers",
+    "A17",
+    "P6.2 Wave behaviour",
+    "A18",
+    "P3.3 Force and extension",
+    "95 s",
+    "A19",
+    "P4.3 Thermal radiation",
+    "1/4",
+    "55 s",
+    "A20",
+    "A21",
+    "P5.3 State changes",
+    "105 s",
+    "A22",
+    "P3.5 Mass and weight",
+    "A23",
+    "P2.4 Electromagnetic induction",
+    "A24",
+    "P6.5 Electromagnetic spectrum",
+    "A25",
+    "90 s",
+    "A26",
+    "A27",
+    "P7.4 Half-life"
+  ],
+  "overviewBRaw": [
+    "Question",
+    "Answer",
+    "Topic",
+    "Difficulty",
+    "Target",
+    "B1",
+    "B",
+    "P5.5 Pressure",
+    "3/4",
+    "85 s",
+    "B2",
+    "F",
+    "P1.2 Electric circuits",
+    "B3",
+    "C",
+    "P3.1 Kinematics",
+    "B4",
+    "E",
+    "P6.4 Sound waves",
+    "4/4",
+    "100 s",
+    "B5",
+    "A",
+    "P2.2 Magnetic field due to a current",
+    "2/4",
+    "70 s",
+    "B6",
+    "D",
+    "P4.4 Heat capacity",
+    "90 s",
+    "B7",
+    "P7.1 Atomic structure",
+    "65 s",
+    "B8",
+    "P3.6 Momentum",
+    "B9",
+    "80 s",
+    "B10",
+    "P5.2 Ideal gases",
+    "B11",
+    "P6.1 Wave properties",
+    "95 s",
+    "B12",
+    "P2.5 Transformers",
+    "B13",
+    "P3.7 Energy",
+    "B14",
+    "P4.2 Convection",
+    "1/4",
+    "55 s",
+    "B15",
+    "B16",
+    "P3.3 Force and extension",
+    "B17",
+    "P6.2 Wave behaviour",
+    "B18",
+    "P2.4 Electromagnetic induction",
+    "B19",
+    "P5.3 State changes",
+    "B20",
+    "P3.4 Newton's laws",
+    "B21",
+    "P1.1 Electrostatics",
+    "B22",
+    "P6.3 Optics",
+    "B23",
+    "P2.3 The motor effect",
+    "105 s",
+    "B24",
+    "P3.5 Mass and weight",
+    "B25",
+    "P4.1 Conduction",
+    "B26",
+    "P7.4 Half-life",
+    "B27"
+  ],
+  "counts": {
+    "candA": 27,
+    "candB": 27,
+    "optsA": 0,
+    "optsB": 0,
+    "edA": 27,
+    "edB": 27,
+    "ovA": 27,
+    "ovB": 27
+  }
+}

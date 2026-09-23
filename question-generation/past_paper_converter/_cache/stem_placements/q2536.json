@@ -1,0 +1,28 @@
+{
+  "questionId": 2536,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 57,
+  "stemBlocks": [
+    "A student studied this photograph of part of an organ.\nThe student drew the following conclusions about the two cells labelled X and Y.\n1 Both cells X and Y are found in the same tissue.\n2 Both cells X and Y were produced by mitosis.\n3 Both cells X and Y have a cell wall.\nWhich of these conclusions is/are correct?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "a layer of cells that protects the cell layers found deeper in the wall of the oesophagus",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.833657+00:00",
+  "sourceImageHash": "f0cb91fe81bf2c08521363f01c2536646f4faa63d013cb6b55373c0d8e79f216",
+  "status": "ok"
+}

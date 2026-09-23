@@ -1,0 +1,30 @@
+{
+  "questionId": 3170,
+  "examName": "ENGAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 1,
+  "stemBlocks": [
+    "The diagram shows an object of mass $2.4 \\text{ kg}$ on a smooth horizontal surface.\nA force $F$ acts on the object at an acute angle $\\theta$ to the horizontal, where $\\tan \\theta = \\frac{4}{3}$.\nA force of $36 \\text{ N}$ acts on the object towards the right.\nThe object is in equilibrium.",
+    "What is the magnitude of the normal contact force exerted on the object by the surface?",
+    "(gravitational field strength = $10 \\text{ Nkg}^{-1}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:46:58.348262+00:00",
+  "sourceImageHash": "e3310f28a7f695149ae81fc618367281c3e1dbc0972a1027dbf5ae2c00e882a6",
+  "status": "ok"
+}

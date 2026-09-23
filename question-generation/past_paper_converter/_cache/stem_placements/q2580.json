@@ -1,0 +1,29 @@
+{
+  "questionId": 2580,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 11,
+  "stemBlocks": [
+    "The diagram shows two congruent right-angled triangles $PQR$ and $TSR$ with right angles at $Q$ and $S$, respectively.\n$PQ = TS = 3$ cm\n$QR = SR = 4$ cm\n$PRT$ is a straight line.",
+    "What is the length, in cm, of $QS$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:18.973475+00:00",
+  "sourceImageHash": "53362a76dd55e9f1a05040d97b3730ac138d21294e34cb67b3b59c48401ce7cb",
+  "status": "ok"
+}

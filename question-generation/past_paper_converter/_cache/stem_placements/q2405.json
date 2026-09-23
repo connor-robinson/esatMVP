@@ -1,0 +1,29 @@
+{
+  "questionId": 2405,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 16,
+  "stemBlocks": [
+    "The diagram shows a square with side of length $x$ cm. A circle is drawn with centre O which lies at the mid-point of one of the sides of the square. This side forms part of a diameter of the circle. The circle passes through two corners of the square as shown.",
+    "What is the area, in cm$^2$, of the shaded part of the semi-circle?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:49:16.030744+00:00",
+  "sourceImageHash": "359f57a56b0934e6b84f69d8b3ddf4b39c39cc24c677439abf800ccd28a3ba21",
+  "status": "ok"
+}

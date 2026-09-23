@@ -1,0 +1,39 @@
+{
+  "questionId": 3048,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 69,
+  "stemBlocks": [
+    "The graph below shows the effect of different concentrations of sodium chloride (NaCl) solution on the percentage haemolysis of human red blood cells. Haemolysis occurs when the cells swell and then burst open.",
+    "Which letter correctly describes the effect of changing the concentration of NaCl from $0.12 \\text{ mol dm}^{-3}$ to $0.084 \\text{ mol dm}^{-3}$ on percentage haemolysis?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    },
+    {
+      "id": "d2",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    },
+    {
+      "assetId": "d2",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T17:16:37.469563+00:00",
+  "sourceImageHash": "fb1bdfd98dee6cbaaf5ab26769a02770d740be1a90274725fd043effbf3ddeaf",
+  "status": "ok"
+}

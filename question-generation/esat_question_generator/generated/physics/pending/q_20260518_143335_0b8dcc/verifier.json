@@ -1,0 +1,52 @@
+{
+  "stage": "verifier",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "D",
+    "independent_solution": {
+      "main_law_or_principle": "Newton's First Law at terminal velocity (Drag = Weight - Upthrust)",
+      "calculation_or_logic": "Let $V$ be the volume of the object and $\\rho_x$ be its density. Weight $W = V\\rho_x g$. Upthrust $U = V\\rho_f g$. Drag $F_d = kv$. At terminal velocity, $kv = Vg(\\rho_x - \\rho_f)$.\nCase 1: $k(5v_0) = Vg(\\rho_x - \\rho)$.\nCase 2: $k(v_0) = Vg(\\rho_x - 3\\rho)$.\nDividing Case 1 by Case 2: $5 = (\\rho_x - \\rho) / (\\rho_x - 3\\rho)$.\n$5(\\rho_x - 3\\rho) = \\rho_x - \\rho \\implies 5\\rho_x - 15\\rho = \\rho_x - \\rho \\implies 4\\rho_x = 14\\rho \\implies \\rho_x = 3.5\\rho = \\frac{7}{2}\\rho$.",
+      "verified_answer_value": "7/2 rho",
+      "claimed_answer_value": "7/2 rho",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Force balance at terminal velocity",
+        "Archimedes' principle",
+        "Algebraic ratio comparison"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "derived_relationship_audit": {
+      "requires_nontrivial_derivation": false,
+      "number_of_linked_relationships": 0,
+      "relationships_given_in_stem": [],
+      "safe_for_esat": true
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a",
+      "derived_relationship_safety": "pass"
+    },
+    "notes": [
+      "The physics is sound and the algebraic manipulation is appropriate for the target level."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

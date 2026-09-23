@@ -1,0 +1,29 @@
+{
+  "questionId": 2514,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 35,
+  "stemBlocks": [
+    "A filament lamp and a $0-10 \\ \\Omega$ variable resistor are connected in series with a power supply of constant voltage.\nThe graph shows the voltage-current $(V-I)$ characteristic of the filament lamp.\nWhen the resistance of the variable resistor is $4.0 \\ \\Omega$, the current in the lamp is $2.0 \\ \\text{A}$.",
+    "What is the power dissipated in the lamp when the resistance of the variable resistor is zero?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.814346+00:00",
+  "sourceImageHash": "cb07c036ecf019ec8b49931826bc777e12a7d28f1c75335cf3ef6213d598556a",
+  "status": "ok"
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 2755,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 16,
+  "stemBlocks": [
+    "The following right-angled triangles have the same hypotenuse length.",
+    "Which of the following is a correct expression for $y$ in terms of $x$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.351472+00:00",
+  "sourceImageHash": "8f87f2dbd6125f36707a21f907bfdac58ef37507145d62f91413db0c3c1bef5f",
+  "status": "ok"
+}

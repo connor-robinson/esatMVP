@@ -1,0 +1,29 @@
+{
+  "questionId": 2828,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 9,
+  "stemBlocks": [
+    "A rectangle $PQRS$ has length $(2x - 1)$ cm and width $(x + 1)$ cm as shown on the diagram. A larger rectangle is made by adding 3 cm to both the length and the width of $PQRS$, as shown. The larger rectangle has an area of $360 \\text{ cm}^2$.",
+    "What is the ratio of $PQ$ to $PS$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.360219+00:00",
+  "sourceImageHash": "c5583d890846ddc0b77d0a42ce8dddb613dcf132559d60e1947257345cb944b4",
+  "status": "ok"
+}

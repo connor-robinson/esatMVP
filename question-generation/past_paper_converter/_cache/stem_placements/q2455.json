@@ -1,0 +1,28 @@
+{
+  "questionId": 2455,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 66,
+  "stemBlocks": [
+    "At which two of the numbered stages does only mitosis occur?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "The diagram shows the life cycle of a simple type of plant. The stages are: adult plant stage P (n), spores (n), adult plant stage Q (2n), female gamete (n), male gamete (n). Arrows indicate transitions: 1 from adult plant stage P to female gamete, 2 from female gamete and male gamete to adult plant stage Q, 3 from adult plant stage Q to spores, 4 from spores to adult plant stage P. Key: n = haploid number of chromosomes, 2n = diploid number of chromosomes.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:49:16.212658+00:00",
+  "sourceImageHash": "a87eae97c503f71f90cfa2dff6213d5322bd11fcf79eeeab4406ec42e1043e9c",
+  "status": "ok"
+}

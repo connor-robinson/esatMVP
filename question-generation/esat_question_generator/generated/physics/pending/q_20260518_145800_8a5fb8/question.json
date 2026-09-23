@@ -1,0 +1,285 @@
+{
+  "id": "P_a9a3eea7-Medium-9f4ef1f519",
+  "schema_id": "P_a9a3eea7",
+  "difficulty": "Medium",
+  "idea_plan": {
+    "schema_id": "P_a9a3eea7",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Medium",
+    "idea_summary": "Compare the terminal velocities of two spheres of identical volume but different densities falling through the same fluid, given a linear drag force.",
+    "schema_invariant": {
+      "core_move": "Equating weight to the sum of upthrust and drag to analyse terminal velocity.",
+      "what_must_not_change": [
+        "Application of Newton's First Law (F_net = 0) at terminal velocity",
+        "Inclusion of weight, buoyant force (upthrust), and drag"
+      ],
+      "what_can_change": [
+        "Using symbolic comparison instead of absolute numerical calculation",
+        "The specific densities of the objects and fluid",
+        "The exact relationship requested (e.g., ratio of velocities)"
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "proportional_reasoning",
+      "reasoning_hinge": "Recognising that upthrust remains constant for both spheres because they have the same volume and are in the same fluid, meaning the driving force (Weight - Upthrust) scales with (rho_object - rho_fluid).",
+      "why_top_students_win": "They correctly write W - U = kv, substituting densities to get V*g*(rho_object - rho_fluid) = kv, and then compare the two cases.",
+      "why_mid_students_miss": "They assume terminal velocity is directly proportional to object density alone (ignoring upthrust) or directly proportional to object mass, leading to incorrect ratios."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Newton's First Law for falling objects (Weight = Upthrust + Drag)",
+      "supporting_idea_if_any": "Archimedes' principle / defining mass and upthrust in terms of density and volume",
+      "estimated_solution_steps": 3,
+      "number_of_core_physics_principles": 2,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 3,
+      "must_include": [
+        "model_selection",
+        "non_obvious_inference",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "Shifts the challenge from numerical algebraic rearrangement to symbolic proportional reasoning, maintaining the same conceptual difficulty and time requirement.",
+    "task_signature": "proportional_change",
+    "tool_footprint": [
+      "force_balance",
+      "density_substitution",
+      "ratio_comparison"
+    ],
+    "primary_tag": "2",
+    "secondary_tags": [
+      "1"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "Instead of calculating a single terminal velocity from raw numerical values, the candidate must find a new terminal velocity in terms of the original 'v' by comparing two objects with different densities.",
+    "why_still_on_spec": "Force balances, terminal velocity, and the definition of density/upthrust are core ESAT Physics topics. Taking ratios of these equations is standard practice for proportional reasoning questions.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Ignoring upthrust entirely and assuming terminal velocity is proportional to weight/density.",
+        "distractor_role": "Yields a ratio based strictly on the object densities (e.g., 2/3 instead of 1/2)."
+      },
+      {
+        "mistake": "Assuming upthrust scales with the object's mass rather than the fluid's density.",
+        "distractor_role": "Leads to the same incorrect ratio as ignoring upthrust, reinforcing a common misconception."
+      },
+      {
+        "mistake": "Setting up the force balance as Weight + Upthrust = Drag.",
+        "distractor_role": "Yields a ratio based on (rho_object + rho_fluid), giving an incorrect fraction."
+      }
+    ],
+    "difficulty_rationale": "It requires candidates to synthesise three concepts (force balance, density-volume relation for mass, density-volume relation for upthrust) into a single proportional argument. It is fast for those who see the (rho_object - rho_fluid) invariant, but effectively traps those who take mental shortcuts with proportions.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "There is no single formula to plug numbers into; the candidate must construct the force balance equation for both scenarios and divide them to find the scaling factor."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The proportional reasoning naturally generates clean, distinct fractions (e.g., 1/2, 2/3, 3/4) that serve as excellent MCQ options corresponding to specific algebraic errors."
+    }
+  },
+  "question_package": {
+    "metadata": {
+      "schema_id": "P_a9a3eea7",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Medium",
+      "task_signature": "proportional_change",
+      "primary_tag": "2",
+      "secondary_tags": [
+        "1"
+      ]
+    },
+    "question": {
+      "stem": "Two solid spheres, X and Y, have identical volumes. They fall through the same fluid, which has a constant density $\\rho$.\n\nThe density of sphere X is $5\\rho$ and the density of sphere Y is $4\\rho$.\n\nThe drag force on each sphere is given by $F = kv$, where $v$ is its velocity and $k$ is the same constant for both spheres.\n\nSphere X reaches a terminal velocity $v_0$. What is the terminal velocity of sphere Y?\n\n<figure class=\"qg-diagram\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 600 420\" width=\"600\" height=\"420\" role=\"img\" aria-label=\"concept image\"><image href=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_145800_8a5fb8/concept_image_v1.png\" x=\"0\" y=\"0\" width=\"600\" height=\"420\" preserveAspectRatio=\"xMidYMid meet\" /></svg><figcaption>concept image</figcaption></figure>\n",
+      "options": {
+        "A": "$\\frac{3}{4} v_0$",
+        "B": "$\\frac{4}{5} v_0$",
+        "C": "$\\frac{5}{6} v_0$",
+        "D": "$\\frac{4}{3} v_0$",
+        "E": "$\\frac{5}{4} v_0$",
+        "F": "$\\frac{6}{5} v_0$"
+      },
+      "correct_option": "A",
+      "stem_before_visual": "Two solid spheres, X and Y, have identical volumes. They fall through the same fluid, which has a constant density $\\rho$.\n\nThe density of sphere X is $5\\rho$ and the density of sphere Y is $4\\rho$.\n\nThe drag force on each sphere is given by $F = kv$, where $v$ is its velocity and $k$ is the same constant for both spheres.\n\nSphere X reaches a terminal velocity $v_0$. What is the terminal velocity of sphere Y?"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "At terminal velocity, the drag force equals the net downward force (Weight - Upthrust). Since both spheres have the same volume and are in the same fluid, the upthrust is identical for both.",
+      "reasoning": "1. For an object at terminal velocity, $W = U + F_d$, so $F_d = W - U$.\n2. The weight of a sphere is $W = \\rho_{\\text{obj}} V g$ and the upthrust is $U = \\rho_{\\text{fluid}} V g$.\n3. For sphere X: $k v_0 = 5\\rho V g - \\rho V g = 4\\rho V g$.\n4. For sphere Y: $k v_Y = 4\\rho V g - \\rho V g = 3\\rho V g$.\n5. Taking the ratio gives $\\frac{k v_Y}{k v_0} = \\frac{3\\rho V g}{4\\rho V g} = \\frac{3}{4}$, so $v_Y = \\frac{3}{4} v_0$."
+    },
+    "distractor_map": {
+      "A": "Correct. Uses the net force (Weight - Upthrust) which is proportional to (density_obj - density_fluid).",
+      "B": "Ignores upthrust completely, assuming terminal velocity is directly proportional to object density (4/5).",
+      "C": "Incorrectly adds upthrust to weight ($W + U = F_d$), leading to a ratio of (4+1)/(5+1) = 5/6.",
+      "D": "Inverts the correct proportional relationship, assuming terminal velocity is inversely proportional to net force.",
+      "E": "Inverts the object density relationship, assuming terminal velocity is inversely proportional to object density.",
+      "F": "Inverts the incorrect $W + U$ relationship."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Recognising that upthrust is constant and must be subtracted from weight to find the driving force for terminal velocity.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 2,
+        "estimated_solution_steps": 3,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "verifier_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "A",
+    "independent_solution": {
+      "main_law_or_principle": "Newton's First Law at terminal velocity: Weight = Upthrust + Drag.",
+      "calculation_or_logic": "Let $V$ be the volume of the spheres and $\\rho$ be the fluid density. The weight $W = \\rho_{obj}Vg$ and upthrust $U = \\rho Vg$. Terminal velocity $v$ satisfies $kv = W - U = Vg(\\rho_{obj} - \\rho)$. For sphere X: $kv_0 = Vg(5\\rho - \\rho) = 4\\rho Vg$. For sphere Y: $kv_Y = Vg(4\\rho - \\rho) = 3\\rho Vg$. Dividing the two equations: $v_Y / v_0 = (3\\rho Vg) / (4\\rho Vg) = 3/4$. Thus, $v_Y = 3/4 v_0$.",
+      "verified_answer_value": "A",
+      "claimed_answer_value": "A",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Force balance at terminal velocity",
+        "Archimedes' principle for upthrust",
+        "Density-volume-mass relationship",
+        "Proportional reasoning"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "derived_relationship_audit": {
+      "requires_nontrivial_derivation": false,
+      "number_of_linked_relationships": 0,
+      "relationships_given_in_stem": [],
+      "safe_for_esat": true
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a",
+      "derived_relationship_safety": "pass"
+    },
+    "notes": [
+      "The question is a standard application of terminal velocity physics and proportional reasoning, well within ESAT scope."
+    ]
+  },
+  "style_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "shorter",
+      "notes": "The question is perfectly calibrated for the ESAT. It avoids the 'plug-and-chug' trap by requiring the student to construct the net force expression rather than just using a formula."
+    },
+    "selectivity_audit": {
+      "main_trap": "The student failing to subtract the upthrust from the weight, or failing to realize that the upthrust is constant for both spheres, leading to the incorrect ratio 4/5.",
+      "why_not_plug_and_chug": "There is no single formula for 'terminal velocity' that can be used directly; the student must derive the relationship between density and velocity from the force balance.",
+      "expected_mid_student_error": "Assuming terminal velocity is proportional to the object's density alone (4/5) or adding the upthrust instead of subtracting it (5/6).",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 2,
+      "estimated_solution_steps": 3,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "Excellent use of proportional reasoning. The distractors are well-constructed to catch common conceptual errors regarding upthrust."
+    ]
+  },
+  "models": {
+    "designer": "gemini-3.1-pro-preview",
+    "implementer": "gemini-3.1-pro-preview",
+    "verifier": "gemini-3.1-flash-lite",
+    "style_judge": "gemini-3.1-flash-lite"
+  },
+  "attempts": 1,
+  "created_at": "2026-05-18T15:04:57.848582",
+  "token_usage": {
+    "prompt_tokens": 32404,
+    "candidates_tokens": 5372,
+    "total_tokens": 46643
+  },
+  "tags": {
+    "primary_tag": "3",
+    "secondary_tags": [
+      "5"
+    ],
+    "primary_confidence": 0.95,
+    "reasoning": "The question's core involves analyzing forces (weight, upthrust, drag) and applying Newton's laws to determine terminal velocity, which are fundamental concepts in Mechanics. The calculation of weight and upthrust relies on the concept of density and fluid properties, which fall under Matter.",
+    "_raw_text": "```json\n{\n  \"primary_tag\": \"3\",\n  \"secondary_tags\": [\"5\"],\n  \"primary_confidence\": 0.95,\n  \"reasoning\": \"The question's core involves analyzing forces (weight, upthrust, drag) and applying Newton's laws to determine terminal velocity, which are fundamental concepts in Mechanics. The calculation of weight and upthrust relies on the concept of density and fluid properties, which fall under Matter.\"\n}\n```"
+  },
+  "schema_block_snapshot": "## **P_a9a3eea7. Calculating Terminal Velocity with Drag and Buoyancy**\n\n**Core move:** Apply Newton's first law (equilibrium of forces) to determine the terminal velocity of an object falling through a fluid, considering its weight, buoyant force, and a given drag force model.\n\n**Seen in / context:**\n- Fluid dynamics problems involving objects moving through viscous media.\nCalculating terminal velocity for objects falling or rising.\nProblems where densities and volumes are used to determine weight and buoyant force.\nApplications of Stokes' Law or similar empirical drag force equations.\n\n**Possible wrong paths:**\n- Incorrectly setting up the force balance equation (e.g., adding drag force in the wrong direction or neglecting upthrust).\nUsing the wrong density for calculating the object's weight (e.g., liquid density instead of object density).\nUsing the wrong density for calculating the upthrust (e.g., object density instead of liquid density).\nAlgebraic errors when rearranging the force balance equation to solve for terminal velocity.\nMisinterpreting the condition for 'terminal speed' (i.e., not setting the net force to zero).\n\n**Notes for generation:**\n- Ensure all forces (weight, upthrust, drag) are correctly identified and their directions are properly accounted for in the force balance.\nEmphasize the definition of upthrust as the weight of the fluid displaced by the object.\nThe form of the drag force equation (e.g., linear with velocity, quadratic with velocity) will be provided and must be incorporated correctly.\nQuestions should require quantitative calculation and algebraic manipulation to solve for an unknown variable like velocity.\n\n**Exemplar questions:**\n- `NSAA_2020_Section1_Q38_NSAA_Sec`: Initial exemplar for new schema.",
+  "pipeline": "v4",
+  "has_visual": true,
+  "visual_type": "concept_image",
+  "answer_depends_on_visual": false,
+  "question_stem_before_auto_diagram": "Two solid spheres, X and Y, have identical volumes. They fall through the same fluid, which has a constant density $\\rho$.\n\nThe density of sphere X is $5\\rho$ and the density of sphere Y is $4\\rho$.\n\nThe drag force on each sphere is given by $F = kv$, where $v$ is its velocity and $k$ is the same constant for both spheres.\n\nSphere X reaches a terminal velocity $v_0$. What is the terminal velocity of sphere Y?",
+  "visual_assets": [
+    {
+      "kind": "concept_image",
+      "spec_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260518_145800_8a5fb8\\concept_image_prompt.json",
+      "image_paths": [
+        "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_145800_8a5fb8/concept_image_v1.png"
+      ],
+      "renderer": "gemini_image_v1",
+      "qc_status": "pass",
+      "qc_source": "concept_image_verifier.json",
+      "answer_bearing": false,
+      "checksum": null
+    }
+  ]
+}

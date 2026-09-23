@@ -1,0 +1,29 @@
+{
+  "questionId": 3280,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 11,
+  "stemBlocks": [
+    "The diagram shows a circuit containing two power supplies with negligible internal resistance and two resistors with resistances $R$ and $5R$. The emfs of the power supplies and the magnitude and direction of the current in one part of the circuit are shown. One point in the circuit is labelled P.",
+    "What is the magnitude of the current at P?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:13.247863+00:00",
+  "sourceImageHash": "742f5af763c86ac066bd4372ae714c3ba6f2f16701a2b2ad6b5621d74260d4c0",
+  "status": "ok"
+}

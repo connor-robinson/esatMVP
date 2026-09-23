@@ -1,0 +1,1086 @@
+﻿[
+  {
+    "label": "webkit-desktop-fresh",
+    "swInfo": {
+      "supported": true,
+      "controller": null,
+      "regs": [],
+      "caches": [],
+      "cachePoison": null,
+      "cachePoisonError": null,
+      "existingRegs": null
+    },
+    "navResults": [
+      {
+        "route": "/mental-maths/drill",
+        "hasError": false,
+        "title": "ESAT CAMP | ESAT & TMUA Preparation",
+        "url": "https://esatcamp.com/mental-maths/drill",
+        "newPageErrors": [
+          "/esatcamp.com/past-papers/roadmap?_rsc=qcggt due to access control checks.",
+          "/esatcamp.com/past-papers/library?_rsc=qcggt due to access control checks.",
+          "/esatcamp.com/esat-past-papers?_rsc=qcggt due to access control checks.",
+          "/esatcamp.com/past-papers/analytics?_rsc=qcggt due to access control checks.",
+          "/esatcamp.com/api/subscription/status due to access control checks.",
+          "/esatcamp.com/questions?_rsc=qcggt due to access control checks.",
+          "/esatcamp.com/questions/questionbank/analytics?_rsc=qcggt due to access control checks.",
+          "/esatcamp.com/exam-tools/calibration/math-1?_rsc=qcggt due to access control checks.",
+          "/esatcamp.com/tools/score-converter?_rsc=qcggt due to access control checks.",
+          "/esatcamp.com/tools/faqs?_rsc=qcggt due to access control checks.",
+          "/esatcamp.com/tools/tutorials?_rsc=qcggt due to access control checks."
+        ]
+      },
+      {
+        "route": "/past-papers/roadmap",
+        "hasError": false,
+        "title": "ESAT CAMP | ESAT & TMUA Preparation",
+        "url": "https://esatcamp.com/past-papers/roadmap",
+        "newPageErrors": [
+          "/esatcamp.com/api/subscription/status due to access control checks.",
+          "/esatcamp.com/api/subscription/status due to access control checks."
+        ]
+      },
+      {
+        "route": "/questions",
+        "hasError": false,
+        "title": "ESAT CAMP | ESAT & TMUA Preparation",
+        "url": "https://esatcamp.com/questions",
+        "newPageErrors": []
+      },
+      {
+        "route": "/exam-tools/calibration/math-1",
+        "hasError": false,
+        "title": "ESAT Calibration Test 2026/27 | Find Your Weak Spots",
+        "url": "https://esatcamp.com/exam-tools/calibration/math-1",
+        "newPageErrors": []
+      },
+      {
+        "route": "/profile",
+        "hasError": false,
+        "title": "ESAT CAMP | ESAT & TMUA Preparation",
+        "url": "https://esatcamp.com/profile",
+        "newPageErrors": []
+      },
+      {
+        "route": "/",
+        "hasError": false,
+        "title": "ESAT CAMP - ESAT Question Bank, Past Papers & Practice",
+        "url": "https://esatcamp.com/",
+        "newPageErrors": [
+          "/esatcamp.com/api/subscription/status due to access control checks.",
+          "/esatcamp.com/api/subscription/status due to access control checks.",
+          "/esatcamp.com/dashboard?_rsc=1h5b3 due to access control checks.",
+          "/esatcamp.com/mental-maths/drill?_rsc=1h5b3 due to access control checks.",
+          "/esatcamp.com/mental-maths/analytics?_rsc=1h5b3 due to access control checks.",
+          "/esatcamp.com/mental-maths/leaderboard?_rsc=1h5b3 due to access control checks.",
+          "/esatcamp.com/mental-maths/fermiguessr?_rsc=1h5b3 due to access control checks.",
+          "/esatcamp.com/api/subscription/status due to access control checks."
+        ]
+      }
+    ],
+    "clientNav": [
+      {
+        "href": "/mental-maths/drill",
+        "clicked": false,
+        "url": "https://esatcamp.com/mental-maths/drill",
+        "hasError": false,
+        "newPageErrors": []
+      },
+      {
+        "href": "/past-papers/roadmap",
+        "clicked": true,
+        "url": "https://esatcamp.com/mental-maths/drill",
+        "hasError": false,
+        "newPageErrors": []
+      },
+      {
+        "href": "/questions",
+        "clicked": false,
+        "url": "https://esatcamp.com/questions",
+        "hasError": false,
+        "newPageErrors": []
+      },
+      {
+        "href": "/exam-tools/calibration/math-1",
+        "clicked": true,
+        "url": "https://esatcamp.com/questions",
+        "hasError": false,
+        "newPageErrors": []
+      }
+    ],
+    "pageErrors": [
+      {
+        "message": "/esatcamp.com/past-papers/roadmap?_rsc=qcggt due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/past-papers/roadmap?_rsc=qcggt due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/past-papers/library?_rsc=qcggt due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/past-papers/library?_rsc=qcggt due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/esat-past-papers?_rsc=qcggt due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/esat-past-papers?_rsc=qcggt due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/past-papers/analytics?_rsc=qcggt due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/past-papers/analytics?_rsc=qcggt due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/api/subscription/status due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/api/subscription/status due to access control checks.\n    at unknown (https://esatcamp.com/_next/static/chunks/2023-c6c60d2be15129d7.js:1:6441)\n    at unknown (https://esatcamp.com/_next/static/chunks/2023-c6c60d2be15129d7.js:1:7279)\n    at aW (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:73245)\n    at oe (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:84687)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85829)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86139)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85346)\n    at id (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:108719)\n    at o (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:104921)\n    at T (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:83921)"
+      },
+      {
+        "message": "/esatcamp.com/questions?_rsc=qcggt due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/questions?_rsc=qcggt due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/questions/questionbank/analytics?_rsc=qcggt due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/questions/questionbank/analytics?_rsc=qcggt due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/exam-tools/calibration/math-1?_rsc=qcggt due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/exam-tools/calibration/math-1?_rsc=qcggt due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/tools/score-converter?_rsc=qcggt due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/tools/score-converter?_rsc=qcggt due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/tools/faqs?_rsc=qcggt due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/tools/faqs?_rsc=qcggt due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/tools/tutorials?_rsc=qcggt due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/tools/tutorials?_rsc=qcggt due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/api/subscription/status due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/api/subscription/status due to access control checks.\n    at unknown (https://esatcamp.com/_next/static/chunks/2023-c6c60d2be15129d7.js:1:6441)\n    at unknown (https://esatcamp.com/_next/static/chunks/2023-c6c60d2be15129d7.js:1:7279)\n    at aW (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:73245)\n    at oe (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:84687)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85325)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85346)\n    at id (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:108719)\n    at o (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:104921)\n    at T (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:83921)"
+      },
+      {
+        "message": "/esatcamp.com/api/subscription/status due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/api/subscription/status due to access control checks.\n    at unknown (https://esatcamp.com/_next/static/chunks/2023-c6c60d2be15129d7.js:1:6441)\n    at unknown (https://esatcamp.com/_next/static/chunks/2023-c6c60d2be15129d7.js:1:7279)\n    at aW (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:73245)\n    at oe (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:84687)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85325)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85346)\n    at id (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:108719)\n    at o (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:104921)\n    at T (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:83921)"
+      },
+      {
+        "message": "/esatcamp.com/api/subscription/status due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/api/subscription/status due to access control checks.\n    at unknown (https://esatcamp.com/_next/static/chunks/2023-c6c60d2be15129d7.js:1:6441)\n    at unknown (https://esatcamp.com/_next/static/chunks/2023-c6c60d2be15129d7.js:1:7279)\n    at aW (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:73245)\n    at oe (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:84687)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85325)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85346)\n    at id (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:108719)\n    at o (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:104921)\n    at T (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:83921)"
+      },
+      {
+        "message": "/esatcamp.com/api/subscription/status due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/api/subscription/status due to access control checks.\n    at unknown (https://esatcamp.com/_next/static/chunks/2023-c6c60d2be15129d7.js:1:6441)\n    at unknown (https://esatcamp.com/_next/static/chunks/2023-c6c60d2be15129d7.js:1:7279)\n    at aW (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:73245)\n    at oe (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:84687)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85325)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85346)\n    at id (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:108719)\n    at o (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:104921)\n    at T (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:83921)"
+      },
+      {
+        "message": "/esatcamp.com/dashboard?_rsc=1h5b3 due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/dashboard?_rsc=1h5b3 due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at enqueue (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31871)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58859)\n    at a (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:65212)\n    at action (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:7102)\n    at c (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:6133)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:6737)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:79952)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:12357)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:29632)\n    at prefetch (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:12344)"
+      },
+      {
+        "message": "/esatcamp.com/mental-maths/drill?_rsc=1h5b3 due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/mental-maths/drill?_rsc=1h5b3 due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at enqueue (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31871)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58859)\n    at a (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:65212)\n    at action (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:7102)\n    at c (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:6133)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:6737)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:79952)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:12357)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:29632)\n    at prefetch (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:12344)"
+      },
+      {
+        "message": "/esatcamp.com/mental-maths/analytics?_rsc=1h5b3 due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/mental-maths/analytics?_rsc=1h5b3 due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at enqueue (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31871)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58859)\n    at a (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:65212)\n    at action (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:7102)\n    at c (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:6133)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:6737)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:79952)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:12357)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:29632)\n    at prefetch (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:12344)"
+      },
+      {
+        "message": "/esatcamp.com/mental-maths/leaderboard?_rsc=1h5b3 due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/mental-maths/leaderboard?_rsc=1h5b3 due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at enqueue (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31871)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58859)\n    at a (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:65212)\n    at action (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:7102)\n    at c (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:6133)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:6737)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:79952)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:12357)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:29632)\n    at prefetch (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:12344)"
+      },
+      {
+        "message": "/esatcamp.com/mental-maths/fermiguessr?_rsc=1h5b3 due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/mental-maths/fermiguessr?_rsc=1h5b3 due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at enqueue (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31871)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58859)\n    at a (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:65212)\n    at action (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:7102)\n    at c (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:6133)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:6737)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:79952)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:12357)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:29632)\n    at prefetch (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:12344)"
+      },
+      {
+        "message": "/esatcamp.com/api/subscription/status due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/api/subscription/status due to access control checks.\n    at unknown (https://esatcamp.com/_next/static/chunks/2023-c6c60d2be15129d7.js:1:6441)\n    at unknown (https://esatcamp.com/_next/static/chunks/2023-c6c60d2be15129d7.js:1:7279)\n    at aW (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:73245)\n    at oe (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:84687)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85829)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86114)\n    at e (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85815)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86139)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85305)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:86270)\n    at or (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85209)\n    at ol (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:85346)\n    at id (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:108719)\n    at unknown (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:108218)\n    at is (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:108308)\n    at nb (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:26966)\n    at nw (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:27576)\n    at unknown (https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js:1:28609)"
+      },
+      {
+        "message": "/esatcamp.com/past-papers/roadmap?_rsc=1iwkq due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/past-papers/roadmap?_rsc=1iwkq due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/past-papers/library?_rsc=1iwkq due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/past-papers/library?_rsc=1iwkq due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/esat-past-papers?_rsc=1iwkq due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/esat-past-papers?_rsc=1iwkq due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/past-papers/analytics?_rsc=1iwkq due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/past-papers/analytics?_rsc=1iwkq due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      }
+    ],
+    "failedSample": [
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/app/mental-maths/analytics/page-e4413dee7566d38e.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/app/past-papers/mark/page-2fb90653e0715718.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/4350-112a409ed71c2fd5.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/3513-94584970e3927959.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/4507-22895fc1b59c2924.js",
+        "err": "Load request cancelled"
+      }
+    ],
+    "goTrue": [
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:21:23.967Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:21:27.992Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:21:31.316Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:21:34.110Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:21:37.101Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:21:39.509Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:21:42.859Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:21:46.610Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      }
+    ],
+    "chunkRelated": [
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/mental-maths/analytics. Falling back to browser navigation. ChunkLoadError: Loading chunk 5453 failed.\n(error: https://esatcamp.com/_next/static/chunks/app/mental-maths/analytics/page-e4413dee7566d38e.js)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/mental-maths/leaderboard. Falling back to browser navigation. ChunkLoadError: Loading chunk 4937 failed.\n(error: https://esatcamp.com/_next/static/chunks/app/mental-maths/leaderboard/page-7244f5e1ee590f7a.js)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/past-papers/mark. Falling back to browser navigation. ChunkLoadError: Loading chunk 957 failed.\n(error: https://esatcamp.com/_next/static/chunks/app/past-papers/mark/page-2fb90653e0715718.js)"
+      }
+    ],
+    "swRelatedConsole": [],
+    "consoleErrors": [
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/mental-maths/analytics. Falling back to browser navigation. ChunkLoadError: Loading chunk 5453 failed.\n(error: https://esatcamp.com/_next/static/chunks/app/mental-maths/analytics/page-e4413dee7566d38e.js)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/past-papers/roadmap. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/mental-maths/leaderboard. Falling back to browser navigation. ChunkLoadError: Loading chunk 4937 failed.\n(error: https://esatcamp.com/_next/static/chunks/app/mental-maths/leaderboard/page-7244f5e1ee590f7a.js)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/past-papers/library. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/esat-past-papers. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/past-papers/analytics. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/questions. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/mental-maths/analytics. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/mental-maths/fermiguessr. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/mental-maths/leaderboard. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/dashboard. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/mental-maths/drill. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/past-papers/roadmap. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/past-papers/library. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/esat-past-papers. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/past-papers/analytics. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/questions. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/questions/questionbank/analytics. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/exam-tools/calibration/math-1. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/tools/score-converter. Falling back to browser navigation. TypeError: Load failed"
+      }
+    ]
+  },
+  {
+    "label": "webkit-iphone-fresh",
+    "swInfo": {
+      "supported": true,
+      "controller": null,
+      "regs": [],
+      "caches": [],
+      "cachePoison": null,
+      "cachePoisonError": null,
+      "existingRegs": null
+    },
+    "navResults": [
+      {
+        "route": "/mental-maths/drill",
+        "hasError": false,
+        "title": "ESAT CAMP | ESAT & TMUA Preparation",
+        "url": "https://esatcamp.com/mental-maths/drill",
+        "newPageErrors": [
+          "/esatcamp.com/about?_rsc=jge8v due to access control checks.",
+          "/esatcamp.com/help?_rsc=jge8v due to access control checks.",
+          "/esatcamp.com/help?topic=bug&_rsc=jge8v due to access control checks."
+        ]
+      },
+      {
+        "route": "/past-papers/roadmap",
+        "hasError": false,
+        "title": "ESAT CAMP | ESAT & TMUA Preparation",
+        "url": "https://esatcamp.com/past-papers/roadmap",
+        "newPageErrors": []
+      },
+      {
+        "route": "/questions",
+        "hasError": false,
+        "title": "ESAT CAMP | ESAT & TMUA Preparation",
+        "url": "https://esatcamp.com/questions",
+        "newPageErrors": [
+          "/esatcamp.com/?_rsc=1rspn due to access control checks.",
+          "/esatcamp.com/questions/questionbank?_rsc=1rspn due to access control checks."
+        ]
+      },
+      {
+        "route": "/exam-tools/calibration/math-1",
+        "hasError": false,
+        "title": "ESAT Calibration Test 2026/27 | Find Your Weak Spots",
+        "url": "https://esatcamp.com/exam-tools/calibration/math-1",
+        "newPageErrors": [
+          "/esatcamp.com/questions?_rsc=sphek due to access control checks.",
+          "/esatcamp.com/questions/questionbank/analytics?_rsc=sphek due to access control checks.",
+          "/esatcamp.com/exam-tools/calibration/math-1?_rsc=sphek due to access control checks.",
+          "/esatcamp.com/tools/score-converter?_rsc=sphek due to access control checks.",
+          "/esatcamp.com/tools/faqs?_rsc=sphek due to access control checks.",
+          "/esatcamp.com/tools/tutorials?_rsc=sphek due to access control checks.",
+          "/esatcamp.com/?_rsc=81rbi due to access control checks.",
+          "/esatcamp.com/login?mode=signup&redirectTo=%2Fquestions&_rsc=81rbi due to access control checks."
+        ]
+      },
+      {
+        "route": "/profile",
+        "hasError": false,
+        "title": "ESAT CAMP | ESAT & TMUA Preparation",
+        "url": "https://esatcamp.com/profile",
+        "newPageErrors": []
+      },
+      {
+        "route": "/",
+        "hasError": false,
+        "title": "ESAT CAMP - ESAT Question Bank, Past Papers & Practice",
+        "url": "https://esatcamp.com/",
+        "newPageErrors": []
+      }
+    ],
+    "clientNav": [
+      {
+        "href": "/mental-maths/drill",
+        "clicked": false,
+        "url": "https://esatcamp.com/mental-maths/drill",
+        "hasError": false,
+        "newPageErrors": [
+          "/esatcamp.com/login?mode=signup&redirectTo=%2Fpast-papers%2Flibrary&_rsc=1wtp7 due to access control checks.",
+          "/esatcamp.com/login?redirectTo=%2Fsettings&_rsc=1wtp7 due to access control checks.",
+          "/esatcamp.com/cookie-policy?_rsc=1wtp7 due to access control checks.",
+          "/esatcamp.com/login?_rsc=1wtp7 due to access control checks.",
+          "/esatcamp.com/about?_rsc=1wtp7 due to access control checks."
+        ]
+      },
+      {
+        "href": "/past-papers/roadmap",
+        "clicked": false,
+        "url": "https://esatcamp.com/past-papers/roadmap",
+        "hasError": false,
+        "newPageErrors": []
+      },
+      {
+        "href": "/questions",
+        "clicked": false,
+        "url": "https://esatcamp.com/questions",
+        "hasError": false,
+        "newPageErrors": [
+          "/esatcamp.com/exam-tools/calibration/math-1?_rsc=1rspn due to access control checks.",
+          "/esatcamp.com/tools/score-converter?_rsc=1rspn due to access control checks.",
+          "/esatcamp.com/tools/faqs?_rsc=1rspn due to access control checks.",
+          "/esatcamp.com/tools/tutorials?_rsc=1rspn due to access control checks.",
+          "/esatcamp.com/?_rsc=1dyf0 due to access control checks.",
+          "/esatcamp.com/login?mode=signup&redirectTo=%2Fpast-papers%2Froadmap&_rsc=1dyf0 due to access control checks."
+        ]
+      },
+      {
+        "href": "/exam-tools/calibration/math-1",
+        "clicked": false,
+        "url": "https://esatcamp.com/exam-tools/calibration/math-1",
+        "hasError": false,
+        "newPageErrors": []
+      }
+    ],
+    "pageErrors": [
+      {
+        "message": "/esatcamp.com/about?_rsc=jge8v due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/about?_rsc=jge8v due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/help?_rsc=jge8v due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/help?_rsc=jge8v due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/help?topic=bug&_rsc=jge8v due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/help?topic=bug&_rsc=jge8v due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/?_rsc=1rspn due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/?_rsc=1rspn due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at enqueue (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31871)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58859)\n    at a (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:65212)\n    at action (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:7102)\n    at c (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:6133)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:6737)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:79952)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:12357)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:29632)\n    at prefetch (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:12344)\n    at unknown (https://esatcamp.com/_next/static/chunks/app/layout-28377e4290cedb68.js:1:45722)"
+      },
+      {
+        "message": "/esatcamp.com/questions/questionbank?_rsc=1rspn due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/questions/questionbank?_rsc=1rspn due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at enqueue (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31871)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58859)\n    at a (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:65212)\n    at action (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:7102)\n    at c (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:6133)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:6737)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:79952)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:12357)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:29632)\n    at prefetch (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:12344)\n    at unknown (https://esatcamp.com/_next/static/chunks/app/layout-28377e4290cedb68.js:1:45722)"
+      },
+      {
+        "message": "/esatcamp.com/questions?_rsc=sphek due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/questions?_rsc=sphek due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/questions/questionbank/analytics?_rsc=sphek due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/questions/questionbank/analytics?_rsc=sphek due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/exam-tools/calibration/math-1?_rsc=sphek due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/exam-tools/calibration/math-1?_rsc=sphek due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/tools/score-converter?_rsc=sphek due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/tools/score-converter?_rsc=sphek due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/tools/faqs?_rsc=sphek due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/tools/faqs?_rsc=sphek due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/tools/tutorials?_rsc=sphek due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/tools/tutorials?_rsc=sphek due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/?_rsc=81rbi due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/?_rsc=81rbi due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/login?mode=signup&redirectTo=%2Fquestions&_rsc=81rbi due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/login?mode=signup&redirectTo=%2Fquestions&_rsc=81rbi due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/login?mode=signup&redirectTo=%2Fpast-papers%2Flibrary&_rsc=1wtp7 due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/login?mode=signup&redirectTo=%2Fpast-papers%2Flibrary&_rsc=1wtp7 due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/login?redirectTo=%2Fsettings&_rsc=1wtp7 due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/login?redirectTo=%2Fsettings&_rsc=1wtp7 due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/cookie-policy?_rsc=1wtp7 due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/cookie-policy?_rsc=1wtp7 due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/login?_rsc=1wtp7 due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/login?_rsc=1wtp7 due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/about?_rsc=1wtp7 due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/about?_rsc=1wtp7 due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/exam-tools/calibration/math-1?_rsc=1rspn due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/exam-tools/calibration/math-1?_rsc=1rspn due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/tools/score-converter?_rsc=1rspn due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/tools/score-converter?_rsc=1rspn due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/tools/faqs?_rsc=1rspn due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/tools/faqs?_rsc=1rspn due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/tools/tutorials?_rsc=1rspn due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/tools/tutorials?_rsc=1rspn due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/?_rsc=1dyf0 due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/?_rsc=1dyf0 due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/login?mode=signup&redirectTo=%2Fpast-papers%2Froadmap&_rsc=1dyf0 due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/login?mode=signup&redirectTo=%2Fpast-papers%2Froadmap&_rsc=1dyf0 due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      }
+    ],
+    "failedSample": [
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/8442-f5c9d81962a31d9b.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/1139-ae6d4b24d977f685.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/app/tools/faqs/page-9254f11f2f384bc5.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/app/tools/score-converter/page-200ad694e7c96ebd.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/8891-673f5d5a4e5faabe.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/6974-76c5626067411246.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/4874-66fbb7e75f901f8b.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/app/help/page-5ec6bf6f0d861ff7.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/app/about/page-5be670b8598ee172.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/sw.js?build=1789039339257",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/app/mental-maths/fermiguessr/page-abad470241ca64fb.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/6236-d773f94f9da8e69c.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/1139-ae6d4b24d977f685.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/8891-673f5d5a4e5faabe.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/4874-66fbb7e75f901f8b.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/8442-f5c9d81962a31d9b.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/app/tools/score-converter/page-200ad694e7c96ebd.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/app/cookie-policy/page-7f0647335276ebda.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/app/help/page-5ec6bf6f0d861ff7.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/app/about/page-5be670b8598ee172.js",
+        "err": "Load request cancelled"
+      }
+    ],
+    "goTrue": [
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:22:12.019Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:22:14.725Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:22:17.010Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:22:20.963Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:22:23.768Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:22:25.997Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:22:29.877Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:22:33.174Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      }
+    ],
+    "chunkRelated": [
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/help. Falling back to browser navigation. ChunkLoadError: Loading chunk 3569 failed.\n(error: https://esatcamp.com/_next/static/chunks/app/help/page-5ec6bf6f0d861ff7.js)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/past-papers/roadmap. Falling back to browser navigation. ChunkLoadError: Loading chunk 1550 failed.\n(error: https://esatcamp.com/_next/static/chunks/1550-476bb208679a9d4e.js)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/help. Falling back to browser navigation. ChunkLoadError: Loading chunk 3569 failed.\n(error: https://esatcamp.com/_next/static/chunks/app/help/page-5ec6bf6f0d861ff7.js)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/past-papers/analytics. Falling back to browser navigation. ChunkLoadError: Loading chunk 2997 failed.\n(error: https://esatcamp.com/_next/static/chunks/2997-78af542d61beb3d5.js)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/questions/questionbank/analytics. Falling back to browser navigation. ChunkLoadError: Loading chunk 2997 failed.\n(error: https://esatcamp.com/_next/static/chunks/2997-78af542d61beb3d5.js)"
+      }
+    ],
+    "swRelatedConsole": [],
+    "consoleErrors": [
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/login?redirectTo=%2Fsettings. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/login?mode=signup&redirectTo=%2Fmental-maths%2Fdrill. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/tools/tutorials. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/cookie-policy. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/about. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/help. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/help?topic=bug. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/help?topic=bug. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/help. Falling back to browser navigation. ChunkLoadError: Loading chunk 3569 failed.\n(error: https://esatcamp.com/_next/static/chunks/app/help/page-5ec6bf6f0d861ff7.js)"
+      },
+      {
+        "type": "error",
+        "text": "ReferenceError: Can't find variable: requestIdleCallback"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/questions/questionbank. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/past-papers/analytics. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/past-papers/library. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/esat-past-papers. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/past-papers/roadmap. Falling back to browser navigation. ChunkLoadError: Loading chunk 1550 failed.\n(error: https://esatcamp.com/_next/static/chunks/1550-476bb208679a9d4e.js)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/questions. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/questions/questionbank/analytics. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/exam-tools/calibration/math-1. Falling back to browser navigation. TypeError: Load failed"
+      }
+    ]
+  },
+  {
+    "label": "webkit-desktop-cache-poison",
+    "swInfo": {
+      "supported": true,
+      "controller": null,
+      "regs": [
+        {
+          "scope": "https://esatcamp.com/"
+        }
+      ],
+      "caches": [
+        "esat-stale-v1"
+      ],
+      "cachePoison": [
+        "https://esatcamp.com/_next/static/chunks/fd9d1056-434f54d369ac66db.js",
+        "https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js",
+        "https://esatcamp.com/_next/static/chunks/main-app-b8d8f654a4c3de8b.js",
+        "https://esatcamp.com/_next/static/chunks/231-0b7fa58f4b2ce1a2.js",
+        "https://esatcamp.com/_next/static/chunks/7327-4bbe68ea0cdd99b3.js"
+      ],
+      "cachePoisonError": null,
+      "existingRegs": [
+        "https://esatcamp.com/"
+      ]
+    },
+    "navResults": [
+      {
+        "route": "/mental-maths/drill",
+        "hasError": false,
+        "title": "ESAT CAMP | ESAT & TMUA Preparation",
+        "url": "https://esatcamp.com/mental-maths/drill",
+        "newPageErrors": []
+      },
+      {
+        "route": "/past-papers/roadmap",
+        "hasError": false,
+        "title": "ESAT CAMP | ESAT & TMUA Preparation",
+        "url": "https://esatcamp.com/past-papers/roadmap",
+        "newPageErrors": []
+      },
+      {
+        "route": "/questions",
+        "hasError": false,
+        "title": "ESAT CAMP | ESAT & TMUA Preparation",
+        "url": "https://esatcamp.com/questions",
+        "newPageErrors": []
+      },
+      {
+        "route": "/exam-tools/calibration/math-1",
+        "hasError": false,
+        "title": "ESAT Calibration Test 2026/27 | Find Your Weak Spots",
+        "url": "https://esatcamp.com/exam-tools/calibration/math-1",
+        "newPageErrors": []
+      },
+      {
+        "route": "/profile",
+        "hasError": false,
+        "title": "ESAT CAMP | ESAT & TMUA Preparation",
+        "url": "https://esatcamp.com/profile",
+        "newPageErrors": []
+      },
+      {
+        "route": "/",
+        "hasError": false,
+        "title": "ESAT CAMP - ESAT Question Bank, Past Papers & Practice",
+        "url": "https://esatcamp.com/",
+        "newPageErrors": []
+      }
+    ],
+    "clientNav": [
+      {
+        "href": "/mental-maths/drill",
+        "clicked": false,
+        "url": "https://esatcamp.com/mental-maths/drill",
+        "hasError": false,
+        "newPageErrors": []
+      },
+      {
+        "href": "/past-papers/roadmap",
+        "clicked": false,
+        "url": "https://esatcamp.com/past-papers/roadmap",
+        "hasError": false,
+        "newPageErrors": [
+          "/esatcamp.com/past-papers/mark?_rsc=qcggt due to access control checks."
+        ]
+      },
+      {
+        "href": "/questions",
+        "clicked": false,
+        "url": "https://esatcamp.com/questions",
+        "hasError": true,
+        "newPageErrors": []
+      },
+      {
+        "href": "/exam-tools/calibration/math-1",
+        "clicked": false,
+        "url": "https://esatcamp.com/exam-tools/calibration/math-1",
+        "hasError": true,
+        "newPageErrors": []
+      }
+    ],
+    "pageErrors": [
+      {
+        "message": "/esatcamp.com/past-papers/roadmap?_rsc=1iwkq due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/past-papers/roadmap?_rsc=1iwkq due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/past-papers/library?_rsc=1iwkq due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/past-papers/library?_rsc=1iwkq due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/esat-past-papers?_rsc=1iwkq due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/esat-past-papers?_rsc=1iwkq due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/past-papers/analytics?_rsc=1iwkq due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/past-papers/analytics?_rsc=1iwkq due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/questions?_rsc=1iwkq due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/questions?_rsc=1iwkq due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/questions/questionbank/analytics?_rsc=1iwkq due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/questions/questionbank/analytics?_rsc=1iwkq due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/exam-tools/calibration/math-1?_rsc=1iwkq due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/exam-tools/calibration/math-1?_rsc=1iwkq due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/tools/score-converter?_rsc=1iwkq due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/tools/score-converter?_rsc=1iwkq due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/tools/faqs?_rsc=1iwkq due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/tools/faqs?_rsc=1iwkq due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/tools/tutorials?_rsc=1iwkq due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/tools/tutorials?_rsc=1iwkq due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31803)"
+      },
+      {
+        "message": "/esatcamp.com/past-papers/mark?_rsc=qcggt due to access control checks.",
+        "stack": "Fetch API cannot load https://esatcamp.com/past-papers/mark?_rsc=qcggt due to access control checks.\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:45345)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58889)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31742)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:32450)\n    at enqueue (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:31871)\n    at s (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:58859)\n    at a (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:65212)\n    at action (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:7102)\n    at c (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:6133)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:6737)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:79952)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:12357)\n    at unknown (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:2:29632)\n    at prefetch (https://esatcamp.com/_next/static/chunks/7023-743f2b3c3d877396.js:1:12344)\n    at unknown (https://esatcamp.com/_next/static/chunks/app/layout-28377e4290cedb68.js:1:46311)\n    at map (:1:11)\n    at unknown (https://esatcamp.com/_next/static/chunks/app/layout-28377e4290cedb68.js:1:46500)\n    at unknown (https://esatcamp.com/_next/static/chunks/app/layout-28377e4290cedb68.js:1:46722)"
+      }
+    ],
+    "failedSample": [
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/app/questions/questionbank/page-de47596cf2a7aabc.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/3098-afc7f05339928f27.js",
+        "err": "Load request cancelled"
+      },
+      {
+        "url": "https://esatcamp.com/_next/static/chunks/1581-5f2c17e615caeb7e.js",
+        "err": "Load request cancelled"
+      }
+    ],
+    "goTrue": [
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:23:06.082Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:23:11.825Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:23:14.496Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:23:17.590Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:23:19.887Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:23:22.162Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:23:25.767Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      },
+      {
+        "type": "warning",
+        "text": "GoTrueClient@sb-bcbttpsokwoapjypwwwq-auth-token:1 (2.88.0) 2026-09-10T11:23:28.805Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."
+      }
+    ],
+    "chunkRelated": [
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/questions/questionbank. Falling back to browser navigation. ChunkLoadError: Loading chunk 2875 failed.\n(error: https://esatcamp.com/_next/static/chunks/app/questions/questionbank/page-de47596cf2a7aabc.js)"
+      }
+    ],
+    "swRelatedConsole": [],
+    "consoleErrors": [
+      {
+        "type": "error",
+        "text": "ReferenceError: Can't find variable: requestIdleCallback"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 ()"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/questions/questionbank. Falling back to browser navigation. ChunkLoadError: Loading chunk 2875 failed.\n(error: https://esatcamp.com/_next/static/chunks/app/questions/questionbank/page-de47596cf2a7aabc.js)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/mental-maths/fermiguessr. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/dashboard. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/mental-maths/drill. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/mental-maths/leaderboard. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/mental-maths/analytics. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/past-papers/roadmap. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/past-papers/library. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/esat-past-papers. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/past-papers/analytics. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/questions. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 ()"
+      },
+      {
+        "type": "error",
+        "text": "ReferenceError: Can't find variable: requestIdleCallback"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 ()"
+      },
+      {
+        "type": "error",
+        "text": "Failed to fetch RSC payload for https://esatcamp.com/past-papers/mark. Falling back to browser navigation. TypeError: Load failed"
+      },
+      {
+        "type": "error",
+        "text": "ReferenceError: Can't find variable: requestIdleCallback"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 ()"
+      },
+      {
+        "type": "error",
+        "text": "ReferenceError: Can't find variable: requestIdleCallback"
+      }
+    ]
+  }
+]

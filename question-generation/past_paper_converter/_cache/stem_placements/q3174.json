@@ -1,0 +1,42 @@
+{
+  "questionId": 3174,
+  "examName": "ENGAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 5,
+  "stemBlocks": [
+    "Three light springs, P, Q and R, are identical.",
+    "Springs P and Q are connected in series as shown. A downwards force $T$ is applied to the lower end.",
+    "Spring R is cut into four equal lengths, and the four pieces arranged symmetrically as shown. The two connecting bars have negligible mass. A downwards force $F$ is applied to the centre of the lower bar.",
+    "The total extensions of the two systems are equal. The springs obey Hooke's law.",
+    "Which expression gives $T$ in terms of $F$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    },
+    {
+      "id": "d2",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    },
+    {
+      "assetId": "d2",
+      "insertAfterBlock": 3,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T17:16:50.260773+00:00",
+  "sourceImageHash": "d607551b6c1cc53adcfa27c4e315cc8e0feeeb69280db0485191e57c0f29797f",
+  "status": "ok"
+}

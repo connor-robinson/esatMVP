@@ -86,6 +86,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json().catch(() => ({}));
     const planType = (body.planType ?? "monthly") as PlanType;
+    const isExpressDeal = Boolean(body.isExpressDeal);
     const referralCodeRaw =
       typeof body.referralCode === "string" ? body.referralCode : null;
 
@@ -117,9 +118,11 @@ export async function POST(request: NextRequest) {
     // Only reuse a stored Customer. Do not create one until Checkout completes.
     const existingCustomerId = await getStoredStripeCustomerId(user.id);
 
-    // Coupon and free trial are mutually exclusive: any applied discount means
-    // charge immediately.
+    // Express Deal: £9.49 instant buy (no trial)
+    // Regular Monthly: £14.99 with trial (if eligible, no referral code)
+    // Coupon and free trial are mutually exclusive: any applied discount means charge immediately.
     const offerTrial =
+      !isExpressDeal &&
       !referralDiscount &&
       planType === "monthly" &&
       (await isEligibleForTrial(user.id, existingCustomerId));
@@ -149,6 +152,7 @@ export async function POST(request: NextRequest) {
         userId: user.id,
         user_id: user.id,
         planType,
+        isExpressDeal: isExpressDeal ? "true" : "false",
         ...(referralDiscount
           ? { referralCode: referralDiscount.code }
           : {}),
@@ -190,10 +194,36 @@ export async function POST(request: NextRequest) {
     }
 
     const stripe = getStripe();
-    let priceId =
-      planType === "monthly"
-        ? await resolveMonthlyStripePrice(stripe)
-        : getPriceIdForPlan(planType);
+    
+    // Express Deal uses a custom price of £9.49 instead of the standard monthly price
+    let priceId: string | null = null;
+    if (planType === "monthly" && isExpressDeal) {
+      // Create a custom price for Express Deal at £9.49
+      const existingPrices = await stripe.prices.search({
+        query: `product:"${process.env.STRIPE_MONTHLY_PRODUCT_ID ?? ""}" AND metadata["express_deal"]:"true"`,
+        limit: 1,
+      });
+      
+      if (existingPrices.data.length > 0) {
+        priceId = existingPrices.data[0].id;
+      } else {
+        // Create new Express Deal price
+        const newPrice = await stripe.prices.create({
+          currency: "gbp",
+          unit_amount: 949, // £9.49
+          recurring: { interval: "month" },
+          product: process.env.STRIPE_MONTHLY_PRODUCT_ID ?? "",
+          metadata: { express_deal: "true" },
+        });
+        priceId = newPrice.id;
+      }
+    } else {
+      priceId =
+        planType === "monthly"
+          ? await resolveMonthlyStripePrice(stripe)
+          : getPriceIdForPlan(planType);
+    }
+    
     if (!priceId) {
       return NextResponse.json(
         { error: "Price not configured for this plan" },

@@ -1,0 +1,29 @@
+{
+  "questionId": 2848,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 29,
+  "stemBlocks": [
+    "The diagram shows a circuit that includes two ammeters and a resistor R. The readings on the ammeters are shown.",
+    "What is the resistance of resistor R?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.363277+00:00",
+  "sourceImageHash": "63c76135498d47d0edb7731e37f1d887ee33c4eb5b993c0aec5cdbcda7498c45",
+  "status": "ok"
+}

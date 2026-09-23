@@ -1,0 +1,39 @@
+{
+  "stage": "idea_judge",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "selectivity_score": 0,
+    "checks": {
+      "schema_preserved": "pass",
+      "on_spec": "pass",
+      "reasoning_hinge_present": "pass",
+      "not_direct_substitution": "pass",
+      "wrong_paths_specific": "pass",
+      "visual_feasible": "pass",
+      "mcq_viable": "pass",
+      "difficulty_match": "pass",
+      "goldilocks_complexity": "pass"
+    },
+    "complexity_audit": {
+      "number_of_core_physics_principles": 2,
+      "estimated_solution_steps": 3,
+      "requires_derived_relationship": false,
+      "uses_multi_topic_chain": false,
+      "goldilocks_verdict": "good"
+    },
+    "reasoning_hinge_summary": "The candidate must recognize that the ratio of specific heat capacities is proportional to the ratio of heating times (given constant power and mass), then apply this ratio as a weighting factor in the thermal equilibrium equation.",
+    "expected_mid_student_error": "Assuming equal specific heat capacities and calculating the simple arithmetic mean of the initial temperatures.",
+    "notes": [
+      "The logic is sound and fits the ESAT difficulty profile perfectly.",
+      "The two-stage process (ratio extraction followed by equilibrium calculation) is a classic 'Hard' level move that avoids complex multi-law chains."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

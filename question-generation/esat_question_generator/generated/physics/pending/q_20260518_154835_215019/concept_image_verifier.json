@@ -1,0 +1,61 @@
+{
+  "stage": "concept_image_verifier",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "checks": {
+      "exam_style_match": "pass",
+      "serif_font_match": "pass",
+      "math_label_quality": "pass",
+      "no_overlap": "pass",
+      "label_accuracy": "pass",
+      "no_extra_labels": "pass",
+      "monochrome_style": "pass",
+      "layout_cleanliness": "pass",
+      "illustrative_only_safety": "pass",
+      "professionalism": "pass",
+      "object_relation_accuracy": "pass",
+      "measurement_anchor_clarity": "pass",
+      "relative_magnitude_plausibility": "pass",
+      "simplification_level": "pass",
+      "visual_simplicity": "pass",
+      "no_unrequested_arrows": "pass",
+      "no_unrequested_field_patterns": "pass",
+      "main_setup_clarity": "pass",
+      "no_mixed_representations": "pass",
+      "pure_white_background": "pass",
+      "label_target_accuracy": "pass",
+      "medium_label_anchor_rule": "pass",
+      "label_ambiguity": "pass"
+    },
+    "label_audit": [
+      {
+        "text": "X",
+        "intended_type": "object",
+        "observed_target": "left circle",
+        "correct": true,
+        "issue": ""
+      },
+      {
+        "text": "Y",
+        "intended_type": "object",
+        "observed_target": "right circle",
+        "correct": true,
+        "issue": ""
+      }
+    ],
+    "reasons": [
+      "The image adheres to all constraints: simple, monochrome, serif font, pure white background, and no extra labels or symbols.",
+      "The diagram is purely illustrative and does not provide numerical information that would bypass the physics calculation."
+    ],
+    "regen_feedback": "",
+    "delete_reason": ""
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

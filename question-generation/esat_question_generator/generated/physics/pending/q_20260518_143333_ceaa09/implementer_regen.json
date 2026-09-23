@@ -1,0 +1,69 @@
+{
+  "stage": "implementer_regen",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_a9a3eea7",
+      "module": "physics",
+      "variation_mode": "FAR",
+      "target_difficulty": "Medium",
+      "task_signature": "compare_scenarios",
+      "primary_tag": "2",
+      "secondary_tags": [
+        "1"
+      ]
+    },
+    "question": {
+      "stem": "A small submersible in the ocean descends at a constant terminal speed. Its weight is $W$ and the upthrust on it is $U$.\n\nThe submersible's engines are then switched on, providing a constant vertical upward thrust $T$. The submersible now ascends at the same terminal speed.\n\nWhich expression gives the required thrust $T$?",
+      "options": {
+        "A": "$T = W - U$",
+        "B": "$T = 2W - U$",
+        "C": "$T = 2W$",
+        "D": "$T = 2(W - U)$",
+        "E": "$T = 2W + U$",
+        "F": "$T = 2(W + U)$"
+      },
+      "correct_option": "D"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "The drag force has the same magnitude in both cases because the terminal speed is the same, but it always acts in the opposite direction to the motion.",
+      "reasoning": "When descending at terminal speed, the forces are balanced. Weight acts downwards, while upthrust and drag act upwards. Therefore, $W = U + D$, which gives $D = W - U$.\n\nWhen ascending at the same terminal speed, the forces are again balanced. The upward thrust and upthrust act upwards, while weight and drag act downwards. Therefore, $T + U = W + D$.\n\nSubstitute the expression for $D$ into the ascending equation:\n$T + U = W + (W - U)$\n$T + U = 2W - U$\n$T = 2W - 2U$\n$T = 2(W - U)$"
+    },
+    "distractor_map": {
+      "A": "Ignores drag entirely when ascending, assuming the forces balance as $T + U = W$.",
+      "B": "Includes upthrust when descending ($D = W - U$) but forgets it when ascending ($T = W + D$), yielding $T = 2W - U$.",
+      "C": "Ignores upthrust entirely in both cases. Descending gives $W = D$, ascending gives $T = W + D$, yielding $T = 2W$.",
+      "D": "Correct. Sets up $W = U + D$ for descending and $T + U = W + D$ for ascending, then eliminates $D$.",
+      "E": "Ignores upthrust when descending ($D = W$) but incorrectly assumes upthrust acts downwards when ascending ($T = W + U + D$), yielding $T = 2W + U$.",
+      "F": "Assumes upthrust acts downwards in both cases. Descending gives $D = W + U$, ascending gives $T = W + U + D$, yielding $T = 2(W + U)$."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Recognising that drag flips direction but maintains the same magnitude, while upthrust remains constant and upwards.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 1,
+        "estimated_solution_steps": 3,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 2
+}

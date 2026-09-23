@@ -1,0 +1,51 @@
+{
+  "stage": "verifier",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "A",
+    "independent_solution": {
+      "main_law_or_principle": "Doppler effect and the constancy of the speed of light in a vacuum.",
+      "calculation_or_logic": "1. The Doppler effect for waves states that an increase in observed frequency (blueshift) relative to the source frequency indicates that the source is moving towards the observer. 2. According to the second postulate of special relativity, the speed of electromagnetic waves (including microwaves) in a vacuum is a universal constant $c$, independent of the motion of the source.",
+      "verified_answer_value": "A",
+      "claimed_answer_value": "A",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Identify blueshift as motion towards observer",
+        "Recall invariance of speed of light in vacuum"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "derived_relationship_audit": {
+      "requires_nontrivial_derivation": false,
+      "number_of_linked_relationships": 0,
+      "relationships_given_in_stem": [],
+      "safe_for_esat": true
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a",
+      "derived_relationship_safety": "pass"
+    },
+    "notes": [
+      "The question correctly tests conceptual understanding of the Doppler effect and the fundamental postulate of the constancy of the speed of light."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

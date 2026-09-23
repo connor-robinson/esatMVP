@@ -1,0 +1,26 @@
+{
+  "job_id": "20260524-171904-f73a7905",
+  "running": false,
+  "last_update": "2026-05-24T17:19:34.503871+00:00",
+  "stats": {
+    "processed": 2,
+    "errors": 0,
+    "auto_approved": 1,
+    "pending_operator": 1,
+    "skipped_deleted": 0,
+    "calibration_gold": 0,
+    "graph_candidates": 0,
+    "graph_missing_expected": 0,
+    "batch_api_jobs": 0,
+    "diagrams_inserted": 0,
+    "diagram_errors": 0,
+    "formatting_fixed": 0,
+    "tags_relabeled": 0
+  },
+  "last_error": "",
+  "log_tail": [
+    "Job 20260524-171904-f73a7905 started (dry_run=False, record_only=False, batch_api=False, auto_svg=False, llm=vertex, model=gemini-2.5-flash)",
+    "[ok] 0100beaf-2adb-4417-a3b0-05ae74e7a98f verdict=Pass eff=human_review auto_approve=False curriculum=borderline syllabus=5 gold=None graph=False graph_mode=none",
+    "[ok] 0115bc27-df2b-495d-9ee4-213cf7b207d5 verdict=Pass eff=approve auto_approve=True curriculum=in_syllabus syllabus=5 gold=None graph=False graph_mode=none"
+  ]
+}

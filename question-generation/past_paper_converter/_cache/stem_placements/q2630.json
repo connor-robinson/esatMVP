@@ -1,0 +1,30 @@
+{
+  "questionId": 2630,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 61,
+  "stemBlocks": [
+    "A student carried out an investigation using the diffusion of a gas along a tube to model movement of gases in the air space of a leaf. An alkaline gas was released from a solution that evaporated from the cotton wool. As the gas diffused, it caused damp litmus paper to change colour. The time was recorded when each piece of litmus paper changed colour. The apparatus and a graph of the results are shown below.",
+    "Which of the following statements about the investigation is/are correct?",
+    "1 The dependent variable has been plotted on the $x$-axis.\n2 If diffusion of the gas was slower, the graph line would become steeper.\n3 If a more concentrated solution was used in an identical set of apparatus, the data collected would result in a line on the graph below the points plotted for the original gas."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:19.030596+00:00",
+  "sourceImageHash": "6297f8abf8570139e38d4b52231ef244054e5295f1a1a6591e9c2c065deade70",
+  "status": "ok"
+}

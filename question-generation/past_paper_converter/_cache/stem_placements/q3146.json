@@ -1,0 +1,29 @@
+{
+  "questionId": 3146,
+  "examName": "ENGAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 17,
+  "stemBlocks": [
+    "Water in a wide river flows at a constant speed of $0.50 \\text{ ms}^{-1}$. A swimmer swims around a square path of side $30 \\text{ m}$ marked out by 4 posts R, S, T and U which are fixed to the river bed, as shown.",
+    "The swimmer has a constant speed of $1.0 \\text{ ms}^{-1}$ relative to the water.\nHow long does it take for the swimmer to swim around the square path once?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:44:04.586290+00:00",
+  "sourceImageHash": "f86d393f0590f32093246722900428ae1f6f07fd4d5abe6dd8d1a0afe6dfd79c",
+  "status": "ok"
+}

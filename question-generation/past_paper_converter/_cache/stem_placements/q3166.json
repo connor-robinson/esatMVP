@@ -1,0 +1,31 @@
+{
+  "questionId": 3166,
+  "examName": "ENGAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 17,
+  "stemBlocks": [
+    "An empty measuring cylinder is placed on a balance, and the balance reading is then set to zero. A mass of $8.7 \\text{ g}$ of a powder is poured into the measuring cylinder as shown in the diagram.",
+    "Liquid is poured into the cylinder to cover the powder completely. The powder does not dissolve. The reading on the measuring cylinder and the reading on the balance are recorded. More liquid is added and a second pair of readings is recorded. The table shows the two pairs of readings.",
+    "What is the density of the material from which the powder is made?",
+    "| reading on measuring cylinder / $\\text{cm}^3$ | reading on balance / $\\text{g}$ |\n| --- | --- |\n| 10.0 | 15.0 |\n| 25.0 | 27.6 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:45:27.643217+00:00",
+  "sourceImageHash": "2ee9494b2ebb9efc9b0b44e14c4df2d04b747079834e294a48079fe6a8b748b9",
+  "status": "ok"
+}

@@ -1,0 +1,28 @@
+{
+  "questionId": 2609,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 40,
+  "stemBlocks": [
+    "A mass spectrometer is a device that can measure the mass of isotopes. It shows this data as a spectrum, giving both the relative mass and the percentage abundance of each isotope.\nThe charts indicate the relative mass and percentage abundance for lithium atoms, carbon atoms and oxygen atoms found in a sample taken from a nuclear reactor.\nUsing this data, what is the largest possible relative molar mass of lithium carbonate?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Three bar charts showing percentage abundance vs. relative mass for lithium, carbon, and oxygen atoms.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:19.015333+00:00",
+  "sourceImageHash": "975171d0a5ccbb5430d7e5b541ac71e488609b7458d0ea9afbedc4d870e8f4a5",
+  "status": "ok"
+}

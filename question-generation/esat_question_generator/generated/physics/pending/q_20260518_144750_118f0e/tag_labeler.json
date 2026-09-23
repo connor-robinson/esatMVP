@@ -1,0 +1,11 @@
+{
+  "stage": "tag_labeler",
+  "status": "error",
+  "verdict": null,
+  "payload": null,
+  "notes": [],
+  "error": "Gemini quota or rate limit exhausted on Vertex AI. Designer and Implementer stay on Gemini 3.1 Pro Preview (no automatic switch to 2.5 Pro). Limits are per Google Cloud project (RPM, TPM, RPD). Check Vertex AI quota in Google Cloud Console.",
+  "raw_text": null,
+  "model": null,
+  "attempts": 1
+}

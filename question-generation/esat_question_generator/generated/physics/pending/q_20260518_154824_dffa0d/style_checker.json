@@ -1,0 +1,56 @@
+{
+  "stage": "style_checker",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "slightly_harder",
+      "length_feel_vs_reference": "similar",
+      "notes": "The question is 'Extreme' in the context of ESAT because it requires the student to synthesize a scaling law from first principles rather than recalling a standard formula. It is perfectly calibrated for the top end of the cohort."
+    },
+    "selectivity_audit": {
+      "main_trap": "The student must correctly identify that mass scales with r³ and then correctly balance the forces to find the v ∝ r² relationship. The trap is ignoring the r-dependence in the drag force or miscalculating the radius ratio.",
+      "why_not_plug_and_chug": "There is no formula for terminal velocity in this specific fluid provided; the student must derive the proportionality from the force balance condition.",
+      "expected_mid_student_error": "Assuming v ∝ m (leading to 27) or v ∝ r (leading to 3) by failing to correctly account for the r-dependence in the drag force or the volume-mass relationship.",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 1,
+      "estimated_solution_steps": 3,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "Excellent use of proportional reasoning. The distractors are mathematically distinct and target specific conceptual failures."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 3
+}

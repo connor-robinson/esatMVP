@@ -1,0 +1,29 @@
+{
+  "questionId": 2063,
+  "examName": "ENGAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 28,
+  "stemBlocks": [
+    "A uniform plank of length 5.0 m rests horizontally as shown. There is a pivot 1.0 m from one end of the plank. A cable at an angle of $60^\\circ$ to the horizontal supports the plank at the other end so that it is in equilibrium. The tension in the cable is 75 N.",
+    "What is the weight of the plank?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:32:52.518338+00:00",
+  "sourceImageHash": "e40bd31108947d9c1854325accbd39dc8053e8232f6eda961366f223b932b241",
+  "status": "ok"
+}

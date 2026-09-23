@@ -1,0 +1,29 @@
+{
+  "questionId": 1972,
+  "examName": "ENGAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 17,
+  "stemBlocks": [
+    "The diagram shows two congruent right-angled triangles $PQR$ and $TSR$ with right angles at $Q$ and $S$, respectively.\n$PQ = TS = 3 \\text{ cm}$\n$QR = SR = 4 \\text{ cm}$\n$PRT$ is a straight line.",
+    "What is the length, in cm, of $QS$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "[diagram not to scale]",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:42.178936+00:00",
+  "sourceImageHash": "688764d86315fcb3ea60409d338a08994eefb9c8933f78dc1e0e9889c8c92695",
+  "status": "ok"
+}

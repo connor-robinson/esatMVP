@@ -1,0 +1,30 @@
+{
+  "questionId": 1853,
+  "examName": "ENGAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 6,
+  "stemBlocks": [
+    "An electric motor is used to pull a broken-down car slowly from the road up a ramp on to the back of a breakdown truck.\nThe car has a mass of $1200 \\text{ kg}$ and is lifted through a vertical height of $1.0 \\text{ m}$.\nThe total input energy to the motor is $28 \\text{ kJ}$ and it is $75\\%$ efficient.\nIn the process of lifting the car, energy is lost to the surroundings from the motor and from other causes.",
+    "What is the total energy lost to the surroundings?",
+    "(gravitational field strength = $10 \\text{ N kg}^{-1}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:26:26.019986+00:00",
+  "sourceImageHash": "b34603831858fe4028dee184b9cdb84f40ad83cb3f8e3b0051e783f98b14cfc9",
+  "status": "ok"
+}

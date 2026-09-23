@@ -1,0 +1,25 @@
+{
+  "apply": true,
+  "changes": [
+    {
+      "slot": "C21",
+      "reason": "Rational inequality / range analysis beyond M1 M4.17",
+      "oldQuestionId": "6c0acc42-a201-407c-89f4-4ad65c98d025",
+      "newQuestionId": "feae6d9e-39c5-4e6a-b49a-96983d3e16f6",
+      "answer": "A",
+      "topic": "M4",
+      "difficulty": 4,
+      "preview": "The function $f(x) = x^3 + kx$, where $k$ is a constant, takes the same value at $x=a$ and $x=b$. Given that $a$ and $b$ are distinct and are the roots of $x^2 - 4x + 2 = 0$, what is the value of $k$?"
+    },
+    {
+      "slot": "D22",
+      "reason": "Explicit rational polynomial inequality; out of Math 1 spec",
+      "oldQuestionId": "45f9fb97-c401-413a-ac20-0f1289dd5b1d",
+      "newQuestionId": "a2bddb0a-4289-48ff-8549-0566a2f15785",
+      "answer": "C",
+      "topic": "M4",
+      "difficulty": 4,
+      "preview": "A rectangle has vertices at the origin O, and at the points A( $x$, 0), B( $x$, $y$) and C(0, $y$), where $x$ and $y$ are positive integers. The area of the rectangle OABC is 360. The gradient, $m$, of the diagonal OB sa"
+    }
+  ]
+}

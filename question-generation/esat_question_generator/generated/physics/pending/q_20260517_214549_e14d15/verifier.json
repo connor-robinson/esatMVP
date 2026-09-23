@@ -1,0 +1,49 @@
+{
+  "stage": "verifier",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "D",
+    "independent_solution": {
+      "main_law_or_principle": "Hooke's Law (force balance) for static equilibrium, Conservation of Mechanical Energy for dynamic compression.",
+      "calculation_or_logic": "Let the mass be $m$ and the spring constant be $k$.\n\n**Case 1: Static Equilibrium**\nWhen the mass is gently placed, it settles at an equilibrium position where the upward spring force balances the downward gravitational force.\n$F_{spring} = F_{gravity}$\n$kx_1 = mg$\n$x_1 = \\frac{mg}{k}$\n\n**Case 2: Dynamic Compression**\nWhen the mass is dropped from rest, the system conserves mechanical energy. The initial state is the mass at rest just touching the uncompressed spring. The final state is the mass momentarily at rest at maximum compression $x_2$.\nLoss in Gravitational Potential Energy (GPE) = Gain in Elastic Potential Energy (EPE)\nThe mass falls a total distance $x_2$.\n$mgx_2 = \\frac{1}{2}kx_2^2$\nSince $x_2 \\neq 0$ (there is compression), we can divide both sides by $x_2$:\n$mg = \\frac{1}{2}kx_2$\n$x_2 = \\frac{2mg}{k}$\n\n**Ratio $x_2 / x_1$**\n$\\frac{x_2}{x_1} = \\frac{2mg/k}{mg/k} = 2$",
+      "verified_answer_value": "2",
+      "claimed_answer_value": "2",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Apply Hooke's Law for static equilibrium (F=kx)",
+        "Apply Newton's Second Law (F_net=0) for static equilibrium",
+        "Apply Conservation of Mechanical Energy (GPE to EPE conversion)",
+        "Algebraic manipulation to solve for displacements and ratios"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a"
+    },
+    "notes": [
+      "The question correctly distinguishes between static equilibrium and dynamic energy conservation scenarios.",
+      "The solution is straightforward and requires standard ESAT-level physics principles.",
+      "Calculations are simple and suitable for a no-calculator environment.",
+      "Distractors are well-designed, targeting common misconceptions."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

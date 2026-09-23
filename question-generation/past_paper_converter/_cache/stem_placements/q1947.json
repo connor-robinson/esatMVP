@@ -1,0 +1,30 @@
+{
+  "questionId": 1947,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 46,
+  "stemBlocks": [
+    "A metal ball suspended from a steel cable is held at rest by a horizontal force $P$. The cable makes an angle of $30^{\\circ}$ to the vertical as shown in the diagram.",
+    "The cable exerts a force $T$ on the ball.",
+    "What is the magnitude of $P$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:28:14.917949+00:00",
+  "sourceImageHash": "a6d4cb3c17440fc29ca710cb66249d23d115db7d1a8a1c12a66649ac9a5197c9",
+  "status": "ok"
+}

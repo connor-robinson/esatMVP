@@ -1,0 +1,56 @@
+{
+  "stage": "style_checker",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "shorter",
+      "notes": "The question is perfectly calibrated for ESAT. It avoids the 'plug-and-chug' trap by requiring the student to construct two distinct force-balance equations and recognize the invariant (drag magnitude) versus the variant (drag direction)."
+    },
+    "selectivity_audit": {
+      "main_trap": "The student must correctly identify that the drag force flips direction while the upthrust force remains constant in direction. Many students will incorrectly assume upthrust flips or that drag magnitude changes.",
+      "why_not_plug_and_chug": "There is no single formula to apply. The student must derive the relationship between the forces based on the physical constraints of the two scenarios.",
+      "expected_mid_student_error": "Forgetting to flip the drag force direction or incorrectly applying the upthrust direction, leading to one of the plausible distractors.",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 1,
+      "estimated_solution_steps": 3,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "Excellent use of algebraic elimination to test conceptual understanding of Newton's First Law without requiring tedious numerical calculation."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 2
+}

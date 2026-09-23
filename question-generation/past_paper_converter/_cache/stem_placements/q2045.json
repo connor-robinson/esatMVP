@@ -1,0 +1,29 @@
+{
+  "questionId": 2045,
+  "examName": "ENGAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 10,
+  "stemBlocks": [
+    "A train accelerates from rest along a straight, horizontal section of track.\nThe force exerted on the train due to its motors is constant and there is a constant friction force of $1.8 \\times 10^7 \\text{ N}$.\nThe graph shows how the momentum of the train changes with time.",
+    "What is the force exerted on the train due to its motors?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:32:52.500509+00:00",
+  "sourceImageHash": "7c9d58ad8fd0f783814d521df55b1cdfe7b26affd054e060c8c724f486e71b1d",
+  "status": "ok"
+}

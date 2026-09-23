@@ -1,0 +1,28 @@
+{
+  "questionId": 2987,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 8,
+  "stemBlocks": [
+    "A shape is formed by drawing a triangle ABC inside the triangle ADE. BC is parallel to DE. AB = 4 cm, BC = $x$ cm, DE = $x+3$ cm, DB = $x-4$ cm. Calculate the length of DE."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:15.946861+00:00",
+  "sourceImageHash": "c7c853ba92b88beb9a17d5c069a3e71401820e68a4c7c372379a08e13c61ad02",
+  "status": "ok"
+}

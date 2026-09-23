@@ -1,0 +1,20 @@
+{
+  "stage": "tag_labeler",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "primary_tag": "4",
+    "secondary_tags": [
+      "3",
+      "5"
+    ],
+    "primary_confidence": 0.95,
+    "reasoning": "The question describes the effect of heating a liquid parcel, which causes thermal expansion (Thermal physics). The analysis then requires understanding the conservation of mass and the definition of weight (Mechanics), and how the increased volume affects the upthrust (Mechanics, Matter) due to the displacement of fluid.",
+    "_raw_text": "```json\n{\n  \"primary_tag\": \"4\",\n  \"secondary_tags\": [\"3\", \"5\"],\n  \"primary_confidence\": 0.95,\n  \"reasoning\": \"The question describes the effect of heating a liquid parcel, which causes thermal expansion (Thermal physics). The analysis then requires understanding the conservation of mass and the definition of weight (Mechanics), and how the increased volume affects the upthrust (Mechanics, Matter) due to the displacement of fluid.\"\n}\n```"
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

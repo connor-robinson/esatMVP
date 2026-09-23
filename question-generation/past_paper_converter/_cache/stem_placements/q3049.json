@@ -1,0 +1,29 @@
+{
+  "questionId": 3049,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 70,
+  "stemBlocks": [
+    "The diagram shows a kidney and its associated vessels from a healthy individual. Which row correctly identifies the vessels along with the concentration of urea they contain?",
+    "|  | lowest concentration of urea | highest concentration of urea |\n| --- | --- | --- |\n| A | 1 is the aorta | 2 is the vena cava |\n| B | 1 is the vena cava | 2 is the aorta |\n| C | 3 is the renal artery | 5 is the urethra |\n| D | 3 is the renal vein | 5 is the ureter |\n| E | 4 is the renal vein | 5 is the ureter |\n| F | 4 is the renal artery | 5 is the urethra |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "[not to scale]",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:16.027203+00:00",
+  "sourceImageHash": "c0cd97560aa3c960307767f3b7e8f456ee785063aee9f1936e21efefe3a3a151",
+  "status": "ok"
+}

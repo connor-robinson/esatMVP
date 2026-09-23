@@ -1,0 +1,30 @@
+{
+  "questionId": 2037,
+  "examName": "ENGAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 2,
+  "stemBlocks": [
+    "Air is trapped in a cylinder by a piston. The density of the air in the cylinder is $\\rho$. The piston is moved so that the pressure of the trapped air increases by 20%. The temperature of the trapped air does not change.",
+    "What is the new density of the trapped air?",
+    "(Assume that air is an ideal gas.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:32:52.476986+00:00",
+  "sourceImageHash": "14d738422a7487d702f3dc5d4bbd26c0ffb83c8ec07005698af903626f298ebc",
+  "status": "ok"
+}

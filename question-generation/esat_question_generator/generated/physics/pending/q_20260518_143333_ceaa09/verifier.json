@@ -1,0 +1,52 @@
+{
+  "stage": "verifier",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "D",
+    "independent_solution": {
+      "main_law_or_principle": "Newton's First Law (Translational Equilibrium)",
+      "calculation_or_logic": "Case 1 (Descending): Forces are Weight (W) down, Upthrust (U) up, Drag (D) up. Equilibrium: W = U + D => D = W - U. Case 2 (Ascending): Forces are Thrust (T) up, Upthrust (U) up, Weight (W) down, Drag (D) down. Equilibrium: T + U = W + D. Substituting D = W - U into the second equation: T + U = W + (W - U) => T + U = 2W - U => T = 2W - 2U = 2(W - U).",
+      "verified_answer_value": "D",
+      "claimed_answer_value": "D",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Force balance (Newton's First Law)",
+        "Vector addition/subtraction",
+        "Algebraic substitution"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "derived_relationship_audit": {
+      "requires_nontrivial_derivation": false,
+      "number_of_linked_relationships": 0,
+      "relationships_given_in_stem": [],
+      "safe_for_esat": true
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a",
+      "derived_relationship_safety": "pass"
+    },
+    "notes": [
+      "The physics is sound. The logic correctly identifies that drag magnitude is constant due to constant speed, but direction flips, while upthrust remains constant in direction."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 2
+}

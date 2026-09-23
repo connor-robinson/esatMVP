@@ -1,0 +1,31 @@
+{
+  "questionId": 2528,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 49,
+  "stemBlocks": [
+    "Paper chromatography was used to separate three mixtures of amino acids. The mixtures were labelled P, Q and R. Each mixture contains some of the five amino acids in the following table. The $R_f$ values were measured for each amino acid with the solvent used to produce the chromatogram.",
+    "Which of the following statements is/are correct?",
+    "1 Mixture P contains valine and glycine.\n2 Leucine is found in all three mixtures.\n3 Glutamic acid is the least mobile amino acid with this solvent.\n4 Mixtures P and Q both contain asparagine.",
+    "| amino acid | $R_f$ value |\n| --- | --- |\n| asparagine | 0.50 |\n| glutamic acid | 0.30 |\n| glycine | 0.26 |\n| leucine | 0.71 |\n| valine | 0.61 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.822413+00:00",
+  "sourceImageHash": "bd4c2a430391be3d58f70cd77f55bf54668b4c522bf877685af040b7926d471f",
+  "status": "ok"
+}

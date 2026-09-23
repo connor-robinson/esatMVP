@@ -1,0 +1,39 @@
+{
+  "questionId": 2418,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 29,
+  "stemBlocks": [
+    "Graph 1 shows how the displacement of one of the particles of a medium varies with time in seconds as a wave travels through the medium.",
+    "Graph 2 shows how the displacement varies with distance in metres at one time for the same wave. Which expression gives the speed in m s$^{-1}$ of the wave?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph 1 shows displacement vs time. Graph 2 shows displacement vs distance.",
+      "role": "stem_diagram"
+    },
+    {
+      "id": "d2",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    },
+    {
+      "assetId": "d2",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T17:16:22.685458+00:00",
+  "sourceImageHash": "de526715b059680265451509bbcabbcf89d66f714cb26d73251d3fefc3c5d2bc",
+  "status": "ok"
+}

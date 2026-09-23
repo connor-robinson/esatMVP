@@ -1,0 +1,31 @@
+{
+  "questionId": 2683,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 24,
+  "stemBlocks": [
+    "A sample of an ideal gas is sealed in a cylindrical container by a piston as shown in the diagram.",
+    "The particles of the gas are moving with an average speed $v$, and collide with the surface of the piston with a frequency $f$.\nThe piston is now slowly pushed into the cylinder until the gas occupies half of its original volume, but the gas remains at the same temperature.",
+    "What is the new average speed of the particles of the gas, and at what frequency do they now collide with the surface of the piston?",
+    "|  | average speed | frequency |\n| --- | --- | --- |\n| A | $2v$ | $\\frac{1}{2}f$ |\n| B | $2v$ | $f$ |\n| C | $2v$ | $2f$ |\n| D | $v$ | $\\frac{1}{2}f$ |\n| E | $v$ | $f$ |\n| F | $v$ | $2f$ |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:58.188231+00:00",
+  "sourceImageHash": "a7090e002f221198860964960fc2edce3949ad8c4e616164d8ead452a587a7b2",
+  "status": "ok"
+}

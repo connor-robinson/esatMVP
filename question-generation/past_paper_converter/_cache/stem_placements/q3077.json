@@ -1,0 +1,28 @@
+{
+  "questionId": 3077,
+  "examName": "ENGAA",
+  "examYear": 2017,
+  "paperName": "Section 2",
+  "questionNumber": 3,
+  "stemBlocks": [
+    "The ball bounces and hits the floor repeatedly. Which of these graphs might represent the position of the ball plotted against time?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph Q: distance from floor vs time, with constant amplitude",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:39:07.380230+00:00",
+  "sourceImageHash": "62b7471fa9a40a729b97bce82a7217bb9ffdcdec513a076b40c466e9a1ceca02",
+  "status": "ok"
+}

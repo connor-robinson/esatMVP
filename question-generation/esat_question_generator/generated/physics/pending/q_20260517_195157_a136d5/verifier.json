@@ -1,0 +1,48 @@
+{
+  "stage": "verifier",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "A",
+    "independent_solution": {
+      "main_law_or_principle": "Wave equation (v = fλ) and the principle of frequency invariance when an electromagnetic wave crosses a boundary between media. Definition of refractive index (n = c/v).",
+      "calculation_or_logic": "1. In vacuum: $c = fλ$. So, $f = c/λ$.\n2. In the medium: The frequency $f$ remains constant. The speed of light in the medium is $v = c/n$.\n3. The new wavelength $λ'$ in the medium is given by $v = fλ'$.\n4. Substitute $v$ and $f$: $λ' = v/f = (c/n) / (c/λ) = (c/n) \\times (λ/c) = λ/n$.\n5. The decrease in wavelength is the initial wavelength minus the new wavelength: $Δλ = λ - λ'$.\n6. Substitute $λ'$: $Δλ = λ - λ/n = λ(1 - 1/n) = λ((n-1)/n)$.",
+      "verified_answer_value": "$λ \\frac{(n-1)}{n}$",
+      "claimed_answer_value": "$λ \\frac{(n-1)}{n}$",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Apply wave equation v=fλ",
+        "Understand frequency invariance across media",
+        "Apply definition of refractive index n=c/v",
+        "Algebraic manipulation to find change in wavelength"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a"
+    },
+    "notes": [
+      "The question correctly identifies frequency as the invariant quantity, which is a key conceptual understanding for this topic.",
+      "The distractors are well-designed to target common misconceptions, such as assuming wavelength is invariant or incorrectly calculating the new wavelength or the change.",
+      "The calculation is straightforward algebraic manipulation, suitable for a no-calculator exam."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

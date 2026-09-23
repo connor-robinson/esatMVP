@@ -1,0 +1,30 @@
+{
+  "questionId": 2753,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 14,
+  "stemBlocks": [
+    "P, Q and R are points on the circumference of a circle with centre O as shown in the diagram.",
+    "Angle $PQR = 140^\\circ$. $PR = 7$ cm.",
+    "Which of the following expressions gives the radius of the circle, in cm?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.349212+00:00",
+  "sourceImageHash": "9f6556d2307e07ed945c3a0440b535f927b06677671d8718d894cc9584fb9609",
+  "status": "ok"
+}

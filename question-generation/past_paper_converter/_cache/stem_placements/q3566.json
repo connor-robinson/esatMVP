@@ -1,0 +1,29 @@
+{
+  "questionId": 3566,
+  "examName": "TMUA",
+  "examYear": 2023,
+  "paperName": "Paper 1",
+  "questionNumber": 17,
+  "stemBlocks": [
+    "A circle $C_n$ is defined by $x^2 + y^2 = 2n(x + y)$ where $n$ is a positive integer. $C_1$ and $C_2$ are drawn and the area between them is shaded. Next, $C_3$ and $C_4$ are drawn and the area between them is shaded. This is shown in the diagram. This process continues until 100 circles have been drawn.",
+    "What is the total shaded area?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:21.983082+00:00",
+  "sourceImageHash": "ae286377b2e242085b34e80cd9294a704b54be29fd123ea92140c90c405e9898",
+  "status": "ok"
+}

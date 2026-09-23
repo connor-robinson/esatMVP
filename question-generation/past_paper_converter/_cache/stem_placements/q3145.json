@@ -1,0 +1,29 @@
+{
+  "questionId": 3145,
+  "examName": "ENGAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 16,
+  "stemBlocks": [
+    "The diagram shows a ray of light passing through three mediums, P, Q and R. The boundaries between the three mediums are parallel.\nThe ratio of the speed of light in medium P to the speed of light in medium Q is $2:\\sqrt{5}$\nThe ratio of the speed of light in medium Q to the speed of light in medium R is $3:\\sqrt{6}$",
+    "What is the value of $\\sin\\theta$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:44:04.582712+00:00",
+  "sourceImageHash": "7a8c72d65da2c5ffdf2d804890d50d0d5d6714e1ed84c6efcc1d43445c164013",
+  "status": "ok"
+}

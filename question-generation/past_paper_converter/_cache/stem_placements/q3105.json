@@ -1,0 +1,31 @@
+{
+  "questionId": 3105,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 2",
+  "questionNumber": 14,
+  "stemBlocks": [
+    "A block P has a smaller block Q resting on its top surface.\nQ is connected to a hanging block, R, by a light, inextensible string. The string passes over a smooth pulley which is connected to block P, as shown in the diagram.",
+    "The masses of blocks P, Q and R are $m_P$, $m_Q$ and $m_R$ respectively.\nThe surfaces of the three blocks are smooth.\nP is accelerated horizontally to the right by an external force. While this is happening, Q and R do not move relative to P.",
+    "What is the acceleration of P?",
+    "(gravitational field strength = $g$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 1.0
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:40:49.365783+00:00",
+  "sourceImageHash": "7388f1ad55907ed74768bab2b751e7b2d48be8726fe1ed95d08dd055b343918c",
+  "status": "ok"
+}

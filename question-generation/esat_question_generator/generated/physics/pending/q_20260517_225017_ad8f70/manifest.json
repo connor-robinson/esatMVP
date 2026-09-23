@@ -1,0 +1,445 @@
+{
+  "question_id": "q_20260517_225017_ad8f70",
+  "subject": "physics",
+  "schema_id": "P_30453dc9",
+  "difficulty": "Medium",
+  "status": "rejected",
+  "failure_gate": "deterministic_validator",
+  "failure_reasons": [
+    "Required top-level key missing: 'distractor_map'."
+  ],
+  "has_visual": false,
+  "visual_type": "none",
+  "answer_depends_on_visual": false,
+  "assets": [],
+  "model_trace": {
+    "designer": "gemini-2.5-pro",
+    "idea_judge": "gemini-2.5-flash",
+    "implementer": "gemini-2.5-pro",
+    "verifier": "gemini-2.5-flash",
+    "implementer_regen": "gemini-2.5-pro"
+  },
+  "retry_counts": {
+    "implementer": 2
+  },
+  "stages": [
+    {
+      "stage": "designer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "schema_id": "P_30453dc9",
+        "module": "physics",
+        "variation_mode": "SIBLING",
+        "target_difficulty": "Medium",
+        "idea_summary": "Two identical spheres, one matt black and one polished silver, are kept at the same constant high temperature by internal electric heaters. The question is to compare the electrical power required by the heaters.",
+        "schema_invariant": {
+          "core_move": "Comparing rates of thermal energy transfer for objects with different surface properties (emissivity).",
+          "what_must_not_change": [
+            "The core physical principle is comparing heat transfer rates based on surface characteristics.",
+            "The dominant transfer mechanisms to compare are radiation and convection.",
+            "The question must be solvable by qualitative comparison, not calculation."
+          ],
+          "what_can_change": [
+            "The scenario is changed from passive cooling to maintaining a constant temperature (active heating).",
+            "The quantity being compared is electrical power input, not rate of temperature change.",
+            "The reasoning direction is from a desired state (constant T) to the required input, rather than from an initial state to a future outcome."
+          ]
+        },
+        "discrimination_mechanism": {
+          "type": "hidden_invariant",
+          "reasoning_hinge": "The candidate must realise that 'constant temperature' implies a steady state where the electrical power supplied must exactly balance the rate of thermal energy loss to the surroundings (P_in = P_out).",
+          "why_top_students_win": "They immediately model the situation as a thermal equilibrium: Power_electrical = Rate of heat loss (convection + radiation). They know a black surface has higher emissivity, loses heat faster, and therefore requires more input power to compensate.",
+          "why_mid_students_miss": "They may fail to make the connection between electrical power and heat loss. They might incorrectly believe the power required is the same because the temperature is the same, ignoring the different rates of loss. They could also confuse the roles of absorption and emission."
+        },
+        "minimum_reasoning_depth": {
+          "steps": 3,
+          "must_include": [
+            "model_selection",
+            "non_obvious_inference",
+            "short_calculation_or_comparison"
+          ]
+        },
+        "reference_alignment": "This problem has the same core physics as comparing the cooling rates of two flasks, but the framing is inverted. Instead of observing an effect (cooling) and inferring the cause (radiation), the candidate must determine the required cause (power) to maintain a constant effect (temperature). The reasoning depth is equivalent.",
+        "task_signature": "compare_scenarios",
+        "tool_footprint": [
+          "thermal equilibrium",
+          "energy conservation",
+          "emissivity",
+          "power"
+        ],
+        "primary_tag": "4",
+        "secondary_tags": [
+          "5"
+        ],
+        "visual_need": "concept_image_only",
+        "visual_role": "supportive",
+        "visual_brief": "A simple diagram showing two identical spheres in a room. One is labelled 'Matt Black', the other 'Polished Silver'. Each has a heater symbol inside. Arrows pointing away from the spheres indicate heat loss, with more/thicker arrows for the black sphere.",
+        "surface_twist": "",
+        "why_still_on_spec": "The core of the question lies in ESAT Physics tag 4 (Matter and Thermal Physics), specifically understanding heat transfer mechanisms (radiation, convection) and how surface properties (emissivity) affect them. The link to electrical power (tag 5, Electricity) is through the principle of conservation of energy (Power = Energy/time), a fundamental concept, and does not require any detailed circuit analysis.",
+        "constraints_used": [
+          "short condition descriptions only",
+          "no final numbers",
+          "no full equations unless the schema requires them",
+          "no exact geometric diagram dependence"
+        ],
+        "intended_wrong_paths": [
+          {
+            "mistake": "Believing the required power is the same because the final temperature and object size are the same, ignoring the different rates of heat loss.",
+            "distractor_role": "An option stating the power is the same for both spheres."
+          },
+          {
+            "mistake": "Incorrectly recalling the properties of surfaces, e.g., thinking a shiny surface radiates more heat.",
+            "distractor_role": "An option stating the silver sphere requires more power."
+          },
+          {
+            "mistake": "Confusing emission with absorption. A student might argue that since the room is cooler, the black sphere absorbs more 'coldness' and thus needs more power, which is nonsensical but based on a confused version of the right idea.",
+            "distractor_role": "A distractor that gives the right answer (black needs more power) but for a clearly wrong reason related to absorption."
+          },
+          {
+            "mistake": "Ignoring radiation as a heat loss mechanism and assuming only convection, which would be approximately the same for both, leading to the conclusion the power is the same.",
+            "distractor_role": "This reinforces the 'power is the same' distractor."
+          }
+        ],
+        "difficulty_rationale": "This is Medium difficulty because it requires a reasoning step beyond simple recall. The candidate cannot just recite 'black objects cool faster'. They must apply the principle of energy conservation to a steady-state system (Power in = Power out) and then apply their knowledge of thermal radiation. This hinge is selective but the path to the solution is short once it is made.",
+        "anti_plug_and_chug_check": {
+          "would_formula_substitution_alone_solve_it": false,
+          "why_not": "There is no single formula to substitute into. The Stefan-Boltzmann law is conceptually relevant but not required for a calculation. The crucial step is setting up the energy balance equation P_electrical = P_thermal_loss, which is a conceptual modeling step, not a formula application."
+        },
+        "mcq_viability": {
+          "viable": true,
+          "reason": "It's easy to generate clear, distinct options. The question can be about which sphere requires more/less/same power, and the reasons can form the basis of the options, targeting specific misconceptions about thermal properties."
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-pro",
+      "attempts": 1
+    },
+    {
+      "stage": "idea_judge",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "selectivity_score": 0,
+        "checks": {
+          "schema_preserved": "pass",
+          "on_spec": "pass",
+          "reasoning_hinge_present": "pass",
+          "not_direct_substitution": "pass",
+          "wrong_paths_specific": "pass",
+          "visual_feasible": "pass",
+          "mcq_viable": "pass",
+          "difficulty_match": "pass"
+        },
+        "reasoning_hinge_summary": "The core hinge is realizing that 'constant temperature' implies a steady state where the electrical power input precisely balances the total rate of thermal energy loss to the surroundings (P_in = P_out). Candidates must then apply knowledge of how surface properties (emissivity) affect radiative heat loss, and that convection losses would be similar for identical objects at the same temperature.",
+        "expected_mid_student_error": "Mid-level students may fail to connect the electrical power input to the rate of heat loss, or they might incorrectly assume that since the temperature is constant and the objects are identical in size, the power required must be the same. They might also confuse the roles of absorption and emission, or underestimate the significance of radiation compared to convection.",
+        "notes": [
+          "The inversion of the problem from passive cooling to active heating to maintain temperature is a good way to test the underlying physics in a fresh context.",
+          "The visual brief is appropriate and supportive without being essential or answer-bearing.",
+          "The intended wrong paths are well-articulated and target common misconceptions related to thermal equilibrium and surface properties."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "implementer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "metadata": {
+          "schema_id": "P_30453dc9",
+          "module": "physics",
+          "variation_mode": "SIBLING",
+          "target_difficulty": "Medium",
+          "task_signature": "compare_scenarios",
+          "primary_tag": "4",
+          "secondary_tags": [
+            "5"
+          ]
+        },
+        "question": {
+          "stem": "Two spheres of identical size and mass are placed in a cool room. One sphere has a matt black surface, and the other has a polished silver surface. Each sphere contains an internal electric heater.\n\nThe heaters supply the necessary power to keep both spheres at the same constant high temperature, which is well above the room temperature.\n\nLet $P_B$ be the electrical power supplied to the matt black sphere and $P_S$ be the electrical power supplied to the polished silver sphere.\n\nWhich statement correctly compares the powers?",
+          "options": {
+            "A": "$P_B > P_S$",
+            "B": "$P_S > P_B$",
+            "C": "$P_B = P_S$",
+            "D": "The relationship depends on the specific temperature of the spheres.",
+            "E": "The relationship depends on the material the spheres are made from, not just their surfaces.",
+            "F": "The powers cannot be compared without knowing the specific heat capacity of the spheres."
+          },
+          "correct_option": "A"
+        },
+        "visual_requirements": {
+          "visual_need": "concept_image_only",
+          "visual_role": "supportive",
+          "answer_depends_on_visual": false,
+          "graph_request": null,
+          "schematic_request": null,
+          "concept_image_request": "A simple diagram showing two identical spheres in a room. One is labelled 'Matt Black', the other 'Polished Silver'. Each has a heater symbol inside. Arrows pointing away from the spheres indicate heat loss, with more/thicker arrows for the black sphere to visually represent higher heat loss."
+        },
+        "solution": {
+          "key_insight": "To maintain a constant temperature, the electrical power supplied must exactly balance the rate of thermal energy lost to the surroundings. A matt black surface is a better emitter of thermal radiation than a polished silver surface, so it loses energy faster and requires more power to compensate.",
+          "reasoning": "1. The spheres are maintained at a constant temperature. This implies a steady-state condition where the rate of energy input equals the rate of energy output (heat loss).\n2. The energy input is the electrical power from the heater, $P_{in} = P_{electrical}$.\n3. The energy output is the heat lost to the surroundings, $P_{out}$, which occurs via convection and radiation.\n4. Since the spheres are identical in size and at the same temperature, the rate of heat loss due to convection will be approximately the same for both.\n5. The rate of heat loss due to thermal radiation depends on the surface's emissivity. A matt black surface has a high emissivity, while a polished silver surface has a low emissivity.\n6. Therefore, the matt black sphere radiates thermal energy at a significantly higher rate than the polished silver sphere.\n7. The total rate of heat loss ($P_{out} = P_{convection} + P_{radiation}$) is therefore greater for the black sphere.\n8. To maintain the steady state, the power supplied to the black sphere must be greater than the power supplied to the silver sphere. Thus, $P_B > P_S$."
+        },
+        "distractor_map": {
+          "A": "Correct. The matt black sphere has a higher emissivity, causing it to lose heat more rapidly via radiation. To maintain a constant temperature, a greater input power ($P_B$) is required to balance this higher rate of heat loss.",
+          "B": "Incorrect. This reverses the principle of thermal radiation. Polished silver surfaces are poor emitters (and poor absorbers) of radiation, so the silver sphere loses less heat and requires less power.",
+          "C": "Incorrect. This mistake arises from focusing only on the identical size and temperature of the spheres, while neglecting the different rates of heat loss caused by their different surface properties.",
+          "D": "Incorrect. While the magnitude of the power required depends on the temperature, the black surface will always be a better emitter than the silver surface. Therefore, the relationship $P_B > P_S$ holds true for any temperature above that of the surroundings.",
+          "E": "Incorrect. Thermal radiation is a surface phenomenon. The rate of emission is determined by the properties of the surface (emissivity), not the bulk material underneath, assuming the surface is opaque.",
+          "F": "Incorrect. Specific heat capacity relates the energy required to *change* an object's temperature. Since the spheres are kept at a *constant* temperature, their specific heat capacity is irrelevant to the continuous power needed to balance heat loss."
+        },
+        "quality_self_check": {
+          "reasoning_hinge_used": "Yes, the hinge is recognising that 'constant temperature' implies a steady state where input power must equal the rate of heat loss (P_in = P_out), which differs between the two spheres.",
+          "not_direct_substitution": true,
+          "exactly_one_correct": true,
+          "no_calculator_friendly": true,
+          "on_spec": true,
+          "visual_dependency_safe": true
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-pro",
+      "attempts": 1
+    },
+    {
+      "stage": "deterministic_validator",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "ok": true,
+        "errors": [],
+        "warnings": [],
+        "option_keys": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F"
+        ],
+        "summary": "ok"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": null,
+      "attempts": 1
+    },
+    {
+      "stage": "verifier",
+      "status": "error",
+      "verdict": null,
+      "payload": null,
+      "notes": [],
+      "error": "No parseable JSON object in model output.",
+      "raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"correct_option_verified\": \"A\",\n  \"independent_solution\": {\n    \"main_law_or_principle\": \"Thermal equilibrium (conservation of energy), Heat transfer by radiation and convection, Emissivity of surfaces.\",\n    \"calculation_or_logic\": \"1. For a sphere to maintain a constant temperature, the electrical power supplied ($P_{electrical}$) must exactly balance the rate of heat loss to the surroundings ($P_{loss}$). So, $P_{electrical} = P_{loss}$.\\n2. Heat loss occurs primarily through convection and radiation in this scenario. $P_{loss} = P_{convection} + P_{radiation}$.\\n3. Since both spheres are identical in size and maintained at the same constant temperature, the rate of heat loss due to convection ($P_{convection}$) will be approximately the same for both.\\n4. The rate of heat loss due to thermal radiation ($P_{radiation}$) depends on the surface's emissivity ($\\epsilon$). A matt black surface is an excellent emitter of thermal radiation (high $\\epsilon$), while a polished silver surface is a poor emitter (low $\\epsilon$).\\n5. Therefore, the matt black sphere will radiate thermal energy at a significantly higher rate than the polished silver sphere ($P_{radiation,B} > P_{radiation,S}$). \\n6. Consequently, the total rate of heat loss for the matt black sphere will be greater than for the polished silver sphere ($P_{loss,B} > P_{loss,S}$). \\n7. To maintain the constant temperature, the electrical power supplied must be greater for the matt black sphere than for the polished silver sphere. Thus, $P_B > P_S$.\",\n    \"verified_answer_value\": \"P_B > P_S\",\n    \"claimed_answer_value\": \"P_B > P_S\",\n    \"matches_claim\": true\n  },\n  \"spec_audit\": {\n    \"required_physics_moves\": [\n      \"Apply principle of thermal equilibrium (energy conservation)\",\n      \"Identify modes of heat transfer (convection, radiation)\",\n      \"Compare emissivity of different surfaces (matt black vs. polished silver)\",\n      \"Relate emissivity to rate of radiative heat loss\",\n      \"Conclude comparison of total heat loss and required input power\"\n    ],\n    \"all_explicitly_on_spec\": true,\n    \"borderline_or_offspec_moves\": []\n  },\n  \"checks\": {\n    \"correctness\": \"pass\",\n    \"uniqueness\": \"pass\",\n    \"syllabus\": \"pass\",\n    \"no_calc_feasibility\": \"pass\",\n    \"ambiguity\": \"pass\",\n    \"diagram_dependency\": \"pass\",\n    \"distractor_safety\": \"pass\",\n    \"katex_formatting\": \"pass\",\n    \"graph_or_visual_validation\": \"n/a\"\n  },\n  \"notes\": [\n    \"The question correctly assesses understanding of thermal equilibrium and the impact of surface properties on radiative heat transfer.\",\n    \"The distractors are well-designed to target common misconceptions.\",\n    \"No calculator is needed as it's a qualitative comparison.\"\n  ]\n}\n```",
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "implementer_regen",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "metadata": {
+          "schema_id": "P_30453dc9",
+          "module": "physics",
+          "variation_mode": "SIBLING",
+          "target_difficulty": "Medium",
+          "task_signature": "compare_scenarios",
+          "primary_tag": "4",
+          "secondary_tags": [
+            "5"
+          ]
+        },
+        "question": {
+          "stem": "Two identical, sealed metal cans are placed in a cold room at a temperature of 10°C. One can is painted matt black, and the other is painted shiny silver. Each can contains an internal electric heater which is used to maintain the contents of the can at a constant temperature of 60°C.\n\nLet $P_{black}$ be the power supplied to the heater in the black can, and $P_{silver}$ be the power supplied to the heater in the silver can.\n\nWhich statement correctly compares the powers and provides the correct reason?",
+          "options": {
+            "A": "$P_{black} > P_{silver}$ because the black surface is a better emitter of thermal radiation.",
+            "B": "$P_{silver} > P_{black}$ because the silver surface is a poorer conductor of heat.",
+            "C": "$P_{black} = P_{silver}$ because both cans are maintained at the same temperature and have the same size.",
+            "D": "$P_{black} > P_{silver}$ because the black surface absorbs heat from the cold room more effectively.",
+            "E": "$P_{black} = P_{silver}$ because the specific heat capacity of the contents is the same for both cans."
+          },
+          "correct_option": "A"
+        },
+        "visual_requirements": {
+          "visual_need": "concept_image_only",
+          "visual_role": "supportive",
+          "answer_depends_on_visual": false,
+          "graph_request": null,
+          "schematic_request": null,
+          "concept_image_request": "A simple diagram showing two identical metal cans. One is labelled 'Matt Black', the other 'Shiny Silver'. Each can has a heater symbol inside (e.g., a resistor). Arrows pointing away from the cans indicate heat loss, with more/thicker arrows for the black can to visually represent its higher rate of heat loss."
+        },
+        "solution": {
+          "key_insight": "To maintain a constant temperature, the electrical power supplied by the heater must exactly balance the rate at which thermal energy is lost to the surroundings. A matt black surface loses heat via radiation more rapidly than a shiny silver surface, so it requires more power to maintain its temperature.",
+          "reasoning": "1. The problem states that both cans are maintained at a constant temperature (60°C). This is a steady-state condition, which means the rate of energy input must equal the rate of energy output for each can.\n2. The energy input is the electrical power supplied by the heater, $P_{in} = P_{electrical}$.\n3. The energy output is the rate of heat loss to the colder surroundings, $P_{out}$. Heat is lost through convection and radiation.\n4. Both cans are identical in size and shape and are at the same surface temperature. Therefore, the rate of heat loss due to convection is the same for both.\n5. The rate of heat loss due to thermal radiation depends on the surface's emissivity. A matt black surface has a high emissivity (it is a good emitter), while a shiny silver surface has a low emissivity (it is a poor emitter).\n6. Consequently, the black can loses heat by radiation at a higher rate than the silver can.\n7. The total rate of heat loss ($P_{out} = P_{convection} + P_{radiation}$) is therefore greater for the black can.\n8. To maintain the steady state, the electrical power supplied to the black can must be greater than the power supplied to the silver can. Therefore, $P_{black} > P_{silver}$."
+        },
+        "distractor_map": {
+          "A": "Correct. The black surface has a higher emissivity, leading to a greater rate of heat loss by radiation. To compensate for this greater loss and maintain a constant temperature, a greater input power is required.",
+          "B": "Incorrect. This gives the wrong comparison and a flawed reason. Firstly, thermal radiation is a surface effect, not directly related to the bulk material's conductivity. Secondly, a shiny surface is a poor emitter, so it loses less heat and requires less power.",
+          "C": "Incorrect. This is the main trap. While the cans are identical and at the same temperature, their surface properties are different. This difference causes their rates of heat loss to be different, meaning the required input powers cannot be the same.",
+          "D": "Incorrect. This gives the correct comparison ($P_{black} > P_{silver}$) but for a physically nonsensical reason. Objects radiate heat to colder surroundings; they do not absorb heat (or 'coldness') from them. The black surface is a good emitter, which is why it needs more power, not because of absorption in this context.",
+          "E": "Incorrect. Specific heat capacity is relevant when calculating the energy needed to *change* an object's temperature. Since the temperature is *constant*, the specific heat capacity is irrelevant to the continuous power required to balance the ongoing heat loss."
+        },
+        "quality_self_check": {
+          "reasoning_hinge_used": true,
+          "not_direct_substitution": true,
+          "exactly_one_correct": true,
+          "no_calculator_friendly": true,
+          "on_spec": true,
+          "visual_dependency_safe": true
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-pro",
+      "attempts": 2
+    },
+    {
+      "stage": "deterministic_validator",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "ok": true,
+        "errors": [],
+        "warnings": [
+          {
+            "field": "question.options",
+            "kind": "non_default_count",
+            "message": "Expected 6 options (A-F); got 5."
+          }
+        ],
+        "option_keys": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E"
+        ],
+        "summary": "ok"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": null,
+      "attempts": 2
+    },
+    {
+      "stage": "verifier",
+      "status": "error",
+      "verdict": null,
+      "payload": null,
+      "notes": [],
+      "error": "No parseable JSON object in model output.",
+      "raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"correct_option_verified\": \"A\",\n  \"independent_solution\": {\n    \"main_law_or_principle\": \"Thermal equilibrium and energy conservation (Rate of energy input = Rate of energy output); Heat transfer mechanisms (Convection and Radiation); Surface properties (Emissivity).\",\n    \"calculation_or_logic\": \"To maintain a constant temperature, the electrical power supplied by the heater ($P_{electrical}$) must exactly balance the rate of heat loss to the surroundings ($P_{heat\\_loss}$). Both cans are identical in size, shape, and internal temperature (60°C), and are in the same cold room (10°C). Therefore, the rate of heat loss due to convection will be approximately the same for both cans.\\nHowever, the rate of heat loss due to thermal radiation depends on the surface's emissivity. A matt black surface has a high emissivity, making it a good emitter of thermal radiation. A shiny silver surface has a low emissivity, making it a poor emitter of thermal radiation.\\nConsequently, the matt black can will lose heat by radiation at a significantly higher rate than the shiny silver can. Since the total heat loss ($P_{heat\\_loss} = P_{convection} + P_{radiation}$) is greater for the black can, a greater electrical power input ($P_{electrical}$) is required to maintain its constant temperature.\\nTherefore, $P_{black} > P_{silver}$ because the black surface is a better emitter of thermal radiation.\",\n    \"verified_answer_value\": \"A\",\n    \"claimed_answer_value\": \"A\",\n    \"matches_claim\": true\n  },\n  \"spec_audit\": {\n    \"required_physics_moves\": [\n      \"Apply principle of thermal equilibrium (steady state: P_in = P_out)\",\n      \"Identify relevant heat transfer mechanisms (convection, radiation)\",\n      \"Recall/apply knowledge of surface properties regarding thermal radiation (emissivity of black vs. silver surfaces)\",\n      \"Compare rates of heat loss based on surface properties\",\n      \"Relate higher heat loss to higher required power input\"\n    ],\n    \"all_explicitly_on_spec\": true,\n    \"borderline_or_offspec_moves\": []\n  },\n  \"checks\": {\n    \"correctness\": \"pass\",\n    \"uniqueness\": \"pass\",\n    \"syllabus\": \"pass\",\n    \"no_calc_feasibility\": \"pass\",\n    \"ambiguity\": \"pass\",\n    \"diagram_dependency\": \"pass\",\n    \"distractor_safety\": \"pass\",\n    \"katex_formatting\": \"pass\",\n    \"graph_or_visual_validation\": \"n/a\"\n  },\n  \"notes\": [\n    \"The question correctly assesses understanding of thermal equilibrium and the role of surface emissivity in radiative heat transfer.\",\n    \"All distractors are well-designed to target common misconceptions.\"\n  ]\n}\n```",
+      "model": "gemini-2.5-flash",
+      "attempts": 2
+    },
+    {
+      "stage": "implementer_regen",
+      "status": "error",
+      "verdict": null,
+      "payload": {
+        "metadata": {
+          "schema_id": "P_30453dc9",
+          "module": "physics",
+          "variation_mode": "SIBLING",
+          "target_difficulty": "Medium",
+          "task_signature": "compare_scenarios",
+          "primary_tag": "4",
+          "secondary_tags": [
+            "5"
+          ]
+        },
+        "question": {
+          "stem": "Two identical electric kettles, A and B, are filled with the same amount of water. The exterior of kettle A is polished metal, while the exterior of kettle B is coated in matt black paint. Both kettles are placed in a room at 20°C and are switched on. Their internal thermostats are set to maintain the water at a constant temperature of 95°C.\n\nLet $P_A$ and $P_B$ be the average electrical power consumed by kettles A and B, respectively, to maintain this temperature.\n\nWhich of the following statements is correct?",
+          "options": {
+            "A": "$P_B > P_A$, because the matt black surface is a better emitter of thermal radiation.",
+            "B": "$P_A > P_B$, because the polished metal surface is a better conductor of heat.",
+            "C": "$P_A = P_B$, because both kettles maintain the same temperature and have the same surface area.",
+            "D": "$P_B > P_A$, because the matt black surface is better at absorbing energy from the surrounding air."
+          },
+          "correct_option": "A"
+        },
+        "visual_requirements": {
+          "visual_need": "concept_image_only",
+          "visual_role": "supportive",
+          "answer_depends_on_visual": false,
+          "graph_request": null,
+          "schematic_request": null,
+          "concept_image_request": "A simple diagram showing two identical electric kettles side-by-side. One is shiny and metallic, labelled 'A'. The other is matt black, labelled 'B'. Each kettle has a power cord plugged into a socket. Arrows indicating heat loss point away from the kettles, with more/thicker arrows shown for kettle B to visually represent its higher rate of heat loss."
+        },
+        "solution": {
+          "key_insight": "To maintain a constant temperature, the electrical power supplied to the kettle must be equal to the rate at which the kettle loses thermal energy to its surroundings. The rate of heat loss depends on the surface properties of the kettle.",
+          "reasoning": "1. The problem states that the water in both kettles is maintained at a constant temperature (95°C). This implies a steady-state thermal equilibrium where the rate of energy input equals the rate of energy output.\n2. The energy input is the average electrical power consumed by the heater, $P_{in} = P_{electrical}$.\n3. The energy output is the rate of heat loss to the colder surroundings (20°C), $P_{out}$. Heat is lost from the kettle's surface primarily through convection and thermal radiation.\n4. Both kettles are identical in shape and size, and are at the same temperature. Therefore, the rate of heat loss due to convection will be approximately the same for both.\n5. However, the rate of heat loss due to thermal radiation is dependent on the surface's emissivity. A matt black surface (kettle B) has a high emissivity and is a good emitter of thermal radiation. A polished metal surface (kettle A) has a low emissivity and is a poor emitter.\n6. Consequently, kettle B loses heat via radiation at a higher rate than kettle A.\n7. Since the total rate of heat loss is the sum of convection and radiation losses ($P_{out} = P_{convection} + P_{radiation}$), the total rate of heat loss for kettle B is greater than for kettle A ($P_{out, B} > P_{out, A}$).\n8. To maintain the constant temperature, the power supplied must balance this loss. Therefore, the power required for kettle B must be greater than the power required for kettle A ($P_B > P_A$).\n9. Option A correctly states this relationship and provides the correct physical reason.",
+          "distractor_map": {
+            "A": "Correct. The matt black surface has a higher emissivity, leading to a greater rate of heat loss by radiation. To compensate for this greater loss and maintain a constant temperature, a greater input power is required.",
+            "B": "Incorrect. This states the wrong relationship ($P_A > P_B$) and gives a misleading reason. While metal is a good conductor, the dominant factor determining the difference in heat loss is the surface emissivity's effect on radiation. A polished surface loses less heat, so it requires less power.",
+            "C": "Incorrect. This is a common misconception. Although the temperatures and dimensions are identical, the different surface properties (emissivity) cause different rates of heat loss, which in turn require different amounts of power to maintain equilibrium.",
+            "D": "Incorrect. While the comparison $P_B > P_A$ is correct, the reason provided is physically wrong. The kettles are hotter than the surrounding air, so they are net emitters of thermal energy. They lose heat to the surroundings; they do not absorb energy from the colder air."
+          }
+        },
+        "quality_self_check": {
+          "reasoning_hinge_used": true,
+          "not_direct_substitution": true,
+          "exactly_one_correct": true,
+          "no_calculator_friendly": true,
+          "on_spec": true,
+          "visual_dependency_safe": true
+        }
+      },
+      "notes": [],
+      "error": "Missing required keys: ['distractor_map']",
+      "raw_text": "```json\n{\n  \"metadata\": {\n    \"schema_id\": \"P_30453dc9\",\n    \"module\": \"physics\",\n    \"variation_mode\": \"SIBLING\",\n    \"target_difficulty\": \"Medium\",\n    \"task_signature\": \"compare_scenarios\",\n    \"primary_tag\": \"4\",\n    \"secondary_tags\": [\n      \"5\"\n    ]\n  },\n  \"question\": {\n    \"stem\": \"Two identical electric kettles, A and B, are filled with the same amount of water. The exterior of kettle A is polished metal, while the exterior of kettle B is coated in matt black paint. Both kettles are placed in a room at 20°C and are switched on. Their internal thermostats are set to maintain the water at a constant temperature of 95°C.\\n\\nLet $P_A$ and $P_B$ be the average electrical power consumed by kettles A and B, respectively, to maintain this temperature.\\n\\nWhich of the following statements is correct?\",\n    \"options\": {\n      \"A\": \"$P_B > P_A$, because the matt black surface is a better emitter of thermal radiation.\",\n      \"B\": \"$P_A > P_B$, because the polished metal surface is a better conductor of heat.\",\n      \"C\": \"$P_A = P_B$, because both kettles maintain the same temperature and have the same surface area.\",\n      \"D\": \"$P_B > P_A$, because the matt black surface is better at absorbing energy from the surrounding air.\"\n    },\n    \"correct_option\": \"A\"\n  },\n  \"visual_requirements\": {\n    \"visual_need\": \"concept_image_only\",\n    \"visual_role\": \"supportive\",\n    \"answer_depends_on_visual\": false,\n    \"graph_request\": null,\n    \"schematic_request\": null,\n    \"concept_image_request\": \"A simple diagram showing two identical electric kettles side-by-side. One is shiny and metallic, labelled 'A'. The other is matt black, labelled 'B'. Each kettle has a power cord plugged into a socket. Arrows indicating heat loss point away from the kettles, with more/thicker arrows shown for kettle B to visually represent its higher rate of heat loss.\"\n  },\n  \"solution\": {\n    \"key_insight\": \"To maintain a constant temperature, the electrical power supplied to the kettle must be equal to the rate at which the kettle loses thermal energy to its surroundings. The rate of heat loss depends on the surface properties of the kettle.\",\n    \"reasoning\": \"1. The problem states that the water in both kettles is maintained at a constant temperature (95°C). This implies a steady-state thermal equilibrium where the rate of energy input equals the rate of energy output.\\n2. The energy input is the average electrical power consumed by the heater, $P_{in} = P_{electrical}$.\\n3. The energy output is the rate of heat loss to the colder surroundings (20°C), $P_{out}$. Heat is lost from the kettle's surface primarily through convection and thermal radiation.\\n4. Both kettles are identical in shape and size, and are at the same temperature. Therefore, the rate of heat loss due to convection will be approximately the same for both.\\n5. However, the rate of heat loss due to thermal radiation is dependent on the surface's emissivity. A matt black surface (kettle B) has a high emissivity and is a good emitter of thermal radiation. A polished metal surface (kettle A) has a low emissivity and is a poor emitter.\\n6. Consequently, kettle B loses heat via radiation at a higher rate than kettle A.\\n7. Since the total rate of heat loss is the sum of convection and radiation losses ($P_{out} = P_{convection} + P_{radiation}$), the total rate of heat loss for kettle B is greater than for kettle A ($P_{out, B} > P_{out, A}$).\\n8. To maintain the constant temperature, the power supplied must balance this loss. Therefore, the power required for kettle B must be greater than the power required for kettle A ($P_B > P_A$).\\n9. Option A correctly states this relationship and provides the correct physical reason.\",\n    \"distractor_map\": {\n      \"A\": \"Correct. The matt black surface has a higher emissivity, leading to a greater rate of heat loss by radiation. To compensate for this greater loss and maintain a constant temperature, a greater input power is required.\",\n      \"B\": \"Incorrect. This states the wrong relationship ($P_A > P_B$) and gives a misleading reason. While metal is a good conductor, the dominant factor determining the difference in heat loss is the surface emissivity's effect on radiation. A polished surface loses less heat, so it requires less power.\",\n      \"C\": \"Incorrect. This is a common misconception. Although the temperatures and dimensions are identical, the different surface properties (emissivity) cause different rates of heat loss, which in turn require different amounts of power to maintain equilibrium.\",\n      \"D\": \"Incorrect. While the comparison $P_B > P_A$ is correct, the reason provided is physically wrong. The kettles are hotter than the surrounding air, so they are net emitters of thermal energy. They lose heat to the surroundings; they do not absorb energy from the colder air.\"\n    }\n  },\n  \"quality_self_check\": {\n    \"reasoning_hinge_used\": true,\n    \"not_direct_substitution\": true,\n    \"exactly_one_correct\": true,\n    \"no_calculator_friendly\": true,\n    \"on_spec\": true,\n    \"visual_dependency_safe\": true\n  }\n}\n```",
+      "model": "gemini-2.5-pro",
+      "attempts": 3
+    },
+    {
+      "stage": "deterministic_validator",
+      "status": "fail",
+      "verdict": null,
+      "payload": {
+        "ok": false,
+        "errors": [
+          {
+            "field": "distractor_map",
+            "kind": "missing_top_key",
+            "message": "Required top-level key missing: 'distractor_map'."
+          }
+        ],
+        "warnings": [],
+        "option_keys": [],
+        "summary": "missing_required_keys"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": null,
+      "attempts": 3
+    }
+  ],
+  "pipeline": "v4",
+  "created_at": "2026-05-17T22:55:05+01:00",
+  "extra": {
+    "errors": [
+      {
+        "field": "distractor_map",
+        "kind": "missing_top_key",
+        "message": "Required top-level key missing: 'distractor_map'."
+      }
+    ]
+  }
+}

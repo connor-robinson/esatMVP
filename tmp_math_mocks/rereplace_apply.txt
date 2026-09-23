@@ -1,0 +1,32 @@
+﻿APPLY mode
+
+
+=== B19 ΓÇö Repeats B3 diceΓåÆquadratic real-roots template ===
+  current 6a9ae4a4 D=4 M7
+  A fair six-sided die is rolled three times. The result of each roll, $d$, is used to form a quadratic equation $x^2 + dx + 9 = 0$. What is the probability that at least one of the three equations has ΓÇª
+  ΓåÆ 2b78b239-81e0-4d8f-a136-b65e06e9044d D=4 M5 ans=B
+     The line $L_1$ passes through the point $A(1, 2)$ and is perpendicular to the line segment connecting $A$ and $B(5, 4)$. The line $L_2$ passes through $B$ and is perpendicular to the line $x + 3y = 0$ΓÇª
+  APPLIED
+
+=== D13 ΓÇö Another three-dice probability; Mock D already probability-heavy ===
+  current ed241f47 D=3 M7
+  Three fair, six-sided dice are rolled. Let $p$ be the probability that the sum of the numbers obtained is 6, and let $q$ be the probability that the sum of the numbers obtained is 7. What is the valueΓÇª
+  ΓåÆ 48b903f6-39b9-402f-8882-141be4364828 D=3 M5 ans=A
+     Let P be a quadrilateral that has rotational symmetry of order greater than 1, but no line symmetry. Let Q be a quadrilateral that has one or more lines of symmetry, but has rotational symmetry of ordΓÇª
+  APPLIED
+
+=== D22 ΓÇö Density overrepresented in Mock D ===
+  current 88472cf2 D=4 M1
+  A composite solid cylinder is formed from two metals, P and Q. The volume of metal P is 60 cm┬│ and the volume of metal Q is 90 cm┬│. The density of metal P is 5 g/cm┬│ and the density of metal Q is 2 g/ΓÇª
+  ΓåÆ 45f9fb97-c401-413a-ac20-0f1289dd5b1d D=4 M4 ans=D
+     Which of the following describes the set of real values of $x$ that satisfy the inequality? $$\frac{(x-1)^2 (2-x)}{(x+3)(x^2+1)} \le 0$$ΓÇª
+  APPLIED
+
+=== C21 ΓÇö Tank/pipe/flow/rate overrepresented across AΓÇôE ===
+  current c04ff38c D=4 M4
+  A tank is filled by a tap and emptied by a drain. The drain takes 10 minutes longer to empty the full tank than the tap takes to fill the empty tank. Starting with an empty tank, both the tap and the ΓÇª
+  ΓåÆ 6c0acc42-a201-407c-89f4-4ad65c98d025 D=4 M4 ans=A
+     Find the set of values of $k$ for which the equation $$ k = \frac{2x^2 + 3}{x^2 - 1} $$ has real solutions for $x$.ΓÇª
+  APPLIED
+
+Wrote 4 records ΓåÆ C:\Users\anson\Desktop\nocalcMVP2_real\tmp_math_mocks\math1_repetition_rereplace.json

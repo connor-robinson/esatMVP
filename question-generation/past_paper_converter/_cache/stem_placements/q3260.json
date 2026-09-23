@@ -1,0 +1,30 @@
+{
+  "questionId": 3260,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 51,
+  "stemBlocks": [
+    "An experiment was performed to investigate whether capillary action could account for the movement of water from roots to leaves in a plant.\nThe diagram shows apparatus used to model this effect using narrow glass capillary tubing. The inner diameter of the capillary tubing is $0.5 \\text{ mm}$.\nThe initial height of the water in the tubing was recorded as $0.2 \\text{ cm}$. After $2 \\text{ minutes}$ the height was recorded as $1.8 \\text{ cm}$.\nThe model assumes the rate of movement is constant.",
+    "What is the rate of water movement in $\\text{mm}^3 \\text{ min}^{-1}$ and what vessel type transfers water from roots to leaves in a real plant?",
+    "|  | rate of water movement / $\\text{mm}^3 \\text{ min}^{-1}$ | vessel type |\n| --- | --- | --- |\n| A | $0.5\\pi$ | xylem |\n| B | $0.5\\pi$ | phloem |\n| C | $\\pi$ | xylem |\n| D | $\\pi$ | phloem |\n| E | $2\\pi$ | xylem |\n| F | $2\\pi$ | phloem |\n| G | $4\\pi$ | xylem |\n| H | $4\\pi$ | phloem |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:13.951011+00:00",
+  "sourceImageHash": "abf422d52786d23f53cf056b1a64305f08bb5d7c119ce1b002853fa3a1e93f4b",
+  "status": "ok"
+}

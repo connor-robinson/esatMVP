@@ -1,0 +1,28 @@
+{
+  "questionId": 2984,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 5,
+  "stemBlocks": [
+    "The right-angled triangle shown has horizontal and vertical sides measuring $(4 + \\sqrt{2}) \\text{ cm}$ and $(2 - \\sqrt{2}) \\text{ cm}$ respectively.\nCalculate the area of the triangle."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:15.942203+00:00",
+  "sourceImageHash": "d40f391d6b0d188df1314eb27a3eaa77092f7a69f894eb521090b07b1ffa13ae",
+  "status": "ok"
+}

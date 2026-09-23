@@ -1,0 +1,33 @@
+{
+  "questionId": 3364,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 35,
+  "stemBlocks": [
+    "Sodium feredetate trihydrate and iron(II) sulfate can both be used to treat iron deficiency. The formula for sodium feredetate trihydrate is:",
+    "$ \\text{Fe}^{3+} \\text{Na}^+ \\left( \\text{OOCCH}_2 \\text{N}(\\text{CH}_2 \\text{COO}^-)\\text{CH}_2 \\text{CH}_2 \\text{N}(\\text{CH}_2 \\text{COO}^-)\\text{CH}_2 \\text{COO}^- \\right) \\cdot 3\\text{H}_2\\text{O} $",
+    "Sodium feredetate trihydrate is used as a solution. $5.00 \\text{ cm}^3$ of this solution contains $210.5 \\text{ mg}$ of sodium feredetate trihydrate.",
+    "Iron(II) sulfate is used in tablet form. One iron tablet contains $63.0 \\text{ mg}$ of iron(II) ions.",
+    "What volume of sodium feredetate trihydrate solution would give the same mass of iron as one iron(II) sulfate tablet?",
+    "($A_r$ values: H = 1.0; C = 12; N = 14; O = 16; Na = 23; Fe = 56)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:10.849885+00:00",
+  "sourceImageHash": "49930dfb347692c18768a97978a02443d73804da0c3f788cd3621b70ec17dbcd",
+  "status": "ok"
+}

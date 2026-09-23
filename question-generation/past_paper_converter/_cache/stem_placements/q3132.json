@@ -1,0 +1,30 @@
+{
+  "questionId": 3132,
+  "examName": "ENGAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 3,
+  "stemBlocks": [
+    "A ray of light is directed into a semicircular transparent block, entering at P. The direction of the ray is adjusted until it strikes the centre of the flat face XY of the block at the critical angle and reflects to Q as shown.",
+    "The length of XY is $L$.\nThe speed of light in air is $c$.",
+    "What is the time taken by the light to travel from P to Q in the block?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:44:04.571219+00:00",
+  "sourceImageHash": "7215262320d270bdbbc4519973d33cde489c4f505e3665a18a809c2b449bdd55",
+  "status": "ok"
+}

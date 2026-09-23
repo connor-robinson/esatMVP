@@ -1,0 +1,29 @@
+{
+  "questionId": 2449,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 60,
+  "stemBlocks": [
+    "The diagram shows three features which are used to group organisms. Fungi, bacteria and animals can each be placed in one of the regions labelled P, Q, R or S on the diagram. Which row in the following table is correct?",
+    "|  | fungi | bacteria | animals |\n| --- | --- | --- | --- |\n| A | P | S | R |\n| B | P | R | S |\n| C | Q | R | P |\n| D | S | Q | R |\n| E | S | S | S |\n| F | R | P | Q |\n| G | R | Q | P |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:49:16.180302+00:00",
+  "sourceImageHash": "93d2e379e1c3b33aa5d2c20ef299a08baf24a661ea2bcba657ee27e9906c8721",
+  "status": "ok"
+}

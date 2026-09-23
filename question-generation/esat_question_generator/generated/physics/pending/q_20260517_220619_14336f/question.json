@@ -1,0 +1,250 @@
+{
+  "id": "P_121b9ac8-Medium-437863ba88",
+  "schema_id": "P_121b9ac8",
+  "difficulty": "Medium",
+  "idea_plan": {
+    "schema_id": "P_121b9ac8",
+    "module": "physics",
+    "variation_mode": "FAR",
+    "target_difficulty": "Medium",
+    "idea_summary": "Compare the final momentum of a stationary object after it is struck by a pulse of light, considering two cases: perfect absorption and perfect reflection. The formula for photon momentum (p=E/c) is provided in the question stem.",
+    "schema_invariant": {
+      "core_move": "Applying the principle of conservation of momentum to a 'collision' interaction to determine an outcome.",
+      "what_must_not_change": [
+        "A closed system interaction where initial and final states are linked by momentum conservation.",
+        "The vector nature of momentum (specifically, the change in momentum) is the key to the solution."
+      ],
+      "what_can_change": [
+        "The 'colliding' entities are photons and a macroscopic object, not two macroscopic objects.",
+        "The physical context is radiation pressure/optics, not classical mechanics.",
+        "The task is to compare two scenarios rather than calculate a single value."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "tempting_wrong_model",
+      "reasoning_hinge": "Realising that the change in the light's momentum is twice as large for perfect reflection (from +p to -p, so Δp is 2p) as it is for perfect absorption (from +p to 0, so Δp is p). This doubles the impulse imparted to the object.",
+      "why_top_students_win": "They correctly model the interaction as a collision, apply momentum conservation, and correctly calculate the change in momentum for both an 'inelastic' (absorption) and 'elastic' (reflection) case.",
+      "why_mid_students_miss": "They may assume that because the same initial pulse of light is used in both cases, the momentum transferred is the same. They fail to account for the momentum of the reflected light, effectively ignoring the vector change."
+    },
+    "minimum_reasoning_depth": {
+      "steps": 2,
+      "must_include": [
+        "model_selection",
+        "non_obvious_inference",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "The difficulty is similar to comparing an elastic and a perfectly inelastic collision in mechanics. The pace is fast once the principle is identified. The FAR variation disguises this standard comparison in a modern physics context, requiring the candidate to see the underlying unity of the physics principles.",
+    "task_signature": "compare_scenarios",
+    "tool_footprint": [
+      "momentum_conservation",
+      "impulse",
+      "proportional_reasoning",
+      "wave_particle_duality",
+      "comparison"
+    ],
+    "primary_tag": "4",
+    "secondary_tags": [
+      "7"
+    ],
+    "visual_need": "concept_image_only",
+    "visual_role": "supportive",
+    "visual_brief": "Two simple side-by-side diagrams. Left: An arrow representing a light pulse hits a block and is absorbed (no outgoing arrow). Right: An arrow representing a light pulse hits a block and bounces back (outgoing arrow shown). The diagrams are purely conceptual.",
+    "surface_twist": "The problem is framed in the context of light pressure on a surface, which appears to be an optics or modern physics topic. The collapse moment occurs when the student realizes it is a standard momentum conservation problem, analogous to a ball hitting a wall and either sticking (absorption) or bouncing off elastically (reflection).",
+    "why_still_on_spec": "The core concept is Conservation of Momentum (ESAT Physics tag 4.2). The calculation of change in momentum (Δp) is a standard skill. The formula for photon momentum, p=E/c, would be provided in the stem, making the question about applying a given piece of information within a familiar framework, not recalling off-spec knowledge.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Assuming the momentum transferred is the same for absorption and reflection because the initial light pulse is identical.",
+        "distractor_role": "This leads to a ratio of 1:1 for the final momenta."
+      },
+      {
+        "mistake": "Confusing momentum with kinetic energy, and attempting to use E = 1/2 mv^2 inappropriately.",
+        "distractor_role": "This could lead to a ratio involving square roots, such as 1:sqrt(2)."
+      },
+      {
+        "mistake": "Incorrectly calculating the change in momentum for reflection as zero (e.g., final magnitude minus initial magnitude, p - p = 0).",
+        "distractor_role": "A distractor suggesting reflection imparts zero momentum, or a very small momentum compared to absorption."
+      }
+    ],
+    "difficulty_rationale": "Medium. The question requires more than direct formula application. The candidate must first recognize momentum conservation as the relevant principle in an unfamiliar context, and then correctly execute the comparison, which hinges on understanding the vector change in momentum. This two-step reasoning process is selective but computationally trivial.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "The question asks for a comparison between two processes (absorption vs. reflection). A student cannot simply substitute numbers into a formula. They must construct and compare two models based on the principle of momentum conservation, specifically focusing on how the change in momentum differs between the two cases."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The question asks for the ratio of the final momenta (or velocities) in the two cases. This naturally generates distinct numerical options like 1:1, 1:2, 2:1, 1:4, etc., each corresponding to a specific and plausible physical misconception."
+    }
+  },
+  "question_package": {
+    "metadata": {
+      "schema_id": "P_121b9ac8",
+      "module": "physics",
+      "variation_mode": "FAR",
+      "target_difficulty": "Medium",
+      "task_signature": "compare_scenarios",
+      "primary_tag": "4",
+      "secondary_tags": [
+        "7"
+      ]
+    },
+    "question": {
+      "stem": "A pulse of light with total energy $E$ is incident on a stationary object of mass $M$ which is free to move. The total momentum of the light pulse is $p = E/c$, where $c$ is the speed of light.\n\nConsider two separate cases:\n1. The light is perfectly absorbed by the object. The object's final momentum is $p_\\text{abs}$.\n2. The light is perfectly reflected back along its original path. The object's final momentum is $p_\\text{refl}$.\n\nWhat is the value of the ratio $p_\\text{refl} / p_\\text{abs}$?",
+      "options": {
+        "A": "0",
+        "B": "1/2",
+        "C": "1",
+        "D": "$\\sqrt{2}$",
+        "E": "2",
+        "F": "4"
+      },
+      "correct_option": "E"
+    },
+    "visual_requirements": {
+      "visual_need": "concept_image_only",
+      "visual_role": "supportive",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": "Two simple, side-by-side diagrams. Left diagram: An arrow representing a light pulse moves towards a block. The arrow stops at the block, indicating absorption. Right diagram: An arrow representing a light pulse moves towards a block, and another arrow of the same size is shown moving away from the block in the opposite direction, indicating reflection."
+    },
+    "solution": {
+      "key_insight": "The momentum gained by the object is equal to the momentum lost by the light pulse. For reflection, the light's momentum vector reverses, resulting in a change twice the magnitude of its initial momentum. For absorption, the light's momentum simply becomes zero.",
+      "reasoning": "This problem is an application of the principle of conservation of momentum.\nLet the initial direction of the light pulse be the positive direction. The initial momentum of the light pulse is $p = E/c$. The initial momentum of the stationary object is 0.\n\nCase 1: Absorption\nThe initial momentum of the system is $p$. After the interaction, the light is absorbed, so its momentum is 0. The object gains momentum $p_\\text{abs}$.\nBy conservation of momentum: $p + 0 = 0 + p_\\text{abs}$.\nTherefore, $p_\\text{abs} = p$.\n\nCase 2: Reflection\nThe initial momentum of the system is again $p$. After the interaction, the light is reflected and travels in the opposite direction, so its final momentum is $-p$. The object gains momentum $p_\\text{refl}$.\nBy conservation of momentum: $p + 0 = -p + p_\\text{refl}$.\nTherefore, $p_\\text{refl} = p - (-p) = 2p$.\n\nNow, we can find the ratio:\n$$ \\frac{p_\\text{refl}}{p_\\text{abs}} = \\frac{2p}{p} = 2 $$"
+    },
+    "distractor_map": {
+      "A": "This would be the case if reflection transferred no momentum. This might arise from incorrectly calculating the change in momentum as the change in magnitude, $|p| - |-p| = 0$.",
+      "B": "This is the inverse of the correct ratio, $p_\\text{abs} / p_\\text{refl}$.",
+      "C": "This is the most common mistake. It results from assuming that because the initial light pulse is the same in both cases, the momentum transferred must also be the same. This ignores the momentum carried away by the reflected pulse.",
+      "D": "This answer might arise from incorrectly confusing momentum and kinetic energy. If the energy transferred in reflection were double that in absorption, one might incorrectly reason that momentum is proportional to the square root of energy, leading to a factor of $\\sqrt{2}$.",
+      "E": "Correct. The change in momentum of the light during reflection is $\\Delta p_\\text{light} = p_\\text{final} - p_\\text{initial} = (-p) - p = -2p$. By momentum conservation, the object gains momentum $2p$. For absorption, the change is $\\Delta p_\\text{light} = 0 - p = -p$, so the object gains momentum $p$. The ratio is $2p/p = 2$.",
+      "F": "This could be a calculation error, such as squaring the correct ratio of 2, possibly through a mistaken analogy with energy relationships involving squared terms."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "The core hinge is realising that the change in momentum for reflection is from +p to -p, a total change of 2p, whereas for absorption it is from +p to 0, a change of p.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true
+    }
+  },
+  "verifier_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "E",
+    "independent_solution": {
+      "main_law_or_principle": "Conservation of linear momentum",
+      "calculation_or_logic": "Let the initial momentum of the light pulse be $p$ in the positive direction. The initial momentum of the stationary object is 0.\n\nCase 1: Perfect Absorption\nInitial total momentum = $p + 0 = p$.\nAfter absorption, the light pulse has 0 momentum. The object gains momentum $p_\\text{abs}$.\nBy conservation of momentum: $p = 0 + p_\\text{abs} \\implies p_\\text{abs} = p$.\n\nCase 2: Perfect Reflection\nInitial total momentum = $p + 0 = p$.\nAfter reflection, the light pulse travels in the opposite direction, so its momentum is $-p$. The object gains momentum $p_\\text{refl}$.\nBy conservation of momentum: $p = -p + p_\\text{refl} \\implies p_\\text{refl} = p - (-p) = 2p$.\n\nRatio: $p_\\text{refl} / p_\\text{abs} = (2p) / p = 2$.",
+      "verified_answer_value": "2",
+      "claimed_answer_value": "2",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Conservation of linear momentum",
+        "Vector nature of momentum",
+        "Application of given photon momentum formula",
+        "Comparison of two scenarios"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a"
+    },
+    "notes": [
+      "The question correctly applies the principle of conservation of momentum to a light-matter interaction.",
+      "The distinction between absorption (momentum change $p$) and reflection (momentum change $2p$) is fundamental and correctly tested.",
+      "The provided formula for photon momentum ($p=E/c$) ensures the question is self-contained and does not require prior advanced knowledge.",
+      "The distractors are well-designed to target common misconceptions."
+    ]
+  },
+  "style_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 35,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "similar",
+      "notes": "The question's difficulty is well-calibrated to 'Medium'. It requires a key conceptual insight (vector nature of momentum change) rather than complex calculations, making it suitable for ESAT. The comparison to elastic/inelastic collisions is apt."
+    },
+    "selectivity_audit": {
+      "main_trap": "The primary trap is assuming that the momentum transferred to the object is the same for both absorption and reflection because the initial light pulse has the same momentum. This leads to a ratio of 1:1, ignoring the fact that reflected light carries momentum in the opposite direction, effectively doubling the momentum change for the light and thus the impulse on the object.",
+      "why_not_plug_and_chug": "This is not a plug-and-chug question because it requires comparing two distinct scenarios based on a fundamental principle (conservation of momentum) and understanding the vector nature of momentum change. There isn't a single formula to just substitute values into; rather, two models must be constructed and their outcomes compared.",
+      "expected_mid_student_error": "A mid-level student might correctly apply conservation of momentum for absorption (p_abs = p) but incorrectly for reflection, perhaps thinking the change in momentum is p (magnitude only) rather than 2p (vector change from +p to -p). This would lead to a ratio of 1.",
+      "verdict": "selective"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "This question is an excellent example of ESAT physics style. It is concise, clear, and tests a core school physics concept (conservation of momentum) in a slightly unfamiliar context (light pressure), which is a classic ESAT move.",
+      "The provision of the photon momentum formula (p=E/c) ensures it remains within the scope of school physics and doesn't require advanced knowledge.",
+      "The question hinges on a single, crucial conceptual understanding: the vector nature of momentum change, particularly how reflection results in a change of 2p compared to absorption's p.",
+      "The distractors are well-crafted to target common misconceptions, making the question highly selective."
+    ]
+  },
+  "models": {
+    "designer": "gemini-2.5-pro",
+    "implementer": "gemini-2.5-pro",
+    "verifier": "gemini-2.5-flash",
+    "style_judge": "gemini-2.5-flash"
+  },
+  "attempts": 1,
+  "created_at": "2026-05-17T22:10:21.669409",
+  "token_usage": {
+    "prompt_tokens": 29891,
+    "candidates_tokens": 6092,
+    "total_tokens": 50972
+  },
+  "schema_block_snapshot": "## **P_121b9ac8. Applying Momentum Conservation in Collision Problems**\n\n**Core move:** Apply the principle of conservation of momentum to determine an unknown mass or velocity in a closed system collision.\n\n**Seen in / context:**\n- Analyzing collisions (elastic and inelastic)\nRecoil problems (e.g., gun recoil, astronaut push-off)\nExplosions where an object breaks into multiple parts\nSituations involving impulse and average force over a collision time\n\n**Possible wrong paths:**\n- Neglecting the vector nature of momentum (e.g., not assigning positive/negative signs for direction).\nIncorrectly assuming conservation of kinetic energy for inelastic collisions.\nNot defining a consistent positive direction for velocities.\nForgetting to include all objects within the defined system when calculating total momentum.\n\n**Notes for generation:**\n- Remind students to define a positive direction for velocities at the start of the problem.\nEmphasize that total momentum is always conserved in a closed system, even if kinetic energy is not (in inelastic collisions).\nEnsure all masses and velocities are correctly identified for both initial and final states of the collision.\nProblems often involve solving for one unknown quantity (e.g., the mass of one object, the final velocity of another).\n\n**Exemplar questions:**\n- `NSAA_2017_Section1_Q31_NSAA_Sec`: Initial exemplar for new schema.",
+  "pipeline": "v4",
+  "has_visual": false,
+  "visual_type": "none",
+  "answer_depends_on_visual": false,
+  "visual_assets": [
+    {
+      "kind": "concept_image",
+      "spec_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260517_220619_14336f\\concept_image_prompt.json",
+      "image_paths": [
+        "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260517_220619_14336f/concept_image_v1.png"
+      ],
+      "renderer": "gemini_image_v1",
+      "qc_status": "delete",
+      "qc_source": "concept_image_verifier.json",
+      "answer_bearing": false,
+      "checksum": null
+    }
+  ]
+}

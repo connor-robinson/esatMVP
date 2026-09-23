@@ -1,0 +1,32 @@
+{
+  "questionId": 2457,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 68,
+  "stemBlocks": [
+    "A student carried out an experiment to investigate the effect of enzyme concentration on the rate of an enzyme-controlled reaction.\nThe student used a starch agar plate with five identically sized small wells cut into the agar. The wells were filled with identical volumes of different concentrations of amylase solution, as shown in the diagram.",
+    "The starch agar plate was incubated overnight and the plate was then flooded with iodine solution. Most of the agar stained blue, but there was a clear area around each well where starch had been digested by the amylase. The student measured and recorded the diameter of the clear area that formed. The results are shown in the table below.",
+    "Which of the following factors could have affected the diameter of the clear area around the wells containing amylase?",
+    "1 pH of the starch agar\n2 concentration of the amylase solution\n3 temperature at which the plates were incubated",
+    "| percentage concentration of amylase | diameter of clear area that forms around the well containing amylase / mm |\n| --- | --- |\n| 1.0 | 27 |\n| 0.1 | 24 |\n| 0.01 | 15 |\n| 0.001 | 12 |\n| 0.0001 | 9 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "starch agar plate",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:49:16.229524+00:00",
+  "sourceImageHash": "df1a32afd1ee0e2f7dbb2e56504378314633113d9f30c0f88f8c28f7e48e9e0e",
+  "status": "ok"
+}

@@ -1,0 +1,30 @@
+{
+  "questionId": 2544,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 65,
+  "stemBlocks": [
+    "The family tree shows a family affected by a dominant genetic condition. All people who carry the mutation show symptoms of the condition.",
+    "Which of the following statements could explain the presence of the dominant condition in female R?",
+    "1 The mutation occurs in P.\n2 The mutation occurs in Q's father.\n3 The mutation occurs in R."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Key: male without condition (empty square), male with condition (filled square), female without condition (empty circle), female with condition (filled circle). Pedigree chart shows individuals P, Q, and R.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.843914+00:00",
+  "sourceImageHash": "91e8ae78ecd08ac83df874603efab3d601eb225fea33e2c26f9563fbeeca89c3",
+  "status": "ok"
+}

@@ -1,0 +1,50 @@
+{
+  "stage": "style_checker",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 35,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "similar",
+      "notes": "The question is appropriately calibrated for a 'Hard' ESAT question. It requires combining multiple physics principles (mechanics, electromagnetism, energy conservation) and proportional reasoning, with a significant conceptual trap. This aligns well with the demands of a challenging ESAT problem."
+    },
+    "selectivity_audit": {
+      "main_trap": "The primary trap is to incorrectly assume that the terminal velocity ($v$) remains constant when the magnetic field strength ($B$) is doubled. Students might use the formula for electrical power dissipation, $P = (BLv)^2/R$, and conclude that $P \\propto B^2$, leading to an answer of $4P$ (option F). This ignores the crucial fact that $v$ is dependent on $B$ due to the terminal velocity condition.",
+      "why_not_plug_and_chug": "The question cannot be solved by simple formula substitution. It requires a multi-step reasoning process: 1) establishing force balance at terminal velocity to find the relationship between $v_t$ and $B$, and 2) understanding that at terminal velocity, the dissipated electrical power equals the rate of gravitational potential energy loss ($P = F_g v_t$). Failing to connect these ideas or assuming $v$ is independent of $B$ leads to incorrect answers.",
+      "expected_mid_student_error": "A mid-level student is highly likely to fall for the trap of assuming $v$ is constant and selecting option F ($4P$). They might correctly recall the formula for power dissipation in a magnetic field but miss the deeper implication of the terminal velocity condition, which links $v$ to $B$. Other errors could include incorrect derivation of the $v_t$ dependence on $B$ (e.g., $v_t \\propto 1/B$ instead of $1/B^2$).",
+      "verdict": "selective"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "The question is an excellent example of ESAT style. It is concise, uses school-level physics, and demands conceptual understanding and proportional reasoning rather than complex calculations.",
+      "The core idea of balancing forces at terminal velocity and relating power dissipated to power input from gravity is a strong reasoning hinge.",
+      "The distractors are well-engineered to target common misconceptions and errors in proportional reasoning, making the question highly selective."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

@@ -1,0 +1,28 @@
+{
+  "questionId": 1835,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 42,
+  "stemBlocks": [
+    "The diagram shows two identical blocks, each of mass $m$, in two different arrangements. Which expression gives:\n$$ \\left[ \\text{gravitational potential energy} \\text{ of arrangement 2} \\right] - \\left[ \\text{gravitational potential energy}  \\text{ of arrangement 1} \\right] $$\n($g$ is the gravitational field strength.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:23:52.653795+00:00",
+  "sourceImageHash": "42eb167a68a66143152ba3772233c98754afc7c401e567fb4043ab860103c42c",
+  "status": "ok"
+}

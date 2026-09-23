@@ -1,0 +1,28 @@
+{
+  "questionId": 3261,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 52,
+  "stemBlocks": [
+    "Two healthy human cells with no mutations were modelled as shown in the diagrams below. The cells were not dividing. Both cells contain a single nucleus and are diploid.\nA study estimates that mitochondria account for 12% of the volume of both types of cells.\nUsing this estimate for all cells, which of the following is/are correct?\n(The volume of a sphere is given by $\\frac{4}{3}\\pi r^3$, where $r$ is the radius. Use the value 3.14 for $\\pi$)\n1 The larger number of mitochondria in the liver cell will produce more lactic acid than those in the white blood cell.\n2 The liver cell is larger and so will contain a greater mass of nuclear DNA than the white blood cell.\n3 The mitochondria in the white blood cell occupy $14 \\ \\mu m^3$ to the nearest whole number."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "[diagram not to scale]",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:13.951011+00:00",
+  "sourceImageHash": "f65374d36c9febe61c792ead9e811f4c55e94c0d0b26cc474d924c84c9905d25",
+  "status": "ok"
+}

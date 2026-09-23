@@ -718,7 +718,6 @@ export function RoadmapTable({
               const total =
                 data?.total ??
                 groupRoadmapPartsForDisplay(stage.parts).length;
-              const isMockStage = isEsatCampMockRoadmapStage(stage);
               // Full mocks: collapsed by default, expandable for subject sections.
               // Subject tabs: one row only (no nested duplicate section row).
               // Official papers: expandable as before.

@@ -1,0 +1,70 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_a9a3eea7",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Medium",
+      "task_signature": "P_a9a3eea7_reverse_inference_medium_0",
+      "primary_tag": "2",
+      "secondary_tags": [
+        "2.2",
+        "2.5"
+      ]
+    },
+    "question": {
+      "stem": "An object of volume $0.20\\text{ m}^3$ falls through a liquid of density $1500\\text{ kg m}^{-3}$. It reaches a terminal velocity at which the drag force is $1000\\text{ N}$.\n\nWhat is the density of the object in $\\text{kg m}^{-3}$?\n\n(Assume the acceleration of free fall $g = 10\\text{ m s}^{-2}$.)",
+      "options": {
+        "A": "500",
+        "B": "1000",
+        "C": "1500",
+        "D": "2000",
+        "E": "2500",
+        "F": "4000"
+      },
+      "correct_option": "D"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "At terminal velocity, the net force on the falling object is zero. Therefore, the downward weight force must be balanced by the sum of the upward buoyancy (upthrust) and drag forces.",
+      "reasoning": "Let $\\rho_{obj}$ be the density of the object and $\\rho_{fluid}$ be the density of the fluid.\n\n1.  At terminal velocity, the forces are in equilibrium. The downward weight ($W$) is balanced by the upward buoyancy ($U$) and the upward drag ($D$).\n    $$W = U + D$$\n2.  Calculate the buoyancy force: $U = \\rho_{fluid} \\times V \\times g = 1500 \\times 0.20 \\times 10 = 3000\\text{ N}$.\n3.  The drag force $D$ is given as $1000\\text{ N}$.\n4.  Substitute these values into the equilibrium equation to find the weight of the object:\n    $$W = 3000\\text{ N} + 1000\\text{ N} = 4000\\text{ N}$$\n5.  Use the definition of weight, $W = \\rho_{obj} \\times V \\times g$, to find the object's density:\n    $$4000 = \\rho_{obj} \\times 0.20 \\times 10$$\n    $$4000 = \\rho_{obj} \\times 2$$\n    $$\\rho_{obj} = \\frac{4000}{2} = 2000\\text{ kg m}^{-3}$$"
+    },
+    "distractor_map": {
+      "A": "This is the result of neglecting the buoyancy force. If $W = D$, then $\\rho_{obj} V g = 1000$, so $\\rho_{obj} \\times 2 = 1000$, which gives $\\rho_{obj} = 500\\text{ kg m}^{-3}$.",
+      "B": "This result comes from an incorrect force balance, such as $U = W + D$. This would give $3000 = W + 1000$, so $W = 2000\\text{ N}$. Then $\\rho_{obj} \\times 2 = 2000$, giving $\\rho_{obj} = 1000\\text{ kg m}^{-3}$.",
+      "C": "This is the density of the fluid. An object with this density would experience neutral buoyancy (if drag were zero), but it is not the density of the falling object.",
+      "D": "Correct. The weight ($4000\\text{ N}$) is correctly calculated by summing buoyancy ($3000\\text{ N}$) and drag ($1000\\text{ N}$), and then used to find the density.",
+      "E": "This result may arise from a conceptual error, such as adding the drag force value directly to the fluid density: $1500 + 1000 = 2500$. This is dimensionally inconsistent.",
+      "F": "This is the magnitude of the object's weight in Newtons ($W = 4000\\text{ N}$). A student might correctly calculate the weight but forget to divide by $Vg$ to find the density."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "The core task is not to find terminal velocity, but to use the given terminal velocity condition (i.e., the specific drag force) to reverse-calculate an intrinsic property (density) of the object, requiring rearrangement of the force balance equation.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 2,
+        "estimated_solution_steps": 3,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-pro",
+  "attempts": 1
+}

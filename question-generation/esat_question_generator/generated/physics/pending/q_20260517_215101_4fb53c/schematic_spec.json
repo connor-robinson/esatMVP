@@ -1,0 +1,86 @@
+{
+  "diagram_id": "d1",
+  "schematic_type": "simple_circuit",
+  "answer_depends_on_diagram": true,
+  "components": [
+    {
+      "id": "pump_top",
+      "type": "battery",
+      "label": "2P_0",
+      "position_hint": "top-left",
+      "properties": {}
+    },
+    {
+      "id": "pipeA",
+      "type": "resistor",
+      "label": "Pipe A, R",
+      "position_hint": "top-right",
+      "properties": {}
+    },
+    {
+      "id": "pump_bottom",
+      "type": "battery",
+      "label": "P_0",
+      "position_hint": "bottom-left",
+      "properties": {}
+    },
+    {
+      "id": "pipeB",
+      "type": "resistor",
+      "label": "Pipe B, 2R",
+      "position_hint": "bottom-right",
+      "properties": {}
+    },
+    {
+      "id": "pipeC",
+      "type": "resistor",
+      "label": "Pipe C, 8R/3",
+      "position_hint": "centre-bottom",
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "from": "pump_top",
+      "to": "pipeA",
+      "type": "wire"
+    },
+    {
+      "from": "pump_bottom",
+      "to": "pipeB",
+      "type": "wire"
+    },
+    {
+      "from": "pipeA",
+      "to": "pipeC",
+      "type": "wire"
+    },
+    {
+      "from": "pipeB",
+      "to": "pipeC",
+      "type": "wire"
+    },
+    {
+      "from": "pipeC",
+      "to": "pump_top",
+      "type": "wire"
+    },
+    {
+      "from": "pipeC",
+      "to": "pump_bottom",
+      "type": "wire"
+    }
+  ],
+  "labels": [],
+  "style": {
+    "exam_style": true,
+    "black_and_white": true,
+    "minimal": true,
+    "not_to_scale": true
+  },
+  "render_checks": {
+    "no_exact_geometry_required": true,
+    "all_answer_bearing_info_also_in_text": true,
+    "placeholder_id_matches_stem": true
+  }
+}

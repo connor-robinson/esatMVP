@@ -1,0 +1,30 @@
+{
+  "questionId": 2024,
+  "examName": "ENGAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 29,
+  "stemBlocks": [
+    "A box of mass 3.0 kg is pulled a distance 5.0 m directly up a smooth slope by a constant applied force of 30 N acting parallel to the slope.\nThe initial speed of the box is $3.0 \\text{ms}^{-1}$ and the final speed is $7.0 \\text{ms}^{-1}$. Its acceleration is constant.",
+    "What is the component of the weight acting down the slope?",
+    "(gravitational field strength = $10 \\text{N kg}^{-1}$; air resistance is negligible)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:25.595339+00:00",
+  "sourceImageHash": "0c9985c366ce3fbfc7d26dcf2ec0ebe4447e48b14734fe6c135e8f2457c3973e",
+  "status": "ok"
+}

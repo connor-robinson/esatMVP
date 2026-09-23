@@ -1,0 +1,30 @@
+{
+  "questionId": 3057,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 78,
+  "stemBlocks": [
+    "The genetic condition represented by the shading is caused by the presence of at least one allele for the condition.",
+    "Which of the following are possible reasons why U has the condition?",
+    "1 The condition is dominant.\n2 The sperm from T carried the allele for the condition.\n3 A mutation is present in an egg of S."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Key: circle = female, square = male. Shaded individuals (T, U) have the condition.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:16.042255+00:00",
+  "sourceImageHash": "a4d400f344b5aebb1e6e351ef5c510f90ac53da1702c109c443d125dc0fdc775",
+  "status": "ok"
+}

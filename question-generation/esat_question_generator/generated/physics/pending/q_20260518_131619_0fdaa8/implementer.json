@@ -1,0 +1,70 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_8ab88df3",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Medium",
+      "task_signature": "identify_true_statement",
+      "primary_tag": "Thermal Physics",
+      "secondary_tags": [
+        "Forces and Motion",
+        "Fluids"
+      ]
+    },
+    "question": {
+      "stem": "A small heating element at the bottom of an open tank of liquid heats a small parcel of the liquid immediately above it.\n\nJust before this heated parcel begins to rise, how do its mass, weight, and the upthrust acting on it compare to their values before it was heated?",
+      "options": {
+        "A": "Mass: Unchanged, Weight: Unchanged, Upthrust: Increases",
+        "B": "Mass: Unchanged, Weight: Unchanged, Upthrust: Decreases",
+        "C": "Mass: Unchanged, Weight: Decreases, Upthrust: Unchanged",
+        "D": "Mass: Decreases, Weight: Decreases, Upthrust: Unchanged",
+        "E": "Mass: Decreases, Weight: Decreases, Upthrust: Increases",
+        "F": "Mass: Unchanged, Weight: Decreases, Upthrust: Increases"
+      },
+      "correct_option": "A"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "Heating a fixed parcel of fluid increases its volume through thermal expansion, which increases the volume of surrounding fluid it displaces, while its mass and weight remain strictly constant.",
+      "reasoning": "1. The heated parcel consists of a fixed number of particles, so its mass is unchanged.\n2. Since mass is unchanged and the gravitational field strength is constant, its weight ($W = mg$) is also unchanged.\n3. Heating causes the parcel to expand, meaning its volume increases.\n4. Upthrust is equal to the weight of the surrounding (unheated) fluid displaced by the parcel. Because the parcel's volume has increased, it displaces a larger volume of the surrounding fluid, so the upthrust acting on it increases.\n5. The increased upthrust now exceeds the unchanged weight, resulting in a net upward force that causes the parcel to rise."
+    },
+    "distractor_map": {
+      "A": "Correct. Mass and weight are constant; increased volume leads to increased upthrust.",
+      "B": "Incorrectly assumes that because the heated parcel's density decreases, the upthrust acting on it decreases. Upthrust depends on the density of the surrounding displaced fluid.",
+      "C": "Relies on the colloquial misconception that hot fluid is 'lighter', incorrectly concluding that its weight decreases while upthrust remains the same.",
+      "D": "Incorrectly assumes that heating the fluid causes it to lose mass and weight.",
+      "E": "Mixes the correct understanding that upthrust increases with the misconception that mass and weight decrease.",
+      "F": "Correctly identifies that upthrust increases, but incorrectly assumes the weight of the parcel decreases to allow it to rise."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Recognising that upthrust increases due to volume expansion, rather than weight decreasing.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 2,
+        "estimated_solution_steps": 2,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

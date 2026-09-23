@@ -1,0 +1,40 @@
+{
+  "stage": "idea_judge",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "selectivity_score": 0,
+    "checks": {
+      "schema_preserved": "pass",
+      "on_spec": "pass",
+      "reasoning_hinge_present": "pass",
+      "not_direct_substitution": "pass",
+      "wrong_paths_specific": "pass",
+      "visual_feasible": "pass",
+      "mcq_viable": "pass",
+      "difficulty_match": "pass",
+      "goldilocks_complexity": "pass"
+    },
+    "complexity_audit": {
+      "number_of_core_physics_principles": 1,
+      "estimated_solution_steps": 2,
+      "requires_derived_relationship": false,
+      "uses_multi_topic_chain": false,
+      "goldilocks_verdict": "good"
+    },
+    "reasoning_hinge_summary": "The student must recognize that resistance is inversely proportional to the square of the diameter (R ∝ L/d²) and correctly apply scaling factors to this relationship without needing absolute values.",
+    "expected_mid_student_error": "The most likely error is failing to square the diameter scaling factor, leading to an incorrect ratio (e.g., treating area as proportional to diameter).",
+    "notes": [
+      "The idea is a classic, robust test of proportional reasoning suitable for the ESAT.",
+      "The lack of absolute values effectively prevents plug-and-chug and forces the student to engage with the physics relationship.",
+      "The complexity is well-contained within the Goldilocks zone for an 'Easy' difficulty question."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

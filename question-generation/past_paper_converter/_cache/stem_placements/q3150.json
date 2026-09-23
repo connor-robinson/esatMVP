@@ -1,0 +1,30 @@
+{
+  "questionId": 3150,
+  "examName": "ENGAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 1,
+  "stemBlocks": [
+    "Two loudspeakers are positioned 8.0 m apart as shown.",
+    "The loudspeakers emit sound waves of the same single frequency. The wave emitted by one loudspeaker is $180^\\circ$ out of phase with the wave emitted by the other loudspeaker.\nA point P is in front of the loudspeakers. P is 18.0 m from one loudspeaker and 24.0 m from the other loudspeaker. As a result of superposition of the two waves arriving at P, the amplitude of the sound at position P is a minimum.\nThe speed of the sound is $336 \\text{ms}^{-1}$.",
+    "What is the lowest possible frequency of the sound?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:45:27.610074+00:00",
+  "sourceImageHash": "2ad7f9a96bc50357057ff145d76f22d95f3bdbac7d988f558f056c76bb535e44",
+  "status": "ok"
+}

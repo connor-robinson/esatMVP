@@ -1,0 +1,28 @@
+{
+  "questionId": 3159,
+  "examName": "ENGAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 10,
+  "stemBlocks": [
+    "In an industrial process to test the purity of a metal, a narrow beam of ultrasound passes into a block of the metal. The ultrasound generator U is immersed in a gel that is in contact with the metal. The ultrasound passes from the gel into the metal.\nThe arcs of circles shown in the gel are lines that represent the positions of the compressions (known as wavefronts) of the ultrasound wave that comes from U.\nUltrasound travels faster in the metal than in the gel.\nThe wavefronts in the metal are circular arcs with their centre at a point X that is on the dashed line.\nWhere on the dashed line is X?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:45:27.617435+00:00",
+  "sourceImageHash": "dace35af141a1396428bacf60ca92f2b7a8794de73cf239ee71a503f0969b945",
+  "status": "ok"
+}

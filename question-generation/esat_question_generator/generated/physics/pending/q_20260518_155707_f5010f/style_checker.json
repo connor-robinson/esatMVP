@@ -1,0 +1,56 @@
+{
+  "stage": "style_checker",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "shorter",
+      "notes": "The question is perfectly calibrated for an 'Easy' ESAT item. It avoids the trap of being a simple plug-and-chug by using algebraic ratios, which forces the student to demonstrate conceptual understanding of the inverse proportionality between temperature change and the heat capacity product (mc)."
+    },
+    "selectivity_audit": {
+      "main_trap": "The primary trap is the confusion between direct and inverse proportionality. Students who fail to set up the energy balance equation will likely choose options based on additive or simple multiplicative relationships (e.g., 6ΔT or ΔT/5).",
+      "why_not_plug_and_chug": "There are no numerical values for temperature, mass, or specific heat capacity to plug into a calculator. The student must manipulate the variables algebraically.",
+      "expected_mid_student_error": "A student might incorrectly assume that because the liquid has a larger mass and higher specific heat, its temperature change should be larger (e.g., 6ΔT), or they might simply add the factors (2+3=5) to get ΔT/5.",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 1,
+      "estimated_solution_steps": 2,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "Excellent example of an ESAT-style question. It is concise, requires a single core physical model, and uses distractors that target specific conceptual misunderstandings."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

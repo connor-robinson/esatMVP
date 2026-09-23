@@ -1,0 +1,30 @@
+{
+  "questionId": 3677,
+  "examName": "TMUA",
+  "examYear": 2018,
+  "paperName": "Paper 2",
+  "questionNumber": 8,
+  "stemBlocks": [
+    "The diagram shows an example of a mountain profile.\nThis consists of upstrokes which go upwards from left to right, and downstrokes which go downwards from left to right. The example shown has six upstrokes and six downstrokes. The horizontal line at the bottom is known as sea level.\nA mountain profile of order $n$ consists of $n$ upstrokes and $n$ downstrokes, with the condition that the profile begins and ends at sea level and never goes below sea level (although it might reach sea level at any point). So the example shown is a mountain profile of order 6.\nMountain profiles can be coded by using U to indicate an upstroke and D to indicate a downstroke. The example shown has the code UDUUUDUDDUDD. A sequence of U's and D's obtained from a mountain profile in this way is known as a valid code.",
+    "Which of the following statements is/are true?",
+    "I If a valid code is written in reverse order, the result is always a valid code.\nII If each U in a valid code is replaced by D and each D by U, the result is always a valid code.\nIII If U is added at the beginning of a valid code and D is added at the end of the code, the result is always a valid code."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Example mountain profile and definitions of upstroke/downstroke.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:22.010474+00:00",
+  "sourceImageHash": "6b7a1e17f2d0000abbda6dede16b1a68ba1eac84c2c6f914f84aeda971d59020",
+  "status": "ok"
+}

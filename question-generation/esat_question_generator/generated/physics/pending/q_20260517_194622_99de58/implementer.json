@@ -1,0 +1,63 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_d4f05622",
+      "module": "physics",
+      "variation_mode": "FAR",
+      "target_difficulty": "Medium",
+      "task_signature": "implementer_v2_esat_physics",
+      "primary_tag": "4",
+      "secondary_tags": [
+        "2"
+      ]
+    },
+    "question": {
+      "stem": "A straight, horizontal wire of length 20 cm is suspended from a sensitive force sensor. The wire is in a uniform magnetic field of strength 0.50 T, directed perpendicular to the wire. A total charge of 12 C passes through the wire over a time of 2.0 s. What is the magnitude of the change in the reading on the force sensor?",
+      "options": {
+        "A": "0.20 N",
+        "B": "0.60 N",
+        "C": "1.2 N",
+        "D": "2.4 N",
+        "E": "3.0 N",
+        "F": "60 N"
+      },
+      "correct_option": "B"
+    },
+    "visual_requirements": {
+      "visual_need": "concept_image_only",
+      "visual_role": "supportive",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": "A simple schematic showing a horizontal wire viewed end-on or from the side. The wire is attached via a hook to a force sensor (e.g., a digital scale or newton meter). Arrows indicate a uniform magnetic field (B) passing through the wire, perpendicular to its length. An arrow along the wire can indicate current (I). This diagram is purely to help visualize the setup described in the stem."
+    },
+    "solution": {
+      "key_insight": "The change in the force sensor's reading is equal to the magnitude of the magnetic force acting on the wire. The wire's own weight is constant and does not affect the *change* in reading.",
+      "reasoning": "The question asks for the change in the reading on the force sensor. This change is caused by the magnetic force, $F_m$, that acts on the wire when current flows. The weight of the wire is constant and is part of the initial reading, so it does not contribute to the change.\n\n1.  First, calculate the current $I$ flowing through the wire using the definition of current: $I = \\frac{Q}{t}$.\n    $I = \\frac{12 \\text{ C}}{2.0 \\text{ s}} = 6.0 \\text{ A}$.\n\n2.  Next, calculate the magnetic force $F_m$ on the current-carrying wire. The formula is $F_m = BIL\\sin(\\theta)$. Since the field is perpendicular to the wire, $\\theta = 90^\\circ$ and $\\sin(90^\\circ) = 1$. So, $F_m = BIL$.\n\n3.  Convert the length to SI units: $L = 20 \\text{ cm} = 0.20 \\text{ m}$.\n\n4.  Substitute the values into the force equation:\n    $F_m = (0.50 \\text{ T}) \\times (6.0 \\text{ A}) \\times (0.20 \\text{ m})$.\n    $F_m = (0.50 \\times 0.20) \\times 6.0 = 0.10 \\times 6.0 = 0.60 \\text{ N}$.\n\nThis magnetic force is the change in the reading on the sensor."
+    },
+    "distractor_map": {
+      "A": "This value results from incorrectly using the time $t=2.0$ s in place of the current $I$ in the force equation: $F = BLt = 0.50 \\times 0.20 \\times 2.0 = 0.20 \\text{ N}$.",
+      "B": "Correct. The current is $I = Q/t = 12/2.0 = 6.0$ A. The magnetic force (change in reading) is $F = BIL = 0.50 \\times 6.0 \\times 0.20 = 0.60$ N.",
+      "C": "This value results from incorrectly using the charge $Q=12$ C in place of the current $I$: $F = BLQ = 0.50 \\times 0.20 \\times 12 = 1.2 \\text{ N}$. This also happens if you correctly calculate current but forget the magnetic field strength $B$: $F = IL = 6.0 \\times 0.20 = 1.2 \\text{ N}$.",
+      "D": "This value results from an incorrect calculation of current, multiplying charge and time instead of dividing: $I = Q \\times t = 12 \\times 2.0 = 24$ A. Then $F = BIL = 0.50 \\times 24 \\times 0.20 = 2.4 \\text{ N}$.",
+      "E": "This value results from correctly calculating the current ($I=6.0$ A) but forgetting to include the length $L$ in the force calculation: $F = BI = 0.50 \\times 6.0 = 3.0 \\text{ N}$.",
+      "F": "This value results from failing to convert the length from centimetres to metres: $F = BIL = 0.50 \\times 6.0 \\times 20 = 60 \\text{ N}$."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Recognising that the 'change in reading' of the force sensor is a direct measure of the magnetic force alone, and that the initial weight of the wire is irrelevant to this change.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-pro",
+  "attempts": 1
+}

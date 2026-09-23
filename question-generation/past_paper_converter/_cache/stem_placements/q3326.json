@@ -1,0 +1,30 @@
+{
+  "questionId": 3326,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 57,
+  "stemBlocks": [
+    "Scientists studied the processes by which drugs cross the cell membrane and enter cells.\nThe rate of uptake of four drugs, P, Q, R and S, was studied at $4\\ ^\\circ\\text{C}$ and at $37\\ ^\\circ\\text{C}$. The results are shown in the chart. All other variables were kept constant.",
+    "Which of the following conclusions can be drawn from the results?",
+    "1 The percentage increase in rate of uptake of R from $4\\ ^\\circ\\text{C}$ to $37\\ ^\\circ\\text{C}$ is 2.5 times more than the percentage increase in the rate of uptake of S.\n2 The concentration of Q must be the same inside and outside the cell.\n3 P must be transported across the cell membrane using active transport only."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Key: dark grey bar = experiment performed at $4\\ ^\\circ\\text{C}$, light grey bar = experiment performed at $37\\ ^\\circ\\text{C}$. Y-axis: rate of uptake of drug / arbitrary units. X-axis: drug studied (P, Q, R, S).",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:13.306559+00:00",
+  "sourceImageHash": "022daab8fe15e187727a985e0ea5f68caea70f4c28adcd8e5a6a8dd659c35c80",
+  "status": "ok"
+}

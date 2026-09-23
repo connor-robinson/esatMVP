@@ -1,0 +1,32 @@
+{
+  "stage": "idea_judge",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "selectivity_score": 0,
+    "checks": {
+      "schema_preserved": "pass",
+      "on_spec": "pass",
+      "reasoning_hinge_present": "pass",
+      "not_direct_substitution": "pass",
+      "wrong_paths_specific": "pass",
+      "visual_feasible": "pass",
+      "mcq_viable": "pass",
+      "difficulty_match": "pass"
+    },
+    "reasoning_hinge_summary": "The core reasoning hinge is distinguishing between static equilibrium (force balance) and dynamic maximum compression (energy conservation). Students must recognize that at maximum dynamic compression, the net force is not zero, and therefore the spring force does not equal the weight.",
+    "expected_mid_student_error": "Mid-level students are likely to assume that at the point of maximum compression in the dynamic case, the forces are balanced (spring force equals gravitational force), leading them to equate the dynamic compression with the static equilibrium compression.",
+    "notes": [
+      "The idea effectively uses the SIBLING mode to create a conceptually distinct problem within the schema, rather than just a numerical variation.",
+      "The `anti_plug_and_chug_check` is well-justified, highlighting the need for conceptual understanding over rote application.",
+      "The visual brief is clear and appropriate for a supportive role, not critical for the physics itself."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

@@ -1,0 +1,30 @@
+{
+  "questionId": 2087,
+  "examName": "ENGAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 12,
+  "stemBlocks": [
+    "A transverse wave on a string has a speed of $500 \\text{ ms}^{-1}$.\nThe horizontal distance between two points P and Q on the wave is $4.0 \\text{ m}$, as shown in the diagram.",
+    "At time $t = 0 \\text{ ms}$, point X on the string is at its maximum displacement of $6.0 \\text{ mm}$ above equilibrium.",
+    "What is the displacement of point X at time $t = 7.0 \\text{ ms}$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:34:34.966475+00:00",
+  "sourceImageHash": "c07b04dab524a93fad2bc1b3cc3b9670ba7bb89de17215cda36c425ac61dd6ad",
+  "status": "ok"
+}

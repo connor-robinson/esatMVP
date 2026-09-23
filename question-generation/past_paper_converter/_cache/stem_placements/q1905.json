@@ -1,0 +1,30 @@
+{
+  "questionId": 1905,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 4,
+  "stemBlocks": [
+    "The diagram shows three resistors $R_1$, $R_2$ and $R_3$ connected in series with a battery of constant voltage. The resistance of each resistor and the corresponding current are also shown.",
+    "Resistor $R_3$ is now removed and the circuit is reconnected.",
+    "What is the new current in the circuit?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:28:14.883829+00:00",
+  "sourceImageHash": "55495312e66c8e435409ce4d323dfb6a8a4fb75a8993b77d6ff741ca5e6f7ac7",
+  "status": "ok"
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 3099,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 2",
+  "questionNumber": 8,
+  "stemBlocks": [
+    "A painter of mass 74 kg stands on a uniform wooden plank of length 2.5 m and of mass 24 kg. The painter stands at the middle of the plank. The plank rests on two supports. Support P is 0.25 m from one end of the plank and support Q is 0.75m from the other end. A pot of paint of mass 5.0 kg is 0.80 m from the centre of mass of the painter.",
+    "What is the force exerted by support Q on the plank? (gravitational field strength = 10 N kg$^{-1}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:40:49.334938+00:00",
+  "sourceImageHash": "4ca57abb04806efb2bf8ba3b82d48a5c643568c8d20229c0064240e870f5eea2",
+  "status": "ok"
+}

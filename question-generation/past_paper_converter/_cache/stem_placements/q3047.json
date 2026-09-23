@@ -1,0 +1,29 @@
+{
+  "questionId": 3047,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 68,
+  "stemBlocks": [
+    "A person's ear lobes can be attached to the side of their head or unattached. The allele for attached ear lobes is recessive to the allele for unattached ear lobes.\nThe pedigree diagram below shows the ear lobe attachment in one family.",
+    "What is the maximum possible number of heterozygous individuals in this pedigree diagram?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Pedigree diagram showing ear lobe attachment in one family, with a key for symbols.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:16.018854+00:00",
+  "sourceImageHash": "d4f8a572d636ecbe79f960778d854abc483d51402e8c558a14669114c6f1d90f",
+  "status": "ok"
+}

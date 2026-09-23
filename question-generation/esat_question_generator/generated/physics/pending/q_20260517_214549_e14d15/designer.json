@@ -1,0 +1,97 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_8ffbc902",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Medium",
+    "idea_summary": "Compare the maximum compression of a vertical spring when a mass is dropped onto it from its unstretched end, versus when the same mass is placed gently on it and allowed to settle to equilibrium.",
+    "schema_invariant": {
+      "core_move": "Applying conservation of mechanical energy (GPE, EPE) to a spring-mass system and contrasting it with a static force-balance situation.",
+      "what_must_not_change": [
+        "The system must involve a trade-off between Gravitational Potential Energy and Elastic Potential Energy.",
+        "The solution must require the application of the principle of conservation of energy.",
+        "The question must implicitly or explicitly contrast a dynamic process with a static equilibrium."
+      ],
+      "what_can_change": [
+        "The specific scenario (e.g., dropping a mass vs. launching a mass).",
+        "The quantity being asked for (e.g., a ratio of compressions, a maximum height, a speed).",
+        "The orientation of the spring (vertical, horizontal on an incline).",
+        "The initial conditions (e.g., dropped from rest, fired with initial velocity)."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "tempting_wrong_model",
+      "reasoning_hinge": "Recognising that the static equilibrium case is governed by force balance (mg = kx_eq), while the dynamic dropping case is governed by energy conservation (change in GPE = gain in EPE), and that these two conditions are not the same.",
+      "why_top_students_win": "They will immediately distinguish the two scenarios, correctly applying F=ma for the static case and energy conservation for the dynamic one. They will see that at maximum dynamic compression, velocity is zero but acceleration is non-zero, so forces are not balanced.",
+      "why_mid_students_miss": "They will incorrectly assume that at the point of maximum compression in the dynamic case, the spring force must be equal to the weight of the mass (F_spring = mg). This leads them to incorrectly conclude the compression is the same as the static equilibrium compression."
+    },
+    "minimum_reasoning_depth": {
+      "steps": 2,
+      "must_include": [
+        "model_selection",
+        "non_obvious_inference",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "This problem uses the same core physics as a standard vertical spring-mass problem but reframes it as a comparison of two distinct processes (static vs. dynamic). This shifts the focus from a single calculation to conceptual understanding, which is characteristic of ESAT-style questions. The difficulty is comparable, requiring one key insight to avoid a plausible trap.",
+    "task_signature": "compare_scenarios",
+    "tool_footprint": [
+      "energy_conservation",
+      "force_balance",
+      "static_vs_dynamic",
+      "proportional_reasoning"
+    ],
+    "primary_tag": "1",
+    "secondary_tags": [
+      "Energy",
+      "Forces",
+      "Springs"
+    ],
+    "visual_need": "concept_image_only",
+    "visual_role": "supportive",
+    "visual_brief": "A side-by-side pair of simple diagrams. Left: A mass is shown just touching the top of an uncompressed vertical spring, with a label indicating it is dropped. Right: The same mass is shown resting on the spring, which is compressed to its equilibrium position. The compressions in the two cases, x_dynamic and x_static, could be labelled for clarity in the solution.",
+    "surface_twist": "",
+    "why_still_on_spec": "The problem is grounded in fundamental A-level/ESAT syllabus topics: forces (Newton's laws, specifically F=mg), springs (Hooke's Law), and energy (Conservation of Mechanical Energy, GPE, EPE). The reasoning hinge is about correctly choosing which principle applies, a core physics skill.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Assuming that at maximum compression during the drop, the forces are balanced (kx = mg).",
+        "distractor_role": "This leads to the conclusion that the dynamic compression is equal to the static compression, giving a ratio of 1. This is the most compelling distractor."
+      },
+      {
+        "mistake": "An algebraic error in the energy conservation equation, such as cancelling x instead of x^2, leading to mg = 1/2 k.",
+        "distractor_role": "This path is confused but could lead to an answer that seems numerically plausible but is physically meaningless."
+      },
+      {
+        "mistake": "A sign error in the energy conservation equation or getting the ratio the wrong way up.",
+        "distractor_role": "This could produce a ratio of 1/2 instead of 2."
+      },
+      {
+        "mistake": "Confusing energy and length dependencies, perhaps involving a square root.",
+        "distractor_role": "Could produce a distractor like sqrt(2), which often appears in energy-related problems."
+      }
+    ],
+    "difficulty_rationale": "This is a Medium difficulty question. The physical setup is very simple to describe, but the solution requires navigating a very common and tempting misconception. It cleanly separates students who can differentiate between static and dynamic situations from those who apply formulas based on surface features (e.g., 'at the bottom, v=0, so forces balance'). The solution, once the insight is gained, is very fast.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "The candidate must first identify that two different physical models are needed for the two scenarios (force balance vs. energy conservation). Simply plugging numbers into a single formula like F=kx or E=1/2kx^2 without this contextual understanding will lead to the wrong answer."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The question naturally yields a simple numerical ratio (2). This allows for a clear correct answer and plausible distractors based on common errors: 1 (the main misconception), 1/2 (inversion error), and sqrt(2) (mixing up energy/displacement relations)."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-pro",
+  "attempts": 1
+}

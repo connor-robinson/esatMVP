@@ -1,0 +1,30 @@
+{
+  "questionId": 3374,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 45,
+  "stemBlocks": [
+    "In a test to compare the function of the human respiratory system in different individuals, they were asked to breathe out as hard as possible for as long as possible. The volume exhaled was recorded.\nThe graph shows the results obtained after carrying out this test on two males with the same height and body mass.",
+    "Which of the following statements is/are correct?",
+    "1 Individual P exhaled 200% more than individual Q.\n2 Individual Q's diaphragm was more domed at 7 seconds than at 2 seconds.\n3 The mean rate of air flow in the first second was 233% more in individual P than in individual Q (to the nearest whole percentage)."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:10.849885+00:00",
+  "sourceImageHash": "7406faadd848ac1f890378e3d6031525e83d2fdf5a6e882d874d88220d3ed9fa",
+  "status": "ok"
+}

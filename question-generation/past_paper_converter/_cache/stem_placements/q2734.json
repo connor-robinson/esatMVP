@@ -1,0 +1,30 @@
+{
+  "questionId": 2734,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 75,
+  "stemBlocks": [
+    "The diagram shows the changes in the volume of the ventricles, and the ECG trace that accompanies those changes, during two consecutive heart beats.",
+    "Which row is correct about the events happening at X, Y and Z?",
+    "|  | at X blood is being pumped into | at Y valves between atria and ventricles are | chambers of the heart contracting at Z |\n| --- | --- | --- | --- |\n| A | aorta | open | atria |\n| B | aorta | closed | atria |\n| C | atria | open | ventricles |\n| D | atria | closed | ventricles |\n| E | pulmonary artery | open | ventricles |\n| F | pulmonary artery | closed | ventricles |\n| G | pulmonary vein | open | atria |\n| H | pulmonary vein | closed | atria |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:58.244149+00:00",
+  "sourceImageHash": "cc42e4a7154bd9041ee8e4d6f8c30366c355f9fdd4f6bb346816b98e98762521",
+  "status": "ok"
+}

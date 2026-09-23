@@ -1,0 +1,30 @@
+{
+  "questionId": 3298,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 29,
+  "stemBlocks": [
+    "5.0 mol of 3-chloro-prop-1-ene ($M_r = 76.5$) was reacted with excess sodium hydroxide to form a single product X in 80% yield.\nOne third of compound X was heated with excess acidified potassium dichromate(VI) under reflux to form a single product Y in 50% yield.\nAll of compound Y was reacted with hydrogen gas at high temperature in the presence of nickel to form a single product Z in 90% yield.\nThe remaining quantity of compound X was reacted with all of compound Z in the presence of an acid catalyst to form product P in 50% yield.",
+    "What is the maximum mass of product P that could be produced from this synthesis?",
+    "($A_r$ values: H = 1; C = 12; O = 16; Cl = 35.5)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:13.276334+00:00",
+  "sourceImageHash": "699cb08d6994001c980bac22e84702fdd2c7d426b6ebc41bea52c48459751213",
+  "status": "ok"
+}

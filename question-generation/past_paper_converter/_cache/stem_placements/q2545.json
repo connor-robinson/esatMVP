@@ -1,0 +1,30 @@
+{
+  "questionId": 2545,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 66,
+  "stemBlocks": [
+    "Dolly the sheep was born in 1996. She was unusual because she had no biological father. The diagram shows how she was produced.",
+    "Which of the following processes had to occur to produce Dolly?",
+    "1 genetic engineering\n2 mitosis\n3 meiosis\n4 differentiation"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.847435+00:00",
+  "sourceImageHash": "4f6b79fb118abe8883fa715eaef106bc8b495137ca6d1b058f96478532ea4174",
+  "status": "ok"
+}

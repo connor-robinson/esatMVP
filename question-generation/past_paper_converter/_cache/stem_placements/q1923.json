@@ -1,0 +1,29 @@
+{
+  "questionId": 1923,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 22,
+  "stemBlocks": [
+    "A skydiver of weight $1000 \\text{ N}$ falls vertically. The distance-time graph for the skydiver is shown below. The air resistance $F$ (in $\\text{N}$) acting on the skydiver travelling at velocity $v$ (in $\\text{m s}^{-1}$) is given by the equation $$F = kv^2$$ where $k$ (in $\\text{N m}^{-2} \\text{s}^2$) is a constant.",
+    "What is the numerical value of $k$ for the skydiver?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "The distance-time graph for the skydiver is shown below.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:28:14.898506+00:00",
+  "sourceImageHash": "1ec5525cac8920fa988ccece2fde1450795e55d81e84ec0da75828407a3a1989",
+  "status": "ok"
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 1985,
+  "examName": "ENGAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 30,
+  "stemBlocks": [
+    "Two small loudspeakers are placed side by side 30 cm apart. They are connected to the same signal generator so that they emit sound of frequency 400 Hz in phase with one another. The sounds both reach a microphone placed 40 cm directly in front of one of the two loudspeakers as shown.",
+    "What is the phase difference between waves from the loudspeakers as they arrive at the microphone? (speed of sound = $320 \\text{ ms}^{-1}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:42.193831+00:00",
+  "sourceImageHash": "8a10485cc7201b5ddaa0fbdf3f4cfb4325120d4cf3398d392ba9093ce7e2cc77",
+  "status": "ok"
+}

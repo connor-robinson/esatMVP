@@ -1,0 +1,28 @@
+{
+  "questionId": 3296,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 27,
+  "stemBlocks": [
+    "25.0 cm$^3$ of sodium hydroxide solution is placed in a polystyrene cup with a thermometer. 1.00 mol dm$^{-3}$ hydrochloric acid is added from a burette to the stirred solution of sodium hydroxide. Both solutions are at the same temperature before mixing. The temperature is recorded each time a measured amount of hydrochloric acid is added, and the data is plotted on a graph. Assuming that no heat is lost from the cup, what is the enthalpy change of reaction when one mole of aqueous sodium hydroxide is neutralised? (Assume that all solutions have density 1.0 g cm$^{-3}$ and specific heat capacity 4.2 J g$^{-1}$ \\textdegree C$^{-1}$.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:13.271410+00:00",
+  "sourceImageHash": "4bb486c38f01a6da7b27bd725fcf44cbdd2e65c17f4e354f61f6b7209d6cdb85",
+  "status": "ok"
+}

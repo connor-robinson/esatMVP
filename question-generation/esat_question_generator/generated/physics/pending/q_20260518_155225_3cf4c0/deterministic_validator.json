@@ -1,0 +1,24 @@
+{
+  "stage": "deterministic_validator",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "ok": true,
+    "errors": [],
+    "warnings": [],
+    "option_keys": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F"
+    ],
+    "summary": "ok"
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": null,
+  "attempts": 2
+}

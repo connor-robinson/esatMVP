@@ -1,0 +1,30 @@
+{
+  "questionId": 2895,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 76,
+  "stemBlocks": [
+    "The diagram shows two sets of apparatus, P and Q, at the beginning of an investigation.\nThe only difference between P and Q was the contents of the partially permeable membrane.\nThe membrane is not permeable to starch or amylase but is permeable to smaller molecules.\nAfter 10 minutes:\n• the position of the meniscus in P had moved up the tube,\n• the position of the meniscus in Q had moved down the tube.",
+    "Which of the following statements correctly explain(s) these observations?",
+    "1 Water moved by osmosis in P and Q.\n2 Amylase was a substrate for starch.\n3 Maltose was diffusing across the partially permeable membrane in Q, but not in P."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Diagram showing two sets of apparatus, P and Q, with partially permeable membranes and different contents.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.99
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.409170+00:00",
+  "sourceImageHash": "cd04981715b82ec5ce09feddd26942132690c35a61da1490ae5639a09f261f5c",
+  "status": "ok"
+}

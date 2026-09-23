@@ -1,0 +1,29 @@
+{
+  "questionId": 2147,
+  "examName": "ENGAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 32,
+  "stemBlocks": [
+    "Three blocks P, Q and R are in contact on a horizontal surface as shown. The mass of P is $4.0 \\text{ kg}$ and the masses of Q and R are each $2.0 \\text{ kg}$. A horizontal force of $20 \\text{ N}$ is applied to P so that all three blocks move together. The friction force between P and the surface is $2.0 \\text{ N}$, and the friction forces between Q and R and the surface are each $1.0 \\text{ N}$.",
+    "What is the magnitude of the force that R exerts on Q?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:06.360717+00:00",
+  "sourceImageHash": "274aed3f50611503c36c674c4769bdf0fc88f3614c9f4e6817d3e15b6f643cb6",
+  "status": "ok"
+}

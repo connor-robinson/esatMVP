@@ -1,0 +1,28 @@
+{
+  "questionId": 2359,
+  "examName": "NSAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 60,
+  "stemBlocks": [
+    "A student set up the following apparatus at a temperature of $25 \\text{ °C}$ and at pH 7.\nWhat could the student change so that it would take less than 15 minutes for the solution to become clear?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:25:34.724883+00:00",
+  "sourceImageHash": "3984a9598af327b5ae8d87bf528445d246938ad14fae84b2831c7d26424eff88",
+  "status": "ok"
+}

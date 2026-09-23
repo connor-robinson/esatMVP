@@ -1,0 +1,56 @@
+{
+  "stage": "style_checker",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "slightly_harder",
+      "length_feel_vs_reference": "similar",
+      "notes": "This sits at the 'Extreme' end of the ESAT spectrum because it requires a multi-stage proportional chain (Mass -> Radius -> Area -> Velocity). It is well-calibrated for high-performing candidates."
+    },
+    "selectivity_audit": {
+      "main_trap": "The trap is the interplay between the cubic mass scaling and the quadratic area scaling, which forces the student to correctly identify the power-law relationship $v \\propto m^{1/6}$.",
+      "why_not_plug_and_chug": "There is no formula provided for terminal velocity in terms of mass and area; the student must construct the equilibrium condition $mg = kAv^2$ and derive the scaling factors from geometry.",
+      "expected_mid_student_error": "Mid-tier students will likely fail to account for the area scaling (choosing D) or fail to correctly apply the square root to the final ratio (choosing C).",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 2,
+      "estimated_solution_steps": 4,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "Excellent use of proportional reasoning. The scaling factors (64, 4, 16, 2) are chosen perfectly for no-calculator mental arithmetic."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 2725,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 66,
+  "stemBlocks": [
+    "Pepsin and trypsin are both protease enzymes found in the human digestive system.\nThe graph shows how the activity of both enzymes varies with pH.\nIn the human digestive system:\n1 pepsin is most active in the stomach.\n2 trypsin would be inactive in the stomach.\n3 pepsin could be a substrate for trypsin.\n4 pepsin is most active at low acidity and trypsin most active at high acidity.",
+    "Which statements are correct?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:58.232559+00:00",
+  "sourceImageHash": "e1b567e525ff767a03627fc94607dd324846c13a1e6bfbdd5471c665eded76fc",
+  "status": "ok"
+}

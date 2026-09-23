@@ -1,0 +1,29 @@
+{
+  "questionId": 3297,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 28,
+  "stemBlocks": [
+    "Consider the distribution of a solute X between two immiscible solvents: water and ether.\nX(aq) $\\rightleftharpoons$ X(ether)\nThe equilibrium constant, $K_c$, is 0.15 at $25 \\text{ °C}$.\n$50 \\text{ cm}^3$ of a solution of X in ether at $25 \\text{ °C}$ contains $21.5 \\text{ g}$ of X. $100 \\text{ cm}^3$ of water is added, shaken with the ether solution and allowed to reach equilibrium at $25 \\text{ °C}$.",
+    "What is the maximum mass of X that can be transferred into the aqueous layer?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "STEP 1: Separating funnel with X in ether",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:13.274221+00:00",
+  "sourceImageHash": "d9dbde328c6526ca93b989a3be6b86e52dff016bbdf56f96157a9b541fccc367",
+  "status": "ok"
+}

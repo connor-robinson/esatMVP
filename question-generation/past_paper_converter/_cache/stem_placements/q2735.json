@@ -1,0 +1,39 @@
+{
+  "questionId": 2735,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 76,
+  "stemBlocks": [
+    "The placenta is an organ that develops during pregnancy. One function of the placenta is to allow the exchange of gases between the mother and the developing foetus. The diagram represents the maternal and foetal blood flow between P and Q in a section of the placenta of a healthy small mammal. The concentration of oxygen in both maternal and foetal blood was measured at regular distances along this section.",
+    "Which graph illustrates the concentration of oxygen in both maternal and foetal blood between P and Q?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Diagram showing maternal and foetal blood flow directions. Maternal blood flows from P to Q. Foetal blood flows from Q to P. Key for graphs: solid line represents maternal capillary, dashed line represents foetal capillary.",
+      "role": "stem_diagram"
+    },
+    {
+      "id": "d8",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    },
+    {
+      "assetId": "d8",
+      "insertAfterBlock": 2,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:58.251559+00:00",
+  "sourceImageHash": "68082f47713c736b6074f0e4044db6e1e3ae07275c8d63726779fd7f794ee266",
+  "status": "ok"
+}

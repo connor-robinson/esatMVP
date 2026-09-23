@@ -1,0 +1,30 @@
+{
+  "questionId": 2370,
+  "examName": "NSAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 71,
+  "stemBlocks": [
+    "The graph shows the effect of increasing the substrate concentration on an enzyme-controlled reaction when all the other variables were kept constant.",
+    "Which of the following labels, if any, could be correct for the $y$-axis?",
+    "1 rate of substrate loss/mg $\\text{min}^{-1}$\n2 rate of enzyme-substrate complex formation/number of complexes $\\text{s}^{-1}$\n3 rate of product formed per enzyme molecule/mg $\\text{min}^{-1}$"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing the effect of increasing substrate concentration on an enzyme-controlled reaction. The x-axis is 'concentration of substrate / arbitrary units' with values 0, 10, 20. The y-axis is unlabeled. The graph shows a curve that increases and then plateaus.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:25:34.744655+00:00",
+  "sourceImageHash": "5abde79192283764080355760d3e676be1ea933b8a9b1b0d035013e1882148c4",
+  "status": "ok"
+}

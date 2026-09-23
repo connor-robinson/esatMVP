@@ -1,0 +1,39 @@
+{
+  "stage": "idea_judge",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "selectivity_score": 0,
+    "checks": {
+      "schema_preserved": "pass",
+      "on_spec": "pass",
+      "reasoning_hinge_present": "pass",
+      "not_direct_substitution": "pass",
+      "wrong_paths_specific": "pass",
+      "visual_feasible": "pass",
+      "mcq_viable": "pass",
+      "difficulty_match": "pass",
+      "goldilocks_complexity": "pass"
+    },
+    "complexity_audit": {
+      "number_of_core_physics_principles": 2,
+      "estimated_solution_steps": 3,
+      "requires_derived_relationship": false,
+      "uses_multi_topic_chain": false,
+      "goldilocks_verdict": "good"
+    },
+    "reasoning_hinge_summary": "The candidate must recognize that terminal velocity is proportional to the net downward force (Weight - Upthrust). By expressing both Weight and Upthrust in terms of the object's volume and the respective densities (rho_obj and rho_fluid), the candidate identifies that the driving force scales with (rho_obj - rho_fluid), allowing for a ratio comparison without needing absolute values.",
+    "expected_mid_student_error": "The student will likely ignore the upthrust term, leading them to conclude that terminal velocity is simply proportional to the density of the object, resulting in an incorrect ratio.",
+    "notes": [
+      "The proportional reasoning approach effectively avoids plug-and-chug while remaining well within the ESAT difficulty ceiling.",
+      "The distractors are well-aligned with common conceptual errors regarding the role of buoyancy in terminal velocity problems."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

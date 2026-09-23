@@ -1,0 +1,40 @@
+{
+  "stage": "idea_judge",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "selectivity_score": 0,
+    "checks": {
+      "schema_preserved": "pass",
+      "on_spec": "pass",
+      "reasoning_hinge_present": "pass",
+      "not_direct_substitution": "pass",
+      "wrong_paths_specific": "pass",
+      "visual_feasible": "pass",
+      "mcq_viable": "pass",
+      "difficulty_match": "pass",
+      "goldilocks_complexity": "pass"
+    },
+    "complexity_audit": {
+      "number_of_core_physics_principles": 2,
+      "estimated_solution_steps": 3,
+      "requires_derived_relationship": false,
+      "uses_multi_topic_chain": false,
+      "goldilocks_verdict": "good"
+    },
+    "reasoning_hinge_summary": "The candidate must correctly set up the force balance equation (Weight = Buoyancy + Drag) for an object at terminal velocity, substitute density-based expressions for weight and buoyancy, and then algebraically rearrange the equation to solve for the object's density.",
+    "expected_mid_student_error": "Mid-performing students are likely to neglect the buoyancy force, leading to an incorrect force balance (Weight = Drag), or make algebraic errors during the rearrangement to solve for the object's density.",
+    "notes": [
+      "The idea successfully reverses the typical terminal velocity problem, requiring algebraic rearrangement rather than direct calculation, which aligns with the 'Medium' difficulty target.",
+      "The two core physics principles (Newton's 1st Law and Archimedes' Principle) are closely related and appropriately combined for this problem type, fitting within the Goldilocks zone.",
+      "The specified wrong paths are plausible and target common conceptual and algebraic errors."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

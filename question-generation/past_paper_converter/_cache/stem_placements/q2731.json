@@ -1,0 +1,30 @@
+{
+  "questionId": 2731,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 72,
+  "stemBlocks": [
+    "The graph shows the mass of product produced over time for an enzyme-controlled reaction in two different conditions, X and Y. All other variables were kept constant.",
+    "Which of the following could be correct for this graph?",
+    "1 Condition X is a higher pH than condition Y.\n2 Condition X has less substrate supplied than condition Y.\n3 Condition X is a lower pH than condition Y.\n4 Condition X has more substrate supplied than condition Y."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing mass of product produced over time for conditions X (solid line) and Y (dashed line).",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:58.236585+00:00",
+  "sourceImageHash": "6116878588764e3781b54140c5e63431023be030ce4ecfef5b61ef4cbdef8846",
+  "status": "ok"
+}

@@ -1,0 +1,54 @@
+{
+  "stage": "verifier",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "B",
+    "independent_solution": {
+      "main_law_or_principle": "Ohm's Law (V=IR) and Magnetic Force on a Current-Carrying Wire (F=BIL)",
+      "calculation_or_logic": "1. Calculate the current (I) using Ohm's Law: I = V/R = 6.0 V / 3.0 Ω = 2.0 A.\n2. Convert the length of the wire to meters: L = 20 cm = 0.20 m.\n3. Calculate the magnetic force (F) using F = BIL (since the field is perpendicular, sin(90°) = 1): F = (0.50 T) * (2.0 A) * (0.20 m) = 0.20 N.",
+      "verified_answer_value": "0.20 N",
+      "claimed_answer_value": "0.20 N",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Apply Ohm's Law to find current",
+        "Apply magnetic force formula (F=BIL)"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "derived_relationship_audit": {
+      "requires_nontrivial_derivation": false,
+      "number_of_linked_relationships": 2,
+      "relationships_given_in_stem": [],
+      "safe_for_esat": true
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a",
+      "derived_relationship_safety": "pass"
+    },
+    "notes": [
+      "The question correctly links two fundamental ESAT physics concepts (Ohm's Law and magnetic force on a wire) in a two-step problem.",
+      "Calculations are straightforward and suitable for a no-calculator environment.",
+      "Distractors are well-designed to target common misconceptions and calculation errors.",
+      "The visual dependency is correctly marked as supportive, as all necessary numerical information is provided in the text."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

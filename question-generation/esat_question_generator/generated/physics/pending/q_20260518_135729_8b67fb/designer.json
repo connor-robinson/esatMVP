@@ -1,0 +1,106 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_d4f05622",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Medium",
+    "idea_summary": "A wire forming part of a simple circuit is placed in a magnetic field. To find the magnetic force on the wire, the candidate must first use Ohm's law to find the current in the circuit, and then use the magnetic force formula.",
+    "schema_invariant": {
+      "core_move": "Calculate magnetic force F=BIL where the current I is not given directly and must be inferred from other information.",
+      "what_must_not_change": [
+        "The final goal is to find the magnetic force on a wire.",
+        "The current (I) is not an explicitly given quantity.",
+        "The candidate must perform a preliminary calculation to find the current before using F=BIL."
+      ],
+      "what_can_change": [
+        "The method for finding the current (using I=V/R instead of I=Q/t).",
+        "The context (a simple DC circuit instead of abstract charge flow).",
+        "The given quantities (V and R instead of Q and t).",
+        "The use of a circuit diagram."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "hidden_invariant",
+      "reasoning_hinge": "Realising that the current (I) must first be calculated from the given voltage (V) and resistance (R) using Ohm's Law (I=V/R) before it can be used in the magnetic force equation (F=BIL).",
+      "why_top_students_win": "They immediately identify the problem as a two-step process, linking the 'Circuits' part to the 'Magnetism' part via the current, I.",
+      "why_mid_students_miss": "They look for a single formula connecting all variables, or fail to connect the circuit parameters (V, R) to the need to find a current for the magnetic force calculation. They might try to incorrectly substitute V or R into the F=BIL formula."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Magnetic force on a current-carrying conductor (F=BIL).",
+      "supporting_idea_if_any": "Ohm's Law (I=V/R).",
+      "estimated_solution_steps": 2,
+      "number_of_core_physics_principles": 2,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 2,
+      "must_include": [
+        "model_selection",
+        "non_obvious_inference",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "Matches the reference schema's core two-step nature (find I, then find F) but changes the context of the first step from using the definition of current (I=Q/t) to using Ohm's Law (I=V/R). This maintains a similar pace and cognitive load while feeling like a different problem.",
+    "task_signature": "law_application",
+    "tool_footprint": [
+      "two-step problem",
+      "linking models",
+      "circuits",
+      "magnetism"
+    ],
+    "primary_tag": "5",
+    "secondary_tags": [
+      "4"
+    ],
+    "visual_need": "accurate_schematic_json",
+    "visual_role": "supportive",
+    "visual_brief": "A simple circuit diagram. Show a cell (labelled with voltage V), a resistor (labelled with resistance R), and a straight wire segment (labelled with length L) connected in series. Add symbols (e.g., crosses or dots) to indicate a uniform magnetic field (labelled B) acting perpendicularly over the region of the straight wire segment.",
+    "surface_twist": "",
+    "why_still_on_spec": "The idea uses two fundamental, standard school physics principles: magnetic force on a wire (F=BIL, ESAT Physics tag 5.2) and Ohm's law (V=IR, ESAT Physics tag 4.1). Combining these two is a standard problem type that tests conceptual linkage rather than just formula recall, which is characteristic of ESAT.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Inverting Ohm's Law (using I=R/V) and then calculating F = B(R/V)L.",
+        "distractor_role": "A plausible distractor based on a common calculation slip."
+      },
+      {
+        "mistake": "Incorrectly substituting voltage or resistance directly into the force formula, e.g., attempting F=BVL or F=BRL.",
+        "distractor_role": "Catches students who are formula-hunting without understanding the physical roles of the variables."
+      },
+      {
+        "mistake": "Calculating the current correctly but then omitting a variable from the force equation, e.g. omitting L to get F = B(V/R).",
+        "distractor_role": "Tests for careful and complete application of the correct formula."
+      },
+      {
+        "mistake": "Confusing the roles of B and I, e.g. calculating F = I*L*I = I^2 * L.",
+        "distractor_role": "A conceptual error for students who are insecure with the F=BIL formula."
+      }
+    ],
+    "difficulty_rationale": "Medium difficulty is achieved because solving requires more than a single step of formula substitution. The candidate must recognise the need to bridge two topics (circuits and magnetism) by first calculating the current. This reasoning hinge is a mild, standard twist that effectively separates candidates who can connect concepts from those who can only apply isolated formulas. The calculation remains simple, ensuring the question is fast to solve once the method is clear.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "The value for current (I) is not provided directly in the problem's givens. The candidate cannot solve the problem by substituting knowns into the target formula F=BIL. They must first derive the value of I using a different physical principle (Ohm's Law) and a different set of givens (V and R)."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The two-step calculation yields a single correct numerical answer. Common mistakes, such as inverting Ohm's law or substituting the wrong quantity into the force equation, lead to predictable and plausible incorrect answers, which can be used to create effective distractors."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-pro",
+  "attempts": 1
+}

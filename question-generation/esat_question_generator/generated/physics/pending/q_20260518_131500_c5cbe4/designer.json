@@ -1,0 +1,100 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_b51132c8",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Medium",
+    "idea_summary": "A space probe traveling at high speed between two stationary planets emits identical radio pulses forwards and backwards; the candidate must compare the speed, frequency, and wavelength of the pulses as received at each planet.",
+    "schema_invariant": {
+      "core_move": "Predict the observed frequency, wavelength, and speed of electromagnetic radiation by integrating the Doppler effect with the constancy of the speed of light in a vacuum.",
+      "what_must_not_change": [
+        "The speed of the EM wave must remain constant (c) regardless of the source's motion.",
+        "The frequency and wavelength must shift according to the relative motion (approach = blueshift, recession = redshift).",
+        "The inverse relationship between observed frequency and wavelength."
+      ],
+      "what_can_change": [
+        "The specific physical scenario (e.g., one source emitting in two directions instead of a single unidirectional source).",
+        "The objects involved (probe and planets instead of a star and Earth).",
+        "The format of the question (comparing two received signals rather than comparing a received signal to the emitted rest-frame signal)."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "tempting_wrong_model",
+      "reasoning_hinge": "The candidate must decouple the wave speed from the source speed (resisting Galilean velocity addition) while still applying the source speed to the Doppler shift of frequency and wavelength.",
+      "why_top_students_win": "They recognize that the speed of light in a vacuum is an invariant $c$ for all observers, but the relative approach/recession still alters the received frequency and wavelength.",
+      "why_mid_students_miss": "They will either incorrectly apply Galilean velocity addition (claiming the forward pulse travels at $c+v$ and the backward at $c-v$), or they will over-apply the invariance of $c$ and assume that if speed doesn't change, neither do frequency and wavelength."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Constancy of the speed of EM waves in a vacuum.",
+      "supporting_idea_if_any": "Qualitative Doppler effect (redshift/blueshift) for approaching and receding sources.",
+      "estimated_solution_steps": 2,
+      "number_of_core_physics_principles": 2,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 2,
+      "must_include": [
+        "model_selection",
+        "non_obvious_inference",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "Maintains the exact conceptual difficulty of the reference by testing the same misconception traps (variable $c$ vs variable $f/\\lambda$), but uses a symmetrical two-observer setup to make it feel fresh.",
+    "task_signature": "compare_scenarios",
+    "tool_footprint": [
+      "identify_invariant",
+      "apply_doppler_shift",
+      "compare_magnitudes"
+    ],
+    "primary_tag": "3",
+    "secondary_tags": [
+      "7"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "No visual is needed. The text description of a probe between Planet X and Planet Y is sufficient and unambiguous.",
+    "surface_twist": "",
+    "why_still_on_spec": "The constancy of the speed of light in a vacuum and the qualitative nature of redshift/blueshift (Doppler effect for EM waves) are explicit standard requirements in GCSE and ESAT Physics.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Applying Galilean velocity addition to light (forward speed = $c+v$, backward speed = $c-v$).",
+        "distractor_role": "Options where the speeds of the two pulses are different."
+      },
+      {
+        "mistake": "Assuming that because the speed is constant, the frequency and wavelength must also be constant (no Doppler shift).",
+        "distractor_role": "Option stating all properties are identical for both planets."
+      },
+      {
+        "mistake": "Inverting the Doppler shift (associating approach with redshift/lower frequency).",
+        "distractor_role": "Option with correct constant speed but reversed inequalities for frequency and wavelength."
+      }
+    ],
+    "difficulty_rationale": "It requires zero calculation but strong conceptual clarity. The trap of adding source velocity to wave velocity is a classic, highly discriminating misconception that neatly separates rote memorizers from students with genuine physical intuition.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "There are no numbers to plug in; the question requires a conceptual comparison of variables across two different reference frames based on physical postulates."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The permutation of possible relationships (speed equal/unequal, frequency higher/lower, wavelength higher/lower) provides a clean set of distinct, plausible multiple-choice options."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260518_154539_188b69\\assets\\concept_image_v1.png",
+    "bytes": 341210,
+    "model": "imagen-4.0-ultra-generate-001",
+    "aspect_ratio": "4:3",
+    "seed": null,
+    "duration_s": 14.141
+  },
+  "prompt_used": "A brutally simple, monochrome physics circuit diagram in the style of a printed TMUA/ENGAA exam paper. The image shows a standard DC circuit with a power supply and two parallel branches. On the left is a standard DC cell symbol (one long thin vertical line and one short thick vertical line). The circuit wires form a rectangular loop that splits into two parallel horizontal branches on the right. The top parallel branch contains a standard UK-style resistor symbol (a simple empty rectangle). The bottom parallel branch contains an identical standard resistor symbol (an empty rectangle). Label the top resistor 'X' and the bottom resistor 'Y'. The labels 'X' and 'Y' should be in an italic serif font, placed centrally just above their respective rectangles with no leader lines. The background must be pure white #FFFFFF. No current arrows, no extra labels, no 3D effects, and no other components.",
+  "public_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_154539_188b69/concept_image_v1.png"
+}

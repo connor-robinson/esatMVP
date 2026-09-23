@@ -1,0 +1,30 @@
+{
+  "questionId": 3171,
+  "examName": "ENGAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 2,
+  "stemBlocks": [
+    "The length of a spring when no force acts on it is $L$. The spring constant of the spring is $3.0 \\times 10^3 \\text{ Nm}^{-1}$.\nThe spring is on the floor of an accelerating lift (elevator), and the spring supports a $30 \\text{ kg}$ mass.\nThe lift is accelerating downwards at $2.0 \\text{ ms}^{-2}$.",
+    "What is the difference between $L$ and the length of the spring when the lift is accelerating downwards?",
+    "(gravitational field strength $= 10 \\text{ Nkg}^{-1}$; the spring obeys Hooke's law)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:46:58.348262+00:00",
+  "sourceImageHash": "22a67d78455ad4b96f2b9385678c572830511877317bac0de33b25fe6cefcaa4",
+  "status": "ok"
+}

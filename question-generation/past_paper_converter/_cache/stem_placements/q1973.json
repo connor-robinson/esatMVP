@@ -1,0 +1,30 @@
+{
+  "questionId": 1973,
+  "examName": "ENGAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 18,
+  "stemBlocks": [
+    "A block is designed with a cylindrical channel to accommodate a hot-water pipe. The block is 100 cm long and it has a square cross-section of side 22.0 cm with a cylindrical hole in the middle, as shown in the diagram:\nThe diameter of the cylindrical hole is 14.0 cm and the density of the material from which the block is made is $0.100 \\text{ g cm}^{-3}$.",
+    "What is the mass of the block?",
+    "(take $\\pi$ to be $\\frac{22}{7}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:42.178936+00:00",
+  "sourceImageHash": "2cf03af56082707ab79c911524c4dc34a8b4fb761edba425c60ea27476b0f68e",
+  "status": "ok"
+}

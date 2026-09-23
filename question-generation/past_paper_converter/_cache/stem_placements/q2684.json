@@ -1,0 +1,30 @@
+{
+  "questionId": 2684,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 25,
+  "stemBlocks": [
+    "In a laboratory, liquid nitrogen is stored at a very low temperature in the vessel shown in the diagram.\nThe vessel has a double wall made from a poor thermal conductor. There is a vacuum in the gap between the two walls.\nThe inner surface of the inner wall is shiny. The outer surface of the outer wall is shiny.\nThese features insulate the liquid nitrogen by reducing the rate at which thermal energy is transferred to the liquid nitrogen.",
+    "Which of the following statements explain(s) why these features help to insulate the liquid nitrogen?",
+    "1 The shiny inner surface of the inner wall is a good emitter of thermal radiation.\n2 Thermal radiation cannot travel in a vacuum.\n3 The shiny outer surface of the outer wall is a poor absorber of radiation."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:58.191720+00:00",
+  "sourceImageHash": "1c98a7d0b2901344373bfd82b0503a215755bcc9970d77a7ece8063cf636a077",
+  "status": "ok"
+}

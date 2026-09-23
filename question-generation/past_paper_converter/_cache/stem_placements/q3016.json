@@ -1,0 +1,29 @@
+{
+  "questionId": 3016,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 37,
+  "stemBlocks": [
+    "The graph represents the motion of a vehicle during part of a journey.",
+    "What is the best estimate of the distance travelled during the part of the journey shown?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:15.988382+00:00",
+  "sourceImageHash": "c2ae37296fdb5be65bd1e2ed2fb1d655a01385d9e43ef525b5b80bfa96024337",
+  "status": "ok"
+}

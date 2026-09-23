@@ -1,0 +1,28 @@
+{
+  "questionId": 3044,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 65,
+  "stemBlocks": [
+    "The karyogram below is a photograph of the chromosomes taken from a single human cell.\nUsing the karyogram, which of the following statements is/are correct?\n1 The person is healthy with no visible mutations.\n2 These chromosomes come from a male cell.\n3 The cell used could have been a white blood cell."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A karyogram showing human chromosomes numbered 1-22 and sex chromosomes X Y.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:16.015217+00:00",
+  "sourceImageHash": "e19aa6b1907d4413b947c380efbde329c80dc16c367dda3c1c2b4dec47d87a79",
+  "status": "ok"
+}

@@ -1,0 +1,30 @@
+{
+  "questionId": 2456,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 67,
+  "stemBlocks": [
+    "Three different coloured leaves were collected: a dark green leaf, a light green leaf and a yellow leaf. Each leaf had 16 discs of 1 cm diameter cut from it.\nThe discs were treated with sodium hydrogen carbonate solution to replace all the air from the spaces within the leaf. Sodium hydrogen carbonate solution is a source of carbon dioxide.\nTo start the experiment, each group of discs was then placed in a beaker of sodium hydrogen carbonate. At the beginning of the experiment all of the discs sank.\nEach beaker was illuminated for 30 minutes by being placed 10 cm in front of a lamp that provided the same wavelengths of light as sunlight. It was observed that some of the leaf discs floated. The number of floating leaf discs was counted every minute for 15 minutes.\nThe results are shown in the graph.\n(All other variables were kept constant.)",
+    "Which of the following statements is/are correct?",
+    "1 The average rate of photosynthesis was highest in the darkest leaves.\n2 At 5 minutes 25% of the light green discs remained at the bottom of the beaker.\n3 The reciprocal of the time taken for a quarter of the discs of a particular colour to float can be a measure of the relative rate of photosynthesis."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing number of floating discs versus time for dark green, light green, and yellow leaf discs.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 1.0
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:49:16.221038+00:00",
+  "sourceImageHash": "8c1d4d952f626243ae4059f82b2c471d63b69f617d30774406458a25b56074af",
+  "status": "ok"
+}

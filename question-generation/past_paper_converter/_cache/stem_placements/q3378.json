@@ -1,0 +1,31 @@
+{
+  "questionId": 3378,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 49,
+  "stemBlocks": [
+    "Some varieties of plant crops, like maize, can survive at low temperatures, such as $4^\\circ C$.\nScientists identified protein Z that they believe to be involved in the response to low temperatures in maize.\nOne method of studying how plants survive at low temperatures is to investigate the levels of ion leakage from cells damaged by the low temperatures. Higher levels of ion leakage are associated with lower levels of survival.\nThe scientists measured the levels of ions leaking from cells of three varieties of maize.\nOther than the changes listed in the table, the plants were genetically identical.\nIon leakage from samples of cells of each variety was measured after the plants had been kept at $4^\\circ C$ for 4 days. All other variables were kept constant.\nThe results of this investigation are shown in the chart.",
+    "Which of the following statements is/are correct?",
+    "1 The cell wall in maize cells controls the leakage of ions from the cell at $4^\\circ C$.\n2 Inserting an extra base pair near the start of the gene for protein Z could change the overall amino acid sequence of the protein.\n3 The presence of protein Z in maize cells increases the chance of the maize plant surviving at $4^\\circ C$.",
+    "| variety of maize | description |\n| --- | --- |\n| P | normal maize plant |\n| Q | contains a single base pair insertion in the DNA near the start of the gene coding for protein Z |\n| R | is genetically modified to produce the highest levels of protein Z |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Bar chart showing mean ion leakage from cells after 4 days at $4^\\circ C$ for different maize varieties.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 4,
+      "confidence": 0.9
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:10.849885+00:00",
+  "sourceImageHash": "bf29e249b7571262ed174ef08af8c24517de01c8691b0dd0cfbfea5eb68a9e10",
+  "status": "ok"
+}

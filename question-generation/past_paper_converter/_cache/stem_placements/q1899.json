@@ -1,0 +1,31 @@
+{
+  "questionId": 1899,
+  "examName": "ENGAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 52,
+  "stemBlocks": [
+    "The acceleration versus time graph is for a ball dropped from rest, falling vertically and bouncing on the ground.\nThe time of contact with the ground can be ignored.",
+    "What is the speed of the ball immediately **after** hitting the ground for the first time, and what is the maximum height reached by the ball after the first bounce?",
+    "(gravitational field strength = $10 \\text{ N kg}^{-1}$)",
+    "|  | speed / $m \\text{ s}^{-1}$ | height / $m$ |\n| --- | --- | --- |\n| A | 4.00 | 0.80 |\n| B | 4.00 | 1.25 |\n| C | 5.00 | 0.80 |\n| D | 5.00 | 1.25 |\n| E | 8.00 | 3.20 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.2
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:26:26.126175+00:00",
+  "sourceImageHash": "a554b510a1a6e9ba31c90aa19b8c5dd53c64ddd07718faf33ff5f87192df030b",
+  "status": "ok"
+}

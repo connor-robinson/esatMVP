@@ -1,0 +1,30 @@
+{
+  "questionId": 2640,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 71,
+  "stemBlocks": [
+    "An investigation was carried out on the effect of substrate concentration on an enzyme-controlled reaction.\nFour different concentrations of substrate were tested. In each case, the concentration of product was measured at regular intervals following the introduction of the substrate.\nAll the other variables were kept constant.\nThe results obtained are shown on the graph.",
+    "Which of the following statements is/are correct?",
+    "1 As substrate concentration increases, the time taken to produce $0.2 \\text{ arbitrary units}$ of product increases.\n2 Doubling the substrate concentration always doubles the rate of the reaction.\n3 The average rate of reaction for a substrate concentration of $1.0 \\text{ mmol dm}^{-3}$ is $0.005 \\text{ arbitrary units per second}$."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:19.048739+00:00",
+  "sourceImageHash": "a25355ad75a3683d3450a282f06487c050daa45227691cd4b3212b13cee8402f",
+  "status": "ok"
+}

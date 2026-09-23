@@ -1,0 +1,29 @@
+{
+  "questionId": 2320,
+  "examName": "NSAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 21,
+  "stemBlocks": [
+    "A cylindrical copper bar X of length $l$ has a cross-sectional area $A$. The colder end of the bar is kept at temperature $T_1$ and the hotter end is kept at temperature $T_2$. The curved surface of the bar is perfectly insulated and thermal energy is conducted from the hotter end of the bar to the colder end. Changes in $l$, $A$, $T_1$ and $T_2$ may alter the rate at which thermal energy is conducted along the copper bar. In which case is the rate of conduction of thermal energy along the insulated bar the same as for bar X?",
+    "|  | change in $A$ | change in $l$ | change in $T_1$ | change in $T_2$ |\n| --- | --- | --- | --- | --- |\n| A | doubles | no change | no change | no change |\n| B | halves | no change | no change | no change |\n| C | no change | doubles | no change | no change |\n| D | no change | halves | no change | no change |\n| E | no change | no change | decreases by $10^\\circ C$ | increases by $10^\\circ C$ |\n| F | no change | no change | decreases by $10^\\circ C$ | no change |\n| G | no change | no change | increases by $10^\\circ C$ | decreases by $10^\\circ C$ |\n| H | no change | no change | increases by $10^\\circ C$ | increases by $10^\\circ C$ |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:25:34.653166+00:00",
+  "sourceImageHash": "1faa492a02fdf71c0da6e45c951e0a496b254c4fc8155ce029a2d7e880c460e6",
+  "status": "ok"
+}

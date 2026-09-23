@@ -1,0 +1,39 @@
+{
+  "questionId": 3389,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 60,
+  "stemBlocks": [
+    "A particular functional protein consists of two smaller chains of amino acids joined together, chain P and chain Q. A group of scientists made this protein using bacterial cells. They created recombinant plasmid R by inserting the genes for chain P and chain Q into a plasmid. They also inserted a gene for an an antibiotic resistance protein into the plasmid so that cells containing the recombinant plasmid could be selected using antibiotics. A map of the recombinant plasmid is shown: This process is not efficient and must be carried out several times to be certain of creating plasmid R. Four plasmids were made and individually moved into four bacterial cells, labelled W, X, Y and Z. The proteins encoded by the genes in the plasmid in the bacterial cells were checked by separating the proteins based on their mass, producing the results as shown in the following diagram. Each band represents a protein or amino acid chain of the given mass. Assume that one amino acid has a mass of $0.1 \\text{ kDa}$.",
+    "Which of the following statements is/are correct? 1 W is the only bacterium with the fully functional protein. 2 The proteins/amino acid chain(s) in Y and Z are from bacteria that can each only produce one of the parts of the functional protein. 3 The DNA ligase enzymes may not have functioned as intended when creating the plasmid that is in bacterium X."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A map of the recombinant plasmid is shown. The proteins encoded by the genes in the plasmid in the bacterial cells were checked by separating the proteins based on their mass, producing the results as shown in the following diagram.",
+      "role": "stem_diagram"
+    },
+    {
+      "id": "d2",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    },
+    {
+      "assetId": "d2",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:10.897482+00:00",
+  "sourceImageHash": "6be54350e7d7b6376b16c6821abb4a01432c1b70e40fcf3d2254609598acd429",
+  "status": "ok"
+}

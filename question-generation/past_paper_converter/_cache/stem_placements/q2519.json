@@ -1,0 +1,29 @@
+{
+  "questionId": 2519,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 40,
+  "stemBlocks": [
+    "A mass spectrum of a sample of element X with atomic number 5 is shown. Using the data, which row in the following table best describes the position of X in the Periodic Table and the relative atomic mass of this sample of X?",
+    "|  | Period | Group | relative atomic mass |\n| --- | --- | --- | --- |\n| A | 1 | 15 | 10.2 |\n| B | 1 | 15 | 10.8 |\n| C | 2 | 13 | 10.2 |\n| D | 2 | 13 | 10.8 |\n| E | 3 | 2 | 10.2 |\n| F | 3 | 2 | 10.8 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.815356+00:00",
+  "sourceImageHash": "70011e3ad52d367d5e2865ea8e572e9613d75bb391b5c124e56d4743689de7fb",
+  "status": "ok"
+}

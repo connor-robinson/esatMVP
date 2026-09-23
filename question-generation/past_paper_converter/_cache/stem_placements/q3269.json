@@ -1,0 +1,29 @@
+{
+  "questionId": 3269,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 60,
+  "stemBlocks": [
+    "The genetic code is read in groups of three bases when coding for the synthesis of a protein. The diagram shows the base triplets within DNA that correspond to specific amino acids. The diagram is read from the inside out. For example, the base triplets CAT and CAC both code for the amino acid histidine (His). Assume that it is equally likely that mutations can change any base to any other base, and that the probability of this resulting in a change in any particular base during one cell division is $2 \\times 10^{-9}$.",
+    "What is the probability that a triplet that codes for Met changes to code for Pro in one round of division?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Genetic code diagram showing base triplets and corresponding amino acids.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:13.977780+00:00",
+  "sourceImageHash": "9b85e85198a321153aa246ba228d35845bc96a004c9b665484c576ff844acbac",
+  "status": "ok"
+}

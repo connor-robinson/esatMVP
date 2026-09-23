@@ -1,0 +1,11 @@
+.next
+.next-stale-*
+.next-turbo-stale-*
+.pnpm-store
+node_modules
+test-results
+tmp
+tmp_physics_mocks
+question-generation/past_paper_converter/_cache
+question-generation/esat_question_generator/generated
+question-generation/esat_question_generator/__pycache__

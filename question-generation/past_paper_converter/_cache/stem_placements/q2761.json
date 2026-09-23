@@ -1,0 +1,29 @@
+{
+  "questionId": 2761,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 22,
+  "stemBlocks": [
+    "The greatest diagonal distance between the two vertices of a cuboid, as shown in the diagram, is $\\sqrt{77}$ cm.\nA similar cuboid has all its lengths exactly half the lengths of the original cuboid.\nThe sides of this smaller cuboid are 2 cm, 3 cm and $x$ cm.",
+    "What is the value of $x$, in cm?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.6
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.357646+00:00",
+  "sourceImageHash": "1740d9bef733a68094bfa2cc7e0568181676291a8002c538b10105f93259dce4",
+  "status": "ok"
+}

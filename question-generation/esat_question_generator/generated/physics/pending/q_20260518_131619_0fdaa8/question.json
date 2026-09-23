@@ -1,0 +1,279 @@
+{
+  "id": "P_8ab88df3-Medium-462e7141fb",
+  "schema_id": "P_8ab88df3",
+  "difficulty": "Medium",
+  "idea_plan": {
+    "schema_id": "P_8ab88df3",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Medium",
+    "idea_summary": "A table-based question asking how the mass, weight, and upthrust acting on a specific parcel of fluid change as it is heated, driving convection.",
+    "schema_invariant": {
+      "core_move": "Connecting thermal expansion to the physical mechanism of buoyancy that causes a fluid to rise.",
+      "what_must_not_change": [
+        "The underlying phenomenon being convection",
+        "The requirement to trace the cause-and-effect chain of heating to rising"
+      ],
+      "what_can_change": [
+        "The specific quantities being evaluated (e.g., forces instead of just density/volume)",
+        "The format of the question (e.g., table of changes instead of descriptive sentences)",
+        "The physical context (liquid vs gas)"
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "tempting_wrong_model",
+      "reasoning_hinge": "Recognising that heating a parcel of fluid increases its volume and thereby increases the upthrust acting on it, while its mass and weight remain strictly constant.",
+      "why_top_students_win": "They decouple 'density' from 'weight', understanding that the parcel becomes less dense because its volume increases, which displaces more surrounding fluid and increases upthrust, overcoming the constant weight.",
+      "why_mid_students_miss": "They rely on the colloquialism that hot air is 'lighter', incorrectly concluding that the mass or weight of the heated parcel decreases."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Convection mechanism via thermal expansion and density change.",
+      "supporting_idea_if_any": "Archimedes' principle / upthrust.",
+      "estimated_solution_steps": 2,
+      "number_of_core_physics_principles": 2,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 2,
+      "must_include": [
+        "model_selection",
+        "non_obvious_inference",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "Shifts from a purely descriptive sequence of convection to a rigorous conceptual tracking of the forces (weight vs upthrust) involved, maintaining a fast pace but introducing a sharp reasoning hinge.",
+    "task_signature": "identify_true_statement",
+    "tool_footprint": [
+      "conservation_of_mass",
+      "thermal_expansion_logic",
+      "force_balance_reasoning"
+    ],
+    "primary_tag": "Thermal Physics",
+    "secondary_tags": [
+      "Forces and Motion",
+      "Fluids"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "Instead of asking about density and particle spacing, it asks about the actual forces (weight and upthrust) acting on the fluid parcel, forcing candidates to apply mechanics to a thermal physics problem.",
+    "why_still_on_spec": "Thermal expansion, density changes, and convection are standard thermal physics. Upthrust and weight are standard mechanics. Combining them tests deep understanding of a universally taught phenomenon without requiring off-spec knowledge.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Assuming that because the fluid becomes 'less dense', its mass and weight decrease.",
+        "distractor_role": "A row in the table showing Mass: Decreases, Weight: Decreases, Upthrust: Constant."
+      },
+      {
+        "mistake": "Assuming upthrust decreases because the density of the heated fluid has decreased.",
+        "distractor_role": "A row in the table showing Mass: Constant, Weight: Constant, Upthrust: Decreases."
+      },
+      {
+        "mistake": "Assuming that expansion means the fluid 'pushes' itself up against gravity, reducing its weight, while upthrust stays the same.",
+        "distractor_role": "A row in the table showing Mass: Constant, Weight: Decreases, Upthrust: Constant."
+      }
+    ],
+    "difficulty_rationale": "It requires no calculation, making it fast, but targets a very common and robust misconception (that hot fluid weighs less). It perfectly hits the Medium difficulty band by requiring one clear conceptual hinge.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "There are no numbers to plug in. The candidate must conceptually link thermal expansion to the definitions of mass, weight, and upthrust."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The question naturally forms a table of options (Increase / Decrease / Constant) for Mass, Weight, and Upthrust, which is a standard and highly effective MCQ format."
+    }
+  },
+  "question_package": {
+    "metadata": {
+      "schema_id": "P_8ab88df3",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Medium",
+      "task_signature": "identify_true_statement",
+      "primary_tag": "Thermal Physics",
+      "secondary_tags": [
+        "Forces and Motion",
+        "Fluids"
+      ]
+    },
+    "question": {
+      "stem": "A small heating element at the bottom of an open tank of liquid heats a small parcel of the liquid immediately above it.\n\nJust before this heated parcel begins to rise, how do its mass, weight, and the upthrust acting on it compare to their values before it was heated?",
+      "options": {
+        "A": "Mass: Unchanged, Weight: Unchanged, Upthrust: Increases",
+        "B": "Mass: Unchanged, Weight: Unchanged, Upthrust: Decreases",
+        "C": "Mass: Unchanged, Weight: Decreases, Upthrust: Unchanged",
+        "D": "Mass: Decreases, Weight: Decreases, Upthrust: Unchanged",
+        "E": "Mass: Decreases, Weight: Decreases, Upthrust: Increases",
+        "F": "Mass: Unchanged, Weight: Decreases, Upthrust: Increases"
+      },
+      "correct_option": "A"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "Heating a fixed parcel of fluid increases its volume through thermal expansion, which increases the volume of surrounding fluid it displaces, while its mass and weight remain strictly constant.",
+      "reasoning": "1. The heated parcel consists of a fixed number of particles, so its mass is unchanged.\n2. Since mass is unchanged and the gravitational field strength is constant, its weight ($W = mg$) is also unchanged.\n3. Heating causes the parcel to expand, meaning its volume increases.\n4. Upthrust is equal to the weight of the surrounding (unheated) fluid displaced by the parcel. Because the parcel's volume has increased, it displaces a larger volume of the surrounding fluid, so the upthrust acting on it increases.\n5. The increased upthrust now exceeds the unchanged weight, resulting in a net upward force that causes the parcel to rise."
+    },
+    "distractor_map": {
+      "A": "Correct. Mass and weight are constant; increased volume leads to increased upthrust.",
+      "B": "Incorrectly assumes that because the heated parcel's density decreases, the upthrust acting on it decreases. Upthrust depends on the density of the surrounding displaced fluid.",
+      "C": "Relies on the colloquial misconception that hot fluid is 'lighter', incorrectly concluding that its weight decreases while upthrust remains the same.",
+      "D": "Incorrectly assumes that heating the fluid causes it to lose mass and weight.",
+      "E": "Mixes the correct understanding that upthrust increases with the misconception that mass and weight decrease.",
+      "F": "Correctly identifies that upthrust increases, but incorrectly assumes the weight of the parcel decreases to allow it to rise."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Recognising that upthrust increases due to volume expansion, rather than weight decreasing.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 2,
+        "estimated_solution_steps": 2,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "verifier_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "A",
+    "independent_solution": {
+      "main_law_or_principle": "Conservation of Mass, Definition of Weight, Archimedes' Principle, Thermal Expansion",
+      "calculation_or_logic": "1. **Mass:** The 'parcel' refers to a fixed amount of liquid. Heating it does not change the number of particles or the amount of matter within this parcel. Therefore, its mass remains **unchanged**.\n2. **Weight:** Weight is defined as $W = mg$. Since the mass ($m$) of the parcel is unchanged and the gravitational field strength ($g$) is constant, its weight also remains **unchanged**.\n3. **Upthrust:** Upthrust (buoyant force) is given by Archimedes' Principle: $F_b = \\rho_{fluid} V_{displaced} g$. When the parcel of liquid is heated, it undergoes thermal expansion, meaning its volume ($V_{parcel}$) increases. Since the parcel is submerged, the volume of fluid it displaces ($V_{displaced}$) is equal to its own volume. The density of the *surrounding* (unheated) fluid ($\\rho_{fluid}$) remains constant. As $V_{displaced}$ increases due to thermal expansion, the upthrust ($F_b$) acting on the parcel **increases**.",
+      "verified_answer_value": "Mass: Unchanged, Weight: Unchanged, Upthrust: Increases",
+      "claimed_answer_value": "Mass: Unchanged, Weight: Unchanged, Upthrust: Increases",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Apply conservation of mass to a defined parcel of fluid.",
+        "Relate mass to weight using $W=mg$.",
+        "Understand thermal expansion causes volume increase.",
+        "Apply Archimedes' principle ($F_b = \\rho V g$) to relate increased volume to increased upthrust."
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "derived_relationship_audit": {
+      "requires_nontrivial_derivation": false,
+      "number_of_linked_relationships": 3,
+      "relationships_given_in_stem": [],
+      "safe_for_esat": true
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a",
+      "derived_relationship_safety": "pass"
+    },
+    "notes": [
+      "The question correctly tests fundamental concepts of thermal physics (thermal expansion, convection) and mechanics (mass, weight, upthrust).",
+      "It effectively targets a common misconception regarding the 'lightness' of heated fluids by requiring a precise understanding of mass vs. density and the definition of upthrust.",
+      "No calculations are required, making it suitable for a no-calculator exam.",
+      "All distractors are clearly incorrect based on fundamental physics principles."
+    ]
+  },
+  "style_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "similar",
+      "notes": "This question perfectly aligns with a Medium difficulty ESAT question. It's concise, requires conceptual understanding, and targets a common misconception without needing complex calculations or derivations."
+    },
+    "selectivity_audit": {
+      "main_trap": "The primary trap is the common misconception that heating a fluid makes it 'lighter' in terms of its mass or weight, rather than just less dense due to thermal expansion. Students might incorrectly conclude that the mass or weight of the heated parcel decreases.",
+      "why_not_plug_and_chug": "There are no numerical values provided, so the question cannot be solved by formula substitution. It requires a conceptual understanding of mass, weight, upthrust, and thermal expansion.",
+      "expected_mid_student_error": "A mid-level student might incorrectly choose an option where the mass or weight of the parcel decreases (e.g., C, D, E, F), or incorrectly assume upthrust decreases because the parcel's density decreases (B).",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 3,
+      "estimated_solution_steps": 3,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "The question is an excellent example of an ESAT-style physics problem.",
+      "It is short, clear, and directly tests fundamental concepts of thermal physics and mechanics.",
+      "The question effectively targets a robust misconception regarding the 'lightness' of hot fluids, making it highly selective.",
+      "No calculations are required, making it suitable for a no-calculator exam.",
+      "The distractors are well-designed to capture common errors in reasoning."
+    ]
+  },
+  "models": {
+    "designer": "gemini-3.1-pro-preview",
+    "implementer": "gemini-3.1-pro-preview",
+    "verifier": "gemini-2.5-flash",
+    "style_judge": "gemini-2.5-flash"
+  },
+  "attempts": 1,
+  "created_at": "2026-05-18T13:20:30.214584",
+  "token_usage": {
+    "prompt_tokens": 23229,
+    "candidates_tokens": 4376,
+    "total_tokens": 41752
+  },
+  "tags": {
+    "primary_tag": "4",
+    "secondary_tags": [
+      "3",
+      "5"
+    ],
+    "primary_confidence": 0.95,
+    "reasoning": "The question describes the effect of heating a liquid parcel, which causes thermal expansion (Thermal physics). The analysis then requires understanding the conservation of mass and the definition of weight (Mechanics), and how the increased volume affects the upthrust (Mechanics, Matter) due to the displacement of fluid.",
+    "_raw_text": "```json\n{\n  \"primary_tag\": \"4\",\n  \"secondary_tags\": [\"3\", \"5\"],\n  \"primary_confidence\": 0.95,\n  \"reasoning\": \"The question describes the effect of heating a liquid parcel, which causes thermal expansion (Thermal physics). The analysis then requires understanding the conservation of mass and the definition of weight (Mechanics), and how the increased volume affects the upthrust (Mechanics, Matter) due to the displacement of fluid.\"\n}\n```"
+  },
+  "schema_block_snapshot": "## **P_8ab88df3. Explaining Convection Mechanisms**\n\n**Core move:** Describe the sequence of physical changes (e.g., heating, expansion, density alteration, buoyancy) that drive convection currents in fluids.\n\n**Seen in / context:**\n- Heat transfer in liquids and gases (e.g., boiling water, atmospheric circulation, hot air balloons)\nUnderstanding fluid dynamics related to temperature and density differences\nExplaining natural phenomena driven by fluid movement\n\n**Possible wrong paths:**\n- Confusing convection with conduction or radiation as the primary mode of heat transfer in fluids\nIncorrectly identifying the direction of fluid movement based on temperature or density (e.g., hot fluid sinks, cold fluid rises)\nMisunderstanding the role of density changes as the driving force for buoyancy and fluid movement\nFailing to connect temperature changes to volume and density changes\n\n**Notes for generation:**\n- Questions should require an understanding of the cyclical nature of convection.\nCan involve identifying correct statements, ordering steps in the process, or explaining cause-and-effect relationships.\nOften tests the link between temperature, volume, density, and buoyancy principles.\nMay require distinguishing between specific heat capacity and latent heat if phase changes are involved, though less common for basic convection.\n\n**Exemplar questions:**\n- `NSAA_2017_Section1_Q20_NSAA_Sec`: Initial exemplar for new schema.",
+  "pipeline": "v4",
+  "has_visual": false,
+  "visual_type": "none",
+  "answer_depends_on_visual": false
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 2343,
+  "examName": "NSAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 44,
+  "stemBlocks": [
+    "The graphs show results of two experiments (W and Z) involving the catalytic decomposition of hydrogen peroxide. Assuming all other conditions are kept constant, which one of the following options would lead to the results shown?",
+    "|  | experiment W | experiment Z |\n| --- | --- | --- |\n| A | $100 \\text{ cm}^3$ of $1.0 \\text{ mol dm}^{-3}$ hydrogen peroxide | $50 \\text{ cm}^3$ of $2.0 \\text{ mol dm}^{-3}$ hydrogen peroxide |\n| B | catalyst is in lumps | catalyst is finely divided |\n| C | reaction carried out at $25 \\text{ \\degree C}$ | reaction carried out at $50 \\text{ \\degree C}$ |\n| D | $2.0 \\text{ g}$ manganese(IV) oxide used | $1.0 \\text{ g}$ manganese(IV) oxide used |\n| E | $100 \\text{ cm}^3$ of $1.0 \\text{ mol dm}^{-3}$ hydrogen peroxide | $25 \\text{ cm}^3$ of $2.0 \\text{ mol dm}^{-3}$ hydrogen peroxide |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:25:34.702300+00:00",
+  "sourceImageHash": "6a27a876bd65559102be447aa8f7a1c87bda8c8a32ee7467374b7f3e1537bb49",
+  "status": "ok"
+}

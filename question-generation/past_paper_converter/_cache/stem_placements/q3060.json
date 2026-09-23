@@ -1,0 +1,28 @@
+{
+  "questionId": 3060,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 2",
+  "questionNumber": 1,
+  "stemBlocks": [
+    "A series of $100 \\text{ mm}$ long samples have a square cross-section of $5 \\text{ mm} \\times 5 \\text{ mm}$. Each sample is tested in an apparatus which applies increasing tension to the ends of the sample until it breaks. The length of the sample is measured and a plot of tension vs extension obtained. The results for five samples S1-S5 are shown in the figure below. Which of the samples is the stiffest compared to the other samples?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A plot of tension vs extension for five samples S1-S5.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:38:20.003023+00:00",
+  "sourceImageHash": "0259d42f176762f8abbf2db4e72bff9229c1ffb6abd7b34f7f00d7903317518f",
+  "status": "ok"
+}

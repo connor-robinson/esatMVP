@@ -1,0 +1,30 @@
+{
+  "questionId": 1953,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 52,
+  "stemBlocks": [
+    "A load drops from rest through a vertical height $h$ to the ground.\nA light cable attached to the load passes over a friction pulley that provides a braking force during the fall.\nAs the load falls through height $h$, 50% of the gravitational potential energy lost is transferred into thermal energy.\nThe load reaches a final speed of $10 \\text{ ms}^{-1}$.",
+    "What is the vertical height $h$?",
+    "(gravitational field strength $g = 10 \\text{ N kg}^{-1}$; air resistance can be ignored)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:28:14.921551+00:00",
+  "sourceImageHash": "404f65f61094fa4719a0ea4b966656d97576d8acb1b2cd05fa876322df4b0025",
+  "status": "ok"
+}

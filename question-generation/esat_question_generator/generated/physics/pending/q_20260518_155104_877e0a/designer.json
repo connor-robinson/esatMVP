@@ -1,0 +1,100 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_ad97dfb5",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Extreme",
+    "idea_summary": "Determine the ratio of terminal velocities for two spheres of the same material but different masses, requiring the candidate to link mass scaling to area scaling and apply it to a given drag proportionality.",
+    "schema_invariant": {
+      "core_move": "Calculate the resultant value of a dependent physical quantity by applying derived scaling factors to independent variables in a power law relationship.",
+      "what_must_not_change": [
+        "The necessity of using ratios/scaling factors rather than absolute values.",
+        "The presence of power-law relationships (squares, cubes, square roots)."
+      ],
+      "what_can_change": [
+        "The physical context (e.g., mechanics instead of thermodynamics or fields).",
+        "Whether the independent scaling factors are given explicitly or must be derived from geometry.",
+        "The specific powers involved."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "proportional_reasoning",
+      "reasoning_hinge": "Recognising that mass scales with the cube of the radius, while cross-sectional area scales with the square of the radius, and substituting both into the terminal velocity equilibrium condition.",
+      "why_top_students_win": "They construct a combined proportionality: at terminal velocity, Weight ∝ Area × v², so v ∝ √(Mass / Area). They correctly deduce the area scaling factor from the mass scaling factor.",
+      "why_mid_students_miss": "They will likely miss a step in the chain: either assuming Area scales directly with Mass, forgetting to square root the velocity at the end, or ignoring the Area term in the drag proportionality entirely."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Force balance at terminal velocity (Weight = Drag).",
+      "supporting_idea_if_any": "Geometric scaling of spheres (Mass ∝ r³, Area ∝ r²).",
+      "estimated_solution_steps": 4,
+      "number_of_core_physics_principles": 2,
+      "requires_derived_relationship": true,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 4,
+      "must_include": [
+        "derive_radius_ratio_from_mass",
+        "derive_area_ratio_from_radius",
+        "set_up_force_balance_proportionality",
+        "solve_for_velocity_ratio"
+      ]
+    },
+    "reference_alignment": "Pushes the schema to Extreme by hiding the independent variables' scaling factors behind a geometric relationship, whereas standard questions provide the scaling factors directly.",
+    "task_signature": "proportional_change",
+    "tool_footprint": [
+      "geometric_scaling",
+      "force_equilibrium",
+      "power_law_manipulation"
+    ],
+    "primary_tag": "2",
+    "secondary_tags": [
+      "1"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "No visual needed.",
+    "surface_twist": "Instead of purely substituting given scaling factors into a known formula like the Stefan-Boltzmann law, the candidate must build the scaling relationship themselves from a written description of drag and geometric properties.",
+    "why_still_on_spec": "Terminal velocity (Weight = Drag) is core ESAT Physics. Geometric scaling (volume and area of spheres) is standard GCSE/A-level maths/physics. The drag relationship (F ∝ A v²) is provided in the stem, keeping it perfectly on-spec without requiring obscure knowledge.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Ignoring the cross-sectional area change and assuming Drag only depends on v², leading to v ∝ √Mass.",
+        "distractor_role": "Produces an answer based purely on the square root of the mass ratio."
+      },
+      {
+        "mistake": "Forgetting the v² in the drag relationship, leading to v ∝ Mass / Area.",
+        "distractor_role": "Produces an answer that misses the final square root step."
+      },
+      {
+        "mistake": "Assuming cross-sectional area scales linearly with mass (or volume), leading to Area ratio = Mass ratio, so v ratio = 1.",
+        "distractor_role": "Produces a 'no change' or 1:1 ratio distractor."
+      }
+    ],
+    "difficulty_rationale": "Selective because it requires chaining three proportionalities (m ∝ r³, A ∝ r², m ∝ A v²) without getting lost in algebra. It remains fast for top candidates who can manipulate scaling factors directly (e.g., an 8x mass means a 2x radius and 4x area, so v² must double).",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "There is no single standard formula provided that links terminal velocity directly to mass. The candidate must synthesize the equilibrium condition and geometric scaling themselves."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The combination of different power laws (cube, square, square root) provides highly predictable, cleanly calculable wrong answers (distractors) based on skipping or misapplying one of the powers."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

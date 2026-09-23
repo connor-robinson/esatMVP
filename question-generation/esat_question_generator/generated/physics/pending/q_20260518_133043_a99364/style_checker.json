@@ -1,0 +1,56 @@
+{
+  "stage": "style_checker",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "shorter",
+      "notes": "Perfectly calibrated for an early-paper ESAT question. It tests conceptual foundations rather than calculation."
+    },
+    "selectivity_audit": {
+      "main_trap": "The 'Galilean intuition' trap: students often incorrectly assume that if a source is moving towards them, the wave speed must increase (v + v_source).",
+      "why_not_plug_and_chug": "There are no numbers and no formulas to manipulate; it is purely a test of conceptual understanding of wave properties.",
+      "expected_mid_student_error": "Selecting B, as they correctly identify the Doppler shift direction but fail to apply the postulate of the constancy of the speed of light.",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 2,
+      "estimated_solution_steps": 2,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "This is an excellent example of an ESAT question. It is concise, conceptually deep, and targets a common misconception without requiring any calculation."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

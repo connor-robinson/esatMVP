@@ -1,0 +1,19 @@
+{
+  "stage": "visual_router",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "visual_route": "concept_image_prompt",
+    "answer_depends_on_visual": false,
+    "required_files": [],
+    "reason": "The question explicitly states that a 'concept_image_only' is needed, and its role is 'supportive', with the answer not depending on the visual. The requested image is an illustrative side-by-side comparison of two simple scenarios (mass on spring, mass dropped onto spring) which is suitable for a concept image prompt.",
+    "next_prompt_file": "Physics Concept_Image_Prompt.md",
+    "style_target_if_image": "tmua_engaa_exam_diagram",
+    "blocking_issue": null
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

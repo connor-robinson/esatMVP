@@ -1,0 +1,33 @@
+{
+  "questionId": 3375,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 46,
+  "stemBlocks": [
+    "The graph shows the mass of antibody produced by antibody-producing cells over a period of 20 hours.",
+    "Assume that one antibody molecule has a mass of $2.5 \\times 10^{-19}$ g.",
+    "Which of the following statements is/are correct?",
+    "1 One antibody-producing cell produces $2 \\times 10^6$ antibody molecules per hour.",
+    "2 Antibodies are produced in response to dead and living pathogens.",
+    "3 Phagocytes produce antibodies."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "total mass of antibody molecules produced per $10^6$ antibody-producing cells / $\\mu$g\ntime/hours",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T17:17:58.169273+00:00",
+  "sourceImageHash": "8006bc47966501cc07da66b36325ede77b3fca3ae1593002b05aef1aeb02bd89",
+  "status": "ok"
+}

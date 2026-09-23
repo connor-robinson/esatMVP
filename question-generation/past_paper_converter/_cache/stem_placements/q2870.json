@@ -1,0 +1,28 @@
+{
+  "questionId": 2870,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 51,
+  "stemBlocks": [
+    "Three mixtures (P, Q and R) of amino acids were separated using paper chromatography. The test was repeated with the same mixtures, paper and solvent but this time the distance travelled by the common component of the mixtures was 7.5 cm. How far did the most mobile component of mixture Q travel in the second test?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.376328+00:00",
+  "sourceImageHash": "94a929d8c3b00cddb62b16ba501126024ad5e03d2dccf3c151701b844013ccdb",
+  "status": "ok"
+}

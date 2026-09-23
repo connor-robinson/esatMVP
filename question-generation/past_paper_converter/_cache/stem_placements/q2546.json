@@ -1,0 +1,30 @@
+{
+  "questionId": 2546,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 67,
+  "stemBlocks": [
+    "A student investigated the rate of oxygen bubble release from a pondweed plant at different temperatures. The rates are shown below, with two sections of the graph marked X and Y. In each investigation all other factors were kept constant.",
+    "Which of the following statements about sections X and Y is/are correct?",
+    "1 In section X, the kinetic energy of the reaction molecules is increasing with increasing temperature.\n2 In section Y, temperature is the factor which limits that rate of oxygen production.\n3 In section Y, the plant's enzymes may have denatured.\n4 Section Y represents the plant's maximum possible rate of oxygen production under any conditions."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.847435+00:00",
+  "sourceImageHash": "e7fda31e34f0cf95c7b2cbd6be2f17099e0de666f65b41818eea71a10342c92a",
+  "status": "ok"
+}

@@ -1,0 +1,28 @@
+{
+  "questionId": 2324,
+  "examName": "NSAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 25,
+  "stemBlocks": [
+    "The diagram shows a $12\\text{V}$ battery, a switch and three resistors. Each resistor has a resistance of $30\\ \\Omega$.\nInitially the switch is open.\nWhat happens to the reading on the ammeter when the switch is closed?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:25:34.668239+00:00",
+  "sourceImageHash": "5b98690497ba122591332eb1529c6eb83f739764b18b0a480a4f8b1e72082a53",
+  "status": "ok"
+}

@@ -1,0 +1,28 @@
+{
+  "questionId": 3051,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 72,
+  "stemBlocks": [
+    "A student listed four trends in the populations of moose and wolves from 1959 to 2008.\\n1 Increases in wolf population are always after increases in moose population.\\n2 The wolf population is always lower than the moose population.\\n3 There were more wolves than moose in 1965.\\n4 When the wolf population is low there is an increase in the moose population.\\nWhich of the student's statements are correct?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "An isolated island in Canada has populations of moose and wolves. Moose are the main source of food for the wolves. The graph shows changes in the populations of the two species of animal from 1959 to 2008.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:16.036308+00:00",
+  "sourceImageHash": "1a8be6b902de372220ed4e6f550dba245c5b0466706978d91c1475db7a5d7947",
+  "status": "ok"
+}

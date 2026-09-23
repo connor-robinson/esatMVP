@@ -1,0 +1,29 @@
+{
+  "questionId": 3186,
+  "examName": "ENGAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 17,
+  "stemBlocks": [
+    "The upper diagram shows the equilibrium positions of nine equally spaced particles in a medium. The lower diagram shows the positions of the same nine particles when a longitudinal wave is travelling through the medium. The wave is shown at time $t = 0$, travelling to the right. The frequency of the wave is $0.5 \\text{ Hz}$.",
+    "Which graph represents the displacements of the particles at a later time $t = 0.5 \\text{ s}$? (On the graphs, positive displacement values represent particle displacements to the right.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:46:58.369295+00:00",
+  "sourceImageHash": "738ca008212ba979d8689d60e39a4018f08096ce1c31d959a6492c8027f57943",
+  "status": "ok"
+}

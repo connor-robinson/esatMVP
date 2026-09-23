@@ -1,0 +1,29 @@
+{
+  "questionId": 2091,
+  "examName": "ENGAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 16,
+  "stemBlocks": [
+    "A bar magnet is placed at position X close to one end of a coil and on the axis of the coil as shown. The graph shows how the velocity of the magnet varies as it is then moved rapidly to position Y and back to position X. The magnetic field of the bar magnet still affects the coil when the magnet is at position Y.",
+    "Which graph represents how the induced voltage in the coil changes as the magnet moves?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:34:34.972413+00:00",
+  "sourceImageHash": "e93fa480b83aedada3b09c0d2ab1ef1993f07106f06b0249ede696b0a6d01316",
+  "status": "ok"
+}

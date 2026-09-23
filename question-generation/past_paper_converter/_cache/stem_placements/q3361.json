@@ -1,0 +1,28 @@
+{
+  "questionId": 3361,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 32,
+  "stemBlocks": [
+    "A high temperature reaction vessel requires a steady supply of an atmosphere free of oxygen, carbon monoxide and $NO_x$ gases.\nIn order to achieve this, methane was burned in air to give a mixture of carbon dioxide, water vapour and nitrogen only.\nAssume that air is composed of 20% oxygen and 80% nitrogen only by volume.\nWhat mass ratio of air to methane should be supplied to the burner?\n($A_r$ values: H = 1; C = 12; N = 14; O = 16. Assume that one mole of any gas occupies the same volume at a given temperature and pressure.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:10.849885+00:00",
+  "sourceImageHash": "e89048d311d668c97630898543a591aee3f37086cdb0de33c111ac6ff072c009",
+  "status": "ok"
+}

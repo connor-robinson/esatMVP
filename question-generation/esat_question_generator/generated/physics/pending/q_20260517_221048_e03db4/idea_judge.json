@@ -1,0 +1,33 @@
+{
+  "stage": "idea_judge",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "selectivity_score": 0,
+    "checks": {
+      "schema_preserved": "pass",
+      "on_spec": "pass",
+      "reasoning_hinge_present": "pass",
+      "not_direct_substitution": "pass",
+      "wrong_paths_specific": "pass",
+      "visual_feasible": "pass",
+      "mcq_viable": "pass",
+      "difficulty_match": "pass"
+    },
+    "reasoning_hinge_summary": "The core reasoning hinge is the realization that at terminal velocity, the power dissipated as heat in the resistor is equal to the rate at which gravitational potential energy is lost (P = mgv_t). This allows for a more elegant and less error-prone solution than directly manipulating the electrical power formula P = (BLv)²/R, where 'v' itself is dependent on 'B'.",
+    "expected_mid_student_error": "Mid-performing students are likely to focus on the formula for electrical power dissipated, P = (BLv)²/R. They might incorrectly assume that 'v' is independent of 'B' or make an incorrect proportional deduction, leading them to conclude that if B doubles, P quadruples (P ∝ B²). They will miss the crucial step of first determining how terminal velocity (v_t) depends on B from the force balance.",
+    "notes": [
+      "The FAR mode is executed effectively, transforming a fluid dynamics terminal velocity problem into an electromagnetic one while preserving the core reasoning of balancing a constant driving force against a velocity-dependent resistive force.",
+      "The 'Hard' difficulty is well-justified by the conceptual trap and the need for a non-obvious insight (P = mgv_t) to solve it efficiently and correctly.",
+      "The visual brief is appropriate and supportive, not critical for the answer itself.",
+      "The intended wrong paths are specific and plausible, targeting common misconceptions in this type of problem."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

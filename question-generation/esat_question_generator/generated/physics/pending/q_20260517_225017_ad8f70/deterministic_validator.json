@@ -1,0 +1,23 @@
+{
+  "stage": "deterministic_validator",
+  "status": "fail",
+  "verdict": null,
+  "payload": {
+    "ok": false,
+    "errors": [
+      {
+        "field": "distractor_map",
+        "kind": "missing_top_key",
+        "message": "Required top-level key missing: 'distractor_map'."
+      }
+    ],
+    "warnings": [],
+    "option_keys": [],
+    "summary": "missing_required_keys"
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": null,
+  "attempts": 3
+}

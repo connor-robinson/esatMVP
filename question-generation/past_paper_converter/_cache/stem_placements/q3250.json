@@ -1,0 +1,29 @@
+{
+  "questionId": 3250,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 41,
+  "stemBlocks": [
+    "The diagram shows the inheritance of a characteristic controlled by a single gene. Two organisms reproduce sexually and have four offspring, one offspring at a time.\nIndividual T goes on to have a single offspring with an unrelated individual who has a recessive phenotype. The offspring of T has a dominant phenotype.",
+    "What is the ratio of dominant to recessive alleles for all of the individuals in this diagram, as well as T's mate and their one offspring?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Key: dominant allele (filled hexagon), recessive allele (unfilled hexagon). Pedigree chart showing inheritance pattern.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:13.925875+00:00",
+  "sourceImageHash": "c3ebcb4e3cfefbfc1e08544b69b9e536b167d1e11be327d80f97c663028d0456",
+  "status": "ok"
+}

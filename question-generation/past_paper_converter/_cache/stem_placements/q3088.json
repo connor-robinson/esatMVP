@@ -1,0 +1,29 @@
+{
+  "questionId": 3088,
+  "examName": "ENGAA",
+  "examYear": 2017,
+  "paperName": "Section 2",
+  "questionNumber": 14,
+  "stemBlocks": [
+    "Two parallel 0.25 m lengths of the elastic cord are used in the catapult as shown in Fig. 3(c).",
+    "What is the maximum speed at which the mass can now be propelled?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Fig. 3(c)",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:39:07.388358+00:00",
+  "sourceImageHash": "0e20a774a63a59e7b9cb9e8348c0eb55641c0015ce3b72c3b40bb77d58c165de",
+  "status": "ok"
+}

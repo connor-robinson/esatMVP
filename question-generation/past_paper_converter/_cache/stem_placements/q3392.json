@@ -1,0 +1,28 @@
+{
+  "questionId": 3392,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 3,
+  "stemBlocks": [
+    "Two waves P and Q, which superpose, are shown in the diagram in a particular region at time $t = 0$. Both waves have period $T$ and are moving in the directions shown by the arrows. Wave P has amplitude $2.0 \\text{ cm}$ and wave Q has amplitude $1.0 \\text{ cm}$. Which diagram represents the resultant wave formed in the same region by waves P and Q at time $t = \\frac{T}{2}$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.018599+00:00",
+  "sourceImageHash": "9de8231f604c7753ee3ba1a4581cf37aa6afb614c1b3bf9850a1e2895a1ab25a",
+  "status": "ok"
+}

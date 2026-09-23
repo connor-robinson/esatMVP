@@ -1,0 +1,29 @@
+{
+  "questionId": 2191,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 36,
+  "stemBlocks": [
+    "A car is accelerated from rest along a horizontal road by a constant thrust force produced by the engine. The car eventually reaches a terminal velocity.\nThe graphs below show the variation with time of three quantities ($X$, $Y$ and $Z$) for the car:\nWhich line in the table could correctly identify the quantities $X$, $Y$ and $Z$?",
+    "|  | X | Y | Z |\n| --- | --- | --- | --- |\n| A | acceleration | air resistance (drag force) | kinetic energy |\n| B | acceleration | mass of car | weight of car |\n| C | (gravitational) potential energy | velocity | kinetic energy |\n| D | (gravitational) potential energy | air resistance (drag force) | weight of car |\n| E | resultant force | mass of car | kinetic energy |\n| F | resultant force | velocity | weight of car |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:37:46.650877+00:00",
+  "sourceImageHash": "c3b761a2b8dec34a31cfdacbf75a4875d9fd02055e77bd9fd3ac2e5d1b650d75",
+  "status": "ok"
+}

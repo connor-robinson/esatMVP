@@ -1,0 +1,29 @@
+{
+  "questionId": 2086,
+  "examName": "ENGAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 11,
+  "stemBlocks": [
+    "$PQRS$ is a trapezium as shown. $\\tan RSQ = \\frac{5}{8}$.",
+    "What is the length of $PS$, in metres?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:34:34.959877+00:00",
+  "sourceImageHash": "6cdcedf0965ee628fffc76c2ee64d0a59ef81865e4b69007e5c9d56a1d94429e",
+  "status": "ok"
+}

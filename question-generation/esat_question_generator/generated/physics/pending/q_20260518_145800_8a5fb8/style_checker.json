@@ -1,0 +1,56 @@
+{
+  "stage": "style_checker",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "shorter",
+      "notes": "The question is perfectly calibrated for the ESAT. It avoids the 'plug-and-chug' trap by requiring the student to construct the net force expression rather than just using a formula."
+    },
+    "selectivity_audit": {
+      "main_trap": "The student failing to subtract the upthrust from the weight, or failing to realize that the upthrust is constant for both spheres, leading to the incorrect ratio 4/5.",
+      "why_not_plug_and_chug": "There is no single formula for 'terminal velocity' that can be used directly; the student must derive the relationship between density and velocity from the force balance.",
+      "expected_mid_student_error": "Assuming terminal velocity is proportional to the object's density alone (4/5) or adding the upthrust instead of subtracting it (5/6).",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 2,
+      "estimated_solution_steps": 3,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "Excellent use of proportional reasoning. The distractors are well-constructed to catch common conceptual errors regarding upthrust."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

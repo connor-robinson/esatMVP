@@ -1,0 +1,29 @@
+{
+  "questionId": 3175,
+  "examName": "ENGAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 6,
+  "stemBlocks": [
+    "A nylon cube resting on a horizontal surface has a volume of $64 \\text{ cm}^3$. A force $F$ is applied vertically downwards on the top face of the cube so that it compresses the height by $x$. The graph shows the variation of $F$ with $x$.",
+    "What is the Young modulus of the nylon? (Assume that changes in horizontal cross-sectional area are negligible.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:46:58.353281+00:00",
+  "sourceImageHash": "236142d757058d5eda2be41c5662a07416587b7cedcdeab43dd23d2f6b53b835",
+  "status": "ok"
+}

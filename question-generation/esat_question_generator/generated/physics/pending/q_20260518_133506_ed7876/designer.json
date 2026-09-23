@@ -1,0 +1,103 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_2db4e658",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Hard",
+    "idea_summary": "Two buoys are separated by a known distance (e.g., 3.0 m), which is stated to be between one and two wavelengths. A continuous wave of known frequency (e.g., 2.0 Hz) passes them. Buoy A is at a crest, and a short known time later (e.g., 0.1 s), Buoy B reaches its next crest. The candidate must deduce the wave speed by relating the time delay to a spatial phase shift.",
+    "schema_invariant": {
+      "core_move": "Translate a temporal delay between wave features at two locations into a spatial phase shift (fraction of a wavelength), and use the periodic nature of the wave to find the true wave speed.",
+      "what_must_not_change": [
+        "The need to track a wave feature across space and time.",
+        "The requirement to use the wave's period/frequency to interpret the time delay.",
+        "The presence of an integer-wavelength ambiguity that must be resolved."
+      ],
+      "what_can_change": [
+        "The physical medium (water buoys instead of sound/seismic).",
+        "The specific unknown being asked for (wave speed instead of distance).",
+        "The method of resolving the ambiguity (using a stated boundary condition rather than inference)."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "boundary_condition",
+      "reasoning_hinge": "Realising that the time delay represents a fraction of a period, meaning the distance between the buoys is an integer number of wavelengths plus that same fraction of a wavelength.",
+      "why_top_students_win": "They calculate the period (0.5 s), map the 0.1 s delay to 1/5 of a period, conclude the buoys are separated by n + 0.2 wavelengths, use the 'between 1 and 2 wavelengths' constraint to set n=1 (so distance = 1.2λ), and solve for λ and v.",
+      "why_mid_students_miss": "They assume the specific crest at Buoy A takes exactly 0.1 s to travel the entire 3.0 m to Buoy B, completely ignoring the crests already between them, leading directly to the trap answer v = d/t = 30 m/s."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Wave speed equation (v = fλ).",
+      "supporting_idea_if_any": "Phase difference and periodicity (time delay / period = spatial shift / wavelength).",
+      "estimated_solution_steps": 4,
+      "number_of_core_physics_principles": 2,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 3,
+      "must_include": [
+        "model_selection",
+        "non_obvious_inference",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "Maintains the core spatio-temporal tracking of the schema but reframes it using a phase-shift logic and a spatial constraint, perfectly matching the Hard difficulty band without increasing calculation time.",
+    "task_signature": "wave_or_radiation_reasoning",
+    "tool_footprint": [
+      "calculate_period",
+      "map_time_to_phase",
+      "apply_boundary_constraint",
+      "calculate_wave_speed"
+    ],
+    "primary_tag": "4",
+    "secondary_tags": [],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "Instead of directly tracking a single isolated pulse or using standard echo times, the candidate must track a continuous wave and use a spatial constraint (distance is between 1 and 2 wavelengths) to resolve the phase ambiguity.",
+    "why_still_on_spec": "Uses fundamental wave equations (v=fλ, T=1/f) and the definition of a continuous wave, all of which are core to the standard school physics Waves specification.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Calculating speed directly as distance over time delay (v = 3.0 / 0.1).",
+        "distractor_role": "Yields 30 m/s. The most common plug-and-chug trap."
+      },
+      {
+        "mistake": "Assuming the distance is exactly one wavelength plus the phase shift, but subtracting the phase instead of adding it (1.0 - 0.2 = 0.8λ).",
+        "distractor_role": "Yields 7.5 m/s. Tests directionality of the wave."
+      },
+      {
+        "mistake": "Ignoring the constraint that the distance is between 1 and 2 wavelengths, and assuming it is simply 0.2λ.",
+        "distractor_role": "Yields 15 m/s. Tests reading of boundary conditions."
+      },
+      {
+        "mistake": "Multiplying frequency by distance directly (v = 2.0 * 3.0).",
+        "distractor_role": "Yields 6.0 m/s. A dimensional mashup trap."
+      }
+    ],
+    "difficulty_rationale": "Selective because it requires the candidate to step back from the v=d/t formula and visualize the continuous wave in space. The arithmetic is extremely simple (e.g., 3.0 / 1.2 = 2.5), meaning the difficulty is purely conceptual and entirely focused on the reasoning hinge.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "Direct substitution of v = d/t yields a distractor. The candidate must model the wave's spatial periodicity to find the true wavelength before calculating speed."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The misinterpretations of the phase shift (ignoring it, subtracting it, or missing the integer wavelength offset) lead to clean, distinct numerical values that serve as excellent distractors."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

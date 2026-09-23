@@ -1,0 +1,38 @@
+{
+  "stage": "concept_image_verifier",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "checks": {
+      "exam_style_match": "pass",
+      "serif_font_match": "pass",
+      "math_label_quality": "pass",
+      "no_overlap": "pass",
+      "label_accuracy": "pass",
+      "no_extra_labels": "pass",
+      "monochrome_style": "pass",
+      "layout_cleanliness": "pass",
+      "illustrative_only_safety": "pass",
+      "professionalism": "pass",
+      "object_relation_accuracy": "pass",
+      "measurement_anchor_clarity": "pass",
+      "relative_magnitude_plausibility": "pass",
+      "simplification_level": "pass"
+    },
+    "reasons": [
+      "The prompt is well-defined and adheres to all specified requirements for an exam-style concept image.",
+      "It clearly requests a monochrome, serif-font diagram with appropriate labels and no extraneous details.",
+      "The instruction to show a 'visibly shorter wavelength' is qualitative and illustrative, not answer-bearing, as it avoids specific values or labeling of wavelengths.",
+      "The negative constraints are robust, preventing common issues like extra labels, incorrect fonts, or unwanted visual elements."
+    ],
+    "regen_feedback": "",
+    "delete_reason": ""
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 2489,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 10,
+  "stemBlocks": [
+    "$PQRST$ is a regular pentagon.\n$RSU$ is an equilateral triangle.",
+    "What is the size of angle $STU$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.777849+00:00",
+  "sourceImageHash": "a0c5b636712ba6583c37a9ad65cb1616167e8ae928760a87aaec0cb97cc0273d",
+  "status": "ok"
+}

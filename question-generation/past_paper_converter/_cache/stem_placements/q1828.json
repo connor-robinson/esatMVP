@@ -1,0 +1,28 @@
+{
+  "questionId": 1828,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 35,
+  "stemBlocks": [
+    "Tangents are drawn from a point P to a circle of radius 10 cm. The centre of the circle is C and the distance PC is 20 cm. Which one of the following is an expression for the shaded area in square centimetres?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:23:52.638516+00:00",
+  "sourceImageHash": "626320478d95f619d1a23e21141a9634202190e5c4870a675dafb0d2989b1e57",
+  "status": "ok"
+}

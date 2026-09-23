@@ -1,0 +1,28 @@
+{
+  "questionId": 2479,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 90,
+  "stemBlocks": [
+    "The graph shows how the horizontal force on a tennis ball of mass $m$ varies during a shot in a tennis match. The ball is initially travelling horizontally toward the racket with speed $u$ and leaves the racket horizontally travelling in the opposite direction with speed $v$.\nWhich expression gives the magnitude of the momentum of the ball as it leaves the racket?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:49:16.434167+00:00",
+  "sourceImageHash": "da1e5310216a615eabe5c1939f4c35364cc6b423b2ef7aff2abba91c49f76996",
+  "status": "ok"
+}

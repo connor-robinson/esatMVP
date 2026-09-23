@@ -1,0 +1,29 @@
+{
+  "questionId": 1993,
+  "examName": "ENGAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 38,
+  "stemBlocks": [
+    "Light travelling in a transparent liquid strikes the surface from below. The angle between the surface of the liquid and the direction of travel of the light is $\\alpha$. The light then travels along the surface between the liquid and the air as shown in the diagram.",
+    "Now, light travelling in air strikes the surface from above so that the angle between the surface and the direction of travel of this light is also $\\alpha$. After the light strikes the surface from above, the angle between the surface and the direction of travel of the refracted light is $\\beta$.\nWhich expression gives $\\beta$?\n(all angles are in degrees)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:42.208239+00:00",
+  "sourceImageHash": "357630500aa5d65bbbbca864e9bf866fd2ff4bf2a72e8c7dff2147d8b12d0945",
+  "status": "ok"
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 3500,
+  "examName": "TMUA",
+  "examYear": 2020,
+  "paperName": "Paper 1",
+  "questionNumber": 11,
+  "stemBlocks": [
+    "The quadratic function shown passes through $(2,0)$ and $(q,0)$, where $q > 2$.",
+    "What is the value of $q$ such that the area of region $R$ equals the area of region $S$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:21.969542+00:00",
+  "sourceImageHash": "bde05eb49b866c6a7a684ee30bdbf0b9e2d19588cdf3e63770ef4a9f5488be6e",
+  "status": "ok"
+}

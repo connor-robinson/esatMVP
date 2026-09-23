@@ -1,0 +1,29 @@
+{
+  "questionId": 3440,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 51,
+  "stemBlocks": [
+    "A student identified the position of xylem vessels in the root and stem of a plant.\nTwo different types of potometer, P and Q, were used to study transpiration.\nWhen the plant shoot was set up in potometer P, it lost $11.55 \\text{ g}$ of water in $1 \\text{ hour}$.\nThe same shoot was then set up in potometer Q, which had a capillary of internal diameter $7 \\text{ mm}$.\nAll other conditions were the same for both pieces of apparatus.\nAssume that water lost by the shoot is the same as that taken up.\n$1 \\text{ g}$ of water has a volume of $1 \\text{ cm}^3$.\nThe table shows possible distances that the air bubble would travel up the capillary tube in one minute and diagrams of a plant stem and plant root.",
+    "Which row is correct? (Approximate $\\pi$ as $\\frac{22}{7}$)"
+  ],
+  "assets": [
+    {
+      "id": "d9",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d9",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.153686+00:00",
+  "sourceImageHash": "a182819ba4f508e2c9e0c54027f405bdc7854792fc3609756a2b5585a3a6342e",
+  "status": "ok"
+}

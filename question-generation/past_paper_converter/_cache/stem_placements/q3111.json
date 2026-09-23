@@ -1,0 +1,29 @@
+{
+  "questionId": 3111,
+  "examName": "ENGAA",
+  "examYear": 2019,
+  "paperName": "Section 2",
+  "questionNumber": 2,
+  "stemBlocks": [
+    "Identical resistors are used to produce three different arrangements X, Y and Z.\nEach arrangement is connected, in turn, across the same battery which has a negligible internal resistance.\nThe total power developed in each of the arrangements is determined.",
+    "What is the order of the arrangements when placed in order of increasing power?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Arrangement X",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:42:12.049077+00:00",
+  "sourceImageHash": "8d03951be7592835637a3b98ab2d6e0650271ffa8dda22a8fba6f5dd2df9e35b",
+  "status": "ok"
+}

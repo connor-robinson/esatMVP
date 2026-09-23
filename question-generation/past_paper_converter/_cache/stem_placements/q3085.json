@@ -1,0 +1,29 @@
+{
+  "questionId": 3085,
+  "examName": "ENGAA",
+  "examYear": 2017,
+  "paperName": "Section 2",
+  "questionNumber": 11,
+  "stemBlocks": [
+    "Fig. 3(a) shows the results of an experiment in which a 0.5 m length of elastic cord has been extended by a force with a corresponding extension. The cord fails at point Q by fracture.\nThe elastic behaviour of a material can often be described by Hooke's law, which is given by the equation $F=kx$, where $x$ is extension, $F$ is force and $k$ is an elastic constant which depends on the material studied.",
+    "Which of the following statements correctly describes the behaviour of the cord?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Fig. 3(a)",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:39:07.384687+00:00",
+  "sourceImageHash": "672c7a2ec39eccb34e7134c64a709fd2f52a43a135b8a0486ac0ba4ad4ac1560",
+  "status": "ok"
+}

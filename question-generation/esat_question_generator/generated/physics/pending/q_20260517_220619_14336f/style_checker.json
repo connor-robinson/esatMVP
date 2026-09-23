@@ -1,0 +1,51 @@
+{
+  "stage": "style_checker",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 35,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "similar",
+      "notes": "The question's difficulty is well-calibrated to 'Medium'. It requires a key conceptual insight (vector nature of momentum change) rather than complex calculations, making it suitable for ESAT. The comparison to elastic/inelastic collisions is apt."
+    },
+    "selectivity_audit": {
+      "main_trap": "The primary trap is assuming that the momentum transferred to the object is the same for both absorption and reflection because the initial light pulse has the same momentum. This leads to a ratio of 1:1, ignoring the fact that reflected light carries momentum in the opposite direction, effectively doubling the momentum change for the light and thus the impulse on the object.",
+      "why_not_plug_and_chug": "This is not a plug-and-chug question because it requires comparing two distinct scenarios based on a fundamental principle (conservation of momentum) and understanding the vector nature of momentum change. There isn't a single formula to just substitute values into; rather, two models must be constructed and their outcomes compared.",
+      "expected_mid_student_error": "A mid-level student might correctly apply conservation of momentum for absorption (p_abs = p) but incorrectly for reflection, perhaps thinking the change in momentum is p (magnitude only) rather than 2p (vector change from +p to -p). This would lead to a ratio of 1.",
+      "verdict": "selective"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "This question is an excellent example of ESAT physics style. It is concise, clear, and tests a core school physics concept (conservation of momentum) in a slightly unfamiliar context (light pressure), which is a classic ESAT move.",
+      "The provision of the photon momentum formula (p=E/c) ensures it remains within the scope of school physics and doesn't require advanced knowledge.",
+      "The question hinges on a single, crucial conceptual understanding: the vector nature of momentum change, particularly how reflection results in a change of 2p compared to absorption's p.",
+      "The distractors are well-crafted to target common misconceptions, making the question highly selective."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

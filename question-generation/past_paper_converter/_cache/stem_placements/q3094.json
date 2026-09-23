@@ -1,0 +1,29 @@
+{
+  "questionId": 3094,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 2",
+  "questionNumber": 3,
+  "stemBlocks": [
+    "A circuit contains two fixed resistors, X and Y, and a variable resistor W. The power supply has no internal resistance.\nThe resistance of W increases.\nWhat happens to the power dissipated in X and in Y?",
+    "|  | power dissipated in X | power dissipated in Y |\n| --- | --- | --- |\n| A | decreases | decreases |\n| B | decreases | stays constant |\n| C | decreases | increases |\n| D | increases | decreases |\n| E | increases | stays constant |\n| F | increases | increases |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "power supply",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:40:49.318158+00:00",
+  "sourceImageHash": "100062cf5ef51c4cc7af73bac75b1c7bdc0857bc6999441e98eabdd77b310325",
+  "status": "ok"
+}

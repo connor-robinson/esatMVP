@@ -1,0 +1,69 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_ad97dfb5",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Easy",
+      "task_signature": "proportional_change",
+      "primary_tag": "3",
+      "secondary_tags": [
+        "7"
+      ]
+    },
+    "question": {
+      "stem": "Wire X has length $L$ and diameter $d$. Its electrical resistance is $R$.\n\nWire Y is made of the same material. It has length $2L$ and diameter $4d$.\n\nWhat is the electrical resistance of wire Y?",
+      "options": {
+        "A": "$R/8$",
+        "B": "$R/4$",
+        "C": "$R/2$",
+        "D": "$R$",
+        "E": "$2R$",
+        "F": "$8R$"
+      },
+      "correct_option": "A"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "Electrical resistance is directly proportional to length and inversely proportional to the cross-sectional area, which scales with the square of the diameter ($R \\propto L/d^2$).",
+      "reasoning": "The resistance of a wire is given by $R = \\rho L / A$. Since the cross-section is circular, the area is $A = \\pi (d/2)^2$, meaning resistance is proportional to $L/d^2$.\nFor wire Y, the length is multiplied by $2$, and the diameter is multiplied by $4$.\nApplying these scaling factors, the new resistance $R_Y$ is proportional to $2 / 4^2 = 2 / 16 = 1/8$.\nTherefore, the resistance of wire Y is $R/8$."
+    },
+    "distractor_map": {
+      "A": "Correct option.",
+      "B": "Mistake: Assumes resistance is proportional to $L^2/d^2$, squaring the length scaling factor as well as the diameter.",
+      "C": "Mistake: Assumes resistance is inversely proportional to diameter rather than diameter squared, using $L/d$ (ratio $2/4 = 1/2$).",
+      "D": "Mistake: Assumes resistance is proportional to $L^2/d$, squaring the length instead of the diameter (ratio $2^2/4 = 1$).",
+      "E": "Mistake: Assumes resistance is proportional to $d/L$, inverting the relationship and forgetting to square the diameter (ratio $4/2 = 2$).",
+      "F": "Mistake: Assumes resistance is proportional to area over length ($d^2/L$), completely inverting the correct relationship (ratio $4^2/2 = 8$)."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Recognizing that resistance is inversely proportional to the square of the diameter, not just the diameter itself.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 1,
+        "estimated_solution_steps": 2,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

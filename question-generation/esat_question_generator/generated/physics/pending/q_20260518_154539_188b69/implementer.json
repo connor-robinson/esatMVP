@@ -1,0 +1,70 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_ad97dfb5",
+      "module": "physics",
+      "variation_mode": "FAR",
+      "target_difficulty": "Medium",
+      "task_signature": "proportional_change",
+      "primary_tag": "5",
+      "secondary_tags": [
+        "5.2",
+        "5.4"
+      ]
+    },
+    "question": {
+      "stem": "Two wires, X and Y, are made from the same material. Wire Y has twice the length and half the radius of wire X.\n\nThe two wires are connected in parallel to a DC power supply.\n\nWhat is the ratio of the power dissipated by wire Y to the power dissipated by wire X, $\\frac{P_Y}{P_X}$?",
+      "options": {
+        "A": "$\\frac{1}{8}$",
+        "B": "$\\frac{1}{4}$",
+        "C": "$\\frac{1}{2}$",
+        "D": "$2$",
+        "E": "$4$",
+        "F": "$8$"
+      },
+      "correct_option": "A"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "In a parallel circuit, voltage is constant across branches, so power scales inversely with resistance ($P = \\frac{V^2}{R}$). Resistance itself scales directly with length and inversely with the square of the radius.",
+      "reasoning": "First, determine the resistance ratio. Resistance is given by $R = \\frac{\\rho L}{\\pi r^2}$.\nSince wire Y has twice the length ($L_Y = 2L_X$) and half the radius ($r_Y = 0.5r_X$), its resistance is:\n$R_Y = R_X \\times \\frac{2}{(0.5)^2} = R_X \\times \\frac{2}{0.25} = 8R_X$.\nBecause the wires are connected in parallel, they experience the same potential difference $V$.\nUsing the power formula $P = \\frac{V^2}{R}$, the power dissipated is inversely proportional to resistance.\nTherefore, the power ratio is $\\frac{P_Y}{P_X} = \\frac{R_X}{R_Y} = \\frac{1}{8}$."
+    },
+    "distractor_map": {
+      "A": "Correct. Resistance is 8 times greater, and since they are in parallel, power is 1/8th.",
+      "B": "Forgets to square the radius when calculating resistance ($R_Y = 4R_X$), leading to a power ratio of 1/4.",
+      "C": "Assumes resistance is directly proportional to cross-sectional area ($R_Y = 0.5R_X$) and uses the series power formula ($P \\propto R$), leading to 1/2.",
+      "D": "Assumes resistance is directly proportional to cross-sectional area ($R_Y = 0.5R_X$), leading to a power ratio of 2 in parallel.",
+      "E": "Forgets to square the radius ($R_Y = 4R_X$) AND uses the series power formula ($P \\propto R$), leading to 4.",
+      "F": "Correctly calculates $R_Y = 8R_X$ but uses the series power formula $P = I^2R$ assuming current is constant, leading to 8."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Recognising that in a parallel circuit, voltage is the constant invariant, so power scales with 1/R rather than R.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 2,
+        "estimated_solution_steps": 3,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

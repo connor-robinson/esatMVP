@@ -1,0 +1,30 @@
+{
+  "questionId": 2111,
+  "examName": "ENGAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 36,
+  "stemBlocks": [
+    "A circuit comprising two resistors and two batteries, with negligible internal resistance, is set up as shown in the diagram.",
+    "The two junctions in the circuit are labelled X and Y. What are the magnitude and direction of the current in the $3.0 \\text{ V}$ battery?",
+    "|  | magnitude of current / A | direction of current |\n| --- | --- | --- |\n| A | 1.0 | from X to Y |\n| B | 2.0 | from X to Y |\n| C | 2.25 | from X to Y |\n| D | 6.0 | from X to Y |\n| E | 1.0 | from Y to X |\n| F | 2.0 | from Y to X |\n| G | 2.25 | from Y to X |\n| H | 6.0 | from Y to X |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:34:35.003535+00:00",
+  "sourceImageHash": "413cffc8e23c040b2df5a90e8775ed438ffeafdd9b47f747540d04fd39cb6f65",
+  "status": "ok"
+}

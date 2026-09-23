@@ -1,0 +1,337 @@
+{
+  "status": "completed",
+  "pipeline": "nsaa",
+  "model": "gemini-3.7-flash",
+  "subject": "physics",
+  "diagrams_only": true,
+  "allowed_visual_types": [
+    "graph"
+  ],
+  "selected": 244,
+  "already_done": 0,
+  "queued": 50,
+  "target": 5,
+  "ids": [
+    2318,
+    2319,
+    2320,
+    2321,
+    2322,
+    2323,
+    2324,
+    2325,
+    2326,
+    2327,
+    2328,
+    2329,
+    2330,
+    2331,
+    2332,
+    2333,
+    2334,
+    2335,
+    2372,
+    2373,
+    2374,
+    2375,
+    2376,
+    2377,
+    2378,
+    2379,
+    2380,
+    2381,
+    2382,
+    2383,
+    2384,
+    2385,
+    2386,
+    2387,
+    2388,
+    2389,
+    2408,
+    2409,
+    2410,
+    2411,
+    2412,
+    2413,
+    2414,
+    2415,
+    2416,
+    2417,
+    2418,
+    2419,
+    2420,
+    2421
+  ],
+  "generated": 0,
+  "skipped": 0,
+  "errors": 50,
+  "visual_type_counts": {},
+  "results": [
+    {
+      "status": "error",
+      "source_question_id": 2318,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2319,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2320,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2321,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2322,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2323,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2324,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2325,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2326,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2327,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2328,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2329,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2330,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2331,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2332,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2333,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2334,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2335,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2372,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2373,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2374,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2375,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2376,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2377,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2378,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2379,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2380,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2381,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2382,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2383,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2384,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2385,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2386,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2387,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2388,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2389,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2408,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2409,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2410,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2411,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2412,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2413,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2414,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2415,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2416,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2417,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2418,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2419,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2420,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "status": "error",
+      "source_question_id": 2421,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'Publisher model `projects/project-26e317b7-d790-4164-a97/locations/us-central1/publishers/google/models/gemini-3.7-flash` was not found or your project does not have access to it. Ensure you are using a valid model name and that the model is available in the specified region. For more information, see: https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations.', 'status': 'NOT_FOUND'}}"
+    }
+  ],
+  "started_at": "2026-09-09T12:32:30.592850+00:00",
+  "review_label": null,
+  "counts": {
+    "questions": {},
+    "diagrams": {},
+    "pending": 0,
+    "approved": 0,
+    "rejected": 0,
+    "needs_edit": 0,
+    "regenerated": 0,
+    "diagram_pending": 0,
+    "diagram_approved": 0,
+    "diagram_rejected": 0
+  },
+  "finished_at": "2026-09-09T12:33:37.220562+00:00"
+}

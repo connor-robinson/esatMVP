@@ -1,0 +1,30 @@
+{
+  "questionId": 2639,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 70,
+  "stemBlocks": [
+    "An investigation was carried out using clones of one plant.\nTwenty plants of the same initial height were selected and divided into four equal groups. Each group was grown for six months and their environments were controlled as follows:\n• kept at a different temperature to each other\n• grown in a pot with an equal mass of soil with the same nutrients\n• watered with an equal volume of water\n• kept in the same light intensity\nAfter six months, the height of the plants was measured. The mean height of the plants in each pot was calculated. The results are shown in the chart.",
+    "Which of the following statements could explain the results?",
+    "1 The difference in mean height between plants in pot 1 and plants in pot 2 could be due to the environment.\n2 The mean height of plants in pot 4 equals that of plants in pot 3 because of another environmental factor in addition to temperature.\n3 The mean height of plants in pot 3 equals that of plants in pot 4 because of the genotype of the plants."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:19.048739+00:00",
+  "sourceImageHash": "b22e6e8ffd5901ffef18d9edaa8eb65658b6d9ab017ee4a9a1e230aef75c3083",
+  "status": "ok"
+}

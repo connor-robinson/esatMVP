@@ -1,0 +1,61 @@
+{
+  "image_id": "img1",
+  "model_purpose": "apparatus_illustration",
+  "answer_depends_on_image": false,
+  "recommended_model": "MODEL_IMAGE_HIGH_QUALITY",
+  "prompt": "### Subject/Content Brief\nAn illustrative diagram of a physics experiment setup. The diagram shows a straight, horizontal wire suspended from a force sensor. The wire is immersed in a uniform magnetic field that is perpendicular to its length.\n\n### Object Relation Brief\nA simple, rectangular block representing a force sensor is positioned at the top centre of the image. A straight, horizontal wire is suspended directly below it by two thin, vertical, parallel suspension wires, one at each end. The entire horizontal wire is situated within a rectangular region representing a uniform magnetic field. This magnetic field is directed into the page, indicated by a neat grid of 'X' symbols (crosses) filling the rectangular area.\n\n### Required Labels/Annotations\nNone. The diagram must be purely illustrative and contain no text, letters, numbers, or symbols other than the 'X's for the magnetic field.\n\n### Measurement Brief\nNo measurement arrows, scales, or dimensions are to be shown.\n\n### Style Block\nCreate this image in the precise style of a TMUA / ENGAA / NSAA printed exam-paper diagram. It must be a professional, high-fidelity, monochrome vector-style illustration. Use clean, crisp, thin black line art on a plain off-white or very light grey paper background. The layout must be clean, centred, and have generous whitespace. The drawing should be simplified and schematic, not realistic. The force sensor should be a simple rectangular block, and the wire a simple straight line.\n\n### Negative Block\nAvoid all labels, text, and numbers. Do not add any arrows for current or force. Do not show any decorative elements, shading, gradients, or colours. No 3D effects. The force sensor should be a minimal block, without a screen or buttons. Ensure there are no overlapping lines or symbols.",
+  "negative_prompt": "No extra labels. No overlap. No sans-serif fonts. No decorative shading. No photorealism. No colour. No exact answer-bearing measurements. No clutter. No malformed symbols. Do not place objects in the wrong support/location relationship. No text, numbers, or letters of any kind. No arrows for current or force.",
+  "required_labels": [],
+  "forbidden_labels": [
+    "B",
+    "I",
+    "L",
+    "F",
+    "mg",
+    "T",
+    "N",
+    "0.50",
+    "20",
+    "12",
+    "2.0"
+  ],
+  "layout_logic": {
+    "must_show_relations": [
+      "force sensor is above the wire",
+      "wire is suspended from the force sensor by two vertical lines",
+      "wire is horizontal",
+      "magnetic field region encloses the wire",
+      "magnetic field is perpendicular to the wire, shown by 'X' symbols"
+    ],
+    "measurement_mapping": [],
+    "relative_size_constraints": []
+  },
+  "hard_constraints": [
+    "force sensor must be drawn as a simple rectangle at the top",
+    "wire must be suspended from below the sensor via two thin vertical lines",
+    "magnetic field must be represented by a grid of 'X' symbols in a rectangular area around the wire",
+    "no labels of any kind are permitted on the diagram"
+  ],
+  "style": {
+    "target_style": "tmua_engaa_exam_diagram",
+    "exam_style": true,
+    "black_and_white": true,
+    "serif_font": "Times New Roman-like",
+    "math_variables_italic": true,
+    "minimal": true,
+    "not_to_scale": true,
+    "no_overlap": true,
+    "logic_sensitive": true
+  },
+  "post_generation_checks": {
+    "run_concept_image_verifier": true,
+    "verify_no_overlap": true,
+    "verify_font_exam_like": true,
+    "verify_no_extra_labels": true,
+    "verify_not_answer_bearing": true,
+    "verify_object_relations": true,
+    "verify_measurement_clarity": true,
+    "verify_relative_size_plausibility": true,
+    "verify_simplification_level": true
+  }
+}

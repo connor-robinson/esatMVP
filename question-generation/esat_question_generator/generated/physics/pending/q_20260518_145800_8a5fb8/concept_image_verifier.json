@@ -1,0 +1,43 @@
+{
+  "stage": "concept_image_verifier",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "checks": {
+      "exam_style_match": "pass",
+      "serif_font_match": "pass",
+      "math_label_quality": "pass",
+      "no_overlap": "pass",
+      "label_accuracy": "pass",
+      "no_extra_labels": "pass",
+      "monochrome_style": "pass",
+      "layout_cleanliness": "pass",
+      "illustrative_only_safety": "pass",
+      "professionalism": "pass",
+      "object_relation_accuracy": "pass",
+      "measurement_anchor_clarity": "pass",
+      "relative_magnitude_plausibility": "pass",
+      "simplification_level": "pass",
+      "visual_simplicity": "pass",
+      "no_unrequested_arrows": "pass",
+      "no_unrequested_field_patterns": "pass",
+      "main_setup_clarity": "pass",
+      "no_mixed_representations": "pass"
+    },
+    "reasons": [
+      "The image correctly depicts the requested setup: a tank with two identical spheres labeled X and Y, fully submerged in fluid.",
+      "The diagram is clean, monochrome, and uses appropriate serif-style labels.",
+      "No unrequested arrows, symbols, or answer-bearing information are present.",
+      "The layout is simple and professional, adhering to the TMUA/ENGAA style requirements."
+    ],
+    "regen_feedback": "",
+    "delete_reason": ""
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

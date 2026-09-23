@@ -1,0 +1,50 @@
+{
+  "stage": "style_checker",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 35,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "similar",
+      "notes": "The question is appropriately calibrated as 'Hard'. Its difficulty stems from the crucial conceptual understanding that frequency is invariant when a wave crosses a medium boundary, rather than from complex calculations. This aligns well with ESAT's approach to 'Hard' problems, which often test a deeper conceptual grasp rather than just computational ability."
+    },
+    "selectivity_audit": {
+      "main_trap": "The primary trap is failing to identify that the frequency of the electromagnetic wave remains constant when it enters a new medium. Students often incorrectly assume wavelength is constant, or that the speed of light 'c' is constant in all media, leading to incorrect deductions about how frequency or wavelength must change. Specifically, distractor B is a strong trap for those who incorrectly assume frequency changes to maintain a constant 'c' in the medium.",
+      "why_not_plug_and_chug": "This is not a plug-and-chug question because it requires a critical conceptual insight before any formulas can be correctly applied. There isn't a single formula to substitute values into. The candidate must first reason that frequency is the invariant quantity, then apply the definitions of speed, wavelength, and refractive index in sequence.",
+      "expected_mid_student_error": "A mid-level student might make one of several errors: 1) Assume wavelength is invariant, leading to option F. 2) Incorrectly assume that the speed of light 'c' is constant in the medium, leading to a change in frequency and thus options B or D. 3) Correctly calculate the new wavelength (λ/n) but provide this as the answer instead of the *decrease* in wavelength, leading to option C.",
+      "verdict": "selective"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "The question is an excellent example of an ESAT-style problem. It is concise, clear, and tests a fundamental physics concept with a strong reasoning hinge.",
+      "The distractors are very well-designed, targeting common and plausible misconceptions, which enhances the question's selectivity.",
+      "The problem is perfectly suited for a no-calculator environment, requiring only algebraic manipulation after the core physical principle is identified."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

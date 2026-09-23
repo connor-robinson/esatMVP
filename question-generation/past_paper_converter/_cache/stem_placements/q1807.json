@@ -1,0 +1,31 @@
+{
+  "questionId": 1807,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 14,
+  "stemBlocks": [
+    "A motor is used to lift a mass of $5.0 \\text{ kg}$ using a pulley system as shown in the diagram.",
+    "The pulley is secured to the roof using a coupling.\nThe motor needs to cause the mass to accelerate upwards at $0.80 \\text{ m s}^{-2}$.",
+    "What is the minimum tension force that the coupling must be able to withstand without breaking?",
+    "(The gravitational field strength $g$ is $10 \\text{ N kg}^{-1}$. The pulley system is frictionless and has negligible mass. The rope has negligible mass and is inextensible.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:23:52.602106+00:00",
+  "sourceImageHash": "e6d978efe5af7de97dd0ae899c5a5c8a58690b162a9aa50228aa4c09db2091b8",
+  "status": "ok"
+}

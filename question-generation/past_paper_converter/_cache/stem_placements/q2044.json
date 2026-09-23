@@ -1,0 +1,29 @@
+{
+  "questionId": 2044,
+  "examName": "ENGAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 9,
+  "stemBlocks": [
+    "$SQT$ is a right-angled triangle with the right angle at $Q$.\nThe point $R$ is on $SQ$ such that $SR: RQ = 1:3$\n$QRP$ is a right-angled triangle with the right angle at $Q$.\n$PR = ST = 8$ cm\n$QT = 4$ cm",
+    "What is the length of $PQ$, in cm?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "[diagram not to scale]",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:32:52.496489+00:00",
+  "sourceImageHash": "1056d9244e51d5723743e00b4d76950dbb4a10acf93d43fb9441c8de37c299b6",
+  "status": "ok"
+}

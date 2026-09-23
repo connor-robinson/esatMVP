@@ -1,0 +1,29 @@
+{
+  "questionId": 1808,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 15,
+  "stemBlocks": [
+    "In a trapezium $PQRS$, the parallel sides are $PQ$ and $RS$. $PQ = (x-1)$ cm, $RS = (x+5)$ cm and the vertical height $QR = x$ cm. The area of the trapezium is $120$ cm$^2$.",
+    "What is the length of $RS$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:23:52.605864+00:00",
+  "sourceImageHash": "83b05e5ea6717c971baa04acd7851ac8b7aabd8cd5752cbc63ded5d4714bc5c7",
+  "status": "ok"
+}

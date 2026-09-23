@@ -1,0 +1,28 @@
+{
+  "questionId": 3039,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 60,
+  "stemBlocks": [
+    "Calcium carbonate reacts with hydrochloric acid. The reaction gives off carbon dioxide gas.\nLine X on the graph shows the volume of carbon dioxide formed against time when $100 \\text{ cm}^3$ of $1.0 \\text{ mol dm}^{-3}$ of hydrochloric acid reacts with calcium carbonate chips at $20 \\text{ °C}$. There was an excess of calcium carbonate chips.\n$\\text{CaCO}_3 + 2\\text{HCl} \\rightarrow \\text{CaCl}_2 + \\text{CO}_2 + \\text{H}_2\\text{O(l)}$\nWhich line best represents the volume of carbon dioxide formed against time when the reaction is repeated with $50 \\text{ cm}^3$ of $2.0 \\text{ mol dm}^{-3}$ of hydrochloric acid reacting with excess calcium carbonate chips at $20 \\text{ °C}$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:16.002635+00:00",
+  "sourceImageHash": "26a6d197bacafcf3d1bcf22737e0d8e9d786b6e80037b09374b8d4dab51e5f5d",
+  "status": "ok"
+}

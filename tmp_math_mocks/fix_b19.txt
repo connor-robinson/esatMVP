@@ -1,0 +1,10 @@
+﻿B19 current: cd21ee99-1a65-4e51-9c99-6bde3ccd165d
+An exam paper is formatted in sections. For any integer $k \ge 1$, Section $k$ contains exactly $k$ pages.
+
+The paper is printed such that every section must begin on an odd-numbered page. To achieve 
+
+Pick 6a9ae4a4-df82-4826-b963-05c7847d089c D=4 M7 ans=B
+A fair six-sided die is rolled three times. The result of each roll, $d$, is used to form a quadratic equation $x^2 + dx + 9 = 0$.
+
+What is the probability that at least one of the three equations has real roots?
+APPLIED

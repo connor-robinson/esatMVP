@@ -1,0 +1,39 @@
+{
+  "questionId": 3248,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 39,
+  "stemBlocks": [
+    "When bromine reacts with (Z)-pent-2-ene, an intermediate called a bromonium ion forms. This is then attacked by the bromide ion to give the 2,3-dibromopentane addition product. The mechanism is shown:\nIn a different reaction (E)-but-2-ene is reacted with bromine in an addition reaction. This reaction also occurs via a bromonium ion intermediate.",
+    "Which of the following structures show the final product of the reaction of (E)-but-2-ene with bromine?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    },
+    {
+      "id": "d2",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    },
+    {
+      "assetId": "d2",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:13.919117+00:00",
+  "sourceImageHash": "342ff1a84a7a45d9ae102182704931b55bee26535a81eb4182afb652aeed416a",
+  "status": "ok"
+}

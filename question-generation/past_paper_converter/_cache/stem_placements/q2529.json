@@ -1,0 +1,30 @@
+{
+  "questionId": 2529,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 50,
+  "stemBlocks": [
+    "Dilute hydrochloric acid and magnesium were mixed and the total volume of gas released was measured over time.",
+    "What is the average rate of reaction, in g s$^{-1}$, with respect to the magnesium over the first two seconds?",
+    "($A_r$ value: Mg = 24. Assume that the volume of one mole of gas is 24 dm$^3$.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.824317+00:00",
+  "sourceImageHash": "ccf090160f2f86104fb2005a1458fe19cc219bf4d8e7ee307176d87d10ab298b",
+  "status": "ok"
+}

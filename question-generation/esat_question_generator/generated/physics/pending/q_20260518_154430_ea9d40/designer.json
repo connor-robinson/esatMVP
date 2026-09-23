@@ -1,0 +1,95 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_ad97dfb5",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Easy",
+    "idea_summary": "Compare the electrical resistance of two wires of the same material, where the second wire has a scaled length and a scaled diameter, requiring the application of the inverse-square scaling of diameter.",
+    "schema_invariant": {
+      "core_move": "Calculate the resultant value of a dependent physical quantity by applying given scaling factors to its independent variables in a power law relationship.",
+      "what_must_not_change": [
+        "The necessity of proportional reasoning over absolute calculation.",
+        "The presence of a non-linear (squared or higher power) relationship in the formula."
+      ],
+      "what_can_change": [
+        "The specific physics context (e.g., electricity instead of gravity or radiation).",
+        "Which variables are scaled (e.g., scaling two variables such that their effects cancel out)."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "proportional_reasoning",
+      "reasoning_hinge": "Recognizing that resistance is inversely proportional to the square of the diameter, not just the diameter itself.",
+      "why_top_students_win": "They immediately synthesize R ∝ L/d² and apply the scaling factors as a ratio without needing absolute values.",
+      "why_mid_students_miss": "They either forget to square the scaling factor for the diameter (treating area as directly proportional to diameter) or apply the scaling factors in the wrong direction (multiplying instead of dividing)."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Electrical resistance depends on length and cross-sectional area (R = ρL/A).",
+      "supporting_idea_if_any": "Cross-sectional area of a cylinder is proportional to the square of its diameter.",
+      "estimated_solution_steps": 2,
+      "number_of_core_physics_principles": 1,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "medium",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 2,
+      "must_include": [
+        "model_selection",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "Matches the pace of standard ESAT proportional reasoning questions by using a well-known formula but abstracting away the absolute numbers.",
+    "task_signature": "proportional_change",
+    "tool_footprint": [
+      "identify_scaling_factors",
+      "apply_power_law",
+      "construct_ratio"
+    ],
+    "primary_tag": "3",
+    "secondary_tags": [
+      "7"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "No visual needed; the text description of the two wires is sufficient and standard.",
+    "surface_twist": "",
+    "why_still_on_spec": "The resistance formula (R = ρL/A) and the area of a circle are standard GCSE/A-level topics. Proportional reasoning with these formulas is a staple of ESAT Section 1.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Scaling the area linearly with the diameter (e.g., if diameter is doubled, assuming area is doubled instead of quadrupled).",
+        "distractor_role": "Produces a ratio that under-corrects for the diameter change."
+      },
+      {
+        "mistake": "Assuming resistance is directly proportional to area rather than inversely proportional.",
+        "distractor_role": "Produces a ratio that scales in the wrong direction."
+      },
+      {
+        "mistake": "Squaring the length scaling factor instead of the diameter scaling factor.",
+        "distractor_role": "Produces a wildly incorrect ratio based on misremembering the formula."
+      }
+    ],
+    "difficulty_rationale": "It is Easy because the formula is universally known and only two variables are changing. However, it remains selective because students must successfully combine two ideas (resistance formula + area formula) entirely in the abstract (ratios) without the crutch of a calculator or absolute values.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "No absolute values for length, diameter, or resistivity are provided, forcing the student to construct and simplify a ratio algebraically."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The possible errors (forgetting the square, inverting the relationship) lead to clean, predictable integer or simple fraction ratios that make perfect multiple-choice options."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

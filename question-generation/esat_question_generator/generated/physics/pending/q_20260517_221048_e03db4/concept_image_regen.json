@@ -1,0 +1,50 @@
+{
+  "stage": "concept_image_regen",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "image_id": "img1",
+    "recommended_model": "MODEL_IMAGE_HIGH_QUALITY",
+    "prompt": "### Prompt for a High-Fidelity Exam Diagram\n\n**1. Subject/Content Brief:**\nA 2D schematic diagram for a physics exam, illustrating a conducting rod on a pair of parallel conducting rails inclined at an angle. This is an illustrative diagram to support a question about electromagnetic induction and forces.\n\n**2. Object Relation Brief:**\n- Draw two straight, parallel conducting rails. The rails should be shown in a simple 2D perspective, inclined downwards from left to right across the page.\n- A single, straight conducting rod lies horizontally across the two rails, perpendicular to them.\n- The entire area containing the rails and rod is filled with a uniform magnetic field directed into the page. This field must be represented by a grid of evenly spaced, small 'x' symbols (crosses).\n- An arrow representing the force of gravity must be drawn originating from the center of the rod and pointing vertically downwards.\n- To show the incline, draw a horizontal dashed line from the upper end of one rail, and an arc between this line and the rail to indicate the angle of inclination.\n\n**3. Required Labels/Annotations:**\n- ABSOLUTELY NO TEXT, LABELS, VARIABLES, OR NUMBERS ARE TO BE PRESENT ON THE DIAGRAM WHATSOEVER. This includes, but is not limited to, any symbols for magnetic field (B), velocity (v), force (F), gravity (g), mass (m), length (L), resistance (R), or angle (theta/θ). The angle arc must remain completely unlabelled. The diagram must be purely schematic and illustrative, devoid of any textual or numerical annotations.\n\n**4. Measurement Brief:**\n- No measurement arrows or values are needed.\n\n**5. Style Block:**\n- The image must strictly adhere to the style of a professional TMUA / ENGAA / NSAA printed exam diagram.\n- It must be a monochrome image using crisp, clean, thin black or dark-charcoal vector-like lines on a plain, off-white or very light grey paper background.\n- The layout must be clean with generous whitespace. All elements must be clearly defined with no ambiguity and no overlapping lines or symbols.\n- The diagram must be entirely free of any text or numerical annotations.\n- The style must be minimalist, functional, and schematic.\n\n**6. Negative Block:**\n- Do not add ANY text, labels, variables, or numbers whatsoever. Ensure the diagram is completely free of all textual annotations.\n- Avoid 3D rendering, shading, gradients, or textures.\n- No colours.\n- Ensure the gravity arrow is perfectly vertical and not perpendicular to the inclined rails.\n- Do not make the diagram look like a sketch, cartoon, or a casual drawing.",
+    "negative_prompt": "ABSOLUTELY NO TEXT. NO LABELS. NO VARIABLES. NO NUMBERS. No annotations whatsoever. No extra labels. No overlap. No fonts of any kind. No decorative shading. No photorealism. No colour unless explicitly requested. No exact answer-bearing measurements. No clutter. No malformed symbols. Do not place objects in the wrong support/location relationship.",
+    "layout_logic": {
+      "must_show_relations": [
+        "The rod rests perpendicularly on two parallel rails.",
+        "The rails are inclined relative to the horizontal.",
+        "A uniform magnetic field (represented by 'x' symbols) covers the area and is perpendicular to the plane of the rails.",
+        "A gravity arrow points vertically downwards from the rod."
+      ],
+      "measurement_mapping": [],
+      "relative_size_constraints": []
+    },
+    "hard_constraints": [
+      "Rails must be parallel.",
+      "Rod must be perpendicular to the rails.",
+      "Magnetic field must be represented by a grid of 'x' symbols, indicating it is into the page.",
+      "Gravity arrow must be perfectly vertical, not perpendicular to the incline.",
+      "ABSOLUTELY NO TEXT, LABELS, VARIABLES, OR NUMBERS ARE ALLOWED ON THE DIAGRAM WHATSOEVER. The diagram must be entirely free of any textual or numerical annotations.",
+      "The image must be monochrome (black and white/grayscale)."
+    ],
+    "style": {
+      "target_style": "tmua_engaa_exam_diagram",
+      "exam_style": true,
+      "black_and_white": true,
+      "minimal": true,
+      "not_to_scale": true,
+      "no_overlap": true,
+      "logic_sensitive": true
+    },
+    "changes_made": [
+      "Strengthened the 'Required Labels/Annotations' section to explicitly forbid ALL text, labels, variables, and numbers, using emphatic language.",
+      "Updated the 'Negative Block' in the prompt to reiterate the absolute prohibition of any textual annotations.",
+      "Modified the main `negative_prompt` to include 'ABSOLUTELY NO TEXT. NO LABELS. NO VARIABLES. NO NUMBERS. No annotations whatsoever.' and removed 'No sans-serif fonts' as no fonts should be present.",
+      "Strengthened the 'hard_constraints' to explicitly state 'ABSOLUTELY NO TEXT, LABELS, VARIABLES, OR NUMBERS ARE ALLOWED ON THE DIAGRAM WHATSOEVER'.",
+      "Removed 'serif_font' and 'math_variables_italic' from the `style` block as they are irrelevant if no labels are present."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

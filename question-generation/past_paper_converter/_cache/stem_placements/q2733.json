@@ -1,0 +1,30 @@
+{
+  "questionId": 2733,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 74,
+  "stemBlocks": [
+    "The abundance of a plant species in a habitat can be measured in different ways:\n• the density (the number of that plant species per \\text{ m}^2)\n• the frequency (the number of quadrats in which the plant species occurs)\nThe abundance of a plant species in a $100 \\text{ m}^2$ area of grassland was measured. The diagram below represents this area of grassland. Each black circle represents one individual of the plant species in this area of grassland.\nTwo different size quadrats were used to sample the area:\n• large quadrat ($50 \\text{ cm} \\times 50 \\text{ cm}$)\n• small quadrat ($10 \\text{ cm} \\times 10 \\text{ cm}$)\nThe area is sampled randomly, first using 10 large quadrats and then a second time using 10 small quadrats.",
+    "Which of the following statements is/are correct?",
+    "1 The overall density in the grassland calculated from sampling with either size quadrat will always be the same.\n2 The overall density in the grassland calculated from sampling will always be $1 \\text{ plant per m}^2$.\n3 The frequency obtained using the small quadrat will always be lower than that obtained with the large quadrat."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:58.244149+00:00",
+  "sourceImageHash": "e7833d8f2f7f3db815d2dce4d5cbe1b1062098491ff41b7aaa21023577ca94b9",
+  "status": "ok"
+}

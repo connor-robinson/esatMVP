@@ -1,0 +1,28 @@
+{
+  "questionId": 2842,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 23,
+  "stemBlocks": [
+    "The diagram shows a system consisting of two large copper tanks of water connected to each other by a solid cylindrical copper bar. The temperature of the water in tank 1 is $T_1$. The water in tank 2 is at a higher temperature $T_2$. The following four statements list changes that can be made, independently, to the system. At all times $T_1 < T_2$.\n1. increase temperature $T_1$\n2. increase temperature $T_2$\n3. increase the length of the copper bar\n4. increase the diameter of the copper bar\nWhich two changes each independently result in an increase in the rate of conduction of thermal energy along the copper bar?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A diagram showing two tanks (tank 1 and tank 2) connected by a copper bar. Tank 1 contains water at temperature $T_1$. Tank 2 contains water at temperature $T_2$.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.363277+00:00",
+  "sourceImageHash": "a70abd9ca0e88e3812ece2ec7796d1d4162aaa288d67c9e79cb09f0f402f12cc",
+  "status": "ok"
+}

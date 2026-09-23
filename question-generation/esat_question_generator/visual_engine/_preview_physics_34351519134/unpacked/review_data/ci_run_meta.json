@@ -1,0 +1,16 @@
+{
+  "db_path": "/home/runner/work/esatMVP/esatMVP/question-generation/esat_question_generator/visual_engine/review_data/review.db",
+  "counts": {
+    "questions": {},
+    "diagrams": {},
+    "pending": 0,
+    "approved": 0,
+    "rejected": 0,
+    "needs_edit": 0,
+    "regenerated": 0,
+    "diagram_pending": 0,
+    "diagram_approved": 0,
+    "diagram_rejected": 0
+  },
+  "subject_counts": {}
+}

@@ -1,0 +1,56 @@
+{
+  "stage": "verifier",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "D",
+    "independent_solution": {
+      "main_law_or_principle": "Newton's First Law (force equilibrium at terminal velocity) and Archimedes' Principle (buoyancy).",
+      "calculation_or_logic": "At terminal velocity, the net force on the object is zero. The downward weight (W) is balanced by the upward buoyancy (U) and upward drag (D).\nEquation: W = U + D\n\n1.  Calculate Buoyancy (U):\n    U = \\rho_{fluid} \\times V \\times g\n    U = 1500 \\text{ kg m}^{-3} \\times 0.20 \\text{ m}^3 \\times 10 \\text{ m s}^{-2}\n    U = 3000 \\text{ N}\n\n2.  Substitute U and D into the equilibrium equation to find W:\n    W = 3000 \\text{ N} + 1000 \\text{ N}\n    W = 4000 \\text{ N}\n\n3.  Use the definition of weight (W = \\rho_{obj} \\times V \\times g) to find \\rho_{obj}:\n    4000 \\text{ N} = \\rho_{obj} \\times 0.20 \\text{ m}^3 \\times 10 \\text{ m s}^{-2}\n    4000 = \\rho_{obj} \\times 2\n    \\rho_{obj} = \\frac{4000}{2}\n    \\rho_{obj} = 2000 \\text{ kg m}^{-3}",
+      "verified_answer_value": "2000",
+      "claimed_answer_value": "2000",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Apply Newton's First Law for force equilibrium",
+        "Calculate buoyancy force using Archimedes' principle",
+        "Calculate weight using density and volume",
+        "Algebraic rearrangement to solve for an unknown density"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "derived_relationship_audit": {
+      "requires_nontrivial_derivation": false,
+      "number_of_linked_relationships": 3,
+      "relationships_given_in_stem": [],
+      "safe_for_esat": true
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a",
+      "derived_relationship_safety": "pass"
+    },
+    "notes": [
+      "The question correctly applies force equilibrium at terminal velocity, incorporating weight, buoyancy, and a given drag force.",
+      "The calculations are straightforward and suitable for a no-calculator environment.",
+      "The distractors are well-designed to target common conceptual and algebraic errors.",
+      "The problem requires solving for an input parameter (density) rather than an output (velocity), which aligns with the 'reverse_inference' discrimination mechanism and is appropriate for a medium difficulty level."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

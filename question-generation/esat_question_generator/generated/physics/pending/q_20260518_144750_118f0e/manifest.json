@@ -1,0 +1,409 @@
+{
+  "question_id": "q_20260518_144750_118f0e",
+  "subject": "physics",
+  "schema_id": "P_a9a3eea7",
+  "difficulty": "Medium",
+  "status": "accepted",
+  "failure_gate": null,
+  "failure_reasons": [],
+  "has_visual": false,
+  "visual_type": "none",
+  "answer_depends_on_visual": false,
+  "assets": [],
+  "model_trace": {
+    "designer": "gemini-3.1-pro-preview",
+    "idea_judge": "gemini-3.1-flash-lite",
+    "implementer": "gemini-3.1-pro-preview",
+    "verifier": "gemini-3.1-flash-lite",
+    "style_checker": "gemini-3.1-flash-lite",
+    "visual_router": "gemini-3.1-flash-lite"
+  },
+  "retry_counts": {
+    "implementer": 0
+  },
+  "stages": [
+    {
+      "stage": "designer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "schema_id": "P_a9a3eea7",
+        "module": "physics",
+        "variation_mode": "SIBLING",
+        "target_difficulty": "Medium",
+        "idea_summary": "An object with a lower density than a liquid is released from the bottom of a tank and rises, reaching a constant terminal velocity. The candidate must formulate the force balance to find an expression for the drag constant.",
+        "schema_invariant": {
+          "core_move": "Apply Newton's first law to a system at terminal velocity, correctly substituting expressions for weight, upthrust (buoyancy), and drag.",
+          "what_must_not_change": [
+            "The state of terminal velocity (zero acceleration)",
+            "The presence of three forces: weight, upthrust, and drag",
+            "The dependence of weight and upthrust on object and fluid densities respectively"
+          ],
+          "what_can_change": [
+            "The direction of motion (rising instead of falling)",
+            "The quantity to be solved for (e.g., drag constant instead of velocity)",
+            "The specific drag model (e.g., linear vs quadratic)"
+          ]
+        },
+        "discrimination_mechanism": {
+          "type": "vector_direction",
+          "reasoning_hinge": "Recognising that because the object is rising, the drag force acts downwards, meaning the correct force balance is Upthrust = Weight + Drag.",
+          "why_top_students_win": "They systematically identify the direction of motion and assign force vectors accordingly, recognising that drag opposes motion and therefore adds to the weight.",
+          "why_mid_students_miss": "They rely on rote-memorised formulas for falling objects (where Weight = Upthrust + Drag), leading to a sign error in the final expression."
+        },
+        "goldilocks_complexity_audit": {
+          "main_physics_principle": "Newton's First Law (equilibrium of forces at terminal velocity)",
+          "supporting_idea_if_any": "Archimedes' principle (Upthrust = weight of displaced fluid)",
+          "estimated_solution_steps": 3,
+          "number_of_core_physics_principles": 2,
+          "requires_derived_relationship": false,
+          "too_easy_risk": "low",
+          "too_hard_risk": "low",
+          "goldilocks_verdict": "good"
+        },
+        "minimum_reasoning_depth": {
+          "steps": 3,
+          "must_include": [
+            "model_selection",
+            "non_obvious_inference",
+            "short_calculation_or_comparison"
+          ]
+        },
+        "reference_alignment": "Preserves the core difficulty of balancing three fluid forces, but shifts the cognitive load from algebraic rearrangement to correct vector setup by reversing the direction of motion.",
+        "task_signature": "force_motion_reasoning",
+        "tool_footprint": [
+          "force_balance_setup",
+          "vector_direction_assignment",
+          "algebraic_rearrangement"
+        ],
+        "primary_tag": "3",
+        "secondary_tags": [
+          "2"
+        ],
+        "visual_need": "none",
+        "visual_role": "none",
+        "visual_brief": "No visual required. The text clearly describes a rising object.",
+        "surface_twist": "",
+        "why_still_on_spec": "Terminal velocity, density, weight, and upthrust (buoyancy) are standard specification topics. Applying Newton's first law to a rising object is a direct application of core force mechanics.",
+        "constraints_used": [
+          "short condition descriptions only",
+          "no final numbers",
+          "no full equations unless the schema requires them",
+          "no exact geometric diagram dependence",
+          "no multi-law derivation chain"
+        ],
+        "intended_wrong_paths": [
+          {
+            "mistake": "Assuming drag acts upwards (as it does for falling objects), leading to Upthrust + Drag = Weight.",
+            "distractor_role": "Produces an answer with a reversed sign for the density difference (e.g., object density minus fluid density instead of fluid minus object)."
+          },
+          {
+            "mistake": "Swapping the densities used for upthrust and weight (using fluid density for weight and object density for upthrust).",
+            "distractor_role": "Produces an answer with the densities reversed, compounding with or cancelling out the drag direction error."
+          },
+          {
+            "mistake": "Ignoring the weight of the object entirely, assuming upthrust is the only upward force and drag is the only downward force.",
+            "distractor_role": "Produces an answer that only depends on the fluid density, missing the object density term."
+          }
+        ],
+        "difficulty_rationale": "It requires clear physical reasoning rather than just plugging numbers into a memorised formula. The twist of a rising object cleanly discriminates candidates who understand the vector nature of drag from those who just memorised the falling-sphere derivation.",
+        "anti_plug_and_chug_check": {
+          "would_formula_substitution_alone_solve_it": false,
+          "why_not": "A standard terminal velocity formula assumes a falling object. Applying it directly here will result in a sign error because the drag force vector has reversed relative to gravity."
+        },
+        "mcq_viability": {
+          "viable": true,
+          "reason": "The algebraic expression for the drag constant can be easily presented as multiple-choice options with variations in the signs and density terms, directly mapping to common student errors."
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-pro-preview",
+      "attempts": 1
+    },
+    {
+      "stage": "idea_judge",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "selectivity_score": 0,
+        "checks": {
+          "schema_preserved": "pass",
+          "on_spec": "pass",
+          "reasoning_hinge_present": "pass",
+          "not_direct_substitution": "pass",
+          "wrong_paths_specific": "pass",
+          "visual_feasible": "pass",
+          "mcq_viable": "pass",
+          "difficulty_match": "pass",
+          "goldilocks_complexity": "pass"
+        },
+        "complexity_audit": {
+          "number_of_core_physics_principles": 2,
+          "estimated_solution_steps": 3,
+          "requires_derived_relationship": false,
+          "uses_multi_topic_chain": false,
+          "goldilocks_verdict": "good"
+        },
+        "reasoning_hinge_summary": "The candidate must correctly identify that for a rising object, the drag force acts downwards to oppose motion, necessitating the force balance equation: Upthrust = Weight + Drag.",
+        "expected_mid_student_error": "Applying the standard falling-object force balance (Weight = Upthrust + Drag), which leads to an incorrect sign in the final expression for the drag constant.",
+        "notes": [
+          "The idea is well-constrained and avoids the 'plug-and-chug' trap by reversing the standard orientation of the problem.",
+          "The physics is strictly ESAT-appropriate (Newton's First Law + Archimedes' Principle).",
+          "The complexity is perfectly aligned with the Medium difficulty target."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "implementer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "metadata": {
+          "schema_id": "P_a9a3eea7",
+          "module": "physics",
+          "variation_mode": "SIBLING",
+          "target_difficulty": "Medium",
+          "task_signature": "force_motion_reasoning",
+          "primary_tag": "3",
+          "secondary_tags": [
+            "2"
+          ]
+        },
+        "question": {
+          "stem": "An object of volume $V$ and density $\\rho$ is released from rest at the bottom of a tank containing a liquid of density $\\rho_L$.\n\nThe object rises and reaches a constant terminal velocity $v$.\n\nThe magnitude of the drag force acting on the object is given by $k v$, where $k$ is a constant.\n\nWhich of the following is the correct expression for $k$?\n\n(Acceleration of free fall is $g$.)",
+          "options": {
+            "A": "$\\frac{V g (\\rho_L - \\rho)}{v}$",
+            "B": "$\\frac{V g (\\rho - \\rho_L)}{v}$",
+            "C": "$\\frac{V g (\\rho_L + \\rho)}{v}$",
+            "D": "$\\frac{V g \\rho_L}{v}$",
+            "E": "$\\frac{V g \\rho}{v}$",
+            "F": "$\\frac{V (\\rho_L - \\rho)}{v}$"
+          },
+          "correct_option": "A"
+        },
+        "visual_requirements": {
+          "visual_need": "none",
+          "visual_role": "none",
+          "answer_depends_on_visual": false,
+          "graph_request": null,
+          "schematic_request": null,
+          "concept_image_request": null
+        },
+        "solution": {
+          "key_insight": "Because the object is rising, the drag force acts downwards, meaning the correct force balance is Upthrust = Weight + Drag.",
+          "reasoning": "At terminal velocity, the net force on the object is zero. The upward force is upthrust ($U = V \\rho_L g$). The downward forces are the object's weight ($W = V \\rho g$) and the drag force ($F_D = k v$), since drag opposes the upward motion.\nEquating the forces gives: $U = W + F_D$.\nSubstituting the expressions: $V \\rho_L g = V \\rho g + k v$.\nRearranging for $k$: $k v = V g (\\rho_L - \\rho)$, so $k = \\frac{V g (\\rho_L - \\rho)}{v}$."
+        },
+        "distractor_map": {
+          "A": "Correct. Correctly identifies that drag acts downwards, adding to weight.",
+          "B": "Assumes the force balance for a falling object ($W = U + F_D$), leading to a reversed sign for the density difference.",
+          "C": "Assumes drag acts upwards alongside upthrust, leading to $U + W = F_D$ (or simply adds the densities).",
+          "D": "Ignores the weight of the object, assuming upthrust is balanced entirely by drag ($U = F_D$).",
+          "E": "Ignores the upthrust, assuming weight is balanced entirely by drag ($W = F_D$).",
+          "F": "Omits the acceleration of free fall $g$ from the weight and upthrust expressions."
+        },
+        "quality_self_check": {
+          "reasoning_hinge_used": "Recognising that drag acts downwards for a rising object, altering the standard falling-object force balance.",
+          "not_direct_substitution": true,
+          "exactly_one_correct": true,
+          "no_calculator_friendly": true,
+          "on_spec": true,
+          "visual_dependency_safe": true,
+          "goldilocks_complexity": {
+            "number_of_core_physics_principles": 2,
+            "estimated_solution_steps": 3,
+            "requires_derived_relationship": false,
+            "not_overstacked": true
+          }
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-pro-preview",
+      "attempts": 1
+    },
+    {
+      "stage": "deterministic_validator",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "ok": true,
+        "errors": [],
+        "warnings": [],
+        "option_keys": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F"
+        ],
+        "summary": "ok"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": null,
+      "attempts": 1
+    },
+    {
+      "stage": "verifier",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "correct_option_verified": "A",
+        "independent_solution": {
+          "main_law_or_principle": "Newton's First Law (equilibrium at terminal velocity) and Archimedes' Principle.",
+          "calculation_or_logic": "At terminal velocity, the net force is zero. The object is rising, so the forces are: Upthrust (upwards) = Weight (downwards) + Drag (downwards). Upthrust $U = V \\rho_L g$. Weight $W = V \\rho g$. Drag $F_D = kv$. Thus, $V \\rho_L g = V \\rho g + kv$. Rearranging for $k$: $kv = V g (\\rho_L - \\rho) \\implies k = \\frac{V g (\\rho_L - \\rho)}{v}$.",
+          "verified_answer_value": "A",
+          "claimed_answer_value": "A",
+          "matches_claim": true
+        },
+        "spec_audit": {
+          "required_physics_moves": [
+            "Identify forces on a submerged object",
+            "Apply Archimedes' principle",
+            "Apply Newton's first law for terminal velocity",
+            "Vector addition of forces"
+          ],
+          "all_explicitly_on_spec": true,
+          "borderline_or_offspec_moves": []
+        },
+        "derived_relationship_audit": {
+          "requires_nontrivial_derivation": false,
+          "number_of_linked_relationships": 0,
+          "relationships_given_in_stem": [],
+          "safe_for_esat": true
+        },
+        "checks": {
+          "correctness": "pass",
+          "uniqueness": "pass",
+          "syllabus": "pass",
+          "no_calc_feasibility": "pass",
+          "ambiguity": "pass",
+          "diagram_dependency": "pass",
+          "distractor_safety": "pass",
+          "katex_formatting": "pass",
+          "graph_or_visual_validation": "n/a",
+          "derived_relationship_safety": "pass"
+        },
+        "notes": [
+          "The question is physically sound and tests the conceptual understanding of force directions in fluid dynamics."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "style_checker",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "style_score": {
+          "total": 40,
+          "breakdown": {
+            "stem_tone": 5,
+            "physics_authenticity": 5,
+            "reasoning_quality": 5,
+            "selectivity": 5,
+            "no_calc_engineering": 5,
+            "option_realism": 5,
+            "distractor_plausibility": 5,
+            "goldilocks_calibration": 5
+          }
+        },
+        "difficulty_calibration": {
+          "difficulty_vs_reference": "similar",
+          "length_feel_vs_reference": "shorter",
+          "notes": "The question is perfectly calibrated for the ESAT. It avoids the 'falling object' trope by reversing the motion, forcing the student to think about the vector direction of drag rather than recalling a formula."
+        },
+        "selectivity_audit": {
+          "main_trap": "The student assumes the standard 'falling' force balance (Weight = Upthrust + Drag) and arrives at option B, failing to account for the fact that drag must oppose the upward motion.",
+          "why_not_plug_and_chug": "There is no formula for 'k' to plug into. The student must construct the force balance equation from first principles based on the physical scenario provided.",
+          "expected_mid_student_error": "Selecting option B due to rote memorization of the falling-sphere terminal velocity derivation.",
+          "verdict": "selective"
+        },
+        "complexity_audit": {
+          "estimated_core_principles": 2,
+          "estimated_solution_steps": 3,
+          "overstacked": false,
+          "goldilocks_verdict": "good"
+        },
+        "flags": {
+          "too_easy": false,
+          "too_hard": false,
+          "too_wordy": false,
+          "too_recall_heavy": false,
+          "too_plug_and_chug": false,
+          "over_advanced_chain": false,
+          "possible_verifier_miss": false
+        },
+        "notes": [
+          "Excellent use of a 'twist' on a standard problem to test conceptual understanding over rote learning.",
+          "The distractors are well-constructed to catch common conceptual errors (sign errors, missing terms, unit errors)."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "visual_router",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "visual_route": "none",
+        "answer_depends_on_visual": false,
+        "required_files": [],
+        "reason": "The problem describes a standard fluid dynamics scenario that is fully defined by the text. No diagram is required to understand the force balance.",
+        "next_prompt_file": null,
+        "style_target_if_image": null,
+        "blocking_issue": null,
+        "simplicity_audit": {
+          "visual_needed": false,
+          "can_be_described_in_one_sentence": true,
+          "estimated_object_types": 0,
+          "estimated_labels": 0,
+          "requires_unwanted_arrows_or_symbols": false,
+          "route_is_conservative": true
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "tag_labeler",
+      "status": "error",
+      "verdict": null,
+      "payload": null,
+      "notes": [],
+      "error": "Gemini quota or rate limit exhausted on Vertex AI. Designer and Implementer stay on Gemini 3.1 Pro Preview (no automatic switch to 2.5 Pro). Limits are per Google Cloud project (RPM, TPM, RPD). Check Vertex AI quota in Google Cloud Console.",
+      "raw_text": null,
+      "model": null,
+      "attempts": 1
+    }
+  ],
+  "pipeline": "v4",
+  "created_at": "2026-05-18T14:55:57+01:00"
+}

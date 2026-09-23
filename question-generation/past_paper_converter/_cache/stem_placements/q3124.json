@@ -1,0 +1,39 @@
+{
+  "questionId": 3124,
+  "examName": "ENGAA",
+  "examYear": 2019,
+  "paperName": "Section 2",
+  "questionNumber": 15,
+  "stemBlocks": [
+    "Four resistors, P, Q, R and S, are connected to a battery with negligible internal resistance, as shown in the diagram.",
+    "P and S each have resistance $x$. Q and R each have resistance $2x$.\nA fifth resistor, T, which has resistance $x$, is to be added to the circuit in one of the following listed positions, as shown in the diagram:\n1 in parallel with P\n2 in series with Q\n3 in parallel with R\nWhich of the positions for resistor T causes an increase in the magnitude of the voltmeter reading?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    },
+    {
+      "id": "d2",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    },
+    {
+      "assetId": "d2",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:42:12.054654+00:00",
+  "sourceImageHash": "65f80d5064279c9a84c64b4a1622f1d26ef973aad04a1d30f340590b9ff74160",
+  "status": "ok"
+}

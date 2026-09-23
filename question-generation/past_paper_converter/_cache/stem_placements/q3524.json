@@ -1,0 +1,30 @@
+{
+  "questionId": 3524,
+  "examName": "TMUA",
+  "examYear": 2021,
+  "paperName": "Paper 1",
+  "questionNumber": 15,
+  "stemBlocks": [
+    "The diagram shows the graph of $y = f(x)$.",
+    "The graph consists of alternating straight-line segments of gradient 1 and $-1$ and continues in this way for all values of $x$.",
+    "The function $g$ is defined as\n$$g(x) = \\sum_{r=1}^{10} f(2^{r-1}x)$$\nFind the value of\n$$\\int_0^1 g(x) \\, dx$$"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:21.971911+00:00",
+  "sourceImageHash": "e08692609dcc512b396a215d796fddaf6f1b95fc945338b7d33466e3783010cc",
+  "status": "ok"
+}

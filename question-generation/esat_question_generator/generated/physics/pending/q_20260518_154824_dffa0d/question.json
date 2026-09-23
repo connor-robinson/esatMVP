@@ -1,0 +1,287 @@
+{
+  "id": "P_ad97dfb5-Extreme-450762cf2f",
+  "schema_id": "P_ad97dfb5",
+  "difficulty": "Extreme",
+  "idea_plan": {
+    "schema_id": "P_ad97dfb5",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Extreme",
+    "idea_summary": "Candidates are given that drag force scales as r²v², and must find the ratio of terminal velocities for two spheres of the same material where one has 8 times the mass of the other.",
+    "schema_invariant": {
+      "core_move": "Calculate the resultant value of a dependent physical quantity by applying given scaling factors to its independent variables in a power law relationship.",
+      "what_must_not_change": [
+        "The necessity to use proportional reasoning and power laws.",
+        "The absence of absolute values (ratio-based solve)."
+      ],
+      "what_can_change": [
+        "The physical context (terminal velocity instead of fields/radiation).",
+        "The need to derive the final power law relationship from a physical constraint (force balance) before applying the scaling factor."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "proportional_reasoning",
+      "reasoning_hinge": "Equating the scaling of weight (r³) with the scaling of drag (r²v²) to deduce that terminal velocity v scales with √r.",
+      "why_top_students_win": "They immediately recognise that at terminal velocity, weight ∝ drag. Since mass ∝ r³, they write r³ ∝ r²v², simplifying to v ∝ √r. Mass × 8 means r × 2, so v × √2.",
+      "why_mid_students_miss": "They may ignore the r² term in the drag proportionality and assume drag only depends on v², leading to v² ∝ m, giving a ratio of √8. Or, they might fail to cube-root the mass ratio to find the radius ratio."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Force balance at terminal velocity (Weight = Drag).",
+      "supporting_idea_if_any": "Mass of a sphere scales with the cube of its radius (m ∝ r³).",
+      "estimated_solution_steps": 3,
+      "number_of_core_physics_principles": 1,
+      "requires_derived_relationship": true,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 3,
+      "must_include": [
+        "derive_radius_scaling_from_mass",
+        "equate_weight_and_drag_proportionalities",
+        "solve_for_velocity_scaling"
+      ]
+    },
+    "reference_alignment": "Requires the exact same cognitive skill (tracking exponents in scaling ratios) but hides the core power law behind a simple force balance, elevating it to Extreme without adding tedious algebra.",
+    "task_signature": "proportional_change",
+    "tool_footprint": [
+      "identify_scaling_factor",
+      "equate_forces",
+      "manipulate_proportionality"
+    ],
+    "primary_tag": "1",
+    "secondary_tags": [
+      "2"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "Instead of being handed a named formula (like Stefan-Boltzmann or Gravity), the candidate must combine a geometric scaling law (volume) with a given drag proportionality to create their own scaling law.",
+    "why_still_on_spec": "Terminal velocity and the volume/mass relationship of spheres are standard school physics. The drag proportionality is explicitly given in the stem, keeping it perfectly on-spec.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Ignoring the r² dependence in the drag force and assuming drag ∝ v² only, so v² ∝ m.",
+        "distractor_role": "Yields a ratio of √8 (or 2√2)."
+      },
+      {
+        "mistake": "Assuming radius scales directly with mass (r ∝ m instead of r³ ∝ m), so r × 8. Then 8 ∝ 8²v², leading to v ∝ 1/√8.",
+        "distractor_role": "Yields a ratio of 1/(2√2)."
+      },
+      {
+        "mistake": "Finding the radius ratio (r × 2) but multiplying the velocity by this factor directly instead of rooting it.",
+        "distractor_role": "Yields a ratio of 2."
+      },
+      {
+        "mistake": "Assuming v² ∝ r³, leading to v ∝ r^(3/2) because they forgot the r² in the drag term.",
+        "distractor_role": "Yields a ratio of √8."
+      }
+    ],
+    "difficulty_rationale": "The difficulty is purely conceptual and structural. The algebra is trivial (cube root of 8, square root of 2), but the candidate must independently link m ∝ r³ and r³ ∝ r²v² under time pressure. This is a highly selective ESAT move.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "There is no standard formula to plug into. The candidate must synthesize the scaling relationship v ∝ √r from the physical condition of terminal velocity."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The common errors (forgetting a power, confusing mass with radius scaling) lead to distinct, clean numerical ratios (e.g., 2, √8, 1/√8) that make excellent distractors."
+    }
+  },
+  "question_package": {
+    "metadata": {
+      "schema_id": "P_ad97dfb5",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Extreme",
+      "task_signature": "proportional_change",
+      "primary_tag": "1",
+      "secondary_tags": [
+        "2"
+      ]
+    },
+    "question": {
+      "stem": "Two solid spheres, P and Q, are made of the same material and fall through a highly viscous fluid. The drag force on a sphere of radius $r$ moving at velocity $v$ in this fluid is proportional to $r v$.\n\nSphere Q has $27$ times the mass of sphere P.\n\nWhat is the ratio of the terminal velocity of sphere Q to the terminal velocity of sphere P?\n\n<figure class=\"qg-diagram\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 600 420\" width=\"600\" height=\"420\" role=\"img\" aria-label=\"concept image\"><image href=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_154824_dffa0d/concept_image_v1.png\" x=\"0\" y=\"0\" width=\"600\" height=\"420\" preserveAspectRatio=\"xMidYMid meet\" /></svg><figcaption>concept image</figcaption></figure>\n",
+      "options": {
+        "A": "$1/9$",
+        "B": "$1/3$",
+        "C": "$3$",
+        "D": "$9$",
+        "E": "$27$",
+        "F": "$81$"
+      },
+      "correct_option": "D",
+      "stem_before_visual": "Two solid spheres, P and Q, are made of the same material and fall through a highly viscous fluid. The drag force on a sphere of radius $r$ moving at velocity $v$ in this fluid is proportional to $r v$.\n\nSphere Q has $27$ times the mass of sphere P.\n\nWhat is the ratio of the terminal velocity of sphere Q to the terminal velocity of sphere P?"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "At terminal velocity, weight (proportional to $r^3$) balances drag (proportional to $r v$), which simplifies to $v \\propto r^2$.",
+      "reasoning": "1. Since the spheres are made of the same material, they have the same density. Therefore, mass $m \\propto r^3$.\n2. Sphere Q has $27$ times the mass of P, meaning its radius is $\\sqrt[3]{27} = 3$ times larger ($r_Q = 3r_P$).\n3. At terminal velocity, the downward force (weight, proportional to $m$ and thus $r^3$) equals the upward drag force (given as proportional to $r v$).\n4. Equating the proportionalities gives $r^3 \\propto r v$, which simplifies to $v \\propto r^2$.\n5. Since the radius of Q is $3$ times that of P, its terminal velocity is $3^2 = 9$ times that of P."
+    },
+    "distractor_map": {
+      "A": "Incorrect. This results from inverting the relationship, assuming the larger mass falls slower ($v \\propto 1/r^2$).",
+      "B": "Incorrect. This results from assuming $v \\propto 1/r$ or making an inversion error on the radius ratio.",
+      "C": "Incorrect. This comes from correctly finding the radius ratio ($3$) but assuming $v \\propto r$ instead of $v \\propto r^2$.",
+      "D": "Correct. $m \\propto r^3$ means $r$ increases by a factor of 3. Weight balances drag ($r^3 \\propto r v \\implies v \\propto r^2$), so $v$ increases by $3^2 = 9$.",
+      "E": "Incorrect. This occurs if the candidate ignores the $r$ term in the drag proportionality, assuming drag $\\propto v$. This leads to $v \\propto m$, giving a ratio of $27$.",
+      "F": "Incorrect. This results from finding the radius ratio ($3$) but incorrectly assuming $v \\propto r^4$."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Equating the scaling of weight ($r^3$) with the scaling of drag ($r v$) to deduce that terminal velocity $v$ scales with $r^2$.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 1,
+        "estimated_solution_steps": 3,
+        "requires_derived_relationship": true,
+        "not_overstacked": true
+      }
+    }
+  },
+  "verifier_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "D",
+    "independent_solution": {
+      "main_law_or_principle": "Force balance at terminal velocity (Weight = Drag).",
+      "calculation_or_logic": "1. Mass $m \\propto r^3$ (same material). Given $m_Q = 27 m_P$, then $r_Q = \\sqrt[3]{27} r_P = 3 r_P$.\n2. At terminal velocity, $W = F_D$. Weight $W \\propto m \\propto r^3$. Drag $F_D \\propto r v$ (given).\n3. Equating: $r^3 \\propto r v \\implies v \\propto r^2$.\n4. Ratio of velocities: $v_Q / v_P = (r_Q / r_P)^2 = (3)^2 = 9$.",
+      "verified_answer_value": "9",
+      "claimed_answer_value": "9",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "derive_radius_scaling_from_mass",
+        "equate_weight_and_drag_proportionalities",
+        "solve_for_velocity_scaling"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "derived_relationship_audit": {
+      "requires_nontrivial_derivation": false,
+      "number_of_linked_relationships": 0,
+      "relationships_given_in_stem": [],
+      "safe_for_esat": true
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a",
+      "derived_relationship_safety": "pass"
+    },
+    "notes": [
+      "The question is physically sound and adheres to the ESAT syllabus. The scaling logic is clear and the distractors are well-constructed based on common conceptual errors."
+    ]
+  },
+  "style_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "slightly_harder",
+      "length_feel_vs_reference": "similar",
+      "notes": "The question is 'Extreme' in the context of ESAT because it requires the student to synthesize a scaling law from first principles rather than recalling a standard formula. It is perfectly calibrated for the top end of the cohort."
+    },
+    "selectivity_audit": {
+      "main_trap": "The student must correctly identify that mass scales with r³ and then correctly balance the forces to find the v ∝ r² relationship. The trap is ignoring the r-dependence in the drag force or miscalculating the radius ratio.",
+      "why_not_plug_and_chug": "There is no formula for terminal velocity in this specific fluid provided; the student must derive the proportionality from the force balance condition.",
+      "expected_mid_student_error": "Assuming v ∝ m (leading to 27) or v ∝ r (leading to 3) by failing to correctly account for the r-dependence in the drag force or the volume-mass relationship.",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 1,
+      "estimated_solution_steps": 3,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "Excellent use of proportional reasoning. The distractors are mathematically distinct and target specific conceptual failures."
+    ]
+  },
+  "models": {
+    "designer": "gemini-3.1-pro-preview",
+    "implementer": "gemini-3.1-pro-preview",
+    "verifier": "gemini-3.1-flash-lite",
+    "style_judge": "gemini-3.1-flash-lite"
+  },
+  "attempts": 3,
+  "created_at": "2026-05-18T15:57:04.841350",
+  "token_usage": {
+    "prompt_tokens": 64955,
+    "candidates_tokens": 10654,
+    "total_tokens": 88330
+  },
+  "tags": {
+    "primary_tag": "3",
+    "secondary_tags": [
+      "5"
+    ],
+    "primary_confidence": 0.95,
+    "reasoning": "The question's core involves the balance of forces (weight and drag) to determine terminal velocity, which is a fundamental concept in Mechanics. The relationship between mass and radius, derived from the spheres being made of the 'same material' (density), relies on concepts from Matter.",
+    "_raw_text": "```json\n{\n  \"primary_tag\": \"3\",\n  \"secondary_tags\": [\"5\"],\n  \"primary_confidence\": 0.95,\n  \"reasoning\": \"The question's core involves the balance of forces (weight and drag) to determine terminal velocity, which is a fundamental concept in Mechanics. The relationship between mass and radius, derived from the spheres being made of the 'same material' (density), relies on concepts from Matter.\"\n}\n```"
+  },
+  "schema_block_snapshot": "## **P_ad97dfb5. Scaling quantities with power law relationships**\n\n**Core move:** Calculate the resultant value of a dependent physical quantity by applying given scaling factors to its independent variables in a power law relationship.\n\n**Seen in / context:**\n- Stefan-Boltzmann law (P = σAT⁴ or P = kR²T⁴)\nGravitational force/potential (F = Gm₁m₂/r²)\nElectric force/potential (F = kq₁q₂/r²)\nIntensity of waves (I ∝ 1/r²)\nAny physical law where a quantity depends on powers of other variables.\n\n**Possible wrong paths:**\n- Incorrectly applying the exponents to the scaling factors (e.g., multiplying by 2 for R² instead of 2²).\nMisinterpreting the scaling factor (e.g., 'decrease by a factor of two' means multiplying by 1/2, not subtracting 2).\nPerforming absolute calculations when a ratio-based approach would be simpler and less error-prone.\nErrors in manipulating scientific notation or powers of 10.\n\n**Notes for generation:**\n- Encourage the use of ratios (e.g., P_final/P_initial) to cancel out constants and original values, simplifying the calculation.\nEnsure the definition of 'factor of X' increase/decrease is consistent and clearly understood.\nCan involve multiple variables changing simultaneously, requiring careful application of all scaling factors and exponents.\n\n**Exemplar questions:**\n- `NSAA_2016_Section1_Q26_NSAA_Sec`: Initial exemplar for new schema.\n- `NSAA_2017_Section1_Q28_NSAA_Sec`: The question requires calculating the ratio of densities (a dependent physical quantity) by applying the given ratio of radii (an independent variable) using a power law relationship (density is inversely proportional to the cube of the radius, ρ ∝ r⁻³). This directly matches the core move of schema P_ad97dfb5.",
+  "pipeline": "v4",
+  "has_visual": true,
+  "visual_type": "concept_image",
+  "answer_depends_on_visual": false,
+  "question_stem_before_auto_diagram": "Two solid spheres, P and Q, are made of the same material and fall through a highly viscous fluid. The drag force on a sphere of radius $r$ moving at velocity $v$ in this fluid is proportional to $r v$.\n\nSphere Q has $27$ times the mass of sphere P.\n\nWhat is the ratio of the terminal velocity of sphere Q to the terminal velocity of sphere P?",
+  "visual_assets": [
+    {
+      "kind": "concept_image",
+      "spec_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260518_154824_dffa0d\\concept_image_prompt.json",
+      "image_paths": [
+        "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_154824_dffa0d/concept_image_v1.png"
+      ],
+      "renderer": "gemini_image_v1",
+      "qc_status": "pass",
+      "qc_source": "concept_image_verifier.json",
+      "answer_bearing": false,
+      "checksum": null
+    }
+  ]
+}

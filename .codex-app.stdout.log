@@ -1,0 +1,292 @@
+
+> nocalcmvp2_real@0.1.0 dev
+> next dev -p 3000
+
+  ▲ Next.js 14.2.0
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+  - Experiments (use with caution):
+    · turbo
+    · optimizeCss
+
+ ✓ Starting...
+ ✓ Ready in 7.7s
+ ○ Compiling /api/past-papers/library-outline ...
+ ✓ Compiled /api/past-papers/library-outline in 2.4s (113 modules)
+ GET /api/past-papers/library-outline 200 in 5277ms
+ ○ Compiling /src/middleware ...
+ ✓ Compiled /src/middleware in 1326ms (124 modules)
+ ○ Compiling /past-papers/library ...
+ ✓ Compiled /past-papers/library in 25.8s (1605 modules)
+ ✓ Compiled in 3.7s (730 modules)
+ GET /past-papers/library 200 in 30040ms
+ GET /past-papers/library 200 in 29715ms
+ ✓ Compiled in 546ms (716 modules)
+ ○ Compiling /api/profile/preferences ...
+ GET /api/past-papers/library-outline 200 in 1284ms
+ GET /past-papers/library 200 in 434ms
+ GET /past-papers/library 200 in 385ms
+ ✓ Compiled /api/profile/preferences in 19.2s (1815 modules)
+Time 15.7648
+ GET /favicon.ico 500 in 21712ms
+ GET /api/subscription/status 200 in 22233ms
+ GET /api/profile/preferences 401 in 22138ms
+ GET /api/subscription/status 200 in 135ms
+ POST /api/attribution/first-touch 200 in 11155ms
+ POST /api/attribution/first-touch 200 in 23167ms
+ POST /api/attribution/first-touch 200 in 23229ms
+ GET /api/subscription/status 200 in 212ms
+Time 2.4729
+ GET /favicon.ico 500 in 115ms
+ GET /api/past-papers/library-outline 200 in 1177ms
+ GET /api/subscription/status 200 in 354ms
+ POST /api/attribution/first-touch 200 in 2006ms
+ GET /api/profile/preferences 401 in 428ms
+ GET /api/subscription/status 200 in 312ms
+ ○ Compiling /icon.png ...
+ ✓ Compiled /icon.png in 619ms (942 modules)
+ GET /api/profile/preferences 401 in 1349ms
+ GET /icon.png?082e9e7c8b5a8de2 200 in 1680ms
+ GET /icon.png?082e9e7c8b5a8de2 200 in 1473ms
+ GET /api/subscription/status 200 in 1282ms
+ GET /api/profile/preferences 401 in 397ms
+ GET /api/subscription/status 200 in 250ms
+ GET /icon.png?082e9e7c8b5a8de2 200 in 430ms
+ GET /icon.png?082e9e7c8b5a8de2 200 in 260ms
+ GET /api/subscription/status 200 in 258ms
+ ○ Compiling /api/past-papers/library-sections ...
+ ✓ Compiled /api/past-papers/library-sections in 844ms (950 modules)
+ GET /api/past-papers/library-sections?paperId=43 200 in 2526ms
+ ✓ Compiled /api/past-papers/sessions in 394ms (910 modules)
+ GET /api/past-papers/sessions?in_progress=true 401 in 824ms
+ GET /api/past-papers/sessions?in_progress=true 401 in 113ms
+ POST /api/past-papers/sessions 401 in 121ms
+ ○ Compiling /past-papers/solve ...
+ ✓ Compiled /past-papers/solve in 4.5s (1947 modules)
+ POST /api/past-papers/sessions 401 in 296ms
+ PATCH /api/past-papers/sessions 401 in 311ms
+ ○ Compiling /_error ...
+ GET /past-papers/library 200 in 1567ms
+ GET /past-papers/library 200 in 1447ms
+ ✓ Compiled /_error in 1914ms (1874 modules)
+Time 8.4894
+Time 1.5608
+ GET /favicon.ico 500 in 33ms
+ ○ Compiling /api/past-papers/library-outline ...
+ ✓ Compiled /api/past-papers/library-outline in 649ms (962 modules)
+ ✓ Compiled (973 modules)
+ GET /api/subscription/status 200 in 1751ms
+ GET /api/profile/preferences 401 in 1678ms
+ GET /icon.png?082e9e7c8b5a8de2 200 in 1873ms
+ GET /icon.png?082e9e7c8b5a8de2 200 in 1833ms
+ GET /api/subscription/status 200 in 221ms
+ GET /api/profile/preferences 401 in 281ms
+ GET /api/subscription/status 200 in 145ms
+ GET /api/subscription/status 200 in 136ms
+ GET /api/past-papers/library-outline 200 in 2493ms
+ ✓ Compiled in 3.7s (945 modules)
+ ✓ Compiled in 2.3s (944 modules)
+ ✓ Compiled in 2.1s (944 modules)
+ ✓ Compiled in 2.1s (944 modules)
+ ✓ Compiled in 1949ms (944 modules)
+ ✓ Compiled in 3.7s (1880 modules)
+ ○ Compiling /api/past-papers/sessions ...
+ ✓ Compiled /api/past-papers/sessions in 637ms (902 modules)
+ PATCH /api/past-papers/sessions 401 in 1294ms
+ POST /api/past-papers/sessions 401 in 1315ms
+ GET /past-papers/library 200 in 1933ms
+ GET /past-papers/library 200 in 1832ms
+ ○ Compiling /api/profile/preferences ...
+ ✓ Compiled /api/profile/preferences in 1333ms (1845 modules)
+Time 6.4531
+ GET /favicon.ico 500 in 1804ms
+ GET /api/profile/preferences 401 in 1848ms
+ GET /api/subscription/status 200 in 1937ms
+ GET /api/profile/preferences 401 in 192ms
+ GET /api/subscription/status 200 in 221ms
+ GET /api/subscription/status 200 in 117ms
+ GET /api/subscription/status 200 in 117ms
+ GET /api/past-papers/library-outline 200 in 2609ms
+ ✓ Compiled in 2.1s (945 modules)
+ ✓ Compiled in 1981ms (945 modules)
+ ✓ Compiled in 1920ms (945 modules)
+ ✓ Compiled in 1816ms (944 modules)
+ ✓ Compiled in 1820ms (944 modules)
+ ✓ Compiled in 1620ms (944 modules)
+ ✓ Compiled /api/past-papers/library-sections in 1630ms (1846 modules)
+ GET /api/past-papers/library-sections?paperId=43 200 in 2169ms
+ GET /api/past-papers/library-sections?paperId=45 200 in 1413ms
+ ✓ Compiled in 2.1s (944 modules)
+ ✓ Compiled in 1872ms (944 modules)
+ ✓ Compiled in 3.1s (944 modules)
+ ✓ Compiled in 2s (944 modules)
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 3.3s (1759 modules)
+ GET /_next/static/css/css-node_modules_next_font_google_target_css-node_modules_next_font_google_target_css.css?v=1787652830693 404 in 4102ms
+ GET /_next/static/css/css-src_styles_globals_css.css?v=1787652830693 404 in 4095ms
+ GET /_next/static/css/css-node_modules_next_font_google_target_css-node_modules_next_font_google_target_css.css?v=1787652835051 404 in 97ms
+ GET /_next/static/css/css-src_styles_globals_css.css?v=1787652835051 404 in 93ms
+ ✓ Compiled in 1925ms (946 modules)
+ GET /_next/static/css/css-node_modules_next_font_google_target_css-node_modules_next_font_google_target_css.css?v=1787652843572 404 in 95ms
+ GET /_next/static/css/css-src_styles_globals_css.css?v=1787652843572 404 in 97ms
+ ✓ Compiled in 1699ms (946 modules)
+ GET /_next/static/css/css-node_modules_next_font_google_target_css-node_modules_next_font_google_target_css.css?v=1787652857171 404 in 77ms
+ GET /_next/static/css/css-src_styles_globals_css.css?v=1787652857171 404 in 78ms
+ ✓ Compiled in 1999ms (946 modules)
+ GET /_next/static/css/css-node_modules_next_font_google_target_css-node_modules_next_font_google_target_css.css?v=1787652859695 404 in 95ms
+ GET /_next/static/css/css-src_styles_globals_css.css?v=1787652859695 404 in 93ms
+ GET /past-papers/library 200 in 268ms
+ GET /past-papers/library 200 in 242ms
+ GET /_next/static/css/css-node_modules_next_font_google_target_css-node_modules_next_font_google_target_css.css?v=1787653143395 404 in 94ms
+ GET /_next/static/css/css-src_styles_globals_css.css?v=1787653143395 404 in 103ms
+ GET /_next/static/chunks/webpack.js?v=1787653143395 404 in 266ms
+ GET /_next/static/chunks/app/past-papers/library/page.js 404 in 231ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 239ms
+ GET /_next/static/chunks/main-app.js?v=1787653143395 404 in 246ms
+ GET /_next/static/chunks/app/layout.js 404 in 222ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 2.7s (1761 modules)
+Time 9.7929
+ GET /favicon.ico 500 in 6925ms
+ ✓ Compiled in 2.1s (944 modules)
+ ✓ Compiled in 1944ms (944 modules)
+ ✓ Compiled in 1938ms (944 modules)
+ ✓ Compiled in 1647ms (944 modules)
+ ✓ Compiled in 1872ms (944 modules)
+ ✓ Compiled in 1934ms (944 modules)
+ ✓ Compiled in 1911ms (944 modules)
+ ✓ Compiled in 1552ms (944 modules)
+ ✓ Compiled in 3.9s (1756 modules)
+ ✓ Compiled in 1949ms (944 modules)
+ ✓ Compiled in 1881ms (944 modules)
+ ✓ Compiled in 6.3s (1758 modules)
+ ✓ Compiled in 2s (1758 modules)
+ ✓ Compiled in 1797ms (945 modules)
+ ✓ Compiled in 1766ms (945 modules)
+ ✓ Compiled in 1977ms (945 modules)
+ ✓ Compiled in 2s (945 modules)
+ ✓ Compiled in 1946ms (945 modules)
+ ✓ Compiled in 1762ms (945 modules)
+ ✓ Compiled in 1729ms (945 modules)
+ ✓ Compiled in 2.2s (1758 modules)
+ ✓ Compiled in 1454ms (945 modules)
+ ✓ Compiled in 1839ms (945 modules)
+ ✓ Compiled in 1868ms (945 modules)
+ ✓ Compiled in 2.1s (945 modules)
+ ✓ Compiled in 2.1s (945 modules)
+ ✓ Compiled in 1561ms (945 modules)
+ ✓ Compiled in 1671ms (945 modules)
+ ✓ Compiled in 755ms (1744 modules)
+ ✓ Compiled in 2.8s (945 modules)
+ ✓ Compiled in 2.2s (945 modules)
+ ✓ Compiled in 2.3s (945 modules)
+ ✓ Compiled in 2.1s (945 modules)
+ ✓ Compiled in 1528ms (945 modules)
+ ✓ Compiled in 1958ms (945 modules)
+ ✓ Compiled in 1784ms (945 modules)
+ ✓ Compiled in 2.2s (945 modules)
+ ✓ Compiled in 1776ms (945 modules)
+ ✓ Compiled in 1859ms (945 modules)
+ ✓ Compiled in 1691ms (945 modules)
+ ✓ Compiled in 1651ms (945 modules)
+ ✓ Compiled in 1803ms (945 modules)
+ ✓ Compiled in 1865ms (945 modules)
+ ✓ Compiled in 1718ms (945 modules)
+ ✓ Compiled in 1677ms (945 modules)
+ ✓ Compiled in 1687ms (945 modules)
+ ✓ Compiled in 1775ms (945 modules)
+ ✓ Compiled in 1889ms (945 modules)
+ ✓ Compiled in 1822ms (945 modules)
+ ✓ Compiled in 1833ms (945 modules)
+ ✓ Compiled in 1991ms (945 modules)
+ ✓ Compiled in 2s (945 modules)
+ ✓ Compiled in 1979ms (945 modules)
+ ✓ Compiled in 1859ms (945 modules)
+ ✓ Compiled in 2s (945 modules)
+ ✓ Compiled in 1931ms (945 modules)
+ ✓ Compiled in 1711ms (945 modules)
+ ✓ Compiled in 1878ms (945 modules)
+ ✓ Compiled in 1671ms (945 modules)
+ ✓ Compiled in 1708ms (945 modules)
+ ✓ Compiled in 1631ms (945 modules)
+ ✓ Compiled in 1625ms (945 modules)
+ ✓ Compiled in 1840ms (945 modules)
+ ✓ Compiled in 1532ms (945 modules)
+ ✓ Compiled in 1519ms (945 modules)
+ ✓ Compiled in 2s (945 modules)
+ ✓ Compiled in 1768ms (945 modules)
+ ✓ Compiled in 1714ms (945 modules)
+ ✓ Compiled in 1656ms (945 modules)
+ ✓ Compiled in 1810ms (945 modules)
+ ✓ Compiled in 7.7s (1768 modules)
+ ✓ Compiled in 5.8s (1768 modules)
+ ✓ Compiled in 1994ms (1768 modules)
+ ✓ Compiled in 1946ms (1768 modules)
+ ✓ Compiled in 1893ms (950 modules)
+ ✓ Compiled in 4s (975 modules)
+ ✓ Compiled in 3s (1793 modules)
+ ✓ Compiled in 2s (1793 modules)
+ ✓ Compiled in 1902ms (1793 modules)
+ ✓ Compiled in 1745ms (975 modules)
+ ✓ Compiled in 1774ms (975 modules)
+ ✓ Compiled in 1486ms (975 modules)
+ ✓ Compiled in 1708ms (975 modules)
+ ✓ Compiled in 4.3s (1793 modules)
+ ✓ Compiled in 2.6s (1779 modules)
+ ✓ Compiled in 913ms (1779 modules)
+ ✓ Compiled in 4.6s (1793 modules)
+ ✓ Compiled in 1952ms (1793 modules)
+ ✓ Compiled in 2.5s (1793 modules)
+ ✓ Compiled in 2.2s (975 modules)
+ ✓ Compiled in 1861ms (975 modules)
+ ✓ Compiled in 1811ms (975 modules)
+ ✓ Compiled in 2.6s (1793 modules)
+ ✓ Compiled in 1903ms (1793 modules)
+ ✓ Compiled in 1870ms (1793 modules)
+ ✓ Compiled in 1889ms (1793 modules)
+ ✓ Compiled in 2.8s (975 modules)
+ ✓ Compiled in 2.5s (975 modules)
+ ✓ Compiled in 1849ms (975 modules)
+ ✓ Compiled in 6.1s (1793 modules)
+ ✓ Compiled in 2.4s (1793 modules)
+ ✓ Compiled in 1982ms (975 modules)
+ ✓ Compiled in 887ms (1779 modules)
+ ✓ Compiled in 1733ms (975 modules)
+ ✓ Compiled in 2.1s (1793 modules)
+ ✓ Compiled in 1788ms (975 modules)
+ ✓ Compiled in 2.1s (1793 modules)
+ ✓ Compiled in 2.1s (1793 modules)
+ ✓ Compiled in 2s (1793 modules)
+ ✓ Compiled in 2.1s (975 modules)
+ ✓ Compiled in 1838ms (975 modules)
+ ✓ Compiled in 4s (1793 modules)
+ ✓ Compiled in 811ms (1779 modules)
+ ✓ Compiled in 1640ms (975 modules)
+ ✓ Compiled in 1485ms (975 modules)
+ ✓ Compiled in 1624ms (975 modules)
+ ✓ Compiled in 1568ms (975 modules)
+ ✓ Compiled in 1776ms (975 modules)
+ ✓ Compiled in 1841ms (975 modules)
+ ✓ Compiled in 2.3s (975 modules)
+ ✓ Compiled in 1880ms (975 modules)
+ ✓ Compiled in 2.1s (975 modules)
+ ✓ Compiled in 1794ms (975 modules)
+ ✓ Compiled in 2s (975 modules)
+ ✓ Compiled in 1981ms (975 modules)
+ ✓ Compiled in 2s (975 modules)
+ ✓ Compiled in 1800ms (975 modules)
+ ✓ Compiled in 2.9s (975 modules)
+ ✓ Compiled in 2s (975 modules)
+ ✓ Compiled in 1801ms (975 modules)
+ ✓ Compiled in 4.2s (975 modules)
+ ✓ Compiled in 2.2s (975 modules)
+ ✓ Compiled in 2s (975 modules)
+ ✓ Compiled in 1737ms (975 modules)
+ ✓ Compiled in 3.3s (975 modules)
+ ✓ Compiled in 1809ms (975 modules)
+ ✓ Compiled in 1772ms (975 modules)
+ ✓ Compiled in 2.2s (975 modules)
+ ✓ Compiled in 1802ms (975 modules)
+ ✓ Compiled in 2.2s (975 modules)
+ ✓ Compiled in 1972ms (975 modules)
+ ✓ Compiled in 2.3s (975 modules)

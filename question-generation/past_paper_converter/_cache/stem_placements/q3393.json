@@ -1,0 +1,40 @@
+{
+  "questionId": 3393,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 4,
+  "stemBlocks": [
+    "Four identical springs are arranged as shown and suspended from a support.\nThe mass of the springs, rod and hook are negligible.\nA load of weight 8.4 N is attached to the hook at the lower end of the springs and this causes a total extension of the system of 24 mm.\nThe arrangement is then changed to:\nThe load of 8.4 N is attached to the bottom of the lower spring.",
+    "What is the total extension of the system at equilibrium in the second arrangement?",
+    "(The springs obey Hooke's law.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "First spring arrangement",
+      "role": "stem_diagram"
+    },
+    {
+      "id": "d2",
+      "alt": "Second spring arrangement",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.9
+    },
+    {
+      "assetId": "d2",
+      "insertAfterBlock": 1,
+      "confidence": 0.6
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.021781+00:00",
+  "sourceImageHash": "9f9e5152ea4554dc4e0b2fa3f0824ea508f523508db19627c0a303e7f7e46a47",
+  "status": "ok"
+}

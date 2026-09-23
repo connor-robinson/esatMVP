@@ -1,0 +1,29 @@
+{
+  "questionId": 1812,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 19,
+  "stemBlocks": [
+    "A thin rectangular sheet of metal 10m by 5m is made into an open ended cylinder by joining the edges $PS$ and $QR$.\nThe height of the cylinder is 10 m.",
+    "What is the volume, in cubic metres, enclosed by this cylinder?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 2,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:23:52.613275+00:00",
+  "sourceImageHash": "72b17a24c6ae5cf325261736fcfdea0e675f368e31d884aebc4fcf0d47f3d739",
+  "status": "ok"
+}

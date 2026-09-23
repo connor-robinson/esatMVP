@@ -1,0 +1,30 @@
+{
+  "questionId": 2889,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 70,
+  "stemBlocks": [
+    "Some students collected data using a belt transect on a beach and recorded the results in a kite diagram. The shading represents the number of individuals present at each point along the belt transect. The wider the shading in the vertical direction, the larger the number of individuals present. The vertical scale is the same for all species. The six species shown were the only ones present. Data was recorded every 5 m along the belt transect.",
+    "Which of the following statements is/are correct?",
+    "1 The sampling site with the highest number of different species is at 35 m.\n2 The abundance of species T, V and W is the same.\n3 At a distance of 5 m, species Q is the only species present."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.399401+00:00",
+  "sourceImageHash": "a28d31aea9a9c3b8c02b059c38c22a9acd9cd9660841908852b1d0934b0678de",
+  "status": "ok"
+}

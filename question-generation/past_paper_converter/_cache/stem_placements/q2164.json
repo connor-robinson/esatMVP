@@ -1,0 +1,28 @@
+{
+  "questionId": 2164,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 9,
+  "stemBlocks": [
+    "The right-angled triangle shown has horizontal and vertical sides measuring $(4 + \\sqrt{2})$ cm and $(2 - \\sqrt{2})$ cm respectively.\nCalculate the area of the triangle."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:37:46.624892+00:00",
+  "sourceImageHash": "f91615f3cff173f4007a6568beaff54ed09dc8ecd6dbd8c2af7c7cbf7948da0e",
+  "status": "ok"
+}

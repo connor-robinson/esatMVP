@@ -1,0 +1,246 @@
+{
+  "exportedAt": "2026-08-24T11:31:15.667250Z",
+  "paperId": 40,
+  "count": 2,
+  "conversions": [
+    {
+      "id": "65784d3b-2a4b-4a61-9f25-cb3b9d90c84e",
+      "questionId": 2121,
+      "status": "auto_approved",
+      "questionStem": "A spring is initially unstretched. A force $F$ is used to stretch the spring. The extension $x$ and the energy $E$ stored in the stretched spring are measured for different values of $F$.\nThe graph shows how the energy $E$, in J, varies with the extension squared, $x^2$, in cm$^2$.\nWhat is the magnitude of $F$ when the spring stores $0.015$ J of energy?\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2121/diagram_1.png\" alt=\"diagram not to scale\" /></figure>",
+      "options": {
+        "A": "0.30 N",
+        "B": "0.60 N",
+        "C": "1.2 N",
+        "D": "1.5 N",
+        "E": "2.4 N",
+        "F": "3.0 N",
+        "G": "30 N",
+        "H": "60 N"
+      },
+      "diagramAssets": [
+        {
+          "id": "d1",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2121/diagram_1.png",
+          "position": "before_options",
+          "bbox_norm": [
+            0.22141560798548093,
+            0.1674454828660436,
+            0.6448880822746521,
+            0.3294392523364486
+          ],
+          "bbox_norm_raw": [
+            0.302,
+            0.228,
+            0.484,
+            0.178
+          ],
+          "crop_diagnostics": {
+            "crop_size": [
+              1066,
+              423
+            ],
+            "bbox_valid": true,
+            "cutoff_risk": false,
+            "risky_edges": [],
+            "source_size": [
+              1653,
+              1284
+            ],
+            "bbox_norm_raw": [
+              0.302,
+              0.228,
+              0.484,
+              0.178
+            ],
+            "bbox_norm_final": [
+              0.22141560798548093,
+              0.1674454828660436,
+              0.6448880822746521,
+              0.3294392523364486
+            ],
+            "edge_expansions": 1,
+            "edge_ink_ratios": {
+              "top": 0.0,
+              "left": 0.0,
+              "right": 0.0,
+              "bottom": 0.0
+            },
+            "bbox_norm_padded": [
+              0.22199999999999998,
+              0.168,
+              0.644,
+              0.298
+            ]
+          }
+        }
+      ],
+      "detectedQuestionNumber": 6,
+      "optionLetters": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H"
+      ],
+      "confidence": 0.99,
+      "conversionReport": {
+        "blurry": false,
+        "blur_score": 1237.4955470659772,
+        "ai_provider": "vertex_ai",
+        "has_diagram": true,
+        "diagram_type": "graph",
+        "katex_errors": [],
+        "extra_options": false,
+        "diagram_source": "cropped_original",
+        "low_confidence": false,
+        "missing_options": false,
+        "diagram_reviewed": false,
+        "diagram_generated": false,
+        "diagram_confidence": 0.99,
+        "image_fetch_failed": false,
+        "diagram_crop_failed": false,
+        "answer_letter_missing": false,
+        "diagram_review_status": "available_for_review",
+        "has_graphical_options": false,
+        "wrong_question_number": false,
+        "diagram_classification": "diagram",
+        "diagram_detection_mismatch": false,
+        "diagram_classification_uncertain": false
+      },
+      "sourceImageUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2023-section-1-official/q006.png",
+      "examName": "ENGAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "paperId": 40,
+      "questionNumber": 6
+    },
+    {
+      "id": "7e38cbde-8dd6-43bf-86c2-755e91d7648a",
+      "questionId": 2119,
+      "status": "auto_approved",
+      "questionStem": "A circuit is set up as shown. All three resistors are identical.\nWhen the switch is open, the reading on the ammeter is $1.0\\text{ A}$ and the power transferred from the battery is $1.0\\text{ W}$.\nThe switch is now closed.\nWhat is the new reading on the ammeter and what is the new power transferred from the battery?\n\n<figure class=\"qg-diagram\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2119/diagram_1.png\" alt=\"diagram not to scale\" /></figure>",
+      "options": {
+        "A": "ammeter reading $0.67\\text{ A}$, power transferred $0.67\\text{ W}$",
+        "B": "ammeter reading $0.67\\text{ A}$, power transferred $1.3\\text{ W}$",
+        "C": "ammeter reading $0.67\\text{ A}$, power transferred $1.5\\text{ W}$",
+        "D": "ammeter reading $0.67\\text{ A}$, power transferred $2.0\\text{ W}$",
+        "E": "ammeter reading $1.0\\text{ A}$, power transferred $1.0\\text{ W}$",
+        "F": "ammeter reading $1.0\\text{ A}$, power transferred $1.5\\text{ W}$",
+        "G": "ammeter reading $1.0\\text{ A}$, power transferred $2.0\\text{ W}$",
+        "H": "ammeter reading $1.0\\text{ A}$, power transferred $3.0\\text{ W}$"
+      },
+      "diagramAssets": [
+        {
+          "id": "d1",
+          "alt": "diagram not to scale",
+          "url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2119/diagram_1.png",
+          "position": "before_options",
+          "bbox_norm": [
+            0.2577132486388385,
+            0.13790760869565216,
+            0.6926799758015729,
+            0.23505434782608695
+          ],
+          "bbox_norm_raw": [
+            0.338,
+            0.196,
+            0.532,
+            0.146
+          ],
+          "crop_diagnostics": {
+            "crop_size": [
+              1145,
+              346
+            ],
+            "bbox_valid": true,
+            "cutoff_risk": false,
+            "risky_edges": [],
+            "source_size": [
+              1653,
+              1472
+            ],
+            "bbox_norm_raw": [
+              0.338,
+              0.196,
+              0.532,
+              0.146
+            ],
+            "bbox_norm_final": [
+              0.2577132486388385,
+              0.13790760869565216,
+              0.6926799758015729,
+              0.23505434782608695
+            ],
+            "edge_expansions": 0,
+            "edge_ink_ratios": {
+              "top": 0.0,
+              "left": 0.0,
+              "right": 0.0,
+              "bottom": 0.0
+            },
+            "bbox_norm_padded": [
+              0.258,
+              0.136,
+              0.6920000000000001,
+              0.266
+            ],
+            "whitespace_margin": 18,
+            "vertical_trim_pixels": [
+              3,
+              43
+            ],
+            "vertical_trim_applied": true,
+            "whitespace_bridge_radius": 18
+          }
+        }
+      ],
+      "detectedQuestionNumber": 4,
+      "optionLetters": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H"
+      ],
+      "confidence": 0.98,
+      "conversionReport": {
+        "blurry": false,
+        "blur_score": 1981.9867093536384,
+        "ai_provider": "vertex_ai",
+        "has_diagram": true,
+        "diagram_type": "circuit",
+        "katex_errors": [],
+        "extra_options": false,
+        "diagram_source": "cropped_original",
+        "low_confidence": false,
+        "missing_options": false,
+        "diagram_reviewed": false,
+        "diagram_generated": false,
+        "diagram_confidence": 0.98,
+        "image_fetch_failed": false,
+        "diagram_crop_failed": false,
+        "answer_letter_missing": false,
+        "diagram_review_status": "available_for_review",
+        "has_graphical_options": false,
+        "wrong_question_number": false,
+        "diagram_classification": "diagram",
+        "diagram_detection_mismatch": false,
+        "diagram_classification_uncertain": false
+      },
+      "sourceImageUrl": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2023-section-1-official/q004.png",
+      "examName": "ENGAA",
+      "examYear": 2023,
+      "paperName": "Section 1",
+      "paperId": 40,
+      "questionNumber": 4
+    }
+  ]
+}

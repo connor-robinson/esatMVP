@@ -1,0 +1,100 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_a9a3eea7",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Medium",
+    "idea_summary": "Compare the terminal velocities of the same object falling through two different fluids to find the object's density in terms of the fluid density.",
+    "schema_invariant": {
+      "core_move": "Apply Newton's first law (Weight = Upthrust + Drag) at terminal velocity, expanding weight and upthrust in terms of density.",
+      "what_must_not_change": [
+        "Object reaching terminal velocity",
+        "Drag force model dependent on velocity",
+        "Upthrust dependent on fluid density"
+      ],
+      "what_can_change": [
+        "The unknown variable being solved for",
+        "Number of scenarios compared",
+        "Whether the given values are absolute or proportional"
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "proportional_reasoning",
+      "reasoning_hinge": "Setting up the force balance for both fluid scenarios and taking the ratio of the two equations to eliminate the unknown drag constant and object volume.",
+      "why_top_students_win": "They construct the full equilibrium equation (kv = Weight - Upthrust) for both cases, correctly substituting fluid density for upthrust, and divide them to find the object's density.",
+      "why_mid_students_miss": "They may forget the upthrust term entirely, or incorrectly assume terminal velocity is inversely proportional to fluid density without accounting for the subtractive upthrust term."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Newton's First Law at terminal velocity (Net force = 0).",
+      "supporting_idea_if_any": "Archimedes' principle (Upthrust = fluid density * volume * g).",
+      "estimated_solution_steps": 3,
+      "number_of_core_physics_principles": 2,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 3,
+      "must_include": [
+        "model_selection",
+        "proportional_comparison",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "Preserves the core requirement to balance weight, buoyancy, and drag, but elevates it to Medium by requiring a comparison between two states rather than a single direct calculation.",
+    "task_signature": "compare_scenarios",
+    "tool_footprint": [
+      "force_balance",
+      "archimedes_principle",
+      "ratio_reasoning"
+    ],
+    "primary_tag": "3",
+    "secondary_tags": [
+      "4"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "Instead of providing all parameters to calculate a single terminal velocity, it gives the relative terminal velocities in two different fluids to find the object's density.",
+    "why_still_on_spec": "Force balance, terminal velocity, and upthrust are standard ESAT topics. Comparing two scenarios to eliminate constants is a standard mathematical technique expected at this level.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Ignoring upthrust entirely, assuming Drag = Weight.",
+        "distractor_role": "Leads to a contradictory or impossible result, or a specific incorrect ratio if they try to force a relationship."
+      },
+      {
+        "mistake": "Calculating upthrust using the object's density instead of the fluid's density.",
+        "distractor_role": "Produces an incorrect algebraic relationship, leading to a wrong multiple for the density."
+      },
+      {
+        "mistake": "Assuming terminal velocity scales linearly or inversely with fluid density without setting up the force balance.",
+        "distractor_role": "Leads to a tempting but physically baseless simple fraction."
+      }
+    ],
+    "difficulty_rationale": "It requires synthesizing the correct physical model (including the often-forgotten upthrust) and applying it twice. The algebra is clean if the ratio is taken, punishing candidates who try to plug in arbitrary numbers or use shallow proportionality rules.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "The candidate must construct the force balance equation themselves and realize they need to divide two instances of it to eliminate unknowns; there is no single formula to plug into."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The final answer is a clean integer or simple fractional multiple of the fluid density, making it perfect for a set of plausible multiple-choice options."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

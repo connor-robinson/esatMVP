@@ -1,0 +1,30 @@
+{
+  "questionId": 3385,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 56,
+  "stemBlocks": [
+    "A student investigated the effect of increasing the size of an agar (a jelly-like substance) cube on its efficiency to absorb and distribute a blue dye.\nTwo agar cubes were prepared, one with side lengths of 1 cm and the other with side lengths of 3 cm. They were put in a solution of blue dye for 30 minutes.\nThe cubes were then removed from the dye and cut in half to measure the penetration of the dye into the agar.\nIn the 3 cm cube the dye had penetrated to a depth of 0.75 cm. The cross section of this cube is shown:\nWhen the cube with sides of 1 cm was cut in half, all the agar had been penetrated with the dye.",
+    "Which row is correct for this investigation?",
+    "|  | percentage of the volume of the 3 cm cube penetrated by the dye | change in surface area : volume ratio as cube size increases | process(es) to describe the movement of the blue dye into the cube |\n| --- | --- | --- | --- |\n| A | 12.5 | increases | active transport and osmosis |\n| B | 75.0 | increases | diffusion and osmosis |\n| C | 87.5 | decreases | diffusion only |\n| D | 12.5 | decreases | diffusion and osmosis |\n| E | 75.0 | decreases | diffusion only |\n| F | 87.5 | increases | diffusion and osmosis |\n| G | 75.0 | increases | active transport and osmosis |\n| H | 87.5 | decreases | active transport and osmosis |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "[diagram not to scale]",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:10.881822+00:00",
+  "sourceImageHash": "d6fdee1d036cfbbfc6815bdc2015a2ccdee0b603a2021d01152a21a551378ab8",
+  "status": "ok"
+}

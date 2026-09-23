@@ -1,0 +1,28 @@
+{
+  "questionId": 1924,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 23,
+  "stemBlocks": [
+    "The vertical height $h$ cm of an isosceles triangle is 3 cm longer than the base length of $b$ cm.\nThe sloping side is of length $s$ cm.\nThe area of the triangle is 14 cm$^2$.\nThere is one value of $s$ which satisfies these conditions.\nWithin which range does this value of $s$ lie?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:28:14.900541+00:00",
+  "sourceImageHash": "ab71feb1b65027af20e55d9ea30a68ce2f5617d573d26d09a63732ac8d42a491",
+  "status": "ok"
+}

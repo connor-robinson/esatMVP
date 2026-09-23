@@ -1,0 +1,29 @@
+{
+  "questionId": 3185,
+  "examName": "ENGAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 16,
+  "stemBlocks": [
+    "The diagram shows a circuit that includes two batteries, each with negligible internal resistance.",
+    "What is the reading on the ammeter?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:46:58.367390+00:00",
+  "sourceImageHash": "c5f9004d77e1676583d9b2c52734eb5eb0ad397275802316c12ea956edeea391",
+  "status": "ok"
+}

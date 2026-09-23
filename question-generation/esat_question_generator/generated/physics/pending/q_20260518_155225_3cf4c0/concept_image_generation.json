@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260518_155225_3cf4c0\\assets\\concept_image_v1.png",
+    "bytes": 317822,
+    "model": "imagen-4.0-ultra-generate-001",
+    "aspect_ratio": "4:3",
+    "seed": null,
+    "duration_s": 13.779
+  },
+  "prompt_used": "A simple, professional monochrome physics exam diagram on a pure white #FFFFFF background. The image shows two horizontal cylindrical wires, one positioned above the other. The top wire is a simple cylinder outline. The bottom wire is another cylinder outline that is visibly longer and thicker than the top one. Label 'X' is placed just to the left of the top wire, with no leader line. Label 'Y' is placed just to the left of the bottom wire, with no leader line. The cylinders are drawn as simple 2D outlines with elliptical ends to indicate their cylindrical shape. No extra arrows, no dimensions, no shading, and no background details. The style must be clean, minimal black line art with Times New Roman-like serif font for the labels.",
+  "public_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_155225_3cf4c0/concept_image_v1.png"
+}

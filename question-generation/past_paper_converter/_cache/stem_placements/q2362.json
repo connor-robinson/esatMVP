@@ -1,0 +1,28 @@
+{
+  "questionId": 2362,
+  "examName": "NSAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 63,
+  "stemBlocks": [
+    "The diagram shows the tip of a plant shoot, with two areas labelled P and Q. A student wrote the following statements to explain the growth of this shoot:\n1 Cells at P are smaller than the cells at Q.\n2 Concentration of plant hormone is higher at Q than P.\n3 Unidirectional light has caused a change in the concentration of plant hormone at P.\nWhich of the student's statements, if any, could be correct?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:25:34.728370+00:00",
+  "sourceImageHash": "5edeb2b26177687a128f8313ab8e93d4b1ae8e1b1bce167b1c45874ce2fdc93b",
+  "status": "ok"
+}

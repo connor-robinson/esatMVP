@@ -1,0 +1,28 @@
+{
+  "questionId": 2999,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 20,
+  "stemBlocks": [
+    "A cross-country running track is in the shape of a regular pentagon.\nCompetitors run clockwise around the track.\nWhen on the third leg of the course they run on a bearing of $110^\\circ$.\nWhat bearing do they run on for the first leg?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:15.955581+00:00",
+  "sourceImageHash": "2ec27b412ea4009110f2e7709e7912ce7e08f685dc2cb420556c2a1fce467b60",
+  "status": "ok"
+}

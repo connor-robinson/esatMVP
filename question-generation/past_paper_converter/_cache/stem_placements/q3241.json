@@ -1,0 +1,43 @@
+{
+  "questionId": 3241,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 32,
+  "stemBlocks": [
+    "A paper coffee cup is lined with a thin layer of plastic to make it waterproof.",
+    "This plastic makes up 5% of the mass of the cup and has the following molecular structure. 960 $dm^3$ of a gaseous hydrocarbon monomer (measured at room temperature and pressure) was used to make a certain number of plastic-lined cups.",
+    "It is proposed that a more environmentally-friendly, biodegradable plastic, poly(lactic acid), could be used instead in the same proportions by mass (5\\%).",
+    "Assume that any polymerisation reaction has a 100\\% yield.",
+    "What mass of lactic acid ($M_r = 90$) is required to make the same number of biodegradable cups? ($A_r$ values: H = 1; C = 12; O = 16.",
+    "Assume that one mole of a gas occupies 24 $dm^3$ at room temperature and pressure.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "molecular structure of the plastic lining",
+      "role": "stem_diagram"
+    },
+    {
+      "id": "d2",
+      "alt": "lactic acid",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    },
+    {
+      "assetId": "d2",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T17:17:27.281844+00:00",
+  "sourceImageHash": "e5cbb08614cccb75ce77b76a53cb16cc13f5e5ad8daf0c8f81ac10f0631a4fae",
+  "status": "ok"
+}

@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260518_154835_215019\\assets\\concept_image_v1.png",
+    "bytes": 281529,
+    "model": "imagen-4.0-ultra-generate-001",
+    "aspect_ratio": "4:3",
+    "seed": null,
+    "duration_s": 11.729
+  },
+  "prompt_used": "A brutally simple physics diagram illustrating two objects in motion. Two identical circles (representing spheres) are drawn side-by-side with generous horizontal spacing. The left circle contains the label X centered inside it. The right circle contains the label Y centered inside it. From the right edge of each circle, a simple straight horizontal arrow points to the right to indicate motion. The arrows should be the same length. The image is illustrative only and not answer-bearing. Style: professional monochrome admissions-test diagram. Use clean black vector-like strokes on a pure white #FFFFFF background. The labels X and Y must be in a Times New Roman-like serif font. No other labels, no extra arrows, no shading, no 3D rendering, and no background clutter.",
+  "public_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_154835_215019/concept_image_v1.png"
+}

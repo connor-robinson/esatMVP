@@ -1,0 +1,53 @@
+{
+  "stage": "verifier",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "A",
+    "independent_solution": {
+      "main_law_or_principle": "Newton's First Law at terminal velocity: Weight = Upthrust + Drag.",
+      "calculation_or_logic": "Let $V$ be the volume of the spheres and $\\rho$ be the fluid density. The weight $W = \\rho_{obj}Vg$ and upthrust $U = \\rho Vg$. Terminal velocity $v$ satisfies $kv = W - U = Vg(\\rho_{obj} - \\rho)$. For sphere X: $kv_0 = Vg(5\\rho - \\rho) = 4\\rho Vg$. For sphere Y: $kv_Y = Vg(4\\rho - \\rho) = 3\\rho Vg$. Dividing the two equations: $v_Y / v_0 = (3\\rho Vg) / (4\\rho Vg) = 3/4$. Thus, $v_Y = 3/4 v_0$.",
+      "verified_answer_value": "A",
+      "claimed_answer_value": "A",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Force balance at terminal velocity",
+        "Archimedes' principle for upthrust",
+        "Density-volume-mass relationship",
+        "Proportional reasoning"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "derived_relationship_audit": {
+      "requires_nontrivial_derivation": false,
+      "number_of_linked_relationships": 0,
+      "relationships_given_in_stem": [],
+      "safe_for_esat": true
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a",
+      "derived_relationship_safety": "pass"
+    },
+    "notes": [
+      "The question is a standard application of terminal velocity physics and proportional reasoning, well within ESAT scope."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

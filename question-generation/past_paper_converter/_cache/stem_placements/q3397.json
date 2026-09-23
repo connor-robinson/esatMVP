@@ -1,0 +1,28 @@
+{
+  "questionId": 3397,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 8,
+  "stemBlocks": [
+    "Three identical bar magnets, each of mass $m$, and two identical trolleys, X and Y, also each of mass $m$, are arranged with the bar magnets fixed to the trolleys as shown. The trolleys are held at rest a short distance apart on a smooth horizontal track.\nThe trolleys are released at the same time. They move towards each other and collide.\nFind the value of the ratio\n$$\\frac{\\text{kinetic energy of X immediately before collision}}{\\text{kinetic energy of Y immediately before collision}}$$"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.034913+00:00",
+  "sourceImageHash": "7d6a43021ae023233610e8575c571a4152f40f518214d122671d4a23f3cf028c",
+  "status": "ok"
+}

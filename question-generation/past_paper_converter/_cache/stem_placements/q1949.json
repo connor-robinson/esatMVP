@@ -1,0 +1,29 @@
+{
+  "questionId": 1949,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 48,
+  "stemBlocks": [
+    "A pendulum bob of mass 10 g is suspended by a light, inextensible string of length 50 cm. The bob is released from rest at position X.",
+    "What is the speed of the bob as it passes through position Y? (gravitational field strength $g = 10 \\text{ N kg}^{-1}$; assume that resistive forces are negligible)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:28:14.919537+00:00",
+  "sourceImageHash": "438732abb5d2d6560a0b9f6f6c77951a5e25d7324a7d29b0f30ed971479832fd",
+  "status": "ok"
+}

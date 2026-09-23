@@ -1,0 +1,30 @@
+{
+  "questionId": 3322,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 53,
+  "stemBlocks": [
+    "Sex determination in cows is identical to that in humans. To maximise productivity, dairy farmers want their cows to have female calves only.\nSperm cells can be sorted using their DNA content. This method is used to ensure the sex of calves born to dairy cows following artificial insemination. The method used is described below:\n* The sperm cells are treated with a DNA binding dye.\n* The greater the DNA content, the brighter the binding dye fluoresces.\n* The brighter sperm cells are given a positive charge and the remaining sperm cells are given a negative charge.\n* The charged sperm cells pass through a pair of charged plates and are attracted to the plate with the opposite charge.\n* The sperm cells are collected in beakers below the plates.\nAssume that all the separated sperm cells are alive and capable of fertilisation, no mutations have occurred, and the method of separation is 100% efficient.",
+    "Which of the following statements is/are correct?",
+    "1 Sperm cells in beaker V have fewer chromosomes.\n2 For maximum productivity, dairy farmers should only use positively charged sperm cells.\n3 The chance of obtaining a female calf using sperm cells from beaker W will be double that of using unseparated sperm cells."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Diagram showing the process of sperm cell separation based on DNA content and charge.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:13.303286+00:00",
+  "sourceImageHash": "9f00bb80bda97a5eac32a4eb1eb2ed942633333317708a3afee1fab758b7cbd1",
+  "status": "ok"
+}

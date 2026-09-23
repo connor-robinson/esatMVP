@@ -1,0 +1,28 @@
+{
+  "questionId": 2369,
+  "examName": "NSAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 70,
+  "stemBlocks": [
+    "The graph shows how a number of factors vary with the distance down a river, after a source of pollution flowed in. (Assume the oxygen concentration is changing only based on the species present in the river.) Which one of the statements below can be correctly concluded from the graph?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A graph showing the variation of oxygen, fish, algae, and bacteria quantities with distance downstream after pollution, with labeled points 1-5.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:25:34.741495+00:00",
+  "sourceImageHash": "bc823b1e100f2ded03050453a052c5f9401378d2d4cb40cdceac572f0e9bcf8d",
+  "status": "ok"
+}

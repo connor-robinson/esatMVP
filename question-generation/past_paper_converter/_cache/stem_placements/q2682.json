@@ -1,0 +1,29 @@
+{
+  "questionId": 2682,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 23,
+  "stemBlocks": [
+    "A water wave is travelling in a shallow tank of water. The wave passes from region X into region Y where the speed of the wave differs from that in region X. The diagram shows the directions of travel in the two regions and peaks of the wave that are separated by one wavelength.\nIn region X, the angle between the wave peaks and the boundary between the regions is $\\theta$.\nIn region Y, the angle between the wave peaks and the boundary is $\\phi$.\nWhat are the angle of incidence and the angle of refraction, and in which region is the speed of the wave greater?",
+    "|  | angle of incidence | angle of refraction | speed greater in region |\n| --- | --- | --- | --- |\n| A | $\\theta$ | $\\phi$ | X |\n| B | $\\theta$ | $\\phi$ | Y |\n| C | $\\theta$ | $90^\\circ - \\phi$ | X |\n| D | $\\theta$ | $90^\\circ - \\phi$ | Y |\n| E | $90^\\circ - \\theta$ | $\\phi$ | X |\n| F | $90^\\circ - \\theta$ | $\\phi$ | Y |\n| G | $90^\\circ - \\theta$ | $90^\\circ - \\phi$ | X |\n| H | $90^\\circ - \\theta$ | $90^\\circ - \\phi$ | Y |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:58.184704+00:00",
+  "sourceImageHash": "7b7cd4c0ce6f5a67fc81de32002976fdf12dac5f1ec42d7402760c1ac864e326",
+  "status": "ok"
+}

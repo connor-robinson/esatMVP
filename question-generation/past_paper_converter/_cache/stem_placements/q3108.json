@@ -1,0 +1,29 @@
+{
+  "questionId": 3108,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 2",
+  "questionNumber": 17,
+  "stemBlocks": [
+    "Oil of density $800 \\text{ kg m}^{-3}$ is pumped through a pipe of circular cross-sectional area $0.60 \\text{ m}^2$ at a speed of $5.0 \\text{ m s}^{-1}$. Between X and Y, the cross-sectional area of the pipe decreases to $0.25 \\text{ m}^2$.",
+    "What is the resultant force exerted on the oil as it passes from X to Y?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:40:49.365783+00:00",
+  "sourceImageHash": "363f6597e687d0e2eb120a88e2197a20cd3df62e18e7bb8bea1ae22bca666f96",
+  "status": "ok"
+}

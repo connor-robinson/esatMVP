@@ -1,0 +1,30 @@
+{
+  "questionId": 2865,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 46,
+  "stemBlocks": [
+    "Three samples of calcium of different masses were added separately to excess dilute hydrochloric acid and the volume of gas released, measured at room temperature and pressure, was monitored.\nOne sample was powdered calcium, one was granules of calcium, and one was a solid piece of calcium.\nThe results are shown on the graph.",
+    "What is the mass of powdered calcium used in this experiment?",
+    "($A_r$ value: Ca = 40. Assume that one mole of gas occupies a volume of $24 \\text{ dm}^3$ at room temperature and pressure.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.376328+00:00",
+  "sourceImageHash": "6cd735602b9e58861d674c6c2a43643a16ccd3b76987073b7ad53939b9eccbe0",
+  "status": "ok"
+}

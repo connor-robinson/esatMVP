@@ -1,0 +1,98 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_3b31da9d",
+    "module": "physics",
+    "variation_mode": "FAR",
+    "target_difficulty": "Medium",
+    "idea_summary": "A stationary underwater sensor emits a sonar pulse and receives an echo. The student is told the echo has a shorter wavelength and a smaller amplitude than the emitted pulse, and must deduce the direction of the reflecting object's motion and the cause of the amplitude change.",
+    "schema_invariant": {
+      "core_move": "Predicting or interpreting changes in amplitude (due to energy dissipation/spreading) and frequency/wavelength (due to the Doppler effect from relative motion) of a reflected wave.",
+      "what_must_not_change": [
+        "The presence of a reflected wave (echo)",
+        "The simultaneous consideration of amplitude and a frequency/wavelength shift",
+        "Relative motion between the source and the reflector"
+      ],
+      "what_can_change": [
+        "The medium (e.g., water instead of air)",
+        "The knowns and unknowns (e.g., giving the wave properties and asking for the motion, rather than vice versa)",
+        "Asking about wavelength instead of frequency"
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "reverse_inference",
+      "reasoning_hinge": "Linking a shorter wavelength to a higher frequency (since wave speed in the medium is constant), and deducing that a higher frequency means the reflector must be moving towards the sensor.",
+      "why_top_students_win": "They recognize that wave speed depends only on the medium, so a shorter wavelength implies a higher frequency (Doppler blue-shift equivalent), meaning the object is approaching. They also correctly attribute the amplitude drop to energy dissipation/spreading, not the object's motion.",
+      "why_mid_students_miss": "They may confuse the relationship between wavelength and frequency, assuming a shorter wavelength means the object is moving away. Alternatively, they might incorrectly think the amplitude decreased *because* the object is moving away, rather than as a standard property of all echoes."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Doppler effect (qualitative shift due to relative motion).",
+      "supporting_idea_if_any": "Wave equation (v = fλ) and wave energy dissipation.",
+      "estimated_solution_steps": 2,
+      "number_of_core_physics_principles": 2,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 2,
+      "must_include": [
+        "non_obvious_inference",
+        "model_selection"
+      ]
+    },
+    "reference_alignment": "Shifts from a forward-prediction task (given motion, find wave changes) to a reverse-deduction task (given wave changes, find motion), maintaining the same conceptual weight.",
+    "task_signature": "reverse_reasoning",
+    "tool_footprint": [
+      "wave_equation_application",
+      "doppler_shift_direction",
+      "energy_dissipation_recognition"
+    ],
+    "primary_tag": "4",
+    "secondary_tags": [
+      "4.1",
+      "4.3"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "Instead of asking what happens to the frequency of a sound bouncing off a moving wall, it gives the wavelength of an underwater sonar echo and asks the student to work backwards to find the motion of the target.",
+    "why_still_on_spec": "The Doppler effect for sound, the wave equation (v = fλ), and the concept that wave amplitude relates to energy (which dissipates over distance/reflection) are all core ESAT Physics topics.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Assuming a shorter wavelength implies a lower frequency, leading to the conclusion that the object is moving away.",
+        "distractor_role": "Inverts the direction of motion."
+      },
+      {
+        "mistake": "Believing that amplitude only decreases if the object is moving away (associating 'quieter' with 'getting further').",
+        "distractor_role": "Provides a false causal link for the amplitude change."
+      },
+      {
+        "mistake": "Assuming the wave speed in the water decreased upon reflection, causing the shorter wavelength.",
+        "distractor_role": "Tests the misconception that wave speed changes without a change in medium."
+      }
+    ],
+    "difficulty_rationale": "Selective because it requires chaining two qualitative relationships (wavelength -> frequency -> motion direction) without getting confused, while avoiding any tedious calculation. It tests deep understanding of wave invariants.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "There are no numbers to plug in. The candidate must qualitatively reason through the wave equation and the Doppler effect in reverse."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The options naturally form a matrix of combinations: Motion (Towards / Away / Stationary) vs Cause of Amplitude Drop (Energy loss / Motion away / Speed change)."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

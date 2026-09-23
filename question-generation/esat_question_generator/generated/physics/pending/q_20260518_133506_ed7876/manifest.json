@@ -1,0 +1,416 @@
+{
+  "question_id": "q_20260518_133506_ed7876",
+  "subject": "physics",
+  "schema_id": "P_2db4e658",
+  "difficulty": "Hard",
+  "status": "accepted",
+  "failure_gate": null,
+  "failure_reasons": [],
+  "has_visual": false,
+  "visual_type": "none",
+  "answer_depends_on_visual": false,
+  "assets": [],
+  "model_trace": {
+    "designer": "gemini-3.1-pro-preview",
+    "idea_judge": "gemini-3.1-flash-lite",
+    "implementer": "gemini-3.1-pro-preview",
+    "verifier": "gemini-3.1-flash-lite",
+    "style_checker": "gemini-3.1-flash-lite",
+    "visual_router": "gemini-3.1-flash-lite",
+    "tag_labeler": "gemini-2.5-flash"
+  },
+  "retry_counts": {
+    "implementer": 0
+  },
+  "stages": [
+    {
+      "stage": "designer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "schema_id": "P_2db4e658",
+        "module": "physics",
+        "variation_mode": "SIBLING",
+        "target_difficulty": "Hard",
+        "idea_summary": "Two buoys are separated by a known distance (e.g., 3.0 m), which is stated to be between one and two wavelengths. A continuous wave of known frequency (e.g., 2.0 Hz) passes them. Buoy A is at a crest, and a short known time later (e.g., 0.1 s), Buoy B reaches its next crest. The candidate must deduce the wave speed by relating the time delay to a spatial phase shift.",
+        "schema_invariant": {
+          "core_move": "Translate a temporal delay between wave features at two locations into a spatial phase shift (fraction of a wavelength), and use the periodic nature of the wave to find the true wave speed.",
+          "what_must_not_change": [
+            "The need to track a wave feature across space and time.",
+            "The requirement to use the wave's period/frequency to interpret the time delay.",
+            "The presence of an integer-wavelength ambiguity that must be resolved."
+          ],
+          "what_can_change": [
+            "The physical medium (water buoys instead of sound/seismic).",
+            "The specific unknown being asked for (wave speed instead of distance).",
+            "The method of resolving the ambiguity (using a stated boundary condition rather than inference)."
+          ]
+        },
+        "discrimination_mechanism": {
+          "type": "boundary_condition",
+          "reasoning_hinge": "Realising that the time delay represents a fraction of a period, meaning the distance between the buoys is an integer number of wavelengths plus that same fraction of a wavelength.",
+          "why_top_students_win": "They calculate the period (0.5 s), map the 0.1 s delay to 1/5 of a period, conclude the buoys are separated by n + 0.2 wavelengths, use the 'between 1 and 2 wavelengths' constraint to set n=1 (so distance = 1.2λ), and solve for λ and v.",
+          "why_mid_students_miss": "They assume the specific crest at Buoy A takes exactly 0.1 s to travel the entire 3.0 m to Buoy B, completely ignoring the crests already between them, leading directly to the trap answer v = d/t = 30 m/s."
+        },
+        "goldilocks_complexity_audit": {
+          "main_physics_principle": "Wave speed equation (v = fλ).",
+          "supporting_idea_if_any": "Phase difference and periodicity (time delay / period = spatial shift / wavelength).",
+          "estimated_solution_steps": 4,
+          "number_of_core_physics_principles": 2,
+          "requires_derived_relationship": false,
+          "too_easy_risk": "low",
+          "too_hard_risk": "low",
+          "goldilocks_verdict": "good"
+        },
+        "minimum_reasoning_depth": {
+          "steps": 3,
+          "must_include": [
+            "model_selection",
+            "non_obvious_inference",
+            "short_calculation_or_comparison"
+          ]
+        },
+        "reference_alignment": "Maintains the core spatio-temporal tracking of the schema but reframes it using a phase-shift logic and a spatial constraint, perfectly matching the Hard difficulty band without increasing calculation time.",
+        "task_signature": "wave_or_radiation_reasoning",
+        "tool_footprint": [
+          "calculate_period",
+          "map_time_to_phase",
+          "apply_boundary_constraint",
+          "calculate_wave_speed"
+        ],
+        "primary_tag": "4",
+        "secondary_tags": [],
+        "visual_need": "none",
+        "visual_role": "none",
+        "visual_brief": "",
+        "surface_twist": "Instead of directly tracking a single isolated pulse or using standard echo times, the candidate must track a continuous wave and use a spatial constraint (distance is between 1 and 2 wavelengths) to resolve the phase ambiguity.",
+        "why_still_on_spec": "Uses fundamental wave equations (v=fλ, T=1/f) and the definition of a continuous wave, all of which are core to the standard school physics Waves specification.",
+        "constraints_used": [
+          "short condition descriptions only",
+          "no final numbers",
+          "no full equations unless the schema requires them",
+          "no exact geometric diagram dependence",
+          "no multi-law derivation chain"
+        ],
+        "intended_wrong_paths": [
+          {
+            "mistake": "Calculating speed directly as distance over time delay (v = 3.0 / 0.1).",
+            "distractor_role": "Yields 30 m/s. The most common plug-and-chug trap."
+          },
+          {
+            "mistake": "Assuming the distance is exactly one wavelength plus the phase shift, but subtracting the phase instead of adding it (1.0 - 0.2 = 0.8λ).",
+            "distractor_role": "Yields 7.5 m/s. Tests directionality of the wave."
+          },
+          {
+            "mistake": "Ignoring the constraint that the distance is between 1 and 2 wavelengths, and assuming it is simply 0.2λ.",
+            "distractor_role": "Yields 15 m/s. Tests reading of boundary conditions."
+          },
+          {
+            "mistake": "Multiplying frequency by distance directly (v = 2.0 * 3.0).",
+            "distractor_role": "Yields 6.0 m/s. A dimensional mashup trap."
+          }
+        ],
+        "difficulty_rationale": "Selective because it requires the candidate to step back from the v=d/t formula and visualize the continuous wave in space. The arithmetic is extremely simple (e.g., 3.0 / 1.2 = 2.5), meaning the difficulty is purely conceptual and entirely focused on the reasoning hinge.",
+        "anti_plug_and_chug_check": {
+          "would_formula_substitution_alone_solve_it": false,
+          "why_not": "Direct substitution of v = d/t yields a distractor. The candidate must model the wave's spatial periodicity to find the true wavelength before calculating speed."
+        },
+        "mcq_viability": {
+          "viable": true,
+          "reason": "The misinterpretations of the phase shift (ignoring it, subtracting it, or missing the integer wavelength offset) lead to clean, distinct numerical values that serve as excellent distractors."
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-pro-preview",
+      "attempts": 1
+    },
+    {
+      "stage": "idea_judge",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "selectivity_score": 0,
+        "checks": {
+          "schema_preserved": "pass",
+          "on_spec": "pass",
+          "reasoning_hinge_present": "pass",
+          "not_direct_substitution": "pass",
+          "wrong_paths_specific": "pass",
+          "visual_feasible": "pass",
+          "mcq_viable": "pass",
+          "difficulty_match": "pass",
+          "goldilocks_complexity": "pass"
+        },
+        "complexity_audit": {
+          "number_of_core_physics_principles": 2,
+          "estimated_solution_steps": 4,
+          "requires_derived_relationship": false,
+          "uses_multi_topic_chain": false,
+          "goldilocks_verdict": "good"
+        },
+        "reasoning_hinge_summary": "The candidate must recognize that the time delay between crests at two fixed points corresponds to a phase shift, which, when combined with the spatial constraint (1 < λ < 2), allows for the determination of the unique wavelength and subsequent wave speed.",
+        "expected_mid_student_error": "The student will likely treat the time delay as the total travel time for the wave to cover the entire distance between the buoys, ignoring the periodic nature of the wave and the spatial constraint.",
+        "notes": [
+          "The logic is sound and fits the ESAT difficulty profile perfectly.",
+          "The distractor set is well-constructed to catch common conceptual errors rather than arithmetic ones."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "implementer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "metadata": {
+          "schema_id": "P_2db4e658",
+          "module": "physics",
+          "variation_mode": "SIBLING",
+          "target_difficulty": "Hard",
+          "task_signature": "wave_or_radiation_reasoning",
+          "primary_tag": "4",
+          "secondary_tags": []
+        },
+        "question": {
+          "stem": "Two points, A and B, on a long string are separated by a distance of $8.4\\text{ m}$. A continuous transverse wave of frequency $2.0\\text{ Hz}$ travels along the string from A to B.\n\nThe distance between A and B is known to be between one and two wavelengths.\n\nAt time $t = 0$, point A is at a crest. Point B reaches a crest for the first time after $t = 0$ at $t = 0.20\\text{ s}$.\n\nWhat is the speed of the wave?",
+          "options": {
+            "A": "$7.0\\text{ m s}^{-1}$",
+            "B": "$10.5\\text{ m s}^{-1}$",
+            "C": "$12\\text{ m s}^{-1}$",
+            "D": "$16.8\\text{ m s}^{-1}$",
+            "E": "$28\\text{ m s}^{-1}$",
+            "F": "$42\\text{ m s}^{-1}$"
+          },
+          "correct_option": "C"
+        },
+        "visual_requirements": {
+          "visual_need": "none",
+          "visual_role": "none",
+          "answer_depends_on_visual": false,
+          "graph_request": null,
+          "schematic_request": null,
+          "concept_image_request": null
+        },
+        "solution": {
+          "key_insight": "The time delay of $0.20\\text{ s}$ represents a fraction of the wave's period, but because the distance is greater than one wavelength, the total travel time for a crest from A to B must include an additional full period.",
+          "reasoning": "1. The wave period is $T = 1 / f = 1 / 2.0 = 0.50\\text{ s}$.\n2. A crest at A travels to B. Since B reaches its first crest after $t=0$ at $t=0.20\\text{ s}$, the travel time from A to B must be $\\Delta t = 0.20\\text{ s} + nT$, where $n$ is an integer.\n3. We are told the distance $d$ is between $1\\lambda$ and $2\\lambda$. Because $d = v \\Delta t$ and $\\lambda = v T$, the travel time must be between $1T$ and $2T$ (between $0.50\\text{ s}$ and $1.00\\text{ s}$).\n4. Therefore, $n = 1$, making the true travel time $\\Delta t = 0.20 + 0.50 = 0.70\\text{ s}$.\n5. The wave speed is $v = d / \\Delta t = 8.4 / 0.70 = 12\\text{ m s}^{-1}$."
+        },
+        "distractor_map": {
+          "A": "Assumes the distance is between 2 and 3 wavelengths ($n=2$), giving a travel time of $1.20\\text{ s}$ and $v = 8.4 / 1.20 = 7.0\\text{ m s}^{-1}$.",
+          "B": "Correctly includes one full wavelength but misinterprets the phase shift direction, using a travel time of $0.50 - 0.20 + 0.50 = 0.80\\text{ s}$.",
+          "C": "Correct option.",
+          "D": "Ignores the phase shift entirely and simply divides the distance by the period ($v = 8.4 / 0.50 = 16.8\\text{ m s}^{-1}$).",
+          "E": "Misinterprets the phase shift direction (using $0.30\\text{ s}$) and ignores the boundary condition that distance $> 1\\lambda$, giving $v = 8.4 / 0.30 = 28\\text{ m s}^{-1}$.",
+          "F": "Assumes the crest at A takes exactly $0.20\\text{ s}$ to reach B, ignoring the wave cycles already between them (fails the $> 1\\lambda$ constraint), giving $v = 8.4 / 0.20 = 42\\text{ m s}^{-1}$."
+        },
+        "quality_self_check": {
+          "reasoning_hinge_used": "Translating a temporal delay into a spatial phase shift and resolving the integer wavelength ambiguity using the stated boundary condition.",
+          "not_direct_substitution": true,
+          "exactly_one_correct": true,
+          "no_calculator_friendly": true,
+          "on_spec": true,
+          "visual_dependency_safe": true,
+          "goldilocks_complexity": {
+            "number_of_core_physics_principles": 2,
+            "estimated_solution_steps": 4,
+            "requires_derived_relationship": false,
+            "not_overstacked": true
+          }
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-pro-preview",
+      "attempts": 1
+    },
+    {
+      "stage": "deterministic_validator",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "ok": true,
+        "errors": [],
+        "warnings": [],
+        "option_keys": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F"
+        ],
+        "summary": "ok"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": null,
+      "attempts": 1
+    },
+    {
+      "stage": "verifier",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "correct_option_verified": "C",
+        "independent_solution": {
+          "main_law_or_principle": "Wave speed $v = f\\lambda$ and the relationship between travel time, distance, and periodicity.",
+          "calculation_or_logic": "1. Period $T = 1/f = 1/2.0 = 0.50\\text{ s}$.\n2. The distance $d = 8.4\\text{ m}$ is between $1\\lambda$ and $2\\lambda$. Since $\\lambda = vT$, this means $vT < d < 2vT$, or $0.5v < 8.4 < 1.0v$. Thus, $8.4 < v < 16.8$.\n3. A crest at A reaches B at $t = 0.20\\text{ s} + nT$. The travel time $\\Delta t = 0.20 + 0.5n$.\n4. $v = d / \\Delta t = 8.4 / (0.20 + 0.5n)$.\n5. Testing $n=1$: $v = 8.4 / 0.70 = 12\\text{ m/s}$.\n6. Check constraint: $12\\text{ m/s}$ is between $8.4$ and $16.8$, so $n=1$ is consistent.",
+          "verified_answer_value": "12 m/s",
+          "claimed_answer_value": "12 m/s",
+          "matches_claim": true
+        },
+        "spec_audit": {
+          "required_physics_moves": [
+            "Calculate period from frequency",
+            "Relate travel time to distance and speed",
+            "Apply spatial boundary condition to resolve integer ambiguity"
+          ],
+          "all_explicitly_on_spec": true,
+          "borderline_or_offspec_moves": []
+        },
+        "derived_relationship_audit": {
+          "requires_nontrivial_derivation": false,
+          "number_of_linked_relationships": 0,
+          "relationships_given_in_stem": [],
+          "safe_for_esat": true
+        },
+        "checks": {
+          "correctness": "pass",
+          "uniqueness": "pass",
+          "syllabus": "pass",
+          "no_calc_feasibility": "pass",
+          "ambiguity": "pass",
+          "diagram_dependency": "pass",
+          "distractor_safety": "pass",
+          "katex_formatting": "pass",
+          "graph_or_visual_validation": "n/a",
+          "derived_relationship_safety": "pass"
+        },
+        "notes": [
+          "The question is well-posed and tests conceptual understanding of wave propagation and periodicity without requiring complex derivations."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "style_checker",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "style_score": {
+          "total": 40,
+          "breakdown": {
+            "stem_tone": 5,
+            "physics_authenticity": 5,
+            "reasoning_quality": 5,
+            "selectivity": 5,
+            "no_calc_engineering": 5,
+            "option_realism": 5,
+            "distractor_plausibility": 5,
+            "goldilocks_calibration": 5
+          }
+        },
+        "difficulty_calibration": {
+          "difficulty_vs_reference": "similar",
+          "length_feel_vs_reference": "similar",
+          "notes": "The question hits the 'Hard' ESAT band perfectly by requiring a conceptual model of wave propagation rather than a rote formula application."
+        },
+        "selectivity_audit": {
+          "main_trap": "The 'v = d/t' trap (30 m/s or 42 m/s) which ignores the periodic nature of the wave and the spatial constraint.",
+          "why_not_plug_and_chug": "Direct substitution of the given numbers into standard formulas leads to incorrect answers; the student must synthesize the period, the phase shift, and the spatial constraint to determine the correct travel time.",
+          "expected_mid_student_error": "Assuming the crest at A travels directly to B in 0.20 s, ignoring the fact that the wave is continuous and the distance is greater than one wavelength.",
+          "verdict": "selective"
+        },
+        "complexity_audit": {
+          "estimated_core_principles": 2,
+          "estimated_solution_steps": 4,
+          "overstacked": false,
+          "goldilocks_verdict": "good"
+        },
+        "flags": {
+          "too_easy": false,
+          "too_hard": false,
+          "too_wordy": false,
+          "too_recall_heavy": false,
+          "too_plug_and_chug": false,
+          "over_advanced_chain": false,
+          "possible_verifier_miss": false
+        },
+        "notes": [
+          "Excellent use of a boundary condition to resolve ambiguity in a wave problem.",
+          "The arithmetic is clean and well-suited for a no-calculator environment.",
+          "The distractors are highly effective at catching common conceptual errors."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "visual_router",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "visual_route": "none",
+        "answer_depends_on_visual": false,
+        "required_files": [],
+        "reason": "The problem is a conceptual wave-mechanics word problem. The spatial and temporal relationships are fully described in the text, and a diagram would not add clarity or be required for the solution.",
+        "next_prompt_file": null,
+        "style_target_if_image": null,
+        "blocking_issue": null,
+        "simplicity_audit": {
+          "visual_needed": false,
+          "can_be_described_in_one_sentence": true,
+          "estimated_object_types": 0,
+          "estimated_labels": 0,
+          "requires_unwanted_arrows_or_symbols": false,
+          "route_is_conservative": true
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "tag_labeler",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "primary_tag": "6",
+        "secondary_tags": [],
+        "primary_confidence": 1.0,
+        "reasoning": "The question directly involves the properties of a transverse wave, including frequency, wavelength, period, and wave speed. The core task is to calculate the wave speed based on its propagation characteristics.",
+        "_raw_text": "```json\n{\n  \"primary_tag\": \"6\",\n  \"secondary_tags\": [],\n  \"primary_confidence\": 1.0,\n  \"reasoning\": \"The question directly involves the properties of a transverse wave, including frequency, wavelength, period, and wave speed. The core task is to calculate the wave speed based on its propagation characteristics.\"\n}\n```"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    }
+  ],
+  "pipeline": "v4",
+  "created_at": "2026-05-18T13:39:16+01:00"
+}

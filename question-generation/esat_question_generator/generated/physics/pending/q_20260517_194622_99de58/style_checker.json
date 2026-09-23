@@ -1,0 +1,50 @@
+{
+  "stage": "style_checker",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 35,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "similar",
+      "notes": "The question is well-calibrated for 'Medium' difficulty. It requires a clear two-step calculation (I=Q/t then F=BIL) and a crucial conceptual interpretation ('change in reading' = magnetic force). This elevates it beyond a simple plug-and-chug, aligning with the ESAT style for medium-difficulty questions."
+    },
+    "selectivity_audit": {
+      "main_trap": "The primary trap is misunderstanding that the 'change in the reading on the force sensor' directly corresponds to the magnetic force, and not attempting to involve the wire's weight or total force. Students might get confused by the mechanics context and try to add/subtract gravity, even though the weight isn't provided.",
+      "why_not_plug_and_chug": "This is not a plug-and-chug question because it requires two distinct steps (calculating current from charge and time, then calculating force) and, more importantly, a key conceptual interpretation of what 'change in reading' signifies in this context. Simply finding a formula and substituting values will not work without this interpretation.",
+      "expected_mid_student_error": "Mid-performing students might make errors in calculating current (e.g., using Q or t directly in F=BIL, or multiplying Q and t), fail to convert units (cm to m), or forget one of the terms in the F=BIL equation. The most significant conceptual error would be getting confused by the 'force sensor' and trying to incorporate gravitational force, even though it's irrelevant to the *change* in reading.",
+      "verdict": "selective"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "The question perfectly embodies the ESAT style: concise, clear, school-physics based, no-calculator friendly, and rich in potential misconceptions.",
+      "The 'one dominant idea' is the magnetic force on a wire, but it's embedded in a context that requires careful interpretation, which is a hallmark of good ESAT questions.",
+      "Distractors are excellently crafted, targeting specific and common errors, making the question highly selective."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

@@ -1,0 +1,28 @@
+{
+  "questionId": 2026,
+  "examName": "ENGAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 31,
+  "stemBlocks": [
+    "Electrical power is supplied through a dc transmission line that consists of two metal wires. Each wire is $8.0 \\text{ km}$ long and has a cross-sectional area of $1.0 \\text{ cm}^2$. The resistivity of the metal from which the wires are made is $2.5 \\times 10^{-7} \\Omega \\text{m}$. Electrical power is transmitted to the transmission line at a potential difference of $24000 \\text{ V}$. At what rate is energy being wasted as heat in the wires when the power supplied to the transmission line is $120 \\text{ kW}$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A diagram showing two parallel wires with arrows indicating current flow in opposite directions.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:25.595339+00:00",
+  "sourceImageHash": "ad326ea79b8d936e6eb01bacd76a6b5897e4cb86626379b9c0e6e22305afec8b",
+  "status": "ok"
+}

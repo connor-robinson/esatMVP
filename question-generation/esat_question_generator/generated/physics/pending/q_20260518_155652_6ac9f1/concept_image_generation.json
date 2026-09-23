@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260518_155652_6ac9f1\\assets\\concept_image_v1.png",
+    "bytes": 284431,
+    "model": "imagen-4.0-ultra-generate-001",
+    "aspect_ratio": "4:3",
+    "seed": null,
+    "duration_s": 14.913
+  },
+  "prompt_used": "A brutally simple 2D monochrome physics exam diagram showing two identical beakers side by side on a single horizontal line representing a surface. Both beakers are partially filled with liquid to the same level. Place the label 'X' directly below the left beaker, and the label 'Y' directly below the right beaker. Do not draw leader lines. Use a Times New Roman-like serif font for the labels. The drawing must be a flat, 2D schematic style with crisp black vector-like lines on a pure white #FFFFFF background. Do not draw heaters, thermometers, or any other apparatus. No extra text, no shading, and no 3D perspective.",
+  "public_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_155652_6ac9f1/concept_image_v1.png"
+}

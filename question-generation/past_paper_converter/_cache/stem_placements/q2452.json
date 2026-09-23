@@ -1,0 +1,29 @@
+{
+  "questionId": 2452,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 63,
+  "stemBlocks": [
+    "Young plant roots show a similar positive response to the direction of gravity as their shoots do to the direction of light. A clinostat, shown in the diagram, can be used to counter the effects of gravity on a plant. It has a motor which slowly rotates the plant. The cover is opaque to prevent light affecting the direction of root growth. Two clinostats were set up using identical seedlings for two days: Clinostat 1, with the motor running Clinostat 2, with the motor stationary In which direction would the root grow in each clinostat?",
+    "|  | results for clinostat 1 | results for clinostat 2 |\n| --- | --- | --- |\n| A | $\\downarrow$ | $\\uparrow$ |\n| B | $\\downarrow$ | $\\leftrightarrow$ |\n| C | $\\downarrow$ | $\\downarrow$ |\n| D | $\\uparrow$ | $\\leftrightarrow$ |\n| E | $\\uparrow$ | $\\downarrow$ |\n| F | $\\leftrightarrow$ | $\\uparrow$ |\n| G | $\\leftrightarrow$ | $\\downarrow$ |\n| H | $\\leftrightarrow$ | $\\leftrightarrow$ |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "[diagram not to scale]",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:49:16.189245+00:00",
+  "sourceImageHash": "43c9cba9cec2988535c5d04600e6b11f0fcd299027bfb31057be483a820861f3",
+  "status": "ok"
+}

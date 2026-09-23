@@ -1,0 +1,28 @@
+{
+  "questionId": 2674,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 15,
+  "stemBlocks": [
+    "In the diagram, $QS$ is perpendicular to $PR$.\n$PS = x$ cm\n$PQ = y$ cm\n$QR = z$ cm\nangle $QRS = 61^\\circ$\n$PSR$ is a straight line.\nWhich one of the following is an expression for the length $z$, in cm?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:58.177711+00:00",
+  "sourceImageHash": "1b5adfd7a7d847b66a3a6135b71e1f398a5b4f9082de20c79e43596cc54d2c5a",
+  "status": "ok"
+}

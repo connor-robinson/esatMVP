@@ -1,0 +1,29 @@
+{
+  "questionId": 2454,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 65,
+  "stemBlocks": [
+    "The diagram shows the apparatus used to investigate the movement of molecules across a partially permeable membrane. Sucrose is unable to cross the partially permeable membrane.",
+    "Which graph correctly shows how the height of solution in the capillary tube changes over 15 minutes?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Diagram of an osmometer setup with a capillary tube, concentrated sucrose solution, partially permeable membrane, and water.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:49:16.204486+00:00",
+  "sourceImageHash": "6f690616bfecc093d52ca597e7eba02e2d60a6125bdbccd6c5c95ba866e2f28b",
+  "status": "ok"
+}

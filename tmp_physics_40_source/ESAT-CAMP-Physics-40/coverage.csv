@@ -1,0 +1,41 @@
+id,question,topic,specification,estimated_time_seconds,difficulty,answer,diagram
+G01,1,Electromagnetic induction,P2.4(a-c),75,Medium,A,q01.svg
+G02,2,Circuit components,"P1.2(f-g,i,m)",95,Demanding,B,q02.svg
+G03,3,Springs and elasticity,P3.3(c-d),90,Medium,C,
+G04,4,Radioactivity,"P7.3(a,d)",80,Medium,C,
+G05,5,Transformers and transmission,P2.5(b-c); P1.2(m),90,Medium,D,
+G06,6,Electrostatics,P1.1(b-d),65,Medium,E,
+G07,7,Refraction,P6.2(b-c); P6.3(c-e),75,Medium,B,q07.svg
+G08,8,Particle models and states,P5.1; P5.3,80,Medium,A,q08.svg
+G09,9,Basic magnetism,P2.2(a-c),80,Medium,E,q09.svg
+G10,10,Sound and ultrasound,P6.1(g); P6.4(g),85,Medium,B,
+G11,11,Electromagnetic induction,P2.4(d-e); P6.1(f),90,Medium,B,q11.svg
+G12,12,Circuit components,"P1.2(h-i,f)",100,Demanding,A,q12.svg
+G13,13,Transformers and transmission,P2.5(d); P1.2(m),90,Medium,D,
+G14,14,Radioactivity,P7.2(d); P7.3(c),75,Medium,A,q14.svg
+G15,15,Springs and elasticity,P3.3(c-d); P3.2(c-d),100,Demanding,E,q15.svg
+G16,16,Electromagnetic spectrum,P6.5(b-e),65,Medium,A,
+G17,17,Electrostatics,P1.1(b); P1.2(d),80,Medium,D,
+G18,18,Refraction,P6.1(h); P6.2(b-d),85,Medium,B,
+G19,19,Electromagnetic induction,P2.4(a-c),85,Medium,E,q19.svg
+G20,20,Circuit components,"P1.2(f,h-i,m)",90,Medium,C,
+G21,21,Basic magnetism,"P2.1(a,c-d)",80,Medium,E,q21.svg
+G22,22,Particle models and states,P5.1; P5.3(a),70,Medium,A,
+G23,23,Transformers and transmission,P2.5(b-c); P1.2(m),105,Demanding,C,
+G24,24,Sound and ultrasound,P6.1(e-f); P6.4(c),85,Medium,E,
+G25,25,Springs and elasticity,P3.3(a-b),95,Demanding,C,q25.svg
+G26,26,Electromagnetic induction,P2.4(a-c),80,Medium,A,q26.svg
+G27,27,Circuit components,"P1.2(h-k,m)",105,Demanding,B,q27.svg
+G28,28,Refraction,P6.1(g); P6.2(b-c),100,Demanding,B,
+G29,29,Radioactivity,"P7.3(a,e); P7.4(b)",90,Medium,C,
+G30,30,Basic magnetism,P2.1(b); P2.2(b),85,Medium,D,q30.svg
+G31,31,Particle models and states,P5.1(b); P5.2(a-b),75,Medium,A,
+G32,32,Electromagnetic induction,"P2.4(e-f); P1.2(d,f,h); M4.14",100,Demanding,B,q32.svg
+G33,33,Transformers and transmission,P2.5(b-c); P1.2(m),100,Demanding,E,
+G34,34,Electrostatics,P1.1(b-d),80,Medium,E,
+G35,35,Electromagnetic spectrum,"P6.1(g); P6.5(a,e)",80,Medium,D,
+G36,36,Springs and elasticity,"P3.3(d); P3.7(c,f)",95,Medium,D,
+G37,37,Radioactivity,P7.2(b); P7.4(b),80,Medium,D,
+G38,38,Refraction,P6.2(b-c); P6.3(c-e),90,Medium,C,q38.svg
+G39,39,Sound and ultrasound,"P6.1(a-c); P6.4(b,d)",65,Medium,C,
+G40,40,Circuit components,"P1.2(e-f,h-i)",95,Demanding,D,

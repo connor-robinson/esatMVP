@@ -1,0 +1,30 @@
+{
+  "questionId": 3431,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 42,
+  "stemBlocks": [
+    "The following two molecules join to form a disaccharide.",
+    "Which row is correct?",
+    "|  | reaction type when molecules join | disaccharide formed | number of hydroxyl groups in disaccharide formed |\n| --- | --- | --- | --- |\n| A | condensation | maltose | 8 |\n| B | condensation | sucrose | 8 |\n| C | condensation | maltose | 9 |\n| D | condensation | sucrose | 9 |\n| E | hydrolysis | maltose | 8 |\n| F | hydrolysis | sucrose | 8 |\n| G | hydrolysis | maltose | 9 |\n| H | hydrolysis | sucrose | 9 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.126365+00:00",
+  "sourceImageHash": "731aba3794ac8be343e793982718c14deb7410b592033d41ea4eb139c8fb9faa",
+  "status": "ok"
+}

@@ -1,0 +1,494 @@
+{
+  "question_id": "q_20260517_214549_e14d15",
+  "subject": "physics",
+  "schema_id": "P_8ffbc902",
+  "difficulty": "Medium",
+  "status": "accepted",
+  "failure_gate": null,
+  "failure_reasons": [],
+  "has_visual": false,
+  "visual_type": "concept_image_prompt",
+  "answer_depends_on_visual": false,
+  "assets": [
+    {
+      "kind": "concept_image",
+      "spec_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260517_214549_e14d15\\concept_image_prompt.json",
+      "image_paths": [],
+      "renderer": "spec_only",
+      "qc_status": "pass",
+      "qc_source": "concept_image_verifier.json",
+      "answer_bearing": false,
+      "checksum": null
+    }
+  ],
+  "model_trace": {
+    "designer": "gemini-2.5-pro",
+    "idea_judge": "gemini-2.5-flash",
+    "implementer": "gemini-2.5-pro",
+    "verifier": "gemini-2.5-flash",
+    "style_checker": "gemini-2.5-flash",
+    "visual_router": "gemini-2.5-flash",
+    "concept_image_prompt": "gemini-2.5-pro",
+    "concept_image_verifier": "gemini-2.5-flash"
+  },
+  "retry_counts": {
+    "implementer": 0,
+    "concept_image_regen": 0
+  },
+  "stages": [
+    {
+      "stage": "designer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "schema_id": "P_8ffbc902",
+        "module": "physics",
+        "variation_mode": "SIBLING",
+        "target_difficulty": "Medium",
+        "idea_summary": "Compare the maximum compression of a vertical spring when a mass is dropped onto it from its unstretched end, versus when the same mass is placed gently on it and allowed to settle to equilibrium.",
+        "schema_invariant": {
+          "core_move": "Applying conservation of mechanical energy (GPE, EPE) to a spring-mass system and contrasting it with a static force-balance situation.",
+          "what_must_not_change": [
+            "The system must involve a trade-off between Gravitational Potential Energy and Elastic Potential Energy.",
+            "The solution must require the application of the principle of conservation of energy.",
+            "The question must implicitly or explicitly contrast a dynamic process with a static equilibrium."
+          ],
+          "what_can_change": [
+            "The specific scenario (e.g., dropping a mass vs. launching a mass).",
+            "The quantity being asked for (e.g., a ratio of compressions, a maximum height, a speed).",
+            "The orientation of the spring (vertical, horizontal on an incline).",
+            "The initial conditions (e.g., dropped from rest, fired with initial velocity)."
+          ]
+        },
+        "discrimination_mechanism": {
+          "type": "tempting_wrong_model",
+          "reasoning_hinge": "Recognising that the static equilibrium case is governed by force balance (mg = kx_eq), while the dynamic dropping case is governed by energy conservation (change in GPE = gain in EPE), and that these two conditions are not the same.",
+          "why_top_students_win": "They will immediately distinguish the two scenarios, correctly applying F=ma for the static case and energy conservation for the dynamic one. They will see that at maximum dynamic compression, velocity is zero but acceleration is non-zero, so forces are not balanced.",
+          "why_mid_students_miss": "They will incorrectly assume that at the point of maximum compression in the dynamic case, the spring force must be equal to the weight of the mass (F_spring = mg). This leads them to incorrectly conclude the compression is the same as the static equilibrium compression."
+        },
+        "minimum_reasoning_depth": {
+          "steps": 2,
+          "must_include": [
+            "model_selection",
+            "non_obvious_inference",
+            "short_calculation_or_comparison"
+          ]
+        },
+        "reference_alignment": "This problem uses the same core physics as a standard vertical spring-mass problem but reframes it as a comparison of two distinct processes (static vs. dynamic). This shifts the focus from a single calculation to conceptual understanding, which is characteristic of ESAT-style questions. The difficulty is comparable, requiring one key insight to avoid a plausible trap.",
+        "task_signature": "compare_scenarios",
+        "tool_footprint": [
+          "energy_conservation",
+          "force_balance",
+          "static_vs_dynamic",
+          "proportional_reasoning"
+        ],
+        "primary_tag": "1",
+        "secondary_tags": [
+          "Energy",
+          "Forces",
+          "Springs"
+        ],
+        "visual_need": "concept_image_only",
+        "visual_role": "supportive",
+        "visual_brief": "A side-by-side pair of simple diagrams. Left: A mass is shown just touching the top of an uncompressed vertical spring, with a label indicating it is dropped. Right: The same mass is shown resting on the spring, which is compressed to its equilibrium position. The compressions in the two cases, x_dynamic and x_static, could be labelled for clarity in the solution.",
+        "surface_twist": "",
+        "why_still_on_spec": "The problem is grounded in fundamental A-level/ESAT syllabus topics: forces (Newton's laws, specifically F=mg), springs (Hooke's Law), and energy (Conservation of Mechanical Energy, GPE, EPE). The reasoning hinge is about correctly choosing which principle applies, a core physics skill.",
+        "constraints_used": [
+          "short condition descriptions only",
+          "no final numbers",
+          "no full equations unless the schema requires them",
+          "no exact geometric diagram dependence"
+        ],
+        "intended_wrong_paths": [
+          {
+            "mistake": "Assuming that at maximum compression during the drop, the forces are balanced (kx = mg).",
+            "distractor_role": "This leads to the conclusion that the dynamic compression is equal to the static compression, giving a ratio of 1. This is the most compelling distractor."
+          },
+          {
+            "mistake": "An algebraic error in the energy conservation equation, such as cancelling x instead of x^2, leading to mg = 1/2 k.",
+            "distractor_role": "This path is confused but could lead to an answer that seems numerically plausible but is physically meaningless."
+          },
+          {
+            "mistake": "A sign error in the energy conservation equation or getting the ratio the wrong way up.",
+            "distractor_role": "This could produce a ratio of 1/2 instead of 2."
+          },
+          {
+            "mistake": "Confusing energy and length dependencies, perhaps involving a square root.",
+            "distractor_role": "Could produce a distractor like sqrt(2), which often appears in energy-related problems."
+          }
+        ],
+        "difficulty_rationale": "This is a Medium difficulty question. The physical setup is very simple to describe, but the solution requires navigating a very common and tempting misconception. It cleanly separates students who can differentiate between static and dynamic situations from those who apply formulas based on surface features (e.g., 'at the bottom, v=0, so forces balance'). The solution, once the insight is gained, is very fast.",
+        "anti_plug_and_chug_check": {
+          "would_formula_substitution_alone_solve_it": false,
+          "why_not": "The candidate must first identify that two different physical models are needed for the two scenarios (force balance vs. energy conservation). Simply plugging numbers into a single formula like F=kx or E=1/2kx^2 without this contextual understanding will lead to the wrong answer."
+        },
+        "mcq_viability": {
+          "viable": true,
+          "reason": "The question naturally yields a simple numerical ratio (2). This allows for a clear correct answer and plausible distractors based on common errors: 1 (the main misconception), 1/2 (inversion error), and sqrt(2) (mixing up energy/displacement relations)."
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-pro",
+      "attempts": 1
+    },
+    {
+      "stage": "idea_judge",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "selectivity_score": 0,
+        "checks": {
+          "schema_preserved": "pass",
+          "on_spec": "pass",
+          "reasoning_hinge_present": "pass",
+          "not_direct_substitution": "pass",
+          "wrong_paths_specific": "pass",
+          "visual_feasible": "pass",
+          "mcq_viable": "pass",
+          "difficulty_match": "pass"
+        },
+        "reasoning_hinge_summary": "The core reasoning hinge is distinguishing between static equilibrium (force balance) and dynamic maximum compression (energy conservation). Students must recognize that at maximum dynamic compression, the net force is not zero, and therefore the spring force does not equal the weight.",
+        "expected_mid_student_error": "Mid-level students are likely to assume that at the point of maximum compression in the dynamic case, the forces are balanced (spring force equals gravitational force), leading them to equate the dynamic compression with the static equilibrium compression.",
+        "notes": [
+          "The idea effectively uses the SIBLING mode to create a conceptually distinct problem within the schema, rather than just a numerical variation.",
+          "The `anti_plug_and_chug_check` is well-justified, highlighting the need for conceptual understanding over rote application.",
+          "The visual brief is clear and appropriate for a supportive role, not critical for the physics itself."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "implementer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "metadata": {
+          "schema_id": "P_8ffbc902",
+          "module": "physics",
+          "variation_mode": "SIBLING",
+          "target_difficulty": "Medium",
+          "task_signature": "compare_scenarios",
+          "primary_tag": "1",
+          "secondary_tags": [
+            "Energy",
+            "Forces",
+            "Springs"
+          ]
+        },
+        "question": {
+          "stem": "A light spring is stood vertically on a surface.\n\nCase 1: A mass is gently placed on top of the uncompressed spring. The spring compresses by a distance $x_1$ to reach its equilibrium position.\n\nCase 2: The same mass is dropped from rest from a height where it just touches the top of the uncompressed spring. The spring compresses by a maximum distance $x_2$.\n\nWhat is the value of the ratio $x_2 / x_1$?",
+          "options": {
+            "A": "$\\frac{1}{2}$",
+            "B": "$1$",
+            "C": "$\\sqrt{2}$",
+            "D": "$2$",
+            "E": "$4$",
+            "F": "It depends on the mass and spring constant."
+          },
+          "correct_option": "D"
+        },
+        "visual_requirements": {
+          "visual_need": "concept_image_only",
+          "visual_role": "supportive",
+          "answer_depends_on_visual": false,
+          "graph_request": null,
+          "schematic_request": null,
+          "concept_image_request": "A side-by-side pair of simple diagrams. Left: A mass is shown just touching the top of an uncompressed vertical spring, with a label indicating it is dropped (Case 2). Right: The same mass is shown resting on the spring, which is compressed to its equilibrium position (Case 1). The compressions in the two cases, x2 and x1, could be labelled for clarity in the solution."
+        },
+        "solution": {
+          "key_insight": "The static equilibrium case is governed by a balance of forces, while the dynamic dropping case is governed by conservation of energy. At the point of maximum dynamic compression, the net force is not zero.",
+          "reasoning": "Let the mass be $m$ and the spring constant be $k$.\n\nIn Case 1 (static equilibrium), the system is at rest, so the net force is zero. The upward spring force, $F_s = kx_1$, must balance the downward gravitational force (weight), $F_g = mg$.\n$$kx_1 = mg$$ \n$$x_1 = \\frac{mg}{k}$$ \n\nIn Case 2 (dynamic compression), we consider the conservation of mechanical energy from the point of release to the point of maximum compression. The mass starts at rest and ends momentarily at rest. The loss in gravitational potential energy (GPE) is converted into a gain in elastic potential energy (EPE).\n\nThe mass falls a vertical distance of $x_2$. The loss in GPE is $mgx_2$. The gain in EPE is $\\frac{1}{2}kx_2^2$.\n\n$$mgx_2 = \\frac{1}{2}kx_2^2$$ \nSince $x_2 > 0$, we can divide both sides by $x_2$: \n$$mg = \\frac{1}{2}kx_2$$ \n$$x_2 = \\frac{2mg}{k}$$ \n\nNow we can find the ratio $x_2 / x_1$: \n$$\\frac{x_2}{x_1} = \\frac{2mg/k}{mg/k} = 2$$"
+        },
+        "distractor_map": {
+          "A": "This is the inverse of the correct ratio, $x_1/x_2$. This error occurs from inverting the final fraction.",
+          "B": "This is the most common incorrect answer. It arises from the misconception that at the point of maximum dynamic compression, the forces are balanced ($kx_2 = mg$), just as they are in the static equilibrium case. This would incorrectly imply $x_2 = x_1$.",
+          "C": "This distractor, $\\sqrt{2}$, often appears in energy-related problems (e.g., relating speed and height) and can be chosen by students who are confused about the relationship between energy and displacement for a spring.",
+          "D": "Correct. This is derived by correctly applying force balance for the static case ($kx_1 = mg$) and energy conservation for the dynamic case ($mgx_2 = \\frac{1}{2}kx_2^2$), which shows that $x_2 = 2x_1$.",
+          "E": "This may arise from incorrectly reasoning that because elastic potential energy is proportional to $x^2$, and the displacement doubles, the ratio should be squared ($2^2=4$).",
+          "F": "This is incorrect. As shown in the derivation, the mass $m$ and spring constant $k$ cancel out when the ratio is calculated, resulting in a constant value."
+        },
+        "quality_self_check": {
+          "reasoning_hinge_used": "The solution requires distinguishing between a static force-balance model and a dynamic energy-conservation model for two different scenarios involving the same components.",
+          "not_direct_substitution": true,
+          "exactly_one_correct": true,
+          "no_calculator_friendly": true,
+          "on_spec": true,
+          "visual_dependency_safe": true
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-pro",
+      "attempts": 1
+    },
+    {
+      "stage": "deterministic_validator",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "ok": true,
+        "errors": [],
+        "warnings": [],
+        "option_keys": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F"
+        ],
+        "summary": "ok"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": null,
+      "attempts": 1
+    },
+    {
+      "stage": "verifier",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "correct_option_verified": "D",
+        "independent_solution": {
+          "main_law_or_principle": "Hooke's Law (force balance) for static equilibrium, Conservation of Mechanical Energy for dynamic compression.",
+          "calculation_or_logic": "Let the mass be $m$ and the spring constant be $k$.\n\n**Case 1: Static Equilibrium**\nWhen the mass is gently placed, it settles at an equilibrium position where the upward spring force balances the downward gravitational force.\n$F_{spring} = F_{gravity}$\n$kx_1 = mg$\n$x_1 = \\frac{mg}{k}$\n\n**Case 2: Dynamic Compression**\nWhen the mass is dropped from rest, the system conserves mechanical energy. The initial state is the mass at rest just touching the uncompressed spring. The final state is the mass momentarily at rest at maximum compression $x_2$.\nLoss in Gravitational Potential Energy (GPE) = Gain in Elastic Potential Energy (EPE)\nThe mass falls a total distance $x_2$.\n$mgx_2 = \\frac{1}{2}kx_2^2$\nSince $x_2 \\neq 0$ (there is compression), we can divide both sides by $x_2$:\n$mg = \\frac{1}{2}kx_2$\n$x_2 = \\frac{2mg}{k}$\n\n**Ratio $x_2 / x_1$**\n$\\frac{x_2}{x_1} = \\frac{2mg/k}{mg/k} = 2$",
+          "verified_answer_value": "2",
+          "claimed_answer_value": "2",
+          "matches_claim": true
+        },
+        "spec_audit": {
+          "required_physics_moves": [
+            "Apply Hooke's Law for static equilibrium (F=kx)",
+            "Apply Newton's Second Law (F_net=0) for static equilibrium",
+            "Apply Conservation of Mechanical Energy (GPE to EPE conversion)",
+            "Algebraic manipulation to solve for displacements and ratios"
+          ],
+          "all_explicitly_on_spec": true,
+          "borderline_or_offspec_moves": []
+        },
+        "checks": {
+          "correctness": "pass",
+          "uniqueness": "pass",
+          "syllabus": "pass",
+          "no_calc_feasibility": "pass",
+          "ambiguity": "pass",
+          "diagram_dependency": "pass",
+          "distractor_safety": "pass",
+          "katex_formatting": "pass",
+          "graph_or_visual_validation": "n/a"
+        },
+        "notes": [
+          "The question correctly distinguishes between static equilibrium and dynamic energy conservation scenarios.",
+          "The solution is straightforward and requires standard ESAT-level physics principles.",
+          "Calculations are simple and suitable for a no-calculator environment.",
+          "Distractors are well-designed, targeting common misconceptions."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "style_checker",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "style_score": {
+          "total": 35,
+          "breakdown": {
+            "stem_tone": 5,
+            "physics_authenticity": 5,
+            "reasoning_quality": 5,
+            "selectivity": 5,
+            "no_calc_engineering": 5,
+            "option_realism": 5,
+            "distractor_plausibility": 5
+          }
+        },
+        "difficulty_calibration": {
+          "difficulty_vs_reference": "similar",
+          "length_feel_vs_reference": "shorter",
+          "notes": "The question is a classic test of a fundamental misconception, making it suitable for a Medium difficulty ESAT question. It's concise and requires a clear conceptual understanding rather than complex calculations."
+        },
+        "selectivity_audit": {
+          "main_trap": "The primary trap is assuming that at the point of maximum compression in the dynamic case (Case 2), the forces are balanced (i.e., the spring force equals the weight of the mass, $kx_2 = mg$). This leads to the incorrect conclusion that $x_2 = x_1$, resulting in a ratio of 1 (Option B).",
+          "why_not_plug_and_chug": "This is not a plug-and-chug question because it requires the candidate to identify and apply two different physical models for the two scenarios: force balance for static equilibrium (Case 1) and conservation of mechanical energy for the dynamic process (Case 2). Simply substituting values into a single formula would lead to an incorrect answer.",
+          "expected_mid_student_error": "A mid-level student is highly likely to fall for the trap of equating the spring force to the weight at maximum compression in the dynamic case, leading them to choose 1.",
+          "verdict": "selective"
+        },
+        "flags": {
+          "too_easy": false,
+          "too_hard": false,
+          "too_wordy": false,
+          "too_recall_heavy": false,
+          "too_plug_and_chug": false,
+          "possible_verifier_miss": false
+        },
+        "notes": [
+          "The question is highly authentic to the ESAT style: short, clear, school-physics based, no-calculator, and focuses on a single dominant idea with a significant misconception trap.",
+          "The reasoning hinge is excellent, requiring students to differentiate between static force equilibrium and dynamic energy conservation.",
+          "All distractors are well-crafted and target specific, common errors, enhancing the question's selectivity."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "visual_router",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "visual_route": "concept_image_prompt",
+        "answer_depends_on_visual": false,
+        "required_files": [],
+        "reason": "The question explicitly states that a 'concept_image_only' is needed, and its role is 'supportive', with the answer not depending on the visual. The requested image is an illustrative side-by-side comparison of two simple scenarios (mass on spring, mass dropped onto spring) which is suitable for a concept image prompt.",
+        "next_prompt_file": "Physics Concept_Image_Prompt.md",
+        "style_target_if_image": "tmua_engaa_exam_diagram",
+        "blocking_issue": null
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    },
+    {
+      "stage": "concept_image_prompt",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "image_id": "img1",
+        "model_purpose": "concept_visual",
+        "answer_depends_on_image": false,
+        "recommended_model": "MODEL_IMAGE_HIGH_QUALITY",
+        "prompt": "### 1. Subject/content brief\nA professional, high-fidelity exam diagram illustrating two physics scenarios involving a mass and a vertical spring, presented side-by-side. The diagram is for illustrative purposes only.\n\n- **Right Diagram ('Case 1'):** A simple rectangular block rests in equilibrium on a vertically compressed coiled spring. The spring stands on a flat horizontal ground line.\n- **Left Diagram ('Case 2'):** The same setup, but the spring is uncompressed, and the block is positioned just touching the top of the spring. A small, simple downward arrow is drawn next to the block to indicate it is about to be dropped.\n\n### 2. Object relation brief\n- The two diagrams must be presented side-by-side with clear separation.\n- In both diagrams, a vertical coiled spring stands on a solid horizontal line representing a surface.\n- The mass is a simple, plain rectangular block, identical in both diagrams.\n- In the 'Case 2' diagram (left), the spring is uncompressed, and the bottom face of the block is in contact with the top of the spring.\n- In the 'Case 1' diagram (right), the spring is visibly shorter (compressed), and the block rests on top of it.\n\n### 3. Required labels / annotations\n- Above the left diagram, add the label 'Case 2' in an upright serif font.\n- Above the right diagram, add the label 'Case 1' in an upright serif font.\n- In the 'Case 1' diagram, draw a faint, thin horizontal dashed line to indicate the original, uncompressed height of the spring. This dashed line should be at the same height as the top of the spring in the 'Case 2' diagram.\n- In the 'Case 1' diagram, draw a vertical double-headed arrow to the side of the spring. This arrow must span the distance from the dashed line (original height) down to the top of the compressed spring. Label this arrow with the italic serif variable *x*<sub>1</sub>.\n- The block in the 'Case 1' diagram should be labelled with the italic serif variable *m*.\n- In the 'Case 2' diagram, a small, simple, solid downward-pointing arrow should be placed next to the block to signify motion.\n\n### 4. Measurement brief\n- The measurement arrow for *x*<sub>1</sub> must clearly show the compression of the spring in 'Case 1' relative to its original height. The label *x*<sub>1</sub> should be placed neatly beside the arrow, without touching it.\n\n### 5. Style block\n- **Style:** Strictly adhere to a high-fidelity TMUA / ENGAA / NSAA printed exam-diagram style. The image must look like a professional black-and-white vector illustration from a physics admissions test paper.\n- **Line Art:** Use crisp, thin, black or dark-charcoal strokes on a plain off-white or very light grey background.\n- **Typography:** All text must be in a Times New Roman-like serif font. Mathematical variables (*m*, *x*<sub>1</sub>) must be italic. Labels ('Case 1', 'Case 2') must be upright.\n- **Layout:** Ensure a clean, minimalist, and well-spaced layout with generous margins. There must be no overlapping labels, lines, or objects.\n- **Note:** The diagram is illustrative and not to scale.\n\n### 6. Negative block\n- **Forbidden Content:** Do not add any labels, numbers, or annotations not explicitly listed. Specifically, do not label or depict the compression *x*<sub>2</sub>. Do not show the final state of Case 2 (maximum compression). Do not add a '[diagram not to scale]' note.\n- **Forbidden Styles:** No colour, no photorealism, no 3D rendering, no gradients, no decorative shading, no sketchy or cartoonish lines. No sans-serif fonts.",
+        "negative_prompt": "No extra labels. No overlap. No sans-serif fonts. No decorative shading. No photorealism. No colour. No exact answer-bearing measurements. No clutter. No malformed symbols. Do not place objects in the wrong support/location relationship. Do not label x2. Do not show the final state of Case 2. Do not add a '[diagram not to scale]' text block.",
+        "required_labels": [
+          "Case 1",
+          "Case 2",
+          "m",
+          "x_1"
+        ],
+        "forbidden_labels": [
+          "x_2",
+          "mg",
+          "k",
+          "F"
+        ],
+        "layout_logic": {
+          "must_show_relations": [
+            "Two diagrams side-by-side, left is 'Case 2', right is 'Case 1'.",
+            "Spring stands on a horizontal surface in both diagrams.",
+            "Mass rests on compressed spring in 'Case 1'.",
+            "Mass touches uncompressed spring in 'Case 2'.",
+            "Spring in 'Case 1' is visibly shorter than spring in 'Case 2'.",
+            "A dashed line in 'Case 1' indicates the original height of the spring."
+          ],
+          "measurement_mapping": [
+            {
+              "label": "x_1",
+              "description": "A vertical double-headed arrow showing the compression distance of the spring in 'Case 1', from its original height (dashed line) to its compressed height."
+            }
+          ],
+          "relative_size_constraints": []
+        },
+        "hard_constraints": [
+          "Must be two side-by-side diagrams.",
+          "Left diagram must be labelled 'Case 2' and show an uncompressed spring.",
+          "Right diagram must be labelled 'Case 1' and show a compressed spring.",
+          "The label x_1 must correspond to the compression in Case 1.",
+          "The label x_2 must not appear anywhere in the image.",
+          "All text must be a serif font like Times New Roman.",
+          "No overlapping labels or lines."
+        ],
+        "style": {
+          "target_style": "tmua_engaa_exam_diagram",
+          "exam_style": true,
+          "black_and_white": true,
+          "serif_font": "Times New Roman-like",
+          "math_variables_italic": true,
+          "minimal": true,
+          "not_to_scale": true,
+          "no_overlap": true,
+          "logic_sensitive": true
+        },
+        "post_generation_checks": {
+          "run_concept_image_verifier": true,
+          "verify_no_overlap": true,
+          "verify_font_exam_like": true,
+          "verify_no_extra_labels": true,
+          "verify_not_answer_bearing": true,
+          "verify_object_relations": true,
+          "verify_measurement_clarity": true,
+          "verify_relative_size_plausibility": true,
+          "verify_simplification_level": true
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-pro",
+      "attempts": 1
+    },
+    {
+      "stage": "concept_image_verifier",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "checks": {
+          "exam_style_match": "pass",
+          "serif_font_match": "pass",
+          "math_label_quality": "pass",
+          "no_overlap": "pass",
+          "label_accuracy": "pass",
+          "no_extra_labels": "pass",
+          "monochrome_style": "pass",
+          "layout_cleanliness": "pass",
+          "illustrative_only_safety": "pass",
+          "professionalism": "pass",
+          "object_relation_accuracy": "pass",
+          "measurement_anchor_clarity": "pass",
+          "relative_magnitude_plausibility": "pass",
+          "simplification_level": "pass"
+        },
+        "reasons": [
+          "The prompt is highly detailed and explicitly requests all necessary exam-style attributes (monochrome, serif font, clean layout, etc.).",
+          "It correctly specifies the required labels (`Case 1`, `Case 2`, `m`, `x_1`) and explicitly forbids any answer-bearing labels or depictions (e.g., `x_2` or the final state of Case 2).",
+          "Object relationships and measurement clarity are well-defined, ensuring the diagram will be conceptually accurate and illustrative without providing an answer.",
+          "The negative block effectively prevents common issues like extra labels, incorrect styles, or answer-bearing details."
+        ],
+        "regen_feedback": "",
+        "delete_reason": ""
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    }
+  ],
+  "pipeline": "v4",
+  "created_at": "2026-05-17T21:49:54+01:00"
+}

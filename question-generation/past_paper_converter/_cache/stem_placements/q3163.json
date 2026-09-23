@@ -1,0 +1,30 @@
+{
+  "questionId": 3163,
+  "examName": "ENGAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 14,
+  "stemBlocks": [
+    "Two light wires P and Q support a load of weight $W$ in equilibrium as shown. Wire P is horizontal and wire Q is at an angle of $60^\\circ$ to the vertical. The wires are made from the same material.\nThe radius of wire Q is twice the radius of wire P.",
+    "What is the ratio $\\frac{\\text{strain in wire P}}{\\text{strain in wire Q}}$?",
+    "(The wires do not exceed their limits of proportionality.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:45:27.632361+00:00",
+  "sourceImageHash": "af4b35918bb88f465a54e2e7830cba95c9395a3eb9252e6e5c66f6e7385eacba",
+  "status": "ok"
+}

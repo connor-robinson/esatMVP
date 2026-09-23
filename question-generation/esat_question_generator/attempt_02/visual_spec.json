@@ -1,0 +1,83 @@
+{
+  "spec_version": "1.0",
+  "needs_diagram": true,
+  "diagram_type": "graph",
+  "diagram_id": "g1",
+  "not_to_scale": false,
+  "coordinate_system": {
+    "x_min": 0.0,
+    "x_max": 60.0,
+    "y_min": -5.5,
+    "y_max": 5.5,
+    "equal_aspect": false,
+    "show_axes": true
+  },
+  "objects": [
+    {
+      "type": "axes",
+      "x_label": "x / \\text{cm}",
+      "y_label": "y / \\text{cm}",
+      "x_ticks": [
+        0,
+        10,
+        20,
+        30,
+        40,
+        50,
+        60
+      ],
+      "y_ticks": [
+        -4,
+        -2,
+        0,
+        2,
+        4
+      ]
+    },
+    {
+      "type": "function",
+      "expr": "4 * math.sin(math.pi * x / 20)",
+      "domain": [
+        0,
+        60
+      ],
+      "samples": 240
+    },
+    {
+      "type": "function",
+      "expr": "-4 * math.cos(math.pi * x / 20)",
+      "domain": [
+        0,
+        60
+      ],
+      "style": "dashed",
+      "samples": 240
+    }
+  ],
+  "labels": [
+    {
+      "id": "label_t0",
+      "text": "t = 0\\text{ s}",
+      "anchor": [
+        10,
+        4.1
+      ],
+      "preferred_position": "above",
+      "math": true
+    },
+    {
+      "id": "label_t1",
+      "text": "t = 0.050\\text{ s}",
+      "anchor": [
+        20,
+        4.1
+      ],
+      "preferred_position": "above",
+      "math": true
+    }
+  ],
+  "annotations": [],
+  "source_question_id": "nsaa-2418",
+  "variation_mode": "sibling",
+  "graph_preset": "science_xy"
+}

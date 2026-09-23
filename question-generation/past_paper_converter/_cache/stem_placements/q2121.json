@@ -1,0 +1,29 @@
+{
+  "questionId": 2121,
+  "examName": "ENGAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 6,
+  "stemBlocks": [
+    "A spring is initially unstretched. A force $F$ is used to stretch the spring. The extension $x$ and the energy $E$ stored in the stretched spring are measured for different values of $F$.\nThe graph shows how the energy $E$, in J, varies with the extension squared, $x^2$, in cm$^2$.",
+    "What is the magnitude of $F$ when the spring stores $0.015 \\text{ J}$ of energy?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:06.343897+00:00",
+  "sourceImageHash": "e9913c1a2aa8c4704d92bc77598c51a938371510fbb084f83a57b6314c17c54d",
+  "status": "ok"
+}

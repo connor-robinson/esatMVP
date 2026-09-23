@@ -1,0 +1,30 @@
+{
+  "questionId": 3435,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 46,
+  "stemBlocks": [
+    "The vegetation of the Galapagos islands contains 15 different species of a plant belonging to the group Scalesia.\nThe diagram below shows the relationship between the number of Scalesia species found and the relative age and size of the different Galapagos islands. Each island is represented by a different pair of letters.",
+    "Which of the following statements is/are correct?",
+    "1 Older Galapagos islands always have more species.\n2 Island SZ is similar in size to island NG but the number of Scalesia species is 200% larger.\n3 The biotic and abiotic factors affecting Scalesia plants must be the same on PT, PZ and SF."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Relationship between the number of Scalesia species found and the relative age and size of the different Galapagos islands.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 1.0
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.133006+00:00",
+  "sourceImageHash": "f12c3952fc50f91a8a3657ff41735d9aea62938b05e100193b3fdcdfea785dd6",
+  "status": "ok"
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 2539,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 60,
+  "stemBlocks": [
+    "The diagram shows four steps in the process of human sperm production. For each step only one complete division takes place.",
+    "Assuming no mutations and that all of the cells survive, what will be the maximum number of haploid cells originating from a single early spermatogonium?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Flowchart showing steps in human sperm production: early spermatogonium undergoes mitosis to intermediate spermatogonium, then mitosis to late spermatogonium, then mitosis to primary spermatocytes, which then undergo meiosis to sperm.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.837183+00:00",
+  "sourceImageHash": "3867ba13432db1cf5aab42394a81d145ad2ac30d1896c9b7f2833b10ce07fbe1",
+  "status": "ok"
+}

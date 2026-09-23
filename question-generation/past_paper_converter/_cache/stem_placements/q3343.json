@@ -1,0 +1,30 @@
+{
+  "questionId": 3343,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 14,
+  "stemBlocks": [
+    "The three graphs show the displacement, velocity and acceleration against time for an object moving in a straight line. The time axis is shown to the same scale on all three graphs.",
+    "Which graph represents which quantity?",
+    "|  | graph P | graph Q | graph R |\n| --- | --- | --- | --- |\n| A | acceleration | displacement | velocity |\n| B | acceleration | velocity | displacement |\n| C | displacement | acceleration | velocity |\n| D | displacement | velocity | acceleration |\n| E | velocity | acceleration | displacement |\n| F | velocity | displacement | acceleration |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:10.818229+00:00",
+  "sourceImageHash": "8b78b72732336d6b6110740e9f18ebc8edab7ecd4c1b243c94d2314ec2572c7d",
+  "status": "ok"
+}

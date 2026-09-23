@@ -1,0 +1,245 @@
+{
+  "createdAt": "2026-09-20T06:50:09.950Z",
+  "assignment": [
+    {
+      "mockNumber": 1,
+      "position": 5,
+      "sourceId": "G31",
+      "questionId": "73c81f05-fb27-434a-b849-a11ed0034b3a"
+    },
+    {
+      "mockNumber": 1,
+      "position": 6,
+      "sourceId": "G13",
+      "questionId": "87b7f1d2-e71d-4225-a074-5a0d1abd4ecb"
+    },
+    {
+      "mockNumber": 1,
+      "position": 9,
+      "sourceId": "G16",
+      "questionId": "2233c85d-e184-49b9-b731-e09e329f4aab"
+    },
+    {
+      "mockNumber": 1,
+      "position": 10,
+      "sourceId": "G38",
+      "questionId": "63c90ff6-e1f4-40d1-a09c-4e5c6f1752d9"
+    },
+    {
+      "mockNumber": 1,
+      "position": 11,
+      "sourceId": "G18",
+      "questionId": "6aa51d06-b4b1-48b1-915a-968ab493a2b5"
+    },
+    {
+      "mockNumber": 1,
+      "position": 20,
+      "sourceId": "G27",
+      "questionId": "a4caa374-c78f-4de5-8bbe-f2da09f68ceb"
+    },
+    {
+      "mockNumber": 1,
+      "position": 21,
+      "sourceId": "G30",
+      "questionId": "af5fa8a5-baa1-4723-82d1-43164789485c"
+    },
+    {
+      "mockNumber": 1,
+      "position": 24,
+      "sourceId": "G23",
+      "questionId": "99ccfee3-8bb3-4207-8b0e-4f356046b8ac"
+    },
+    {
+      "mockNumber": 1,
+      "position": 26,
+      "sourceId": "G28",
+      "questionId": "a2354673-3cfe-4b4a-b2ab-5a08e8eecd94"
+    },
+    {
+      "mockNumber": 2,
+      "position": 6,
+      "sourceId": "G10",
+      "questionId": "d2e844c2-4799-4928-a63e-884464b2e7f6"
+    },
+    {
+      "mockNumber": 2,
+      "position": 7,
+      "sourceId": "G14",
+      "questionId": "20849a62-ab66-4091-a684-01db7deca62e"
+    },
+    {
+      "mockNumber": 2,
+      "position": 11,
+      "sourceId": "G09",
+      "questionId": "223aea65-0860-4ac9-bf24-64bd284e75b2"
+    },
+    {
+      "mockNumber": 2,
+      "position": 14,
+      "sourceId": "G21",
+      "questionId": "f1d3035f-5a28-41de-9f79-7dfd6005b67e"
+    },
+    {
+      "mockNumber": 2,
+      "position": 20,
+      "sourceId": "G33",
+      "questionId": "23cf5e7a-390d-4edc-af86-bb96052c7094"
+    },
+    {
+      "mockNumber": 2,
+      "position": 22,
+      "sourceId": "G22",
+      "questionId": "6df1ab79-c97e-4257-8091-06e2cf9cd681"
+    },
+    {
+      "mockNumber": 3,
+      "position": 5,
+      "sourceId": "G03",
+      "questionId": "b3ba0eb3-da20-4990-8a7f-92059086caec"
+    },
+    {
+      "mockNumber": 3,
+      "position": 9,
+      "sourceId": "G04",
+      "questionId": "cff67555-f0c7-4296-a05d-45059b0549d5"
+    },
+    {
+      "mockNumber": 3,
+      "position": 10,
+      "sourceId": "G36",
+      "questionId": "c6508137-82ca-4557-8393-0af0a4c58cbf"
+    },
+    {
+      "mockNumber": 3,
+      "position": 18,
+      "sourceId": "G20",
+      "questionId": "e67d6d65-f169-450c-97ff-4b87a9e85086"
+    },
+    {
+      "mockNumber": 3,
+      "position": 20,
+      "sourceId": "G32",
+      "questionId": "5edd05df-8870-4ba4-90f0-f92019ffce5f"
+    },
+    {
+      "mockNumber": 3,
+      "position": 21,
+      "sourceId": "G40",
+      "questionId": "018d7b10-7763-4185-8e99-138e9135e3ea"
+    },
+    {
+      "mockNumber": 3,
+      "position": 27,
+      "sourceId": "G34",
+      "questionId": "067fe01b-c8c6-4b37-b5ea-9b46b99bbad0"
+    },
+    {
+      "mockNumber": 4,
+      "position": 1,
+      "sourceId": "G02",
+      "questionId": "67ff1410-02a3-4cb0-81ea-4ec50981db9c"
+    },
+    {
+      "mockNumber": 4,
+      "position": 3,
+      "sourceId": "G11",
+      "questionId": "d642558f-5b47-4757-a2f4-583efb261034"
+    },
+    {
+      "mockNumber": 4,
+      "position": 7,
+      "sourceId": "G35",
+      "questionId": "942e6442-770f-44c1-80ff-a71ca5091c26"
+    },
+    {
+      "mockNumber": 4,
+      "position": 12,
+      "sourceId": "G24",
+      "questionId": "27086272-48e2-4f21-95b2-81644d31bd19"
+    },
+    {
+      "mockNumber": 4,
+      "position": 13,
+      "sourceId": "G37",
+      "questionId": "fd0e5a27-09de-4015-ac1f-a5b1e0a9c135"
+    },
+    {
+      "mockNumber": 4,
+      "position": 18,
+      "sourceId": "G39",
+      "questionId": "00bf1312-e368-4fe2-9dc5-79c193b489b2"
+    },
+    {
+      "mockNumber": 4,
+      "position": 19,
+      "sourceId": "G15",
+      "questionId": "f35b1d45-0325-43b9-90c6-36e3b36db643"
+    },
+    {
+      "mockNumber": 4,
+      "position": 20,
+      "sourceId": "G17",
+      "questionId": "edaae9f2-3b4a-41ca-8252-4bd840c32908"
+    },
+    {
+      "mockNumber": 4,
+      "position": 21,
+      "sourceId": "G19",
+      "questionId": "8d8e82dd-cb9d-4d38-8deb-3e40710338d9"
+    },
+    {
+      "mockNumber": 4,
+      "position": 27,
+      "sourceId": "G05",
+      "questionId": "348c47e0-4d91-44d2-abd6-fff3495b9cb2"
+    },
+    {
+      "mockNumber": 5,
+      "position": 12,
+      "sourceId": "G12",
+      "questionId": "26da3dba-c150-4c72-aeed-788f68191794"
+    },
+    {
+      "mockNumber": 5,
+      "position": 14,
+      "sourceId": "G25",
+      "questionId": "4c98f770-bcfd-49e7-ac49-1497160f1266"
+    },
+    {
+      "mockNumber": 5,
+      "position": 15,
+      "sourceId": "G08",
+      "questionId": "d5626593-a849-4552-984f-a70dc63bc979"
+    },
+    {
+      "mockNumber": 5,
+      "position": 18,
+      "sourceId": "G26",
+      "questionId": "2443f8d3-c023-47f1-9644-cbe0af45805e"
+    },
+    {
+      "mockNumber": 5,
+      "position": 20,
+      "sourceId": "G29",
+      "questionId": "b7365e1a-f484-445f-b7f7-2c37b454cc2d"
+    },
+    {
+      "mockNumber": 5,
+      "position": 23,
+      "sourceId": "G06",
+      "questionId": "0f5607ce-0ddd-42db-aae1-cde6aa1029b9"
+    },
+    {
+      "mockNumber": 5,
+      "position": 24,
+      "sourceId": "G01",
+      "questionId": "4b2bbc80-5152-4a85-952c-221b2ee4b6d0"
+    },
+    {
+      "mockNumber": 5,
+      "position": 25,
+      "sourceId": "G07",
+      "questionId": "39bc2c44-a4d0-4b12-b906-f5866d9a158c"
+    }
+  ]
+}

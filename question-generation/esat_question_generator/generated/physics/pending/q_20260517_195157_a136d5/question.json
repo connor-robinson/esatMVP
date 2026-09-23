@@ -1,0 +1,252 @@
+{
+  "id": "P_1462623d-Hard-bc3c7146b8",
+  "schema_id": "P_1462623d",
+  "difficulty": "Hard",
+  "idea_plan": {
+    "schema_id": "P_1462623d",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Hard",
+    "idea_summary": "A monochromatic EM wave enters a dielectric medium from a vacuum. The candidate must determine the change in its wavelength, requiring the insight that frequency is the invariant quantity during this process.",
+    "schema_invariant": {
+      "core_move": "Using the wave equation (speed = frequency × wavelength) to relate the properties of an EM wave, and identifying which property is invariant when the wave's conditions (e.g., medium) change.",
+      "what_must_not_change": [
+        "The question must hinge on the relationship v = fλ for an EM wave.",
+        "The core reasoning must involve figuring out how one property (e.g. λ) changes based on another (e.g. f or v)."
+      ],
+      "what_can_change": [
+        "The context can change from propagation in a vacuum to propagation across a boundary into a medium.",
+        "The invariant quantity can be frequency `f` rather than the speed of light `c`.",
+        "The asked quantity can be the change in a property (e.g. Δλ) rather than a final value or a ratio.",
+        "The physics context is shifted from EM spectrum/astronomy to optics/refraction."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "hidden_invariant",
+      "reasoning_hinge": "Realising that when an electromagnetic wave passes from one medium to another, its frequency remains constant while its speed and wavelength both change.",
+      "why_top_students_win": "They correctly identify frequency as the invariant property determined by the source, and then correctly apply the definition of refractive index (n=c/v) to deduce the change in wavelength (λ = v/f).",
+      "why_mid_students_miss": "They incorrectly assume wavelength is constant, or that frequency changes with speed. A very common and tempting mistake is to think that because speed decreases by a factor of n, wavelength must increase by a factor of n to keep c constant, failing to distinguish between c and v."
+    },
+    "minimum_reasoning_depth": {
+      "steps": 3,
+      "must_include": [
+        "model_selection",
+        "non_obvious_inference",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "This question preserves the core schema's reliance on v=fλ but elevates the difficulty. Standard schema questions involve direct application of c=fλ where c is constant. This variant makes frequency the constant and speed the variable, requiring a deeper conceptual understanding of wave behaviour at a boundary, making it a 'Hard' reasoning problem rather than a Medium calculation.",
+    "task_signature": "wave_or_radiation_reasoning",
+    "tool_footprint": [
+      "wave properties",
+      "refractive index",
+      "invariance",
+      "proportional reasoning",
+      "boundary conditions"
+    ],
+    "primary_tag": "4",
+    "secondary_tags": [],
+    "visual_need": "concept_image_only",
+    "visual_role": "supportive",
+    "visual_brief": "A simple diagram showing a wave train travelling from a region labelled 'Air (n≈1)' into a block labelled 'Medium (n>1)'. The wavelength should be visibly shorter in the medium, but the diagram should not be to scale or contain any answer-bearing information.",
+    "surface_twist": "",
+    "why_still_on_spec": "The question uses core ESAT Physics syllabus topics: '4.1 Wave motion' (frequency, wavelength, speed, v=fλ) and '4.4 Optics' (refraction, refractive index n=c/v). The reasoning step—identifying an invariant quantity during a physical process—is a standard skill tested in admissions physics.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Assumes wavelength is invariant when entering a new medium, leading to a calculated change of zero.",
+        "distractor_role": "A 'zero' or 'no change' option."
+      },
+      {
+        "mistake": "Incorrectly assumes speed of light `c` is constant in all media. To reconcile v=c/n, they assume frequency must change to f_new = f_old/n, then calculate λ_new = c/f_new = n*λ_old. This gives a change of (n-1)λ_old.",
+        "distractor_role": "The most powerful distractor, based on a plausible but flawed conservation argument."
+      },
+      {
+        "mistake": "Correctly deduces the new wavelength is λ_old/n, but provides this as the answer instead of the change in wavelength.",
+        "distractor_role": "An intermediate calculation result."
+      },
+      {
+        "mistake": "Assumes frequency is constant but makes an algebraic slip, calculating the change as λ_old - n*λ_old.",
+        "distractor_role": "A sign-error or algebraic slip variant."
+      }
+    ],
+    "difficulty_rationale": "The difficulty is 'Hard' because success hinges on a specific piece of non-obvious conceptual knowledge (frequency is invariant at a boundary). The problem appears to be a simple wave equation question, but this hinge acts as a strong filter against students with only a surface-level understanding. For those who know the principle, the subsequent calculation is trivial, making it a fast solve for strong candidates and a quick failure for others, which is ideal for a selective test.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "There is no single formula to solve this. The candidate must first perform a qualitative reasoning step: identifying that frequency is the invariant quantity when a wave crosses a media boundary. Without this step, applying the formulas `v=fλ` and `n=c/v` is ambiguous and will likely lead to an incorrect assumption (e.g., that `λ` is constant or that `c` is constant in the medium)."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The correct answer is an algebraic expression in terms of the initial wavelength λ and refractive index n. The common misconceptions naturally generate a set of distinct and plausible alternative algebraic expressions, such as those involving a factor of (n-1), 1/n, or n, providing excellent material for strong distractors."
+    }
+  },
+  "question_package": {
+    "metadata": {
+      "schema_id": "P_1462623d",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Hard",
+      "task_signature": "wave_or_radiation_reasoning",
+      "primary_tag": "4",
+      "secondary_tags": [
+        "4.1",
+        "4.4"
+      ]
+    },
+    "question": {
+      "stem": "A monochromatic electromagnetic wave travels in a vacuum with wavelength $λ$. The wave enters a homogeneous, transparent medium with a refractive index $n$, where $n > 1$. \n\nWhat is the decrease in the wavelength of the wave?",
+      "options": {
+        "A": "$λ \\frac{(n-1)}{n}$",
+        "B": "$λ(n-1)$",
+        "C": "$\\frac{λ}{n}$",
+        "D": "$nλ$",
+        "E": "$λ \\frac{(n+1)}{n}$",
+        "F": "$0$"
+      },
+      "correct_option": "A"
+    },
+    "visual_requirements": {
+      "visual_need": "concept_image_only",
+      "visual_role": "supportive",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": {
+        "description": "A simple diagram showing a wave train travelling from a region on the left labelled 'Vacuum (n=1)' into a block on the right labelled 'Medium (n>1)'. The wave should be represented by a sine wave. The wavelength should be visibly shorter in the medium than in the vacuum. The diagram should not be to scale or contain any values. It is purely to illustrate the physical situation."
+      }
+    },
+    "solution": {
+      "key_insight": "The frequency of a wave is determined by its source and does not change when the wave enters a new medium. Its speed and wavelength, however, must change to accommodate the new conditions.",
+      "reasoning": "1.  In a vacuum, the relationship between the speed of light $c$, frequency $f$, and wavelength $λ$ is $c = fλ$. This can be rearranged to give $f = c/λ$.\n\n2.  When the wave enters the medium of refractive index $n$, its speed is reduced to $v = c/n$.\n\n3.  The crucial physical principle is that the frequency $f$ of the wave remains constant because it is determined by the source of the wave.\n\n4.  The new wavelength in the medium, let's call it $λ'$, is given by the wave equation in the medium: $v = fλ'$.\n\n5.  We can find $λ'$ by substituting our expressions for $v$ and $f$: \n    $λ' = \\frac{v}{f} = \\frac{c/n}{c/λ} = \\frac{c}{n} \\times \\frac{λ}{c} = \\frac{λ}{n}$.\n\n6.  The question asks for the *decrease* in wavelength, which is the initial wavelength minus the new wavelength: $Δλ = λ - λ'$.\n\n7.  Substituting the expression for $λ'$: \n    $Δλ = λ - \\frac{λ}{n} = λ(1 - \\frac{1}{n}) = λ(\\frac{n-1}{n})$.\n\n8.  Therefore, the decrease in wavelength is $λ \\frac{(n-1)}{n}$."
+    },
+    "distractor_map": {
+      "A": "Correct. This is derived by recognising that frequency is invariant, calculating the new wavelength as $λ/n$, and then finding the difference $λ - λ/n$.",
+      "B": "This is a common and significant error. It arises from incorrectly assuming that the frequency must change to keep the speed of light term constant in the wave equation. If one assumes the new frequency is $f/n$, the new wavelength becomes $nλ$, leading to an *increase* of $nλ - λ = λ(n-1)$.",
+      "C": "This is the correct value for the new wavelength ($λ' = λ/n$) inside the medium, but it is not the *decrease* in wavelength, which is the difference between the old and new values.",
+      "D": "This is the incorrect new wavelength derived from the flawed reasoning described for option B. A student might choose this if they calculate the new value but not the change.",
+      "E": "This likely results from an algebraic error, for example, incorrectly adding the initial and new wavelengths ($λ + λ/n$) instead of calculating the difference.",
+      "F": "This corresponds to the fundamental misconception that the wavelength of a wave is an invariant property when it moves between media. In reality, it is the frequency that remains constant."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Identifying frequency as the invariant quantity when a wave crosses a media boundary.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true
+    }
+  },
+  "verifier_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "A",
+    "independent_solution": {
+      "main_law_or_principle": "Wave equation (v = fλ) and the principle of frequency invariance when an electromagnetic wave crosses a boundary between media. Definition of refractive index (n = c/v).",
+      "calculation_or_logic": "1. In vacuum: $c = fλ$. So, $f = c/λ$.\n2. In the medium: The frequency $f$ remains constant. The speed of light in the medium is $v = c/n$.\n3. The new wavelength $λ'$ in the medium is given by $v = fλ'$.\n4. Substitute $v$ and $f$: $λ' = v/f = (c/n) / (c/λ) = (c/n) \\times (λ/c) = λ/n$.\n5. The decrease in wavelength is the initial wavelength minus the new wavelength: $Δλ = λ - λ'$.\n6. Substitute $λ'$: $Δλ = λ - λ/n = λ(1 - 1/n) = λ((n-1)/n)$.",
+      "verified_answer_value": "$λ \\frac{(n-1)}{n}$",
+      "claimed_answer_value": "$λ \\frac{(n-1)}{n}$",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Apply wave equation v=fλ",
+        "Understand frequency invariance across media",
+        "Apply definition of refractive index n=c/v",
+        "Algebraic manipulation to find change in wavelength"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a"
+    },
+    "notes": [
+      "The question correctly identifies frequency as the invariant quantity, which is a key conceptual understanding for this topic.",
+      "The distractors are well-designed to target common misconceptions, such as assuming wavelength is invariant or incorrectly calculating the new wavelength or the change.",
+      "The calculation is straightforward algebraic manipulation, suitable for a no-calculator exam."
+    ]
+  },
+  "style_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 35,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "similar",
+      "notes": "The question is appropriately calibrated as 'Hard'. Its difficulty stems from the crucial conceptual understanding that frequency is invariant when a wave crosses a medium boundary, rather than from complex calculations. This aligns well with ESAT's approach to 'Hard' problems, which often test a deeper conceptual grasp rather than just computational ability."
+    },
+    "selectivity_audit": {
+      "main_trap": "The primary trap is failing to identify that the frequency of the electromagnetic wave remains constant when it enters a new medium. Students often incorrectly assume wavelength is constant, or that the speed of light 'c' is constant in all media, leading to incorrect deductions about how frequency or wavelength must change. Specifically, distractor B is a strong trap for those who incorrectly assume frequency changes to maintain a constant 'c' in the medium.",
+      "why_not_plug_and_chug": "This is not a plug-and-chug question because it requires a critical conceptual insight before any formulas can be correctly applied. There isn't a single formula to substitute values into. The candidate must first reason that frequency is the invariant quantity, then apply the definitions of speed, wavelength, and refractive index in sequence.",
+      "expected_mid_student_error": "A mid-level student might make one of several errors: 1) Assume wavelength is invariant, leading to option F. 2) Incorrectly assume that the speed of light 'c' is constant in the medium, leading to a change in frequency and thus options B or D. 3) Correctly calculate the new wavelength (λ/n) but provide this as the answer instead of the *decrease* in wavelength, leading to option C.",
+      "verdict": "selective"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "The question is an excellent example of an ESAT-style problem. It is concise, clear, and tests a fundamental physics concept with a strong reasoning hinge.",
+      "The distractors are very well-designed, targeting common and plausible misconceptions, which enhances the question's selectivity.",
+      "The problem is perfectly suited for a no-calculator environment, requiring only algebraic manipulation after the core physical principle is identified."
+    ]
+  },
+  "models": {
+    "designer": "gemini-2.5-pro",
+    "implementer": "gemini-2.5-pro",
+    "verifier": "gemini-2.5-flash",
+    "style_judge": "gemini-2.5-flash"
+  },
+  "attempts": 1,
+  "created_at": "2026-05-17T19:57:52.236834",
+  "token_usage": {
+    "prompt_tokens": 31527,
+    "candidates_tokens": 6237,
+    "total_tokens": 56184
+  },
+  "schema_block_snapshot": "## **P_1462623d. Relating Wavelength and Frequency of EM Waves**\n\n**Core move:** Infer the change in one electromagnetic wave property (frequency or wavelength) given a change in the other, utilizing their inverse relationship.\n\n**Seen in / context:**\n- Analyzing shifts in the electromagnetic spectrum (e.g., redshift, Doppler effect)\nUnderstanding the properties of different regions of the EM spectrum (e.g., radio waves vs. gamma rays)\nCalculations involving the speed of light, frequency, and wavelength (c = fλ)\n\n**Possible wrong paths:**\n- Assuming frequency and wavelength change in the same direction (e.g., both increasing or both decreasing)\nIncorrectly recalling the order of the electromagnetic spectrum (e.g., thinking microwaves have higher frequency than gamma rays)\nForgetting or misapplying the constant speed of light relationship (c = fλ)\n\n**Notes for generation:**\n- Questions can be qualitative (describing shifts) or quantitative (calculating values).\nOften involves understanding that higher frequency means higher energy (E=hf) and shorter wavelength.\nThe 'expansion of the universe' context is a common scenario for demonstrating redshift.\n\n**Exemplar questions:**\n- `NSAA_2016_Section1_Q19_NSAA_Sec`: Initial exemplar for new schema.\n- `NSAA_2017_Section1_Q21_NSAA_Sec`: The question provides frequency ranges for different types of electromagnetic waves and the speed of light. It also introduces 'Table 2' which will contain wavelength information. This setup directly points to using the wave equation (speed = frequency × wavelength) to relate frequency and wavelength for EM waves, and then classifying them based on the provided ranges, which perfectly aligns with the core move of relating these two properties.\n- `NSAA_2018_Section1_Q21_NSAA_Sec`: The question requires calculating frequencies from given wavelengths using the inverse relationship c = fλ, and then inferring the frequency range for ultraviolet radiation based on its position relative to visible light in the electromagnetic spectrum, which represents a change in electromagnetic wave property.\n- `NSAA_2019_Section1_Q22_NSAA_Sec`: The question requires using the constant speed of electromagnetic waves in a vacuum (c = fλ) to infer the ratio of frequencies given the ratio of wavelengths, directly utilizing the inverse relationship between frequency and wavelength. It also requires understanding that all EM waves travel at the same speed in a vacuum.\n- `NSAA_2020_Section1_Q32_NSAA_Sec`: This question requires using the relationship c = fλ to convert a given frequency range into a wavelength range (or vice-versa) and then comparing it to known wavelength/frequency ranges for different types of electromagnetic waves (visible, infrared, ultraviolet). This directly matches the core move of inferring one electromagnetic wave property from another, utilizing their inverse relationship.\n- `NSAA_2021_Section1_Q33_NSAA_Sec`: The question requires calculating the wavelength of light from its frequency (or vice versa) using the constant speed of light (c=fλ) to verify a statement about its color, which directly aligns with the core move of relating wavelength and frequency of EM waves.",
+  "pipeline": "v4",
+  "has_visual": false,
+  "visual_type": "concept_image_prompt",
+  "answer_depends_on_visual": false,
+  "visual_assets": [
+    {
+      "kind": "concept_image",
+      "spec_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260517_195157_a136d5\\concept_image_prompt.json",
+      "image_paths": [],
+      "renderer": "spec_only",
+      "qc_status": "pass",
+      "qc_source": "concept_image_verifier.json",
+      "answer_bearing": false,
+      "checksum": null
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "stage": "idea_judge",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "selectivity_score": 0,
+    "checks": {
+      "schema_preserved": "pass",
+      "on_spec": "pass",
+      "reasoning_hinge_present": "pass",
+      "not_direct_substitution": "pass",
+      "wrong_paths_specific": "pass",
+      "visual_feasible": "pass",
+      "mcq_viable": "pass",
+      "difficulty_match": "pass"
+    },
+    "reasoning_hinge_summary": "The core reasoning hinge is recognizing the isomorphism between the fluid dynamics network and a DC electrical circuit, and then applying Thévenin's theorem to simplify the source network before calculating power in the fixed load.",
+    "expected_mid_student_error": "Mid-level students are likely to attempt solving the full system of equations, leading to a time-consuming and error-prone process. Alternatively, they might correctly identify the circuit analogy but make common procedural errors in calculating either the Thévenin equivalent resistance (R_Th) or pressure (P_Th), such as failing to 'short' ideal sources for R_Th or misapplying the potential divider rule for P_Th.",
+    "notes": [
+      "The 'task_signature: compare_scenarios' appears to be a misclassification; the problem asks for a single value calculation, not a comparison between scenarios. This is a minor metadata point and does not impact the quality of the physics idea.",
+      "The FAR mode (fluid dynamics analogy) is well-executed, effectively disguising the underlying circuit problem and requiring a genuine conceptual leap for efficient solution."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

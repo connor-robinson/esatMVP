@@ -1,0 +1,29 @@
+{
+  "questionId": 2425,
+  "examName": "NSAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 36,
+  "stemBlocks": [
+    "In the following circuit the ammeter shows a reading of $4.0 \\text{ A}$. The power dissipated in the $12 \\Omega$ resistor is $12 \\text{W}$.",
+    "What is the power dissipated in the $4.0 \\Omega$ resistor?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:49:16.119322+00:00",
+  "sourceImageHash": "070832291dcde2962f712fc5d00462d813a0d430a28fc2075b7ce91ba5c68ff4",
+  "status": "ok"
+}

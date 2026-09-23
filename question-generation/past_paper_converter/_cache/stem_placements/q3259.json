@@ -1,0 +1,30 @@
+{
+  "questionId": 3259,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 50,
+  "stemBlocks": [
+    "Experiments were carried out to investigate the rate at which products were formed by two digestive enzymes, P and Q over a period of 30 minutes.\nP and Q have similar optimum conditions for function. Only the enzyme and its substrate were changed between each reaction.\nThe results are shown in the graphs.",
+    "Which of the following statements is/are correct?",
+    "1 During the first 10 minutes, the rate of reaction (mgmin$^{-1}$) with enzyme P is double the rate with enzyme Q.\n2 A possible explanation for the difference in the shape between the graphs is that the product of the reaction catalysed by P significantly alters the pH of the solution.\n3 The percentage change in mass of product formed by enzyme Q is more than 5 times greater between 6.5 and 15 minutes than it is between 24 and 29 minutes."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:13.948391+00:00",
+  "sourceImageHash": "7d78199ba483a33f9a578c24f6c70ad8be32f0e57204c00125d67b85fe761932",
+  "status": "ok"
+}

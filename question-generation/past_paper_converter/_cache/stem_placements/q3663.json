@@ -1,0 +1,28 @@
+{
+  "questionId": 3663,
+  "examName": "TMUA",
+  "examYear": 2017,
+  "paperName": "Paper 2",
+  "questionNumber": 14,
+  "stemBlocks": [
+    "The diagram below shows the graph of $y = x^2 - 2bx + c$. The vertex of this graph is at the point $P$. Which one of the following could be the graph of $y = x^2 - 2Bx + c$, where $B > b$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:21.995729+00:00",
+  "sourceImageHash": "1cd54078db69734bc4c36a5bb8888a6567a8bc812561a2af5da7038625fd2b27",
+  "status": "ok"
+}

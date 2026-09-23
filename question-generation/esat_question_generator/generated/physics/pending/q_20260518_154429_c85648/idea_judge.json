@@ -1,0 +1,40 @@
+{
+  "stage": "idea_judge",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "selectivity_score": 0,
+    "checks": {
+      "schema_preserved": "pass",
+      "on_spec": "pass",
+      "reasoning_hinge_present": "pass",
+      "not_direct_substitution": "pass",
+      "wrong_paths_specific": "pass",
+      "visual_feasible": "pass",
+      "mcq_viable": "pass",
+      "difficulty_match": "pass",
+      "goldilocks_complexity": "pass"
+    },
+    "complexity_audit": {
+      "number_of_core_physics_principles": 1,
+      "estimated_solution_steps": 2,
+      "requires_derived_relationship": false,
+      "uses_multi_topic_chain": false,
+      "goldilocks_verdict": "good"
+    },
+    "reasoning_hinge_summary": "The candidate must recognize that resistance is inversely proportional to the square of the diameter (R ∝ 1/d²), requiring the application of a power-law scaling factor rather than a linear one.",
+    "expected_mid_student_error": "The student will likely treat the relationship as linear (R ∝ 1/d) and fail to square the diameter scaling factor, leading to a predictable distractor.",
+    "notes": [
+      "The idea is a classic, robust discriminator for the target difficulty level.",
+      "The use of proportional reasoning instead of absolute values effectively prevents plug-and-chug.",
+      "The schema alignment is excellent."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

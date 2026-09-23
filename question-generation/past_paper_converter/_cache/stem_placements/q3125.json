@@ -1,0 +1,29 @@
+{
+  "questionId": 3125,
+  "examName": "ENGAA",
+  "examYear": 2019,
+  "paperName": "Section 2",
+  "questionNumber": 16,
+  "stemBlocks": [
+    "A ball is thrown vertically upwards in air. The ball travels upwards to reach its highest point and then falls back down to its initial starting position. The velocity-time graph for the ball is shown.",
+    "Which of the following statements is/are correct? 1. The magnitude of the acceleration of the ball is only equal to the magnitude of the acceleration of free fall when it is at its highest point. 2. The time taken for the upward journey of the ball is equal to the time taken for the journey back down to its starting position. 3. The maximum increase in the gravitational potential energy of the ball is less than its initial kinetic energy and greater than its kinetic energy when it returns to its starting position."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:42:12.054654+00:00",
+  "sourceImageHash": "b437757be40a9de81f795532f25ced18a8e7eed56c5709bf1984f03ae7c148b4",
+  "status": "ok"
+}

@@ -1,0 +1,30 @@
+{
+  "questionId": 2892,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 73,
+  "stemBlocks": [
+    "The graph shows the rate of transpiration at different temperatures for a plant in its natural environment.",
+    "Which of the following statements is/are correct?",
+    "1 Stomata open when the guard cells lose water and become flaccid.\n2 Between $20 \\text{ °C}$ and $27 \\text{ °C}$, the humidity around the leaves must have decreased.\n3 The air speed around the leaves could be higher at $23 \\text{ °C}$ than at $30 \\text{ °C}$."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing rate of transpiration ($/\\text{g m}^{-2}\\text{s}^{-1}$) versus temperature ($/\\text{°C}$). The rate increases from $20 \\text{ °C}$ to $27 \\text{ °C}$ and then decreases from $27 \\text{ °C}$ to $30 \\text{ °C}$.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 1.0
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.408016+00:00",
+  "sourceImageHash": "0c78fa72e958ba0b4ed677cf31ee8a699eb4f51f30fb506a462d697fa04d4594",
+  "status": "ok"
+}

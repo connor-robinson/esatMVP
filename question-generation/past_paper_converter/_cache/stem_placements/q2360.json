@@ -1,0 +1,29 @@
+{
+  "questionId": 2360,
+  "examName": "NSAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 61,
+  "stemBlocks": [
+    "The diagram shows the apparatus used by a student to carry out an investigation into the rate of photosynthesis in pondweed. The student measured the distance the gas bubble moved along the capillary tube in 3 minutes as 16 mm. The student calculated the volume of gas produced using the distance moved and the diameter of the capillary tube which was 1.0mm. After 3 minutes the rate of gas production is reduced. Which row represents the correct statements for this experiment?",
+    "|  | volume of gas produced / mm$^3$ | reason for reduction in rate of gas production after 3 minutes |\n| --- | --- | --- |\n| A | 4$\\pi$ | all enzyme active sites are occupied |\n| B | 4$\\pi$ | carbon dioxide concentration is too low |\n| C | 16$\\pi$ | carbon dioxide concentration is too low |\n| D | 16$\\pi$ | photosynthesis enzymes denatured |\n| E | 16.5$\\pi$ | carbon dioxide concentration is too low |\n| F | 16.5$\\pi$ | photosynthesis enzymes denatured |\n| G | 34$\\pi$ | all enzyme active sites are occupied |\n| H | 34$\\pi$ | photosynthesis enzymes denatured |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:25:34.728370+00:00",
+  "sourceImageHash": "00e32832481f8c908be3c8414e19c2f1e3775299e9c4c5e77093858de1e24fb2",
+  "status": "ok"
+}

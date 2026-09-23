@@ -1,0 +1,28 @@
+{
+  "questionId": 2861,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 42,
+  "stemBlocks": [
+    "Some reactions of metal M and its compounds are shown in the following diagram. Which one of the following could be the identity of metal M?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.376328+00:00",
+  "sourceImageHash": "8a47a0dec3d3dd510fb69cb3a1b0919d4b3dbd400e20ec7d1f86323efb7285cd",
+  "status": "ok"
+}

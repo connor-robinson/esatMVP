@@ -1,0 +1,56 @@
+{
+  "stage": "style_checker",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "similar",
+      "notes": "The difficulty is perfectly calibrated for a 'Hard' ESAT question. It avoids complex algebra while demanding a clear conceptual bridge."
+    },
+    "selectivity_audit": {
+      "main_trap": "The assumption that equal masses and temperature changes imply equal heat capacities, leading to the simple average (60°C).",
+      "why_not_plug_and_chug": "The specific heat capacities are not provided as constants; they must be derived from the heating time ratio, which is the core reasoning hinge.",
+      "expected_mid_student_error": "Averaging the temperatures (60°C) or inverting the ratio (70°C).",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 2,
+      "estimated_solution_steps": 3,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "Excellent use of proportional reasoning. The question is concise, authentic to the ESAT style, and tests conceptual understanding of calorimetry rather than rote memorization."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

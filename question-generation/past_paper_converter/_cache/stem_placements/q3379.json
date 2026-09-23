@@ -1,0 +1,29 @@
+{
+  "questionId": 3379,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 50,
+  "stemBlocks": [
+    "Some bacteria become resistant to antibiotics due to the loss of the proteins in their cell surface membranes that the antibiotic uses to enter the cell. To overcome this problem, scientists have developed nanomachines that can make holes in these membranes, allowing the antibiotic to enter and destroy the bacteria. Scientists studied the effects of these nanomachines in two antibiotic-resistant strains of bacteria, R and S. Each culture started with $2.5 \\times 10^6$ living cells. They carried out two sets of experiments, one without the nanomachines and one with the nanomachines. The results are shown in the chart. All other factors were kept the same.",
+    "Which of the following statements is/are correct? 1 The number of living cells of strain S in the experiment with the nanomachines is 2.25 times higher than in the experiment without the nanomachines. 2 The cells of strain S may have more proteins in their cell membranes than strain R, which allow the antibiotic to enter their cells. 3 There would be $2 \\times 10^6$ living cells of strain R at the end of the experiment with the nanomachines."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Bar chart showing percentage reduction in number of living cells for bacterial strains R and S, with and without nanomachines.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:10.865813+00:00",
+  "sourceImageHash": "9a724349fe7e30b9f7c034c93638583fc4733a4d58e1b613c518992c72c687b5",
+  "status": "ok"
+}

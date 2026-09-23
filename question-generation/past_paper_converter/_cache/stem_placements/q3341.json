@@ -1,0 +1,30 @@
+{
+  "questionId": 3341,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 12,
+  "stemBlocks": [
+    "Three resistance wires X, Y and Z, made from the same metal, are connected to each other and to a circular plastic ring as shown.",
+    "Wires X and Y each have twice the diameter of wire Z.\nWire X is 12 cm long. Wire Z is 15 cm long and is connected across a diameter of the ring.\nA power supply is connected to the two corners of the triangle that lie on the diameter.",
+    "What is the value of the ratio $\\frac{\\text{current in X}}{\\text{current in Z}}$ ?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:10.818229+00:00",
+  "sourceImageHash": "6fc9e0f01320b1b19abae5832d6f310629a4ec149fbb94989259a304babb6b3a",
+  "status": "ok"
+}

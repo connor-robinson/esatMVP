@@ -1,0 +1,28 @@
+{
+  "questionId": 2774,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 35,
+  "stemBlocks": [
+    "A metal block has mass $M$. Heat is transferred to the block at a constant rate $P$. The graph shows how the change in temperature $\\Delta T$ of the block from its initial temperature varies with time $t$. The gradient of the line is $k$. Which expression gives the specific heat capacity of the metal from which the block is made? (Assume that no heat is transferred out of the block during the time interval shown by the graph.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing change in temperature $\\Delta T$ versus time $t$. The graph is a straight line starting from the origin with a positive slope.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.365931+00:00",
+  "sourceImageHash": "4ab3541cf49bdfefdd9853d0cdc3b900abbb4bb66ac73b7a876b136209f9ffee",
+  "status": "ok"
+}

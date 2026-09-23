@@ -1,0 +1,29 @@
+{
+  "questionId": 2555,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 76,
+  "stemBlocks": [
+    "The diagram represents a mass that is moving in a straight line at constant speed up a slope of constant gradient.",
+    "Which statement about the forces acting on the mass must be correct?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A mass moving up an inclined plane at constant speed.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.864333+00:00",
+  "sourceImageHash": "953be1316be33b3a504e78d0cd1b2ec81d2ebd511b473add28f348e73d661964",
+  "status": "ok"
+}

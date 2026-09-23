@@ -1,0 +1,29 @@
+{
+  "questionId": 2631,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 62,
+  "stemBlocks": [
+    "A bacterium was genetically modified by inserting a human gene into a plasmid. A plasmid is a small circle of DNA that can be used to transfer genes into bacterial cells. These modified bacteria then secrete the protein that the human gene codes for. The gene contains a sequence of bases that is not repeated anywhere else in its DNA and is not found in the DNA of other organisms. This sequence of bases is found in every allele of this gene.\nAssuming that no mutations occur, how many copies of this base sequence would you expect to find at each of the stages X, Y and Z?",
+    "number of copies of DNA sequence found\n|  | stage X | stage Y | stage Z |\n| --- | --- | --- | --- |\n| A | 1 | 1 | 0 |\n| B | 1 | 2 | 1 |\n| C | 1 | 1 | 1 |\n| D | 2 | 1 | 0 |\n| E | 2 | 1 | 1 |\n| F | 2 | 2 | 0 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:19.030596+00:00",
+  "sourceImageHash": "7f658da9a1aab51e7dfba4bebdd4975889ae33580dc563bc5457708d6e8d3d91",
+  "status": "ok"
+}

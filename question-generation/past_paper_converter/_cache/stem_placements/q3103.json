@@ -1,0 +1,30 @@
+{
+  "questionId": 3103,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 2",
+  "questionNumber": 12,
+  "stemBlocks": [
+    "A circuit contains a battery with internal resistance and two resistors, connected as shown in the diagram.",
+    "The emf of the battery is $6.00\\text{ V}$. The pd across the $20.0\\ \\Omega$ resistor is $4.80\\text{ V}$.",
+    "What is the internal resistance of the battery?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:40:49.349773+00:00",
+  "sourceImageHash": "c536418e8e9037e3581e690292ea397ed4a012075c6d7ff4082f7f8e1bb69131",
+  "status": "ok"
+}

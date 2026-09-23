@@ -1,0 +1,30 @@
+{
+  "questionId": 2207,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 52,
+  "stemBlocks": [
+    "The graph shows the variation with time of the height through which a crane lifts a mass of 20 kg.",
+    "What is the power output of the crane when the mass is at a height of 10 m?",
+    "(gravitational field strength = $10 \\text{ Nkg}^{-1}$, the effects of air resistance and friction are negligible)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:37:46.658286+00:00",
+  "sourceImageHash": "2f66f17d264db4c5822874377bde6bcf4a50da69193b18fb575f10a8a2149e2f",
+  "status": "ok"
+}

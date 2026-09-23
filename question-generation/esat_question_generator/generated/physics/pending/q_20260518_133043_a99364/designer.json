@@ -1,0 +1,97 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_b51132c8",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Easy",
+    "idea_summary": "Given an observed increase in the frequency of a microwave signal from a space probe, the candidate must deduce the relative direction of motion and identify that the speed of the microwaves remains exactly c.",
+    "schema_invariant": {
+      "core_move": "Deducing the relationship between relative motion, Doppler shift (frequency/wavelength), and the invariance of the speed of light in a vacuum.",
+      "what_must_not_change": [
+        "The use of an electromagnetic wave in a vacuum.",
+        "Testing the constancy of the speed of light.",
+        "Testing the qualitative direction of the Doppler shift."
+      ],
+      "what_can_change": [
+        "The specific region of the EM spectrum.",
+        "The direction of reasoning (e.g., from shift to motion, rather than motion to shift).",
+        "The physical setting (e.g., local spacecraft instead of distant galaxies)."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "hidden_invariant",
+      "reasoning_hinge": "Recognising that while frequency and wavelength change due to relative motion, the wave speed (c) does not undergo classical Galilean velocity addition.",
+      "why_top_students_win": "They immediately associate a higher frequency with an approaching source (blueshift) and correctly apply the postulate that all EM waves travel at c in a vacuum regardless of source motion.",
+      "why_mid_students_miss": "They may correctly identify the probe is approaching but intuitively assume the waves are 'pushed' faster, concluding the speed is greater than c."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Qualitative Doppler effect for electromagnetic waves.",
+      "supporting_idea_if_any": "Constancy of the speed of light in a vacuum.",
+      "estimated_solution_steps": 2,
+      "number_of_core_physics_principles": 2,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 2,
+      "must_include": [
+        "non_obvious_inference",
+        "model_selection"
+      ]
+    },
+    "reference_alignment": "Maintains the classic table-style multiple-choice format of NSAA Q25, but flips the logic: instead of given motion -> find properties, it gives one property -> find motion and speed.",
+    "task_signature": "reverse_reasoning",
+    "tool_footprint": [
+      "qualitative_doppler",
+      "speed_of_light_invariance",
+      "reverse_inference"
+    ],
+    "primary_tag": "6",
+    "secondary_tags": [
+      "3"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "Uses a local space probe emitting microwaves and uses reverse reasoning (given the frequency shift, deduce the motion) rather than the standard cosmological redshift scenario.",
+    "why_still_on_spec": "The Doppler effect (qualitative) and the properties of EM waves (including their constant speed in a vacuum) are standard GCSE/A-level specification points.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no exact geometric diagram dependence"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Assuming that because the probe is approaching, the speed of the emitted microwaves is greater than c.",
+        "distractor_role": "Plausible distractor combining correct motion with incorrect classical velocity addition."
+      },
+      {
+        "mistake": "Associating an increase in frequency with the source moving away (confusing redshift and blueshift).",
+        "distractor_role": "Tests basic recall of the Doppler shift direction."
+      },
+      {
+        "mistake": "Believing that a change in frequency must be accompanied by a change in wave speed to keep wavelength constant (misapplying v = fλ by holding λ fixed instead of v).",
+        "distractor_role": "Tests understanding of how the wave equation variables interrelate during a Doppler shift."
+      }
+    ],
+    "difficulty_rationale": "It is an Easy question because it relies on two fundamental, qualitative facts (blueshift means approaching, c is constant). The difficulty is strictly conceptual (avoiding classical velocity addition), which is perfect for ESAT Section 1.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "There are no numbers to substitute; the candidate must conceptually link frequency change to motion direction and recall a physical postulate about wave speed."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The combinations of motion (approaching/receding) and wave speed (<c, =c, >c) naturally form a clean set of multiple-choice options."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

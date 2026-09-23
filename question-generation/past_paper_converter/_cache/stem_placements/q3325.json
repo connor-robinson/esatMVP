@@ -1,0 +1,30 @@
+{
+  "questionId": 3325,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 56,
+  "stemBlocks": [
+    "Mutations can occur in the genes coding for some of the enzymes that catalyse respiration reactions. This can result in mitochondria that do not function correctly.\nScientists studying this tested a molecule, T, for its ability to restore the function to these mitochondria in human cells.\nThe graphs show the rate of oxygen consumption, measured relative to the percentage of healthy mitochondria, and the rate of acidification of the cellular environment, over time.",
+    "Which of the following statements is/are correct?",
+    "1 Molecule T could reduce the rate of lactic acid production in the cells.\n2 Between 20 and 30 minutes, the oxygen consumption rate without molecule T increases by 50%.\n3 The concentration gradient for oxygen between the cell cytoplasm and the mitochondria is steeper with molecule T compared to without molecule T."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Key: with molecule T (solid line), without molecule T (dashed line). Left graph: relative rate of oxygen consumption vs time / min. Right graph: rate of acidification / arbitrary units vs time / min.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:13.306559+00:00",
+  "sourceImageHash": "ed97aaaac83b239d1d28f1e33ab22e1d5a92bc5d2ed7c6b2445ad20fb6d582c1",
+  "status": "ok"
+}

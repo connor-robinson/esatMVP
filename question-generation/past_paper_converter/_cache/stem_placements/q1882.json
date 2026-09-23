@@ -1,0 +1,29 @@
+{
+  "questionId": 1882,
+  "examName": "ENGAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 35,
+  "stemBlocks": [
+    "The diagram shows the outline of a keyhole consisting of three straight sides and an arc from a circle.\nThe sides $PQ$ and $RS$ are both $18 \\text{ mm}$ in length and when extended meet at the centre of the circle $O$ forming an angle of $\\frac{\\pi}{6}$ radians.\nThe longer arc from $Q$ to $R$ has length $22\\pi \\text{ mm}$.",
+    "What is the area, in $\\text{mm}^2$, of the keyhole as shaded in the diagram?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "[diagram not to scale]",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:26:26.107055+00:00",
+  "sourceImageHash": "cff2835088768ace4698065df5ecbd953c402ee97dd5593585bc62a26d3982a2",
+  "status": "ok"
+}

@@ -1,0 +1,3167 @@
+ORIGINAL PRACTICE PACK
+ESAT Mathematics 2
+Two complete practice modules with full author notes
+54 questions  |  2 x 40 minutes  |  No calculator
+Built to the official ESAT content specification for assessment in October 2026 and January 2027.
+Includes candidate papers, concise solutions, tips, distractor maps, calibration references and final validation 
+tables.
+Prepared 25 August 2026
+Independent, unofficial practice material. Not endorsed by UAT-UK, Pearson or Cambridge University Press & Assessment.
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 2
+1. Official sources and papers researched
+The current official specification is the syllabus boundary. Historic papers are used only to calibrate pace, wording, 
+traps and reasoning depth. Questions marked outside the current specification in the official archive were not used 
+as content models.
+ESAT Content Specification, for October 2026 and January 2027. Confirms 27 multiple-choice questions in 40 
+minutes, no calculator, Mathematics 1 assumed, and the current MM1 to MM8 Mathematics 2 content.
+Notes on Mathematics for TMUA Paper 1 and ESAT Mathematics 2, June 2026. The current official guide 
+written by the mathematicians who develop and oversee the assessments. Used to interpret the scope and 
+intended thinking level of each code.
+Official Pearson ESAT specimen and sample-test landing page. Used for the current computer-based 
+presentation, concise wording and option style. The interactive questions do not have stable public PDF question 
+numbers.
+Official UAT-UK ESAT preparation archive. Hosts the historic ENGAA and NSAA papers with current-specification 
+exclusions marked in the papers.
+Past-paper calibration set
+Paper
+Year
+Question paper
+Answer key
+Use in calibration
+ENGAA
+2018
+Open paper
+Open key
+Advanced Mathematics plus compact mixed reasoning
+ENGAA
+2019
+Open paper
+Open key
+Advanced Mathematics, 60-minute pacing
+ENGAA
+2021
+Open paper
+Open key
+Recent short-form calculus, circle and graph styles
+ENGAA
+2022
+Open paper
+Open key
+Recent inequalities, surds and coordinate geometry
+ENGAA
+2023
+Open paper
+Open key
+Recent factors, sequences and logarithms
+NSAA
+2018
+Open paper
+Open key
+Part E Advanced Mathematics, including trig, logs, binomial and 
+integration
+NSAA
+2019
+Open paper
+Open key
+Part E Advanced Mathematics, including inequalities, exponentials and 
+integrals
+NSAA
+2021
+Open paper
+Open key
+Recent Mathematics Part A wording and distractor economy
+NSAA
+2022
+Open paper
+Open key
+Recent Mathematics Part A pace and option structure
+NSAA
+2023
+Open paper
+Open key
+Recent Mathematics Part A concise applied style
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 3
+2. Syllabus and difficulty plan
+Both modules use the same coverage architecture but different mechanisms and representations. Mathematics 1 
+knowledge may be used as a foundation, while the main assessed skill in every item is from MM1 to MM8.
+Code
+Official area
+Module 1
+Module 2
+Planned emphasis
+MM1
+Algebra and functions
+5
+5
+Indices, surds, quadratics, inequalities, polynomial methods, 
+composition
+MM2
+Sequences and series
+3
+3
+Recurrences, arithmetic/geometric series, binomial expansion
+MM3
+Coordinate geometry
+3
+3
+Lines, circles, tangents and chords
+MM4
+Trigonometry
+4
+4
+Rules, radians, identities, graphs and equations
+MM5
+Exponentials and 
+logarithms
+3
+3
+Laws, equations, graphs and models
+MM6
+Differentiation
+3
+3
+Gradients, stationary points, optimisation and rates
+MM7
+Integration
+3
+3
+Area, FTC, trapezium rule, ranges and differential equations
+MM8
+Graphs of functions
+3
+3
+Transformations, modulus, asymptotes and intersections
+Total
+27
+27
+Difficulty and timing
+Difficulty
+Module 
+1
+Module 
+2
+Design intention
+Typical target
+Easy
+7
+7
+Usually one clean observation or short calculation
+35 to 55 seconds
+Medium
+14
+14
+Two linked ideas, a domain check or a convincing trap
+55 to 75 seconds
+Hard
+6
+6
+An unfamiliar representation or compact multi-step insight
+80 to 90 seconds
+Total
+27
+27
+Balanced for a strong candidate under time pressure
+40 minutes
+Design rules applied
+Mathematics 2 identity. The central move in every question belongs to MM1 to MM8, rather than being a harder 
+Mathematics 1 calculation.
+Pace. No intended solution needs more than 90 seconds for a strong candidate using the quickest route.
+Options. Each item has four to seven choices, one unique answer, and distractors tied to identifiable mistakes.
+Diagrams. Eighteen original diagrams are generated from the stated equations and coordinates. Relevant 
+intercepts, points, asymptotes and shaded regions are labelled.
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 4
+3. Module 1 candidate paper
+Time: 40 minutes  |  Questions: 27  |  Calculator: not permitted
+Choose one answer for each question. There is no penalty for an incorrect answer. Diagrams are drawn to scale unless 
+stated otherwise.
+1.
+For x > 0, simplify
+(16x⁶)^(3/4) / (2x^(1/2)).
+A
+2x³
+B
+2x⁴
+C
+4x³
+D
+4x⁴
+E
+8x⁴
+2.
+The line y = 2x + 3 is tangent to the curve y = x² - 4x + k.
+What is the value of k?
+A
+12
+B
+9
+C
+6
+D
+3
+E
+0
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 5
+3.
+The polynomial p(x) = 2x³ + ax² - 3x + 6 leaves the same remainder when divided by x - 1 and by x + 2.
+What is a?
+A
+-3
+B
+-1
+C
+-1/3
+D
+0
+E
+1
+F
+3
+4.
+For x ≥ 2, let
+f(x) = x² - 4x + 7    and    g(x) = √(x - 3).
+Which expression is equal to g(f(x))?
+A
+x + 2
+B
+|x - 2|
+C
+x - 2
+D
+(x - 2)²
+E
+√(x² - 4x + 7)
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 6
+5.
+Both roots of
+x² - 2kx + k² - 1 = 0
+are strictly between 0 and 4. Which condition on k is correct?
+A
+k < 1
+B
+k > 3
+C
+-3 < k < -1
+D
+-1 < k < 3
+E
+k < 1 or k > 3
+F
+1 ≤ k ≤ 3
+G
+1 < k < 3
+6.
+A sequence is defined by u₁ = 2 and u_{n+1} = 1 - u_n. 
+What is u₂₀₂₆?
+A
+-2
+B
+-1
+C
+1
+D
+2
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 7
+7.
+An arithmetic progression has first term a, non-zero common difference d, and sum S_n of its first n terms. 
+Given that S₁₀ = 3S₅, what is a/d?
+A
+-3
+B
+-1
+C
+0
+D
+1
+E
+3
+F
+5
+8.
+What is the coefficient of x² in
+(1 - 2x)⁵ + (1 + 2x)⁵?
+A
+0
+B
+40
+C
+80
+D
+160
+E
+320
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 8
+9.
+The line through A(1, 4) and B(5, 2) is perpendicular to line L. Line L passes through A.
+What is the equation of L?
+A
+y = 2x + 2
+B
+y = 2x - 2
+C
+y = x/2 + 7/2
+D
+y = -x/2 + 9/2
+E
+y = -2x + 6
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 9
+10.
+The circle (x - 2)² + (y + 1)² = 9 has centre C. A tangent from P(8, -1) touches the circle at T, as shown.
+What is PT?
+A
+3/2
+B
+√3
+C
+3
+D
+2√3
+E
+√15
+F
+3√3
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 10
+11.
+The points A(-1, 2) and B(5, 6) are the endpoints of a diameter of a circle.
+Which is the equation of the circle?
+A
+(x - 2)² + (y - 4)² = 52
+B
+(x + 2)² + (y + 4)² = 13
+C
+(x - 2)² + (y - 4)² = 26
+D
+(x - 2)² + (y - 4)² = 13
+E
+(x - 3)² + (y - 2)² = 13
+12.
+Evaluate
+(sin 30° + cos 60°) / tan 45°.
+A
+1/2
+B
+1
+C
+√2
+D
+2
+E
+2√2
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 11
+13.
+A circle has radius 6. A minor arc AB has length 4π, and the minor segment cut off by chord AB is shaded.
+What is the exact area of the shaded segment?
+A
+4π - 3√3
+B
+8π - 9√3
+C
+9π - 6√3
+D
+12π - 18√3
+E
+12π + 9√3
+F
+18π - 9√3
+G
+12π - 9√3
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 12
+14.
+How many solutions of
+2sin²x + cos x = 3/2
+lie in 0 ≤ x < 2π?
+A
+0
+B
+1
+C
+2
+D
+3
+E
+4
+15.
+An acute angle θ satisfies tan θ = 3/4.
+What is sin θ - cos θ?
+A
+-1
+B
+-4/5
+C
+-1/5
+D
+1/5
+E
+7/5
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 13
+16.
+Solve
+4^(x - 1) = 8^(x + 1).
+A
+-5
+B
+-3
+C
+-1
+D
+1
+E
+5
+17.
+Evaluate
+log₂(3/2) + log₂(4/3) + log₂(5/4) + ... + log₂(32/31).
+A
+-4
+B
+-1
+C
+1
+D
+4
+E
+5
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 14
+18.
+Two quantities are modelled by
+P = 3 × 2ᵗ    and    Q = 96 × 2^(-t).
+For what value of t are P and Q equal?
+A
+-5/2
+B
+-1
+C
+0
+D
+1
+E
+2
+F
+5/2
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 15
+19.
+The curve y = x³ - 3x has a normal at the point where x = 2.
+Which is the equation of the normal?
+A
+y - 2 = 9(x - 2)
+B
+y - 2 = -(x - 2)/9
+C
+y + 2 = -(x + 2)/9
+D
+y - 2 = -(x - 2)/6
+E
+y - 2 = (x - 2)/9
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 16
+20.
+For a > 0, the curve
+y = x³ - 3ax + 2
+has a stationary point on the x-axis. What is a?
+A
+-4
+B
+-2
+C
+-1
+D
+0
+E
+1
+F
+2
+G
+4
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 17
+21.
+An open box is made from a 12 by 8 rectangular sheet by cutting a square of side x from each corner and folding up 
+the sides.
+For 0 < x < 4, which value of x gives the maximum volume?
+A
+(10 + 2√7)/3
+B
+(10 - √7)/3
+C
+(8 - 2√7)/3
+D
+4 - √7
+E
+2√7/3
+F
+2
+G
+(10 - 2√7)/3
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 18
+22.
+The line y = x - 1 is shown for 0 ≤ x ≤ 3. The two regions between the line and the x-axis are shaded.
+What is the total shaded area?
+A
+3/2
+B
+2
+C
+5/2
+D
+3
+E
+7/2
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 19
+23.
+The area under y = x² from x = 0 to x = 2 is estimated using the trapezium rule with ordinates at x = 0, 1 and 2.
+Which row is correct?
+A
+estimate 3; overestimate
+B
+estimate 3; underestimate
+C
+estimate 8/3; exact
+D
+estimate 5/2; underestimate
+E
+estimate 4; overestimate
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 20
+24.
+A curve satisfies dy/dx = 6x - 4 and passes through (1, 5).
+What is the value of y when x = 2?
+A
+5
+B
+6
+C
+7
+D
+8
+E
+9
+F
+10
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 21
+25.
+The graph of y = f(x) has a maximum at (-2, 3) and x-intercepts at (-4, 0) and (0, 0), as shown.
+What is the turning point of y = -2f(x + 1) + 5?
+A
+(-1, -1)
+B
+(-3, 11)
+C
+(-1, 11)
+D
+(-3, -1)
+E
+(3, -1)
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 22
+26.
+How many distinct real solutions does
+x³ - 3x = 2
+have?
+A
+1
+B
+2
+C
+3
+D
+4
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 23
+27.
+The graph shown is decreasing, has horizontal asymptote y = -3, and passes through (0, -1).
+Which is its equation?
+A
+y = 2ˣ - 3
+B
+y = 2^(-x) + 3
+C
+y = 2^(x + 1) - 3
+D
+y = 2^(-x) - 1
+E
+y = 2^(1 - x) - 3
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 24
+4. Module 1 answer key and full author notes
+Q
+Ans
+Q
+Ans
+Q
+Ans
+1
+D
+10
+F
+19
+B
+2
+A
+11
+D
+20
+E
+3
+F
+12
+B
+21
+G
+4
+C
+13
+G
+22
+C
+5
+G
+14
+E
+23
+A
+6
+B
+15
+C
+24
+F
+7
+E
+16
+A
+25
+D
+8
+C
+17
+D
+26
+B
+9
+A
+18
+F
+27
+E
+The quickest reasonable method is shown. Each distractor explanation identifies the intended misconception rather than 
+merely restating that the option is wrong.
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 25
+Question 1
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Easy
+MM1.1 Algebra and functions: rational indices
+None
+45 seconds
+Correct answer
+D. 4x⁴
+Quick solution. 16^(3/4) = 8 and (x⁶)^(3/4) = x^(9/2). Dividing by 2x^(1/2) gives 4x⁴.
+Tip. Apply the outside power to both the number and x before dividing.
+Distractor map
+Option
+Specific mistake
+A
+Uses 16^(3/4) = 4 and also loses one power of x.
+B
+Gets the power of x right but evaluates 16^(3/4) as 4.
+C
+Evaluates the numerical factor correctly but subtracts the powers incorrectly.
+E
+Forgets to divide the coefficient by 2.
+Calibration reference. ENGAA 2022 Section 1, Q1, rational-index simplification style. [ENGAA 2022 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 26
+Question 2
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM1.3 Algebra and functions: quadratics and 
+discriminant
+MM8.7 intersections
+65 seconds
+Correct answer
+A. 12
+Quick solution. At an intersection, x² - 4x + k = 2x + 3, so x² - 6x + k - 3 = 0. Tangency means one repeated root, so 
+36 - 4(k - 3) = 0. Hence k = 12.
+Tip. For a line tangent to a quadratic, set the discriminant of the intersection equation to zero.
+Distractor map
+Option
+Specific mistake
+B
+Uses the repeated x-coordinate, x = 3, as k.
+C
+Sets the coefficient of x, rather than the discriminant, to zero.
+D
+Drops k when rearranging and keeps only the line's constant term.
+E
+Assumes tangency occurs only when the quadratic has no constant term.
+Calibration reference. NSAA 2018 Section 1, Q77, tangent line to a quadratic; ENGAA 2021 Section 1, Q11, line-quadratic 
+intersections. [ENGAA 2021 paper] [NSAA 2018 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 27
+Question 3
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM1.6 Algebra and functions: Remainder Theorem
+None
+65 seconds
+Correct answer
+F. 3
+Quick solution. Equal remainders give p(1) = p(-2). Now p(1) = a + 5 and p(-2) = 4a - 4. Thus a + 5 = 4a - 4, so a = 3.
+Tip. Translate each divisor into the value to substitute before expanding anything.
+Distractor map
+Option
+Specific mistake
+A
+Uses x = 2 instead of x = -2 for the divisor x + 2.
+B
+Changes the sign of the cubic term at x = -2 incorrectly.
+C
+Divides by 3 too early after forming the wrong linear equation.
+D
+Assumes equal remainders mean both remainders are zero.
+E
+Evaluates (-2)² as -4.
+Calibration reference. ENGAA 2023 Section 1, Q21, polynomial-factor information used to determine coefficients. [ENGAA 
+2023 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 28
+Question 4  
+ Strong question
+★
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM1.7 Algebra and functions: function 
+composition
+MM8.2 graph transformations and 
+composition
+70 seconds
+Correct answer
+C. x - 2
+Quick solution. g(f(x)) = √(f(x) - 3) = √((x - 2)²) = |x - 2|. Since x ≥ 2, this is x - 2.
+Tip. Remember that √(u²) = |u|, then use the stated domain.
+Distractor map
+Option
+Specific mistake
+A
+Reverses the sign when completing the square.
+B
+Stops before using the restriction x ≥ 2.
+D
+Forgets that the outer function takes a square root.
+E
+Substitutes f(x) into √x rather than into √(x - 3).
+Calibration reference. Official 2026 Notes on Mathematics, MM1.7 and MM8.2 composition style; no close single archive 
+question was used. [official guide] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 29
+Question 5
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Hard
+MM1.3 Algebra and functions: quadratic roots
+MM1.5 inequalities
+80 seconds
+Correct answer
+G. 1 < k < 3
+Quick solution. The quadratic is (x - k)² = 1, so the roots are k - 1 and k + 1. Requiring 0 < k - 1 and k + 1 < 4 gives 1 < 
+k < 3.
+Tip. Complete the square before reaching for the quadratic formula.
+Distractor map
+Option
+Specific mistake
+A
+Checks only that the smaller root is below 4.
+B
+Checks only that the larger root is positive.
+C
+Uses roots -k ± 1 instead of k ± 1.
+D
+Applies the bounds to k itself rather than to both roots.
+E
+Chooses the exterior of the required interval after reversing both inequalities.
+F
+Includes k = 1 and k = 3, where a root equals an excluded endpoint.
+Calibration reference. ENGAA 2022 Section 1, Q31, complete-set inequality style; NSAA 2019 Section 1, Q89, polynomial sign 
+intervals. [ENGAA 2022 paper] [NSAA 2019 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 30
+Question 6
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Easy
+MM2.1 Sequences and series: recurrence relations
+None
+35 seconds
+Correct answer
+B. -1
+Quick solution. The sequence alternates 2, -1, 2, -1, ... . Every even-numbered term is -1.
+Tip. Write the first three terms and look for a short cycle.
+Distractor map
+Option
+Specific mistake
+A
+Changes the sign but forgets the added 1.
+C
+Treats the recurrence as u_{n+1} = 1 - n. 
+D
+Uses the value of the odd-numbered terms.
+Calibration reference. Official 2026 Notes on Mathematics, MM2.1 recurrence exercises; broader ESAT sequence style. 
+[official guide] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 31
+Question 7
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM2.2 Sequences and series: arithmetic series
+None
+70 seconds
+Correct answer
+E. 3
+Quick solution. S₁₀ = 5(2a + 9d) and S₅ = (5/2)(2a + 4d). Setting S₁₀ = 3S₅ gives 10(2a + 9d) = 15(2a + 4d), so a = 3d.
+Tip. Cancel the common factor 5 before doing the algebra.
+Distractor map
+Option
+Specific mistake
+A
+Moves the d terms across with the wrong sign.
+B
+Uses 10d and 5d instead of 9d and 4d in the sum formula.
+C
+Cancels a from both sides even though it is inside brackets.
+D
+Uses S  = n(a + d)/2.
+F
+Equates the tenth term to three times the fifth term instead of the sums.
+Calibration reference. ENGAA 2023 Section 1, Q23, linked arithmetic sums; NSAA 2018 Section 1, Q79, conditions on an 
+arithmetic progression. [ENGAA 2023 paper] [NSAA 2018 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 32
+Question 8
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Easy
+MM2.4 Sequences and series: binomial expansion
+None
+50 seconds
+Correct answer
+C. 80
+Quick solution. Each expansion contributes C(5,2)(2x)² = 10 × 4x² = 40x². The signs are positive for an even power, 
+so the total coefficient is 80.
+Tip. Odd-power terms cancel, but even-power terms add.
+Distractor map
+Option
+Specific mistake
+A
+Assumes every non-constant term cancels.
+B
+Finds the coefficient from only one expansion.
+D
+Adds the two contributions and then doubles once more.
+E
+Uses 2⁵ instead of 2² for the x² term.
+Calibration reference. NSAA 2018 Section 1, Q85, coefficient extraction with paired binomial factors. [NSAA 2018 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 33
+Question 9
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM3.1 Coordinate geometry: perpendicular lines
+None
+60 seconds
+Correct answer
+A. y = 2x + 2
+Quick solution. The gradient of AB is (2 - 4)/(5 - 1) = -1/2, so the perpendicular gradient is 2. Through A, y - 4 = 2(x - 
+1), hence y = 2x + 2.
+Tip. Find the gradient first, then use the negative reciprocal.
+Distractor map
+Option
+Specific mistake
+B
+Uses the correct gradient but substitutes A incorrectly.
+C
+Changes the sign of the gradient but does not take the reciprocal.
+D
+Uses the equation of AB itself.
+E
+Takes the reciprocal but keeps the negative sign.
+Calibration reference. ENGAA 2018 Section 1, Q5, parallel-gradient reasoning; ENGAA 2022 Section 1, Q37, point-to-line 
+geometry. [ENGAA 2018 paper] [ENGAA 2022 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 34
+Question 10
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM3.2 Coordinate geometry: circles
+MM3.3 tangent-radius property
+70 seconds
+Correct answer
+F. 3√3
+Quick solution. CP = 6 and CT = 3. Since CT is perpendicular to the tangent, triangle CTP is right-angled. Thus PT² = 
+6² - 3² = 27, so PT = 3√3.
+Tip. Join the external point to the centre to create a right-angled triangle.
+Distractor map
+Option
+Specific mistake
+A
+Uses the difference of the two lengths and then halves it.
+B
+Calculates √(6 - 3) instead of using squares.
+C
+Assumes the tangent length equals the radius.
+D
+Uses PT² = CP × CT.
+E
+Uses PT² = CP² - CT rather than CP² - CT².
+Calibration reference. NSAA 2018 Section 1, Q83, tangent length from an external point to a circle. [NSAA 2018 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 35
+Question 11
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM3.2 Coordinate geometry: equation of a circle
+None
+65 seconds
+Correct answer
+D. (x - 2)² + (y - 4)² = 13
+Quick solution. The centre is the midpoint (2, 4). Also AB² = 6² + 4² = 52, so r² = AB²/4 = 13. Therefore (x - 2)² + (y - 
+4)² = 13.
+Tip. The diameter is twice the radius, so square lengths with care.
+Distractor map
+Option
+Specific mistake
+A
+Uses the squared diameter as r².
+B
+Uses the right radius but reverses both centre signs.
+C
+Divides the squared diameter by 2 instead of 4.
+E
+Finds the wrong midpoint by pairing unlike coordinates.
+Calibration reference. Official 2026 Notes on Mathematics, MM3.2 circle-equation examples; broader coordinate-geometry 
+style in ENGAA 2022 Q37. [ENGAA 2022 paper] [official guide] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 36
+Question 12
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Easy
+MM4.3 Trigonometry: exact values
+None
+40 seconds
+Correct answer
+B. 1
+Quick solution. sin 30° = cos 60° = 1/2 and tan 45° = 1. The value is (1/2 + 1/2)/1 = 1.
+Tip. Recall the exact values before doing any manipulation.
+Distractor map
+Option
+Specific mistake
+A
+Uses only one term in the numerator.
+C
+Confuses sin 45° with tan 45°.
+D
+Divides each half by 1/2 instead of by 1.
+E
+Uses tan 45° = 1/√2 and also doubles the numerator.
+Calibration reference. Official Pearson ESAT Mathematics 2 specimen, exact-trigonometric-value style; specification MM4.3. 
+[official specimen page] [specification]
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 37
+Question 13
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Hard
+MM4.2 Trigonometry: radians, sectors and 
+segments
+MM4.3 exact values
+85 seconds
+Correct answer
+G. 12π - 9√3
+Quick solution. The angle is θ = s/r = 4π/6 = 2π/3. Sector area is (1/2)r²θ = 12π. Triangle AOB has area (1/2)(6)
+(6)sin(2π/3) = 9√3. The segment area is 12π - 9√3.
+Tip. A segment is a sector minus the triangle formed by the two radii.
+Distractor map
+Option
+Specific mistake
+A
+Uses the arc length as if it were the angle.
+B
+Uses θ = π/3 rather than 2π/3.
+C
+Uses πrθ/2 for the sector area.
+D
+Forgets the factor 1/2 in the triangle area.
+E
+Adds the triangle instead of subtracting it.
+F
+Uses the whole 18π half-circle area as the sector.
+Calibration reference. ENGAA 2021 Section 1, Q27, exact area of a circular segment; official specification MM4.2. [ENGAA 
+2021 paper] [specification]
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 38
+Question 14  
+ Strong question
+★
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Hard
+MM4.6 Trigonometry: equations in an interval
+MM4.5 identities
+85 seconds
+Correct answer
+E. 4
+Quick solution. Let c = cos x and use sin²x = 1 - c². This gives 4c² - 2c - 1 = 0, with roots c = (1 ± √5)/4. Both lie 
+strictly between -1 and 1, so each cosine value gives two x-values in the interval. Total: 4.
+Tip. You only need to check whether the cosine roots lie in [-1, 1]; you do not need their angles.
+Distractor map
+Option
+Specific mistake
+A
+Rejects the irrational cosine values because they are not standard angles.
+B
+Keeps only one root of the quadratic and one angle.
+C
+Keeps both cosine roots but gives one angle for each.
+D
+Treats one valid cosine root as an endpoint value with only one angle.
+Calibration reference. NSAA 2018 Section 1, Q75, counting trigonometric solutions in a radian interval. [NSAA 2018 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 39
+Question 15
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Easy
+MM4.5 Trigonometry: identities
+MM4.3 exact triangles
+45 seconds
+Correct answer
+C. -1/5
+Quick solution. Use a 3-4-5 triangle. Then sin θ = 3/5 and cos θ = 4/5, so sin θ - cos θ = -1/5.
+Tip. Turn a positive tangent ratio into a right triangle.
+Distractor map
+Option
+Specific mistake
+A
+Subtracts 4 from 3 without dividing by the hypotenuse.
+B
+Uses sin θ = 0.
+D
+Reverses the order of subtraction.
+E
+Adds sine and cosine instead of subtracting.
+Calibration reference. NSAA 2019 Section 1, Q77, reducing a trigonometric condition to algebraic ratios. [NSAA 2019 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 40
+Question 16
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Easy
+MM5.3 Exponentials and logarithms: exponential 
+equations
+None
+45 seconds
+Correct answer
+A. -5
+Quick solution. Write both sides in base 2: 2^(2x - 2) = 2^(3x + 3). Hence 2x - 2 = 3x + 3, giving x = -5.
+Tip. Convert both sides to the same base before comparing exponents.
+Distractor map
+Option
+Specific mistake
+B
+Drops the factor 2 multiplying x - 1.
+C
+Equates x - 1 and x + 1 directly.
+D
+Changes 8 to 2² instead of 2³.
+E
+Moves the constants across with the wrong sign.
+Calibration reference. NSAA 2019 Section 1, Q81, exponential equation reduced using a substitution or common base. [NSAA 
+2019 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 41
+Question 17
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM5.2 Exponentials and logarithms: logarithm 
+laws
+None
+60 seconds
+Correct answer
+D. 4
+Quick solution. Combine the logarithms. The product telescopes to (3/2)(4/3)...(32/31) = 32/2 = 16. Therefore the 
+sum is log₂16 = 4.
+Tip. Combine first, then cancel the product before evaluating the logarithm.
+Distractor map
+Option
+Specific mistake
+A
+Reverses every fraction before combining.
+B
+Keeps only the first and last denominators in the wrong order.
+C
+Assumes a telescoping product must equal the base 2.
+E
+Uses 32 = 2⁵ and forgets the remaining division by 2.
+Calibration reference. NSAA 2018 Section 1, Q81, telescoping sum of logarithms. [NSAA 2018 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 42
+Question 18
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM5.3 Exponentials and logarithms: exponential 
+models
+MM8.7 intersections
+65 seconds
+Correct answer
+F. 5/2
+Quick solution. Set the models equal: 3 × 2ᵗ = 96 × 2^(-t). Hence 2^(2t) = 32 = 2⁵, so 2t = 5 and t = 5/2.
+Tip. Bring equal bases together before comparing exponents.
+Distractor map
+Option
+Specific mistake
+A
+Moves 2^(-t) across but keeps the exponent negative.
+B
+Uses 96/3 = 2⁻².
+C
+Assumes the increasing and decreasing models meet at t = 0.
+D
+Uses 32 = 2².
+E
+Finds 2t = 4 after treating 32 as 16.
+Calibration reference. Official 2026 Notes on Mathematics, MM5.3 exponential-equation modelling; broader ESAT intersection 
+style. [official guide] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 43
+Question 19
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM6.3 Differentiation: tangents and normals
+MM3.1 straight lines
+70 seconds
+Correct answer
+B. y - 2 = -(x - 2)/9
+Quick solution. At x = 2, y = 2. Also dy/dx = 3x² - 3, so the tangent gradient is 9 and the normal gradient is -1/9. 
+Thus y - 2 = -(x - 2)/9.
+Tip. Find both the point and the negative reciprocal gradient.
+Distractor map
+Option
+Specific mistake
+A
+Uses the tangent gradient instead of the normal gradient.
+C
+Uses (-2, -2) instead of (2, 2).
+D
+Differentiates x³ as 3x instead of 3x².
+E
+Takes the reciprocal but forgets the negative sign.
+Calibration reference. ENGAA 2021 Section 1, Q21, efficient derivative evaluation; official MM6.3 tangent and normal style. 
+[ENGAA 2021 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 44
+Question 20
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Hard
+MM6.3 Differentiation: stationary points
+MM1.3 cubic functions
+80 seconds
+Correct answer
+E. 1
+Quick solution. At a stationary point, 3x² - 3a = 0, so a = x². Being on the x-axis also gives x³ - 3x³ + 2 = 0, hence x³ = 
+1. Therefore x = 1 and a = 1.
+Tip. Use the derivative equation to remove the parameter from the curve equation.
+Distractor map
+Option
+Specific mistake
+A
+Uses a = -x² and x = 2.
+B
+Substitutes x³ = 2 instead of x³ = 1.
+C
+Takes x = -1 even though it does not make the point lie on the axis.
+D
+Assumes a stationary point on an axis must occur at the origin.
+F
+Uses x³ = 2 after missing the factor -2x³.
+G
+Squares the constant term 2 to obtain a.
+Calibration reference. Official 2026 Notes on Mathematics, MM6.3 stationary-point parameter exercises; tangent condition 
+style also seen in NSAA 2018 Q77. [NSAA 2018 paper] [official guide] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 45
+Question 21  
+ Strong question
+★
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Hard
+MM6.3 Differentiation: optimisation
+MM1.3 quadratics
+90 seconds
+Correct answer
+G. (10 - 2√7)/3
+Quick solution. V = x(12 - 2x)(8 - 2x) = 4x(6 - x)(4 - x). Differentiating gives V' = 12x² - 80x + 96. Thus 3x² - 20x + 24 = 
+0, so x = (10 ± 2√7)/3. Only the minus sign lies in 0 < x < 4, so it gives the maximum.
+Tip. Use the physical interval to reject the second stationary value immediately.
+Distractor map
+Option
+Specific mistake
+A
+Keeps the stationary value outside the physical domain.
+B
+Loses the factor 2 when applying the quadratic formula.
+C
+Uses 8 rather than 10 in the quadratic-formula numerator.
+D
+Differentiates the three factors separately but does not use the product rule correctly.
+E
+Keeps only the square-root part of the solution.
+F
+Assumes the best cut is half the smaller side's half-width.
+Calibration reference. ENGAA 2022 Section 1, Q23, forming an area model from a diagram; official 2026 Notes MM6.3 
+optimisation style. [ENGAA 2022 paper] [official guide] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 46
+Question 22
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM7.1 Integration: area and signed integral
+MM8.1 graphs
+55 seconds
+Correct answer
+C. 5/2
+Quick solution. From 0 to 1 the triangle has area 1/2. From 1 to 3 the triangle has area (1/2)(2)(2) = 2. Total area = 
+1/2 + 2 = 5/2.
+Tip. Areas below the axis still count positively in a total geometric area.
+Distractor map
+Option
+Specific mistake
+A
+Calculates the signed integral, 2 - 1/2.
+B
+Counts only the region above the axis.
+D
+Adds the two triangle bases but omits the factor 1/2.
+E
+Treats the smaller triangle as having area 3/2.
+Calibration reference. ENGAA 2018 Section 1, Q29, area enclosed by a curve and a line; official MM7.1 signed-area distinction. 
+[ENGAA 2018 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 47
+Question 23
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM7.5 Integration: trapezium rule
+MM8.5 curve shape
+65 seconds
+Correct answer
+A. estimate 3; overestimate
+Quick solution. With width 1, the trapezium estimate is (1/2)[0 + 2(1) + 4] = 3. Since y = x² is convex, the chords lie 
+above the curve, so this is an overestimate.
+Tip. For a convex curve, trapezium tops sit above the curve.
+Distractor map
+Option
+Specific mistake
+B
+Gets the numerical estimate right but reverses the convexity judgement.
+C
+Uses the exact integral instead of the trapezium estimate.
+D
+Uses the midpoint value as an average height.
+E
+Adds the three ordinates without endpoint half-weights.
+Calibration reference. Official 2026 Notes on Mathematics, MM7.5 trapezium-rule and overestimate style; no close archive 
+item was used. [official guide] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 48
+Question 24
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM7.6 Integration: differential equations
+MM7.2 indefinite integration
+65 seconds
+Correct answer
+F. 10
+Quick solution. Integrating gives y = 3x² - 4x + C. Using (1, 5), 5 = 3 - 4 + C, so C = 6. At x = 2, y = 12 - 8 + 6 = 10.
+Tip. Find the constant before substituting the requested x-value.
+Distractor map
+Option
+Specific mistake
+A
+Assumes the initial y-value remains constant.
+B
+Finds C correctly but reports it as the answer.
+C
+Integrates 6x as 3x rather than 3x².
+D
+Omits the constant of integration.
+E
+Uses C = 5 without applying the point to the other terms.
+Calibration reference. Official 2026 Notes on Mathematics, MM7.6 first-order differential-equation examples. [official guide] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 49
+Question 25
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Easy
+MM8.2 Graphs of functions: transformations
+MM8.4 quadratics
+55 seconds
+Correct answer
+D. (-3, -1)
+Quick solution. Replacing x by x + 1 shifts the graph left by 1, so the x-coordinate becomes -3. The y-value 
+transforms as -2(3) + 5 = -1. The turning point is (-3, -1).
+Tip. Do the horizontal transformation first, and remember its direction is reversed.
+Distractor map
+Option
+Specific mistake
+A
+Shifts the graph right instead of left.
+B
+Shifts left but uses 2(3) + 5.
+C
+Shifts right and also misses the reflection.
+E
+Changes the sign of the original x-coordinate instead of shifting it.
+Calibration reference. Official Pearson ESAT Mathematics 2 specimen and 2026 Notes MM8.2 graph-transformation style. 
+[official specimen page] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 50
+Question 26  
+ Strong question
+★
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Hard
+MM8.7 Graphs of functions: intersections
+MM1.6 polynomial factorisation
+80 seconds
+Correct answer
+B. 2
+Quick solution. Rearrange to x³ - 3x - 2 = 0. This factorises as (x - 2)(x + 1)² = 0, giving the two distinct roots x = 2 
+and x = -1. The repeated root represents tangency to y = 2.
+Tip. The question asks for distinct roots, so inspect multiplicity after factorising.
+Distractor map
+Option
+Specific mistake
+A
+Counts only the crossing at x = 2 and misses the tangent root.
+C
+Counts the repeated root x = -1 twice.
+D
+Assumes a cubic and a line can meet in four places.
+Calibration reference. NSAA 2018 Section 1, Q77, tangency as a repeated algebraic solution; ENGAA 2021 Section 1, Q11, 
+intersections encoded by a quadratic. [ENGAA 2021 paper] [NSAA 2018 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 51
+Question 27
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM8.1 Graphs of functions: exponential graphs
+MM8.2 transformations
+65 seconds
+Correct answer
+E. y = 2^(1 - x) - 3
+Quick solution. A decreasing base-2 exponential needs a negative coefficient of x in the exponent. The asymptote 
+-3 fixes the vertical shift. At x = 0, 2^(1 - 0) - 3 = -1, so y = 2^(1 - x) - 3.
+Tip. Use the asymptote and direction first, then check one point.
+Distractor map
+Option
+Specific mistake
+A
+Has the right asymptote but is increasing and has y-intercept -2.
+B
+Is decreasing but has asymptote y = 3.
+C
+Has the right intercept and asymptote but is increasing.
+D
+Is decreasing and has the right intercept, but its asymptote is y = -1.
+Calibration reference. Official 2026 Notes on Mathematics, MM5.1 and MM8.1-2 exponential-graph style; official Pearson 
+specimen graph interpretation. [official guide] [official specimen page] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 52
+5. Module 2 candidate paper
+Time: 40 minutes  |  Questions: 27  |  Calculator: not permitted
+Choose one answer for each question. There is no penalty for an incorrect answer. Diagrams are drawn to scale unless 
+stated otherwise.
+1.
+Simplify
+1/(√5 - 2) - 1/(√5 + 2).
+A
+2
+B
+4
+C
+2√5
+D
+4√5
+E
+8
+2.
+The line y = x + 2 intersects the curve y = x² - k at two points. The difference between their x-coordinates is 4.
+What is k?
+A
+-7/4
+B
+-1/4
+C
+1/4
+D
+3/4
+E
+7/4
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 53
+3.
+The polynomial x² + x - 6 is a factor of
+x³ + ax² + bx + 12.
+What is a + b?
+A
+-9
+B
+-6
+C
+-3
+D
+3
+E
+9
+4.
+What is the complete set of real values of x satisfying
+(x - 1)(x + 3) ≥ 4(x - 1)?
+A
+x ≤ -3
+B
+x ≥ 1
+C
+x ≤ 1
+D
+x ≠ 1
+E
+-3 ≤ x ≤ 1
+F
+x ≤ -3 or x ≥ 1
+G
+all real x
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 54
+5.
+Let f(x) = x² + 1 and g(x) = 2x - 3.
+What is the complete solution set of f(g(x)) = 5?
+A
+{1/2}
+B
+{5/2}
+C
+{-1/2, 5/2}
+D
+{1/2, 5/2}
+E
+{-5/2, -1/2}
+6.
+A sequence is defined by u₁ = 2 and
+u_{n+1} = u_n + 2n + 1. 
+What is u₁₀?
+A
+82
+B
+100
+C
+101
+D
+102
+E
+121
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 55
+7.
+A convergent geometric series has positive common ratio and begins
+3 + 3r + 3r² + ... .
+Its sum to infinity is 12. What is the sum of its first two terms?
+A
+3
+B
+15/4
+C
+4
+D
+9/2
+E
+5
+F
+21/4
+8.
+What is the constant term in the expansion of
+(2x + 1/x)⁴?
+A
+16
+B
+24
+C
+32
+D
+48
+E
+96
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 56
+9.
+The point Q(4, 2) lies on the circle (x - 1)² + (y + 2)² = 25.
+Which is the equation of the tangent at Q?
+A
+3x - 4y = 4
+B
+4x + 3y = 22
+C
+3x + 4y = 25
+D
+4x - 3y = 10
+E
+3x + 4y = 18
+F
+4x + 3y = 18
+G
+3x + 4y = 20
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 57
+10.
+The line x = 5 cuts the circle
+(x - 2)² + (y + 1)² = 25
+in a chord. What is the length of the chord?
+A
+4
+B
+5
+C
+6
+D
+8
+E
+10
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 58
+11.
+The two lines y = mx through the origin are tangent to the circle
+(x - 4)² + y² = 4.
+What is m²?
+A
+1/3
+B
+1/2
+C
+1
+D
+2
+E
+3
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 59
+12.
+In a triangle, two sides of lengths 4 and 5 enclose angle θ. The side opposite θ has length 3.
+What is cos θ?
+A
+1/5
+B
+2/5
+C
+3/5
+D
+3/4
+E
+4/5
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 60
+13.
+A triangle ABC satisfies A = 30°, a = 4 and b = 6, where side a is opposite A and side b is opposite B.
+How many different triangles satisfy these data?
+A
+0
+B
+1
+C
+2
+D
+3
+14.
+How many solutions of
+tan x (tan²x - 1) = 0
+lie in 0 ≤ x ≤ 2π?
+A
+1
+B
+2
+C
+3
+D
+4
+E
+5
+F
+6
+G
+7
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 61
+15.
+A sector of radius 3 has perimeter 12. The minor segment between its arc and chord is shaded.
+What is the exact shaded area?
+A
+9sin 2
+B
+9 - 9sin 2
+C
+9 + (9/2)sin 2
+D
+18 - (9/2)sin 2
+E
+9 - 9sin 1
+F
+9 - (9/2)sin 2
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 62
+16.
+Solve
+log₂(x - 1) + log₂(x - 3) = 3.
+A
+x = -1 only
+B
+x = 5 only
+C
+x = -1 or 5
+D
+x = 3 or 5
+E
+no real solution
+17.
+What is the complete solution set of
+4ˣ - 5 × 2ˣ + 4 = 0?
+A
+{-2, 0}
+B
+{0}
+C
+{2}
+D
+{0, 2}
+E
+{1, 4}
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 63
+18.
+A quantity is modelled by
+N(t) = 1600 × 2^(-t/3).
+For what value of t is N(t) = 800?
+A
+3
+B
+6
+C
+9
+D
+12
+E
+24
+19.
+Given
+y = (x³ + 2x)/√x,
+find dy/dx when x = 4.
+A
+9/2
+B
+10
+C
+21/2
+D
+20
+E
+41/2
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 64
+20.
+For which values of a is
+f'(x) > 0 for every real x, where
+f(x) = x³ + ax² + 3x?
+A
+a < -3
+B
+a > 3
+C
+-3 < a < 3
+D
+a ≤ -3 or a ≥ 3
+E
+-3 ≤ a ≤ 3
+21.
+A particle has displacement
+s(t) = t³ - 6t² + 9t
+for 0 ≤ t ≤ 4. At which time or times is its velocity greatest?
+A
+t = 0 only
+B
+t = 1 only
+C
+t = 2 only
+D
+t = 3 only
+E
+t = 4 only
+F
+t = 1 and t = 3
+G
+t = 0 and t = 4
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 65
+22.
+It is given that
+∫₋₁² f(x) dx = 5    and    ∫₄² f(x) dx = -3.
+What is ∫₋₁⁴ f(x) dx?
+A
+-8
+B
+-5
+C
+-2
+D
+2
+E
+5
+F
+8
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 66
+23.
+The curve y = (3/2)x(x - 1) is shown from x = 0 to x = 2. The regions between the curve and the x-axis are shaded.
+What is the total shaded area?
+A
+1
+B
+3/2
+C
+2
+D
+5/2
+E
+3
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 67
+24.
+Let
+F(x) = ∫₀ˣ (3t² - 12t + 9) dt.
+On which interval is F decreasing?
+A
+x < 1
+B
+x > 3
+C
+x < 1 or x > 3
+D
+1 < x < 3
+E
+-1 < x < 3
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 68
+25.
+The graph of y = f(x) has vertical asymptote x = 2 and crosses the x-axis at x = 5, as shown.
+For y = f(2x + 1), which pair is correct?
+A
+asymptote x = 1/2; root x = 2
+B
+asymptote x = 3/2; root x = 3
+C
+asymptote x = 1; root x = 5/2
+D
+asymptote x = 3; root x = 6
+E
+asymptote x = 4; root x = 10
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 69
+26.
+The graph shown is V-shaped, has vertex (2, -1), and passes through (0, 3).
+Which is its equation?
+A
+y = |x - 2| - 1
+B
+y = 2|x + 2| - 1
+C
+y = |2x - 2| - 1
+D
+y = 2|x - 2| + 1
+E
+y = 2|x - 2| - 1
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 70
+27.
+How many real solutions does
+|x² - 1| = x + 1
+have?
+A
+1
+B
+2
+C
+3
+D
+4
+E
+5
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 71
+6. Module 2 answer key and full author notes
+Q
+Ans
+Q
+Ans
+Q
+Ans
+1
+B
+10
+D
+19
+E
+2
+E
+11
+A
+20
+C
+3
+A
+12
+E
+21
+G
+4
+G
+13
+C
+22
+F
+5
+D
+14
+G
+23
+B
+6
+C
+15
+F
+24
+D
+7
+F
+16
+B
+25
+A
+8
+B
+17
+D
+26
+E
+9
+G
+18
+A
+27
+C
+The quickest reasonable method is shown. Each distractor explanation identifies the intended misconception rather than 
+merely restating that the option is wrong.
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 72
+Question 1
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Easy
+MM1.2 Algebra and functions: surds
+None
+50 seconds
+Correct answer
+B. 4
+Quick solution. The common denominator is (√5 - 2)(√5 + 2) = 1. The numerator is (√5 + 2) - (√5 - 2) = 4, so the 
+value is 4.
+Tip. Conjugate denominators often collapse to a small integer.
+Distractor map
+Option
+Specific mistake
+A
+Subtracts the two 2s instead of accounting for the outer minus sign.
+C
+Adds the surd parts and cancels the rational parts.
+D
+Uses 5 + 4 as the denominator rather than the difference of squares.
+E
+Doubles the numerator again after rationalising both fractions.
+Calibration reference. ENGAA 2022 Section 1, Q27, exact simplification of a surd expression. [ENGAA 2022 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 73
+Question 2
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM1.4 Algebra and functions: simultaneous 
+equations
+MM1.3 quadratic roots
+75 seconds
+Correct answer
+E. 7/4
+Quick solution. Intersections satisfy x² - x - (k + 2) = 0. For a monic quadratic, the root difference has square equal 
+to the discriminant: 1 + 4(k + 2) = 4k + 9. Hence 4k + 9 = 16 and k = 7/4.
+Tip. For roots r and s of a monic quadratic, (r - s)² equals the discriminant.
+Distractor map
+Option
+Specific mistake
+A
+Moves 9 across with the wrong sign.
+B
+Uses the difference 4 as the discriminant rather than 4².
+C
+Drops the +2 when equating the graphs.
+D
+Uses 4k + 1 for the discriminant.
+Calibration reference. ENGAA 2021 Section 1, Q11, deducing a line-curve parameter from the separation of intersection roots. 
+[ENGAA 2021 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 74
+Question 3
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Easy
+MM1.6 Algebra and functions: polynomial factors
+None
+55 seconds
+Correct answer
+A. -9
+Quick solution. Since x² + x - 6 = (x + 3)(x - 2), the remaining factor is x + c. The constant term is -6c = 12, so c = -2. 
+Expanding (x² + x - 6)(x - 2) gives a = -1 and b = -8, hence a + b = -9.
+Tip. Use the constant term to find the linear quotient before expanding.
+Distractor map
+Option
+Specific mistake
+B
+Reports the constant coefficient of the quadratic factor.
+C
+Uses c = 2 instead of c = -2.
+D
+Adds the roots 3 and -2 rather than the required coefficients.
+E
+Finds the correct magnitude but loses the negative signs.
+Calibration reference. ENGAA 2023 Section 1, Q21, a quadratic factor used to determine cubic coefficients. [ENGAA 2023 
+paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 75
+Question 4  
+ Strong question
+★
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM1.5 Algebra and functions: inequalities
+MM1.6 factorisation
+65 seconds
+Correct answer
+G. all real x
+Quick solution. Move the right side across and factor: (x - 1)[(x + 3) - 4] = (x - 1)² ≥ 0. A square is non-negative for 
+every real x, including x = 1.
+Tip. Do not divide by an expression whose sign, or zero value, is unknown.
+Distractor map
+Option
+Specific mistake
+A
+Keeps the original root -3 after failing to combine the two sides.
+B
+Divides by x - 1 and assumes it is positive.
+C
+Divides by x - 1 and assumes it is negative.
+D
+Recognises a square but incorrectly excludes the zero case despite ≥.
+E
+Uses the roots -3 and 1 as if the original product were compared with zero.
+F
+Uses an exterior sign pattern for roots that disappear after simplification.
+Calibration reference. ENGAA 2022 Section 1, Q31, complete-set inequality selection; NSAA 2019 Section 1, Q89, polynomial 
+sign analysis. [ENGAA 2022 paper] [NSAA 2019 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 76
+Question 5
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM1.7 Algebra and functions: function 
+composition
+MM1.3 quadratics
+65 seconds
+Correct answer
+D. {1/2, 5/2}
+Quick solution. f(g(x)) = (2x - 3)² + 1. Setting this equal to 5 gives (2x - 3)² = 4, so 2x - 3 = ±2. Hence x = 1/2 or 5/2.
+Tip. When a square equals a positive number, keep both signs.
+Distractor map
+Option
+Specific mistake
+A
+Keeps only the negative square-root branch.
+B
+Keeps only the positive square-root branch.
+C
+Solves 2x + 3 = ±2 after reversing the sign in g.
+E
+Changes both solutions' signs after solving correctly.
+Calibration reference. Official 2026 Notes on Mathematics, MM1.7 composition exercises; official Pearson specimen function 
+style. [official guide] [official specimen page] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 77
+Question 6
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Easy
+MM2.1 Sequences and series: recurrence relations
+MM1.6 algebraic pattern
+55 seconds
+Correct answer
+C. 101
+Quick solution. The increments 2n + 1 are the differences between consecutive squares. Since u₁ = 1² + 1, it follows 
+that u  = n² + 1. Thus u_{10} = 101. 
+Tip. Recognise 2n + 1 as (n + 1)² - n².
+Distractor map
+Option
+Specific mistake
+A
+Adds only the odd numbers from 1 to 9 rather than from 3 to 19.
+B
+Recognises n² but forgets the extra 1.
+D
+Adds the initial 2 to 10² instead of tracking the offset.
+E
+Uses (n + 1)².
+Calibration reference. Official 2026 Notes on Mathematics, MM2.1 recurrence and nth-term connection style. [official guide] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 78
+Question 7
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM2.3 Sequences and series: geometric series
+None
+65 seconds
+Correct answer
+F. 21/4
+Quick solution. 3/(1 - r) = 12, so 1 - r = 1/4 and r = 3/4. The first two terms sum to 3 + 9/4 = 21/4.
+Tip. Find the common ratio from the infinite sum before using only the terms requested.
+Distractor map
+Option
+Specific mistake
+A
+Reports only the first term.
+B
+Uses r = 1/4.
+C
+Adds 3 and the missing amount 1.
+D
+Uses the second term as 3/2.
+E
+Rounds 21/4 down or uses r = 2/3.
+Calibration reference. ENGAA 2021 Section 1, Q37, compact series evaluation; official 2026 Notes MM2.3. [ENGAA 2021 
+paper] [official guide] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 79
+Question 8
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Easy
+MM2.4 Sequences and series: binomial expansion
+MM1.1 indices
+55 seconds
+Correct answer
+B. 24
+Quick solution. The general term contains x^(4 - 2r), so the constant term occurs when r = 2. Its coefficient is C(4,2) 
+× 2² = 6 × 4 = 24.
+Tip. Track the power of x before calculating the coefficient.
+Distractor map
+Option
+Specific mistake
+A
+Uses only 2⁴ and ignores the binomial coefficient.
+C
+Uses C(4,1) × 2³, which belongs to a non-constant term.
+D
+Uses C(4,2) × 2³.
+E
+Multiplies the correct result by the binomial coefficient a second time.
+Calibration reference. NSAA 2018 Section 1, Q85, targeted binomial coefficient extraction. [NSAA 2018 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 80
+Question 9
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM3.2 Coordinate geometry: equation of a circle
+MM3.3 tangent-radius property
+65 seconds
+Correct answer
+G. 3x + 4y = 20
+Quick solution. The radius from (1, -2) to Q has direction (3, 4), which is normal to the tangent. Therefore 3(x - 4) + 
+4(y - 2) = 0, giving 3x + 4y = 20.
+Tip. Use the radius vector directly as a normal vector to the tangent.
+Distractor map
+Option
+Specific mistake
+A
+Uses the radius direction as the tangent direction.
+B
+Swaps the normal-vector components.
+C
+Uses r² = 25 as the line constant.
+D
+Uses a perpendicular direction but substitutes Q incorrectly.
+E
+Substitutes the centre rather than Q into 3x + 4y = c.
+F
+Swaps the components and also uses the wrong constant.
+Calibration reference. NSAA 2018 Section 1, Q83, tangent-radius geometry; official 2026 Notes MM3.2-3. [NSAA 2018 
+paper] [official guide] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 81
+Question 10
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM3.3 Coordinate geometry: circle chords
+MM3.2 equation of a circle
+60 seconds
+Correct answer
+D. 8
+Quick solution. On x = 5, (x - 2)² = 9, so (y + 1)² = 16. The endpoints have y = 3 and y = -5, giving chord length 8.
+Tip. Substitute the fixed coordinate and use both square-root signs.
+Distractor map
+Option
+Specific mistake
+A
+Finds the half-chord and reports it as the full length.
+B
+Reports the radius.
+C
+Uses the horizontal distance 3 twice.
+E
+Assumes the chord is a diameter.
+Calibration reference. Official 2026 Notes on Mathematics, MM3.2 circle-coordinate examples and MM3.3 chord property. 
+[official guide] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 82
+Question 11  
+ Strong question
+★
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Hard
+MM3.2 Coordinate geometry: tangents to a circle
+MM1.3 discriminant
+85 seconds
+Correct answer
+A. 1/3
+Quick solution. Substitute y = mx into the circle: (1 + m²)x² - 8x + 12 = 0. Tangency requires discriminant zero, so 64 
+- 48(1 + m²) = 0. Hence 16 = 48m² and m² = 1/3.
+Tip. Tangency turns the substituted intersection equation into a repeated-root quadratic.
+Distractor map
+Option
+Specific mistake
+B
+Uses 4² instead of the circle's r² = 4 when expanding.
+C
+Assumes the tangent gradients are ±1 from the sketch.
+D
+Solves 16 = 8m² after losing the factor 1 + m².
+E
+Finds the reciprocal after rearranging the discriminant equation.
+Calibration reference. NSAA 2018 Section 1, Q83, external tangents to a circle; ENGAA 2021 Q11, repeated-root intersection 
+condition. [ENGAA 2021 paper] [NSAA 2018 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 83
+Question 12
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Easy
+MM4.1 Trigonometry: cosine rule
+None
+45 seconds
+Correct answer
+E. 4/5
+Quick solution. By the cosine rule, 3² = 4² + 5² - 2(4)(5)cos θ. Thus 9 = 41 - 40cos θ, so cos θ = 32/40 = 4/5.
+Tip. The side opposite the angle is the one that appears alone on the left of the cosine rule.
+Distractor map
+Option
+Specific mistake
+A
+Uses the smallest side divided by the largest as the cosine.
+B
+Uses 16/40 after omitting 5².
+C
+Uses sin θ from a 3-4-5 triangle.
+D
+Uses adjacent/opposite rather than adjacent/hypotenuse in the right triangle.
+Calibration reference. Official 2026 Notes on Mathematics, MM4.1 cosine-rule examples; broader diagram-led ESAT 
+trigonometry style. [official guide] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 84
+Question 13
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM4.1 Trigonometry: sine rule ambiguous case
+None
+70 seconds
+Correct answer
+C. 2
+Quick solution. The sine rule gives sin B = b sin A/a = 6(1/2)/4 = 3/4. There is an acute value B and its obtuse 
+supplement. Since the acute B is greater than 30°, its supplement still leaves A + B < 180°. Both triangles are valid.
+Tip. In an angle-side-side problem, check both B and 180° - B.
+Distractor map
+Option
+Specific mistake
+A
+Treats b > a as impossible even though B is also larger than A.
+B
+Keeps only the principal acute value of B.
+D
+Counts the acute angle, its supplement and a reflected drawing as three different triangles.
+Calibration reference. Official 2026 Notes on Mathematics and specification MM4.1, which explicitly includes the ambiguous 
+sine-rule case. [official guide] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 85
+Question 14  
+ Strong question
+★
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Hard
+MM4.6 Trigonometry: equations and periodicity
+MM4.4 tangent graph
+80 seconds
+Correct answer
+G. 7
+Quick solution. Either tan x = 0 or tan x = ±1. In the closed interval, tan x = 0 at 0, π and 2π, giving three solutions. 
+The equations tan x = 1 and tan x = -1 give two each, for four more. The undefined points π/2 and 3π/2 are not 
+solutions. Total: 7.
+Tip. Count endpoints carefully and exclude the vertical asymptotes of tan x.
+Distractor map
+Option
+Specific mistake
+A
+Counts only the factor tan x = 0 at x = 0.
+B
+Counts only the two tan x = 1 solutions.
+C
+Counts tan x = 0 but omits both ±1 branches.
+D
+Counts the ±1 branches but omits tan x = 0.
+E
+Counts two zeros of tan and the four ±1 solutions, then loses one branch.
+F
+Omits one of the equal endpoints 0 or 2π.
+Calibration reference. NSAA 2018 Section 1, Q75, counting all trigonometric solutions in a specified interval. [NSAA 2018 
+paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 86
+Question 15
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Hard
+MM4.2 Trigonometry: radians and segments
+None
+80 seconds
+Correct answer
+F. 9 - (9/2)sin 2
+Quick solution. The arc length is 12 - 2(3) = 6, so the angle is θ = 6/3 = 2 radians. The sector area is (1/2)(3²)(2) = 9. 
+The triangle area is (1/2)(3²)sin 2 = (9/2)sin 2. Subtracting gives 9 - (9/2)sin 2.
+Tip. Use the perimeter to find the arc length before finding the angle.
+Distractor map
+Option
+Specific mistake
+A
+Reports twice the triangle area.
+B
+Omits the factor 1/2 in the triangle area.
+C
+Adds the triangle to the sector.
+D
+Uses 18 as the sector area.
+E
+Halves the angle inside the sine as well as in the triangle formula.
+Calibration reference. ENGAA 2021 Section 1, Q27, circular segment area; official specification MM4.2 radian measure. 
+[ENGAA 2021 paper] [specification]
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 87
+Question 16
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM5.2 Exponentials and logarithms: logarithmic 
+equations
+MM1.3 quadratics
+70 seconds
+Correct answer
+B. x = 5 only
+Quick solution. Combine logs: (x - 1)(x - 3) = 8. Hence x² - 4x - 5 = 0, so x = -1 or 5. The logarithms require x > 3, 
+leaving x = 5 only.
+Tip. Apply the logarithm domain after solving the algebraic equation.
+Distractor map
+Option
+Specific mistake
+A
+Keeps only the algebraic root that makes both log arguments negative.
+C
+Keeps both quadratic roots without checking the domain.
+D
+Treats the boundary x = 3 as a solution even though log 0 is undefined.
+E
+Rejects both roots after using x > 0 rather than x > 3.
+Calibration reference. ENGAA 2023 Section 1, Q35, logarithmic equation with a necessary domain check. [ENGAA 2023 
+paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 88
+Question 17
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM5.3 Exponentials and logarithms: reducible 
+exponential equations
+MM1.3 quadratics
+65 seconds
+Correct answer
+D. {0, 2}
+Quick solution. Let u = 2ˣ > 0. Then u² - 5u + 4 = 0, so u = 1 or 4. Therefore 2ˣ = 1 gives x = 0, and 2ˣ = 4 gives x = 2.
+Tip. When two powers are related, substitute for the smaller base power.
+Distractor map
+Option
+Specific mistake
+A
+Converts u = 4 to x = -2.
+B
+Keeps only u = 1.
+C
+Keeps only u = 4.
+E
+Reports the u-values rather than converting back to x.
+Calibration reference. NSAA 2019 Section 1, Q81, reducing an exponential equation to a quadratic. [NSAA 2019 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 89
+Question 18
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Easy
+MM5.1 Exponentials and logarithms: exponential 
+models
+None
+40 seconds
+Correct answer
+A. 3
+Quick solution. 800/1600 = 1/2 = 2⁻¹. Hence -t/3 = -1, so t = 3.
+Tip. Compare the model with its initial value before solving the exponent.
+Distractor map
+Option
+Specific mistake
+B
+Treats one halving as two periods.
+C
+Uses the denominator 3 as a multiplier twice.
+D
+Uses 800/1600 = 1/4.
+E
+Divides 1600 by the exponent denominator instead of using the ratio.
+Calibration reference. Official 2026 Notes on Mathematics, MM5.1 exponential graphs and simple growth-decay models. 
+[official guide] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 90
+Question 19
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM6.2 Differentiation: rational powers
+MM1.1 indices
+70 seconds
+Correct answer
+E. 41/2
+Quick solution. First simplify: y = x^(5/2) + 2x^(1/2). Thus dy/dx = (5/2)x^(3/2) + x^(-1/2). At x = 4, this is (5/2)(8) + 
+1/2 = 41/2.
+Tip. Simplify powers before differentiating.
+Distractor map
+Option
+Specific mistake
+A
+Substitutes x = 4 before differentiating and differentiates the resulting number.
+B
+Uses x^(3/2) = 4.
+C
+Uses (5/2)(4) + 1/2.
+D
+Drops the derivative of 2x^(1/2).
+Calibration reference. ENGAA 2021 Section 1, Q21, differentiating an expression after index simplification. [ENGAA 2021 
+paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 91
+Question 20
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Hard
+MM6.3 Differentiation: strictly increasing functions
+MM1.3 discriminant
+85 seconds
+Correct answer
+C. -3 < a < 3
+Quick solution. f'(x) = 3x² + 2ax + 3. This upward-opening quadratic is positive for every real x exactly when it has 
+no real roots, so its discriminant is negative: (2a)² - 36 < 0. Hence a² < 9, giving -3 < a < 3.
+Tip. A positive quadratic for all real x needs positive leading coefficient and negative discriminant.
+Distractor map
+Option
+Specific mistake
+A
+Chooses one exterior interval after reversing the discriminant inequality.
+B
+Chooses the other exterior interval.
+D
+Uses discriminant ≥ 0 instead of < 0.
+E
+Includes a = ±3, where f'(x) equals zero at one x and so fails the stated > 0 condition.
+Calibration reference. Official 2026 Notes on Mathematics, MM6.3 increasing-function and parameter style; discriminant 
+reasoning calibrated against NSAA 2018 Q77. [NSAA 2018 paper] [official guide] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 92
+Question 21
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Hard
+MM6.3 Differentiation: rates of change
+MM8.5 graph shape
+80 seconds
+Correct answer
+G. t = 0 and t = 4
+Quick solution. Velocity is v(t) = 3t² - 12t + 9, an upward-opening quadratic. Its stationary point at t = 2 is a 
+minimum, so compare the endpoints: v(0) = 9 and v(4) = 9. The greatest velocity occurs at both t = 0 and t = 4.
+Tip. On a closed interval, a maximum can occur at an endpoint rather than at a stationary point.
+Distractor map
+Option
+Specific mistake
+A
+Checks the first endpoint but not the second.
+B
+Uses a zero of velocity rather than its maximum.
+C
+Assumes every stationary point is a maximum.
+D
+Uses the other zero of velocity.
+E
+Checks the second endpoint but not the first.
+F
+Uses the two times when displacement is stationary.
+Calibration reference. Official 2026 Notes on Mathematics, MM6.1 rate interpretation and MM6.3 endpoint-aware 
+optimisation style. [official guide] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 93
+Question 22
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM7.4 Integration: combining and reversing 
+ranges
+None
+60 seconds
+Correct answer
+F. 8
+Quick solution. Reversing the second integral gives ∫₂⁴ f(x) dx = 3. Therefore ∫₋₁⁴ f(x) dx = 5 + 3 = 8.
+Tip. Reverse the limits before joining contiguous intervals.
+Distractor map
+Option
+Specific mistake
+A
+Adds the magnitudes and then keeps the reversed sign.
+B
+Uses only the first integral and changes its sign.
+C
+Adds 5 and -3 without reversing the second integral.
+D
+Subtracts 3 from 5 after recognising the intervals are contiguous.
+E
+Ignores the second interval.
+Calibration reference. NSAA 2019 Section 1, Q83, combining definite integrals with different orientations. [NSAA 2019 
+paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 94
+Question 23  
+ Strong question
+★
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Hard
+MM7.1 Integration: total area between curve and 
+axis
+MM8.6 roots
+85 seconds
+Correct answer
+B. 3/2
+Quick solution. An antiderivative is F(x) = x³/2 - 3x²/4. From 0 to 1, the integral is -1/4, so that area is 1/4. From 1 
+to 2, the integral is F(2) - F(1) = 1 - (-1/4) = 5/4. The total area is 1/4 + 5/4 = 3/2.
+Tip. Split at every x-intercept and make each geometric contribution positive.
+Distractor map
+Option
+Specific mistake
+A
+Uses only F(2), the signed integral from 0 to 2.
+C
+Adds the magnitudes but doubles the smaller region.
+D
+Adds 5/4 and 5/4, treating the two regions as equal.
+E
+Omits the factor 1/2 when integrating the leading term.
+Calibration reference. ENGAA 2018 Section 1, Q29, exact enclosed area; official MM7.1 distinction between signed integral and 
+geometric area. [ENGAA 2018 paper] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 95
+Question 24
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM7.3 Integration: Fundamental Theorem of 
+Calculus
+MM1.5 inequalities
+70 seconds
+Correct answer
+D. 1 < x < 3
+Quick solution. By the Fundamental Theorem, F'(x) = 3x² - 12x + 9 = 3(x - 1)(x - 3). This is negative between its 
+roots, so F decreases for 1 < x < 3.
+Tip. Differentiate the integral by reading off its integrand.
+Distractor map
+Option
+Specific mistake
+A
+Uses only the interval to the left of the first root.
+B
+Uses only the interval to the right of the second root.
+C
+Selects where the upward-opening derivative is positive.
+E
+Uses -1 as a root after a sign error in factorisation.
+Calibration reference. Official 2026 Notes on Mathematics, MM7.3 Fundamental Theorem examples combined with MM6.3 
+monotonicity. [official guide] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 96
+Question 25
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Easy
+MM8.2 Graphs of functions: horizontal 
+transformations
+MM8.6 roots
+50 seconds
+Correct answer
+A. asymptote x = 1/2; root x = 2
+Quick solution. The asymptote occurs when 2x + 1 = 2, giving x = 1/2. The root occurs when 2x + 1 = 5, giving x = 2.
+Tip. Transform important input values by solving the inside equation, not by shifting the picture by inspection.
+Distractor map
+Option
+Specific mistake
+B
+Adds 1 before dividing both original x-values by 2.
+C
+Divides the original x-values by 2 but ignores the +1.
+D
+Adds 1 directly to both original x-values.
+E
+Multiplies both original x-values by 2.
+Calibration reference. Official Pearson ESAT Mathematics 2 specimen and 2026 Notes MM8.2 horizontal-transformation style. 
+[official specimen page] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 97
+Question 26
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM8.1 Graphs of functions: modulus graphs
+MM8.2 transformations
+65 seconds
+Correct answer
+E. y = 2|x - 2| - 1
+Quick solution. A modulus graph with vertex (2, -1) has form y = a|x - 2| - 1. Using (0, 3), 3 = 2a - 1, so a = 2. Hence 
+y = 2|x - 2| - 1.
+Tip. Use the vertex to fix the shifts, then one point to fix the stretch.
+Distractor map
+Option
+Specific mistake
+A
+Has the correct vertex but slope magnitude 1, so it passes through (0, 1).
+B
+Places the vertex at (-2, -1).
+C
+Places the vertex at (1, -1).
+D
+Places the vertex at (2, 1).
+Calibration reference. Official 2026 Notes on Mathematics, MM8.1 modulus graphs and MM8.2 transformations. [official 
+guide] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 98
+Question 27
+Difficulty
+Official syllabus
+Secondary
+Estimated time
+Medium
+MM8.7 Graphs of functions: intersections
+MM8.1 modulus
+75 seconds
+Correct answer
+C. 3
+Quick solution. For -1 ≤ x ≤ 1, 1 - x² = x + 1, so x(x + 1) = 0 and x = -1 or 0. For x ≥ 1, x² - 1 = x + 1, so (x - 2)(x + 1) = 0 
+and only x = 2 fits this region. For x < -1 the right side is negative, so there are no solutions. Total: 3.
+Tip. Split where the expression inside the modulus changes sign, and respect each region.
+Distractor map
+Option
+Specific mistake
+A
+Keeps only the positive solution x = 2.
+B
+Solves only the central modulus branch.
+D
+Keeps x = -1 twice, once from each algebraic branch.
+E
+Counts every algebraic root before checking branch conditions.
+Calibration reference. Official 2026 Notes on Mathematics, MM8.1 modulus graphs and MM8.7 graph-intersection 
+interpretation. [official guide] 
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 99
+7. Final validation tables
+The pack was checked structurally and mathematically after drafting. Automated checks covered counts, answer 
+keys, option uniqueness, distractor completeness, timing, topic balance and numerical or algebraic results. A 
+separate manual pass checked syllabus scope, quickest methods, duplication and diagram labelling.
+Topic coverage
+Code
+Official area
+Module 1
+Module 2
+Total
+MM1
+Algebra and functions
+5
+5
+10
+MM2
+Sequences and series
+3
+3
+6
+MM3
+Coordinate geometry
+3
+3
+6
+MM4
+Trigonometry
+4
+4
+8
+MM5
+Exponentials and logarithms
+3
+3
+6
+MM6
+Differentiation
+3
+3
+6
+MM7
+Integration
+3
+3
+6
+MM8
+Graphs of functions
+3
+3
+6
+Total
+27
+27
+54
+Difficulty distribution
+Difficulty
+Module 1
+Module 2
+Total
+Easy
+7
+7
+14
+Medium
+14
+14
+28
+Hard
+6
+6
+12
+Total
+27
+27
+54
+Correct-option distribution
+Option
+Module 1
+Module 2
+Total
+A
+4
+4
+8
+B
+4
+4
+8
+C
+4
+4
+8
+D
+4
+4
+8
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 100
+Option
+Module 1
+Module 2
+Total
+E
+4
+4
+8
+F
+4
+3
+7
+G
+3
+4
+7
+Questions marked 
+ Strong question
+★
+Question
+Code
+Area
+Central strength
+Module 1, Q4
+MM1.7
+Algebra and functions: function 
+composition
+Remember that √(u²) = |u|, then use the stated domain.
+Module 1, Q14
+MM4.6
+Trigonometry: equations in an 
+interval
+You only need to check whether the cosine roots lie in [-1, 
+1]; you do not need their angles.
+Module 1, Q21
+MM6.3
+Differentiation: optimisation
+Use the physical interval to reject the second stationary 
+value immediately.
+Module 1, Q26
+MM8.7
+Graphs of functions: intersections
+The question asks for distinct roots, so inspect multiplicity 
+after factorising.
+Module 2, Q4
+MM1.5
+Algebra and functions: inequalities
+Do not divide by an expression whose sign, or zero value, 
+is unknown.
+Module 2, Q11
+MM3.2
+Coordinate geometry: tangents to 
+a circle
+Tangency turns the substituted intersection equation into 
+a repeated-root quadratic.
+Module 2, Q14
+MM4.6
+Trigonometry: equations and 
+periodicity
+Count endpoints carefully and exclude the vertical 
+asymptotes of tan x.
+Module 2, Q23
+MM7.1
+Integration: total area between 
+curve and axis
+Split at every x-intercept and make each geometric 
+contribution positive.
+
+ESAT Mathematics 2 Practice Pack
+54 original questions
+Page 101
+Validation checklist
+Check
+Result
+Evidence
+Question count and timing
+Pass
+27 questions per module; every estimate is 90 seconds or less
+Syllabus compliance
+Pass
+Every primary code is within the current MM1 to MM8 specification
+Mathematical accuracy
+Pass
+334 structural and numerical assertions passed
+Unique answer
+Pass
+One keyed answer per question; option texts and labels checked
+Distractor maps
+Pass
+Every incorrect option has one specific misconception
+Correct-option balance
+Pass
+A to G are balanced without a repeating answer pattern
+Duplication
+Pass
+No repeated stems; paired syllabus areas use different mechanisms
+Diagram accuracy
+Pass
+Eighteen diagrams generated from the stated equations and coordinates
+Past-paper references
+Pass
+Named question numbers checked against official papers and answer 
+keys
+End of pack

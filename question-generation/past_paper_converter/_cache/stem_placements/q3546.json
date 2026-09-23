@@ -1,0 +1,28 @@
+{
+  "questionId": 3546,
+  "examName": "TMUA",
+  "examYear": 2022,
+  "paperName": "Paper 1",
+  "questionNumber": 17,
+  "stemBlocks": [
+    "Find the complete set of values of $x$ for which there are two non-congruent triangles with the side lengths and angle as shown in the diagram."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:21.979012+00:00",
+  "sourceImageHash": "1f4bb0399c7978d77725de7584b57123a68fd31a6209e62e311347e3502f00e1",
+  "status": "ok"
+}

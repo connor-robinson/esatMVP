@@ -1,52 +1,35 @@
 /**
  * Pricing A/B test variants and configuration.
- * Original monthly price matches the live plan in stripe/best-value.
+ * Monthly plan (£14.99, 4-day trial) is always shown as control.
+ * Express Deal (£9.49, instant buy) replaces weekly and is highlighted.
  */
 
 import { MONTHLY_PRICE_GBP } from "@/lib/stripe/best-value";
 
 export type PricingVariant =
-  | "3day_original"
-  | "3day_discounted"
-  | "nodeal_original"
-  | "nodeal_discounted";
+  | "control"
+  | "express_deal";
 
 export interface VariantConfig {
   id: PricingVariant;
-  trialDays: number;
-  monthlyPriceGbp: number;
+  /** Whether to show the Express Deal plan */
+  showExpressDeal: boolean;
   displayName: string;
   description: string;
 }
 
 export const VARIANT_CONFIGS: Record<PricingVariant, VariantConfig> = {
-  '3day_original': {
-    id: '3day_original',
-    trialDays: 3,
-    monthlyPriceGbp: MONTHLY_PRICE_GBP,
-    displayName: "3-day free trial",
-    description: "3-day free trial, then the standard monthly price",
+  'control': {
+    id: 'control',
+    showExpressDeal: false,
+    displayName: "Control (Standard pricing)",
+    description: "Monthly at £14.99 with 4-day trial, Weekly at £8",
   },
-  '3day_discounted': {
-    id: '3day_discounted',
-    trialDays: 3,
-    monthlyPriceGbp: 9.49,
-    displayName: '3-day free trial (Special offer)',
-    description: '3-day free trial, then £9.49/month'
-  },
-  'nodeal_original': {
-    id: 'nodeal_original',
-    trialDays: 0,
-    monthlyPriceGbp: MONTHLY_PRICE_GBP,
-    displayName: "Buy now",
-    description: "Pay today at the standard monthly price",
-  },
-  'nodeal_discounted': {
-    id: 'nodeal_discounted',
-    trialDays: 0,
-    monthlyPriceGbp: 9.49,
-    displayName: 'Buy now (Special offer)',
-    description: 'Get immediate access for £9.49/month'
+  'express_deal': {
+    id: 'express_deal',
+    showExpressDeal: true,
+    displayName: 'Express Deal',
+    description: 'Monthly at £14.99 with 4-day trial, Express Deal at £9.49 instant buy'
   }
 };
 
@@ -72,12 +55,10 @@ export function parseVariant(value: string | null | undefined): PricingVariant |
 }
 
 /**
- * Randomly assign a variant (equal distribution)
+ * Randomly assign a variant (50/50 split)
  */
 export function assignRandomVariant(): PricingVariant {
-  const variants: PricingVariant[] = ['3day_original', '3day_discounted', 'nodeal_original', 'nodeal_discounted'];
-  const randomIndex = Math.floor(Math.random() * variants.length);
-  return variants[randomIndex]!;
+  return Math.random() < 0.5 ? 'control' : 'express_deal';
 }
 
 /**
@@ -87,41 +68,6 @@ export function getVariantConfig(variant: PricingVariant): VariantConfig {
   return VARIANT_CONFIGS[variant];
 }
 
-/**
- * Check if variant offers a trial
- */
-export function hasFreeTrial(variant: PricingVariant): boolean {
-  return VARIANT_CONFIGS[variant].trialDays > 0;
-}
-
-/**
- * Check if variant is discounted
- */
-export function isDiscounted(variant: PricingVariant): boolean {
-  return variant.includes('discounted');
-}
-
-/**
- * Get the display price for a variant
- */
-export function getVariantPriceDisplay(variant: PricingVariant): string {
-  const config = VARIANT_CONFIGS[variant];
-  return `£${config.monthlyPriceGbp.toFixed(2)}`;
-}
-
-/**
- * Get trial copy for a variant
- */
-export function getTrialCopy(variant: PricingVariant, weeksUntilExam: number): string {
-  const config = VARIANT_CONFIGS[variant];
-  
-  if (config.trialDays > 0) {
-    return `${config.trialDays}-day free trial, then ${getVariantPriceDisplay(variant)}/month`;
-  }
-  
-  if (weeksUntilExam > 0) {
-    return `${weeksUntilExam} weeks until ESAT • ${getVariantPriceDisplay(variant)}/month`;
-  }
-  
-  return `${getVariantPriceDisplay(variant)}/month • Cancel anytime`;
-}
+/** Express Deal constants */
+export const EXPRESS_DEAL_PRICE_GBP = 9.49;
+export const EXPRESS_DEAL_ORIGINAL_PRICE_GBP = MONTHLY_PRICE_GBP;

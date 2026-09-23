@@ -1,0 +1,740 @@
+{
+  "question_id": "q_20260518_155225_3cf4c0",
+  "subject": "physics",
+  "schema_id": "P_ad97dfb5",
+  "difficulty": "Easy",
+  "status": "accepted",
+  "failure_gate": null,
+  "failure_reasons": [],
+  "has_visual": true,
+  "visual_type": "concept_image",
+  "answer_depends_on_visual": false,
+  "assets": [
+    {
+      "kind": "concept_image",
+      "spec_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260518_155225_3cf4c0\\concept_image_prompt.json",
+      "image_paths": [
+        "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_155225_3cf4c0/concept_image_v1.png"
+      ],
+      "renderer": "gemini_image_v1",
+      "qc_status": "pass",
+      "qc_source": "concept_image_verifier.json",
+      "answer_bearing": false,
+      "checksum": null
+    }
+  ],
+  "model_trace": {
+    "designer": "gemini-3.1-pro-preview",
+    "idea_judge": "gemini-3.1-flash-lite",
+    "implementer": "gemini-3.1-pro-preview",
+    "verifier": "gemini-3.1-flash-lite",
+    "style_checker": "gemini-3.1-flash-lite",
+    "implementer_regen": "gemini-3.1-pro-preview",
+    "visual_router": "gemini-3.1-flash-lite",
+    "concept_image_prompt": "gemini-3.1-pro-preview",
+    "concept_image_verifier": "gemini-3.1-flash-lite",
+    "tag_labeler": "gemini-2.5-flash"
+  },
+  "retry_counts": {
+    "implementer": 1,
+    "concept_image_regen": 0
+  },
+  "stages": [
+    {
+      "stage": "designer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "schema_id": "P_ad97dfb5",
+        "module": "physics",
+        "variation_mode": "SIBLING",
+        "target_difficulty": "Easy",
+        "idea_summary": "Compare the electrical resistance of two wires made of the same material, where one wire has a scaled length and a scaled diameter compared to the other.",
+        "schema_invariant": {
+          "core_move": "Calculate a resultant ratio by applying scaling factors to independent variables in a formula containing a power law.",
+          "what_must_not_change": [
+            "The requirement to scale variables proportionally.",
+            "The presence of an exponent on at least one of the scaled variables (creating the trap of forgetting to apply the exponent to the factor)."
+          ],
+          "what_can_change": [
+            "The physical context (e.g., electricity instead of density or gravity).",
+            "The specific variables being scaled.",
+            "The exact scaling factors used."
+          ]
+        },
+        "discrimination_mechanism": {
+          "type": "proportional_reasoning",
+          "reasoning_hinge": "Recognising that cross-sectional area is proportional to the square of the diameter, so the scaling factor for diameter must be squared when determining the new resistance.",
+          "why_top_students_win": "They immediately write R ∝ L / d², apply the scaling factors (e.g., 3L and 3d), and correctly square the denominator factor to find the new ratio.",
+          "why_mid_students_miss": "They forget to square the scaling factor for the diameter, assuming R ∝ L / d, which leads them to think the resistance remains unchanged if both length and diameter scale by the same factor."
+        },
+        "goldilocks_complexity_audit": {
+          "main_physics_principle": "Electrical resistance depends on length and cross-sectional area (R = ρL/A).",
+          "supporting_idea_if_any": "Area of a circle is proportional to the square of its diameter.",
+          "estimated_solution_steps": 2,
+          "number_of_core_physics_principles": 1,
+          "requires_derived_relationship": false,
+          "too_easy_risk": "low",
+          "too_hard_risk": "low",
+          "goldilocks_verdict": "good"
+        },
+        "minimum_reasoning_depth": {
+          "steps": 2,
+          "must_include": [
+            "model_selection",
+            "short_calculation_or_comparison"
+          ]
+        },
+        "reference_alignment": "Matches the cognitive demand of the density/radius exemplar by asking for a ratio based on a hidden power-law dependency (area from diameter), but moves the context to standard electricity.",
+        "task_signature": "proportional_change",
+        "tool_footprint": [
+          "proportional_reasoning",
+          "power_law_scaling"
+        ],
+        "primary_tag": "5",
+        "secondary_tags": [],
+        "visual_need": "none",
+        "visual_role": "none",
+        "visual_brief": "",
+        "surface_twist": "",
+        "why_still_on_spec": "Calculating resistance from resistivity, length, and area is a core specification point. Proportional reasoning with these variables is a standard expectation in ESAT Section 1.",
+        "constraints_used": [
+          "short condition descriptions only",
+          "no final numbers",
+          "no exact geometric diagram dependence"
+        ],
+        "intended_wrong_paths": [
+          {
+            "mistake": "Failing to square the diameter's scaling factor (e.g., thinking a wire 3 times as long and 3 times as thick has the same resistance).",
+            "distractor_role": "Provides a highly tempting 'ratio of 1' distractor."
+          },
+          {
+            "mistake": "Squaring both the length and the diameter scaling factors.",
+            "distractor_role": "Provides an incorrect ratio based on a misremembered formula."
+          },
+          {
+            "mistake": "Applying the diameter scaling factor as a direct proportion rather than inverse square (multiplying instead of dividing).",
+            "distractor_role": "Provides an inverted ratio distractor."
+          }
+        ],
+        "difficulty_rationale": "It is an Easy question because it relies entirely on one fundamental formula and one geometric relationship. The trap is common and well-known, testing basic proportional discipline without requiring multi-step algebraic manipulation.",
+        "anti_plug_and_chug_check": {
+          "would_formula_substitution_alone_solve_it": false,
+          "why_not": "Absolute values are not provided; the candidate must construct a ratio and correctly apply the power law to the scaling factors themselves."
+        },
+        "mcq_viability": {
+          "viable": true,
+          "reason": "The predictable errors in handling the exponent (forgetting it, putting it on the wrong variable, inverting the ratio) naturally generate a clean set of multiple-choice options."
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-pro-preview",
+      "attempts": 1
+    },
+    {
+      "stage": "idea_judge",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "selectivity_score": 0,
+        "checks": {
+          "schema_preserved": "pass",
+          "on_spec": "pass",
+          "reasoning_hinge_present": "pass",
+          "not_direct_substitution": "pass",
+          "wrong_paths_specific": "pass",
+          "visual_feasible": "pass",
+          "mcq_viable": "pass",
+          "difficulty_match": "pass",
+          "goldilocks_complexity": "pass"
+        },
+        "complexity_audit": {
+          "number_of_core_physics_principles": 1,
+          "estimated_solution_steps": 2,
+          "requires_derived_relationship": false,
+          "uses_multi_topic_chain": false,
+          "goldilocks_verdict": "good"
+        },
+        "reasoning_hinge_summary": "The candidate must recognize that resistance depends on the cross-sectional area (A ∝ d²), meaning the scaling factor for diameter must be squared in the denominator of the resistance ratio.",
+        "expected_mid_student_error": "Assuming that because both length and diameter scale by the same factor (e.g., 3), the resistance remains unchanged (forgetting to square the diameter factor).",
+        "notes": [
+          "The idea is a classic, robust test of proportional reasoning within the ESAT syllabus.",
+          "It avoids the 'too easy' trap by requiring the student to identify the hidden square relationship between diameter and area, rather than just plugging numbers into R=ρL/A."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "implementer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "metadata": {
+          "schema_id": "P_ad97dfb5",
+          "module": "physics",
+          "variation_mode": "SIBLING",
+          "target_difficulty": "Easy",
+          "task_signature": "proportional_change",
+          "primary_tag": "5",
+          "secondary_tags": []
+        },
+        "question": {
+          "stem": "Wire X and wire Y are made of the same material.\n\nWire Y has twice the length and three times the diameter of wire X.\n\nIf the electrical resistance of wire X is $R$, what is the electrical resistance of wire Y?",
+          "options": {
+            "A": "$\\frac{2}{9}R$",
+            "B": "$\\frac{4}{9}R$",
+            "C": "$\\frac{2}{3}R$",
+            "D": "$\\frac{3}{2}R$",
+            "E": "$\\frac{9}{2}R$",
+            "F": "$18R$"
+          },
+          "correct_option": "A"
+        },
+        "visual_requirements": {
+          "visual_need": "none",
+          "visual_role": "none",
+          "answer_depends_on_visual": false,
+          "graph_request": null,
+          "schematic_request": null,
+          "concept_image_request": null
+        },
+        "solution": {
+          "key_insight": "Resistance is proportional to length and inversely proportional to cross-sectional area, which in turn is proportional to the square of the diameter ($R \\propto L/d^2$).",
+          "reasoning": "The resistance of a wire is given by $R = \\rho L / A$. Since the cross-sectional area $A = \\pi d^2 / 4$, we can write $R \\propto L / d^2$.\n\nFor wire Y, the length is multiplied by a factor of 2, and the diameter is multiplied by a factor of 3.\nThe new resistance $R_Y$ will be proportional to $2 / 3^2 = 2 / 9$.\n\nTherefore, the resistance of wire Y is $\\frac{2}{9}R$."
+        },
+        "distractor_map": {
+          "A": "Correct. The length factor is 2 and the diameter factor is 3, which must be squared in the denominator.",
+          "B": "Incorrectly squares both the length and the diameter scaling factors.",
+          "C": "Forgets to square the diameter scaling factor, incorrectly assuming resistance is inversely proportional to diameter rather than area.",
+          "D": "Forgets to square the diameter and incorrectly inverts the relationship, assuming resistance is proportional to diameter over length.",
+          "E": "Correctly squares the diameter but incorrectly inverts the relationship, assuming resistance is proportional to area over length.",
+          "F": "Incorrectly assumes resistance is proportional to both length and area, multiplying the factors $2 \\times 3^2$."
+        },
+        "quality_self_check": {
+          "reasoning_hinge_used": "Recognising that cross-sectional area is proportional to the square of the diameter, so the scaling factor for diameter must be squared.",
+          "not_direct_substitution": true,
+          "exactly_one_correct": true,
+          "no_calculator_friendly": true,
+          "on_spec": true,
+          "visual_dependency_safe": true,
+          "goldilocks_complexity": {
+            "number_of_core_physics_principles": 1,
+            "estimated_solution_steps": 2,
+            "requires_derived_relationship": false,
+            "not_overstacked": true
+          }
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-pro-preview",
+      "attempts": 1
+    },
+    {
+      "stage": "deterministic_validator",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "ok": true,
+        "errors": [],
+        "warnings": [],
+        "option_keys": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F"
+        ],
+        "summary": "ok"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": null,
+      "attempts": 1
+    },
+    {
+      "stage": "verifier",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "correct_option_verified": "A",
+        "independent_solution": {
+          "main_law_or_principle": "Resistance of a wire $R = \\rho \\frac{L}{A}$, where $A = \\pi \\frac{d^2}{4}$. Thus $R \\propto \\frac{L}{d^2}$.",
+          "calculation_or_logic": "Let $L_X = L$ and $d_X = d$. Then $R_X \\propto \\frac{L}{d^2} = R$. For wire Y, $L_Y = 2L$ and $d_Y = 3d$. Then $R_Y \\propto \\frac{L_Y}{d_Y^2} = \\frac{2L}{(3d)^2} = \\frac{2L}{9d^2} = \\frac{2}{9} \\left( \\frac{L}{d^2} \\right) = \\frac{2}{9}R$.",
+          "verified_answer_value": "2/9 R",
+          "claimed_answer_value": "2/9 R",
+          "matches_claim": true
+        },
+        "spec_audit": {
+          "required_physics_moves": [
+            "Identify proportionality $R \\propto L/d^2$",
+            "Apply scaling factors to variables"
+          ],
+          "all_explicitly_on_spec": true,
+          "borderline_or_offspec_moves": []
+        },
+        "derived_relationship_audit": {
+          "requires_nontrivial_derivation": false,
+          "number_of_linked_relationships": 0,
+          "relationships_given_in_stem": [],
+          "safe_for_esat": true
+        },
+        "checks": {
+          "correctness": "pass",
+          "uniqueness": "pass",
+          "syllabus": "pass",
+          "no_calc_feasibility": "pass",
+          "ambiguity": "pass",
+          "diagram_dependency": "pass",
+          "distractor_safety": "pass",
+          "katex_formatting": "pass",
+          "graph_or_visual_validation": "n/a",
+          "derived_relationship_safety": "pass"
+        },
+        "notes": [
+          "The question is a standard application of proportional reasoning in electricity, well-suited for the ESAT syllabus."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "style_checker",
+      "status": "error",
+      "verdict": null,
+      "payload": null,
+      "notes": [],
+      "error": "No parseable JSON object in model output.",
+      "raw_text": "{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"style_score\": {\n    \"total\": 40,\n    \"breakdown\": {\n      \"stem_tone\": 5,\n      \"physics_authenticity\": 5,\n      \"reasoning_quality\": 5,\n      \"selectivity\": 5,\n      \"no_calc_engineering\": 5,\n      \"option_realism\": 5,\n      \"distractor_plausibility\": 5,\n      \"goldilocks_calibration\": 5\n    }\n  },\n  \"difficulty_calibration\": {\n    \"difficulty_vs_reference\": \"similar\",\n    \"length_feel_vs_reference\": \"shorter\",\n    \"notes\": \"Perfectly calibrated for an ESAT Section 1 item. It tests the fundamental understanding of the relationship between resistance, length, and cross-sectional area without unnecessary complexity.\"\n  },\n  \"selectivity_audit\": {\n    \"main_trap\": \"The 'diameter vs area' trap: students often forget that area scales with the square of the diameter, leading them to choose 2/3 instead of 2/9.\",\n    \"why_not_plug_and_chug\": \"No absolute values are provided; the student must manipulate the proportionality relationship $R \\propto L/d^2$ to find the ratio.\",\n    \"expected_mid_student_error\": \"Forgetting to square the diameter factor (3), leading to the distractor 2/3R.\",\n    \"verdict\": \"selective\"\n  },\n  \"complexity_audit\": {\n    \"estimated_core_principles\": 1,\n    \"estimated_solution_steps\": 2,\n    \"overstacked\": false,\n    \"goldilocks_verdict\": \"good\"\n  },\n  \"flags\": {\n    \"too_easy\": false,\n    \"too_hard\": false,\n    \"too_wordy\": false,\n    \"too_recall_heavy\": false,\n    \"too_plug_and_chug\": false,\n    \"over_advanced_chain\": false,\n    \"possible_verifier_miss\": false\n  },\n  \"notes\": [\n    \"This is a textbook example of a high-quality ESAT physics question. It is concise, relies on a single core principle, and uses a classic misconception to drive selectivity.\"\n  ]\n}",
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "implementer_regen",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "metadata": {
+          "schema_id": "P_ad97dfb5",
+          "module": "physics",
+          "variation_mode": "SIBLING",
+          "target_difficulty": "Easy",
+          "task_signature": "proportional_change",
+          "primary_tag": "5",
+          "secondary_tags": []
+        },
+        "question": {
+          "stem": "Two wires, X and Y, are made from the same metal.\n\nWire Y has three times the length and twice the diameter of wire X.\n\nThe electrical resistance of wire X is $R$.\n\nWhat is the electrical resistance of wire Y?",
+          "options": {
+            "A": "$\\frac{3}{4}R$",
+            "B": "$\\frac{3}{2}R$",
+            "C": "$\\frac{4}{3}R$",
+            "D": "$\\frac{9}{4}R$",
+            "E": "$6R$",
+            "F": "$12R$"
+          },
+          "correct_option": "A"
+        },
+        "visual_requirements": {
+          "visual_need": "none",
+          "visual_role": "none",
+          "answer_depends_on_visual": false,
+          "graph_request": null,
+          "schematic_request": null,
+          "concept_image_request": null
+        },
+        "solution": {
+          "key_insight": "Resistance is proportional to length and inversely proportional to the square of the diameter.",
+          "reasoning": "The resistance of a wire is given by $R = \\rho \\frac{L}{A}$.\nSince the cross-sectional area $A = \\pi \\frac{d^2}{4}$, we have $R \\propto \\frac{L}{d^2}$.\nFor wire Y, the length $L$ is multiplied by 3, and the diameter $d$ is multiplied by 2.\nThe new resistance is proportional to $\\frac{3}{2^2} = \\frac{3}{4}$.\nTherefore, the resistance of wire Y is $\\frac{3}{4}R$."
+        },
+        "distractor_map": {
+          "A": "Correct. The length factor is 3 and the diameter factor is 2, which must be squared in the denominator.",
+          "B": "Forgets to square the diameter scaling factor, incorrectly assuming resistance is inversely proportional to diameter rather than area.",
+          "C": "Inverts the relationship, effectively calculating the ratio as $d^2 / L$ instead of $L / d^2$.",
+          "D": "Incorrectly squares both the length and the diameter scaling factors.",
+          "E": "Forgets to square the diameter and incorrectly assumes resistance is directly proportional to both length and diameter.",
+          "F": "Squares the diameter but incorrectly assumes resistance is directly proportional to area rather than inversely proportional."
+        },
+        "quality_self_check": {
+          "reasoning_hinge_used": "Recognising that cross-sectional area is proportional to the square of the diameter, so the scaling factor for diameter must be squared.",
+          "not_direct_substitution": true,
+          "exactly_one_correct": true,
+          "no_calculator_friendly": true,
+          "on_spec": true,
+          "visual_dependency_safe": true,
+          "goldilocks_complexity": {
+            "number_of_core_physics_principles": 1,
+            "estimated_solution_steps": 2,
+            "requires_derived_relationship": false,
+            "not_overstacked": true
+          }
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-pro-preview",
+      "attempts": 2
+    },
+    {
+      "stage": "deterministic_validator",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "ok": true,
+        "errors": [],
+        "warnings": [],
+        "option_keys": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F"
+        ],
+        "summary": "ok"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": null,
+      "attempts": 2
+    },
+    {
+      "stage": "verifier",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "correct_option_verified": "A",
+        "independent_solution": {
+          "main_law_or_principle": "Resistance of a wire $R = \\rho \\frac{L}{A}$, where $A = \\pi (d/2)^2$. Thus $R \\propto \\frac{L}{d^2}$.",
+          "calculation_or_logic": "Let $L_X = L$ and $d_X = d$. Then $R_X = k \\frac{L}{d^2} = R$. For wire Y, $L_Y = 3L$ and $d_Y = 2d$. The new resistance $R_Y = k \\frac{3L}{(2d)^2} = k \\frac{3L}{4d^2} = \\frac{3}{4} (k \\frac{L}{d^2}) = \\frac{3}{4}R$.",
+          "verified_answer_value": "3/4 R",
+          "claimed_answer_value": "3/4 R",
+          "matches_claim": true
+        },
+        "spec_audit": {
+          "required_physics_moves": [
+            "Identify proportionality $R \\propto L/d^2$",
+            "Apply scaling factors to variables"
+          ],
+          "all_explicitly_on_spec": true,
+          "borderline_or_offspec_moves": []
+        },
+        "derived_relationship_audit": {
+          "requires_nontrivial_derivation": false,
+          "number_of_linked_relationships": 0,
+          "relationships_given_in_stem": [],
+          "safe_for_esat": true
+        },
+        "checks": {
+          "correctness": "pass",
+          "uniqueness": "pass",
+          "syllabus": "pass",
+          "no_calc_feasibility": "pass",
+          "ambiguity": "pass",
+          "diagram_dependency": "pass",
+          "distractor_safety": "pass",
+          "katex_formatting": "pass",
+          "graph_or_visual_validation": "n/a",
+          "derived_relationship_safety": "pass"
+        },
+        "notes": [
+          "The question correctly tests the inverse-square relationship between resistance and diameter."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 2
+    },
+    {
+      "stage": "style_checker",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "style_score": {
+          "total": 40,
+          "breakdown": {
+            "stem_tone": 5,
+            "physics_authenticity": 5,
+            "reasoning_quality": 5,
+            "selectivity": 5,
+            "no_calc_engineering": 5,
+            "option_realism": 5,
+            "distractor_plausibility": 5,
+            "goldilocks_calibration": 5
+          }
+        },
+        "difficulty_calibration": {
+          "difficulty_vs_reference": "similar",
+          "length_feel_vs_reference": "shorter",
+          "notes": "Perfectly calibrated for an ESAT Section 1 question. It tests a fundamental concept with a classic, high-frequency trap."
+        },
+        "selectivity_audit": {
+          "main_trap": "The 'diameter vs area' trap: students often forget to square the diameter scaling factor, leading to the common error of treating resistance as inversely proportional to diameter (1/2) rather than area (1/4).",
+          "why_not_plug_and_chug": "No numerical values for resistivity or absolute dimensions are provided; the student must perform symbolic proportional reasoning.",
+          "expected_mid_student_error": "Selecting B (3/2 R) by failing to square the diameter factor.",
+          "verdict": "selective"
+        },
+        "complexity_audit": {
+          "estimated_core_principles": 1,
+          "estimated_solution_steps": 2,
+          "overstacked": false,
+          "goldilocks_verdict": "good"
+        },
+        "flags": {
+          "too_easy": false,
+          "too_hard": false,
+          "too_wordy": false,
+          "too_recall_heavy": false,
+          "too_plug_and_chug": false,
+          "over_advanced_chain": false,
+          "possible_verifier_miss": false
+        },
+        "notes": [
+          "This is an exemplary ESAT question. It is concise, relies on a single core physical principle, and uses a well-defined trap to discriminate between students who understand the geometry of the resistance formula and those who do not."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 2
+    },
+    {
+      "stage": "visual_router",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "visual_route": "none",
+        "answer_depends_on_visual": false,
+        "required_files": [],
+        "reason": "The problem is a standard proportional reasoning task that can be fully understood through the text description of the wire dimensions. No diagram is required to solve or clarify the relationship.",
+        "next_prompt_file": null,
+        "style_target_if_image": null,
+        "blocking_issue": null,
+        "simplicity_audit": {
+          "visual_needed": false,
+          "can_be_described_in_one_sentence": true,
+          "estimated_object_types": 0,
+          "estimated_labels": 0,
+          "requires_unwanted_arrows_or_symbols": false,
+          "route_is_conservative": true
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "concept_image_prompt",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "image_id": "img1",
+        "model_purpose": "concept_visual",
+        "answer_depends_on_image": false,
+        "recommended_model": "MODEL_IMAGE_FAST",
+        "prompt": "A simple, professional monochrome physics exam diagram on a pure white #FFFFFF background. The image shows two horizontal cylindrical wires, one positioned above the other. The top wire is a simple cylinder outline. The bottom wire is another cylinder outline that is visibly longer and thicker than the top one. Label 'X' is placed just to the left of the top wire, with no leader line. Label 'Y' is placed just to the left of the bottom wire, with no leader line. The cylinders are drawn as simple 2D outlines with elliptical ends to indicate their cylindrical shape. No extra arrows, no dimensions, no shading, and no background details. The style must be clean, minimal black line art with Times New Roman-like serif font for the labels.",
+        "negative_prompt": "Pure white background only; no grey paper, gradient, or texture. No extra labels. No overlap. No sans-serif fonts. No decorative shading. No photorealism. No colour unless explicitly requested. No exact answer-bearing measurements. No clutter. No malformed symbols. Do not place objects in the wrong support/location relationship. No medium label pointing at objects inside the medium. No fluid label terminating on a sphere, wall, or meniscus. No unrequested arrows, force labels, field symbols, construction arcs, or explanatory overlays.",
+        "required_labels": [
+          "X",
+          "Y"
+        ],
+        "forbidden_labels": [
+          "L",
+          "d",
+          "3L",
+          "2d",
+          "R"
+        ],
+        "label_anchors": [
+          {
+            "text": "X",
+            "label_type": "object",
+            "text_placement": "outside_left",
+            "leader_target": "none",
+            "must_not_point_at": [
+              "inside the wire",
+              "wire Y"
+            ]
+          },
+          {
+            "text": "Y",
+            "label_type": "object",
+            "text_placement": "outside_left",
+            "leader_target": "none",
+            "must_not_point_at": [
+              "inside the wire",
+              "wire X"
+            ]
+          }
+        ],
+        "layout_logic": {
+          "must_show_relations": [
+            "Wire X is above Wire Y",
+            "Wire Y is visibly longer and thicker than Wire X"
+          ],
+          "measurement_mapping": [],
+          "relative_size_constraints": [
+            "Wire Y must be drawn longer than Wire X",
+            "Wire Y must be drawn with a larger diameter (thicker) than Wire X"
+          ]
+        },
+        "simplicity_limits": {
+          "max_object_types": 1,
+          "max_labels": 2,
+          "allow_force_arrows": false,
+          "allow_field_patterns": false,
+          "allow_construction_arcs": false,
+          "allow_mixed_representations": false
+        },
+        "hard_constraints": [
+          "background must be pure white #FFFFFF with no grey fill or gradient",
+          "no overlapping labels",
+          "no unrequested arrows, force labels, field symbols, or construction arcs",
+          "Wire Y must appear visibly longer and thicker than Wire X"
+        ],
+        "style": {
+          "target_style": "tmua_engaa_exam_diagram",
+          "exam_style": true,
+          "black_and_white": true,
+          "background": "pure_white_#FFFFFF",
+          "serif_font": "Times New Roman-like",
+          "math_variables_italic": true,
+          "minimal": true,
+          "not_to_scale": true,
+          "no_overlap": true,
+          "logic_sensitive": true,
+          "brutally_simple": true
+        },
+        "post_generation_checks": {
+          "run_concept_image_verifier": true,
+          "verify_no_overlap": true,
+          "verify_font_exam_like": true,
+          "verify_no_extra_labels": true,
+          "verify_not_answer_bearing": true,
+          "verify_object_relations": true,
+          "verify_measurement_clarity": true,
+          "verify_relative_size_plausibility": true,
+          "verify_simplification_level": true,
+          "verify_no_unrequested_arrows_or_symbols": true,
+          "verify_visual_simplicity": true,
+          "verify_pure_white_background": true,
+          "verify_label_anchor_targets": true,
+          "verify_medium_labels_not_on_objects": true
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-pro-preview",
+      "attempts": 1
+    },
+    {
+      "stage": "concept_image_verifier",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "checks": {
+          "exam_style_match": "pass",
+          "serif_font_match": "pass",
+          "math_label_quality": "pass",
+          "no_overlap": "pass",
+          "label_accuracy": "pass",
+          "no_extra_labels": "pass",
+          "monochrome_style": "pass",
+          "layout_cleanliness": "pass",
+          "illustrative_only_safety": "pass",
+          "professionalism": "pass",
+          "object_relation_accuracy": "pass",
+          "measurement_anchor_clarity": "pass",
+          "relative_magnitude_plausibility": "pass",
+          "simplification_level": "pass",
+          "visual_simplicity": "pass",
+          "no_unrequested_arrows": "pass",
+          "no_unrequested_field_patterns": "pass",
+          "main_setup_clarity": "pass",
+          "no_mixed_representations": "pass",
+          "pure_white_background": "pass",
+          "label_target_accuracy": "pass",
+          "medium_label_anchor_rule": "pass",
+          "label_ambiguity": "pass"
+        },
+        "label_audit": [
+          {
+            "text": "X",
+            "intended_type": "object",
+            "observed_target": "top wire",
+            "correct": true,
+            "issue": ""
+          },
+          {
+            "text": "Y",
+            "intended_type": "object",
+            "observed_target": "bottom wire",
+            "correct": true,
+            "issue": ""
+          }
+        ],
+        "reasons": [
+          "The image correctly represents the two wires with the requested relative dimensions (Y longer and thicker than X).",
+          "The style is clean, monochrome, and uses appropriate serif labels.",
+          "The background is pure white and there are no extra labels or clutter."
+        ],
+        "regen_feedback": "",
+        "delete_reason": ""
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "tag_labeler",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "primary_tag": "1",
+        "secondary_tags": [],
+        "primary_confidence": 1.0,
+        "reasoning": "The question directly assesses the understanding of how electrical resistance depends on the physical dimensions (length and diameter) of a wire, which is a core concept within Electricity.",
+        "_raw_text": "```json\n{\n  \"primary_tag\": \"1\",\n  \"secondary_tags\": [],\n  \"primary_confidence\": 1.0,\n  \"reasoning\": \"The question directly assesses the understanding of how electrical resistance depends on the physical dimensions (length and diameter) of a wire, which is a core concept within Electricity.\"\n}\n```"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    }
+  ],
+  "pipeline": "v4",
+  "created_at": "2026-05-18T15:59:58+01:00"
+}

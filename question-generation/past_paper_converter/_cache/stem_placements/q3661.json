@@ -1,0 +1,28 @@
+{
+  "questionId": 3661,
+  "examName": "TMUA",
+  "examYear": 2017,
+  "paperName": "Paper 2",
+  "questionNumber": 12,
+  "stemBlocks": [
+    "The diagram shows the graphs of $y = \\sin 2x$ and $y = \\cos 2x$ for $-\\frac{\\pi}{2} < x < \\frac{\\pi}{2}$. Which one of the following is not true?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:21.995729+00:00",
+  "sourceImageHash": "51848eed1af153a946ca8582ec051600a6d253418d5e66c34b7eef2662ea0733",
+  "status": "ok"
+}

@@ -1,0 +1,281 @@
+{
+  "id": "P_ae6afb3b-Hard-c796c496c7",
+  "schema_id": "P_ae6afb3b",
+  "difficulty": "Hard",
+  "idea_plan": {
+    "schema_id": "P_ae6afb3b",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Hard",
+    "idea_summary": "Deduce the ratio of specific heat capacities of two liquids from their heating times under a constant power source, then use this ratio to find the final equilibrium temperature when the two liquids are mixed.",
+    "schema_invariant": {
+      "core_move": "Applying Q_lost = Q_gained where heat capacity must be handled as a derived ratio rather than an absolute known value.",
+      "what_must_not_change": [
+        "The core principle of thermal equilibrium (heat lost = heat gained)",
+        "The use of specific heat capacity and temperature changes"
+      ],
+      "what_can_change": [
+        "How the specific heat capacities are provided (derived from heating times instead of explicitly given)",
+        "The presence of an initial heating phase to establish the material properties"
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "proportional_reasoning",
+      "reasoning_hinge": "Realising that absolute values for mass, specific heat capacity, and heater power are unnecessary, as the ratio of the specific heat capacities can be extracted from the heating times.",
+      "why_top_students_win": "They set up the proportionalities from E=Pt and Q=mcΔT, find that liquid Y has twice the specific heat capacity of liquid X, and substitute this 2:1 ratio directly into the mixing equation.",
+      "why_mid_students_miss": "They either get stuck because P, m, and c are unknown, or they assume the heat capacities are equal because the masses and temperature changes in the heating phase are identical, leading them to calculate a simple average temperature."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Thermal energy conservation in mixtures (Q_lost = Q_gained)",
+      "supporting_idea_if_any": "Electrical/thermal energy transfer (E = Pt)",
+      "estimated_solution_steps": 3,
+      "number_of_core_physics_principles": 2,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 3,
+      "must_include": [
+        "link_power_to_heat_capacity",
+        "extract_ratio",
+        "solve_equilibrium_equation"
+      ]
+    },
+    "reference_alignment": "Requires the same conservation of energy equation as the reference, but elevates the difficulty by hiding the specific heat capacities behind a proportional reasoning step.",
+    "task_signature": "calculation_exact_value",
+    "tool_footprint": [
+      "proportional_reasoning",
+      "ratio_extraction",
+      "conservation_of_energy"
+    ],
+    "primary_tag": "3",
+    "secondary_tags": [
+      "2"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "Instead of giving the specific heat capacities directly or asking to find an unknown mass, the specific heat capacities must be inferred as a ratio from an initial, separate heating scenario.",
+    "why_still_on_spec": "Both E=Pt (power and energy) and E=mcΔT (specific heat capacity) are fundamental school physics topics. Combining them via a ratio is a standard test of deeper comprehension without requiring off-spec knowledge.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Assuming the heat capacities are equal because the masses and temperature changes in the first phase are the same, ignoring the different heating times.",
+        "distractor_role": "Yields the simple arithmetic mean of the two initial mixing temperatures."
+      },
+      {
+        "mistake": "Inverting the ratio of the specific heat capacities (e.g., assuming c_X = 2c_Y instead of c_Y = 2c_X).",
+        "distractor_role": "Yields a temperature skewed towards the initial temperature of liquid X instead of liquid Y."
+      },
+      {
+        "mistake": "Adding or subtracting the temperature changes directly without weighting them by the heat capacity ratio.",
+        "distractor_role": "Yields an unphysical extreme temperature."
+      }
+    ],
+    "difficulty_rationale": "The question is highly selective because it requires the candidate to confidently manipulate algebraic symbols (P, m, c) that will eventually cancel out, which deters weak candidates. However, the actual arithmetic is extremely simple (e.g., solving 60 - T = 2(T - 30)), ensuring it is fast for strong candidates.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "The candidate is not given c_X or c_Y to plug into the calorimetry formula; they must first construct a ratio from a separate physical process (heating over time)."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The two-step nature (ratio extraction -> equilibrium calculation) naturally produces clean, predictable wrong answers based on common ratio errors or oversimplifications."
+    }
+  },
+  "question_package": {
+    "metadata": {
+      "schema_id": "P_ae6afb3b",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Hard",
+      "task_signature": "calculation_exact_value",
+      "primary_tag": "3",
+      "secondary_tags": [
+        "2"
+      ]
+    },
+    "question": {
+      "stem": "Two liquids, X and Y, are heated separately by identical electrical heaters.\n\nHeating $1.0\\text{ kg}$ of liquid X by $10\\,^\\circ\\text{C}$ takes $2.0\\text{ minutes}$.\nHeating $1.0\\text{ kg}$ of liquid Y by $10\\,^\\circ\\text{C}$ takes $4.0\\text{ minutes}$.\n\nAssume no thermal energy is lost to the surroundings and no phase changes occur.\n\nA $1.0\\text{ kg}$ sample of liquid X at $90\\,^\\circ\\text{C}$ is mixed with a $1.0\\text{ kg}$ sample of liquid Y at $30\\,^\\circ\\text{C}$.\n\nWhat is the final equilibrium temperature of the mixture?\n\n<figure class=\"qg-diagram\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 600 420\" width=\"600\" height=\"420\" role=\"img\" aria-label=\"concept image\"><image href=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_155652_6ac9f1/concept_image_v1.png\" x=\"0\" y=\"0\" width=\"600\" height=\"420\" preserveAspectRatio=\"xMidYMid meet\" /></svg><figcaption>concept image</figcaption></figure>\n",
+      "options": {
+        "A": "$40\\,^\\circ\\text{C}$",
+        "B": "$42\\,^\\circ\\text{C}$",
+        "C": "$50\\,^\\circ\\text{C}$",
+        "D": "$60\\,^\\circ\\text{C}$",
+        "E": "$70\\,^\\circ\\text{C}$",
+        "F": "$78\\,^\\circ\\text{C}$"
+      },
+      "correct_option": "C",
+      "stem_before_visual": "Two liquids, X and Y, are heated separately by identical electrical heaters.\n\nHeating $1.0\\text{ kg}$ of liquid X by $10\\,^\\circ\\text{C}$ takes $2.0\\text{ minutes}$.\nHeating $1.0\\text{ kg}$ of liquid Y by $10\\,^\\circ\\text{C}$ takes $4.0\\text{ minutes}$.\n\nAssume no thermal energy is lost to the surroundings and no phase changes occur.\n\nA $1.0\\text{ kg}$ sample of liquid X at $90\\,^\\circ\\text{C}$ is mixed with a $1.0\\text{ kg}$ sample of liquid Y at $30\\,^\\circ\\text{C}$.\n\nWhat is the final equilibrium temperature of the mixture?"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "The specific heat capacity of a material is proportional to the time taken to heat it by a given temperature using a constant power source. Liquid Y takes twice as long, so it has twice the specific heat capacity.",
+      "reasoning": "First, link energy, power, and specific heat capacity: $E = Pt = mc\\Delta\\theta$. Since $m$, $P$, and $\\Delta\\theta$ are identical for both liquids during the heating phase, $c \\propto t$. Liquid Y takes $4.0$ minutes compared to liquid X's $2.0$ minutes, so $c_Y = 2c_X$.\n\nWhen mixing, the thermal energy lost by X equals the thermal energy gained by Y:\n$m_X c_X (T_X - T) = m_Y c_Y (T - T_Y)$\n\nSince $m_X = m_Y = 1.0\\text{ kg}$:\n$c_X (90 - T) = 2c_X (T - 30)$\n\nDivide both sides by $c_X$:\n$90 - T = 2(T - 30)$\n$90 - T = 2T - 60$\n$150 = 3T$\n$T = 50\\,^\\circ\\text{C}$."
+    },
+    "distractor_map": {
+      "A": "Algebraic error: forgets to distribute the 2 to the 30, solving $90 - T = 2T - 30$ to get $T = 40\\,^\\circ\\text{C}$.",
+      "B": "Incorrectly squares the time ratio, assuming $c_Y = 4c_X$, leading to $90 - T = 4(T - 30) \\Rightarrow 5T = 210 \\Rightarrow T = 42\\,^\\circ\\text{C}$.",
+      "C": "Correct option.",
+      "D": "Assumes the specific heat capacities are equal because the masses are equal, simply averaging the temperatures: $(90 + 30) / 2 = 60\\,^\\circ\\text{C}$.",
+      "E": "Inverts the specific heat capacity ratio, assuming $c_X = 2c_Y$, leading to $2(90 - T) = T - 30 \\Rightarrow 3T = 210 \\Rightarrow T = 70\\,^\\circ\\text{C}$.",
+      "F": "Inverts and squares the ratio, assuming $c_X = 4c_Y$, leading to $4(90 - T) = T - 30 \\Rightarrow 5T = 390 \\Rightarrow T = 78\\,^\\circ\\text{C}$."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Extracting the ratio of specific heat capacities from heating times.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 2,
+        "estimated_solution_steps": 3,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "verifier_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "C",
+    "independent_solution": {
+      "main_law_or_principle": "Conservation of energy (calorimetry) and $E = Pt = mc\\Delta\\theta$",
+      "calculation_or_logic": "1. From $E = Pt = mc\\Delta\\theta$, since $P, m, \\Delta\\theta$ are constant for the heating phase, $c \\propto t$. Thus $c_Y/c_X = t_Y/t_X = 4.0/2.0 = 2$. So $c_Y = 2c_X$.\n2. For the mixture, $Q_{lost} = Q_{gained} \\Rightarrow m_X c_X (90 - T) = m_Y c_Y (T - 30)$.\n3. With $m_X = m_Y = 1.0\\text{ kg}$ and $c_Y = 2c_X$, the equation becomes $c_X(90 - T) = 2c_X(T - 30)$.\n4. Dividing by $c_X$: $90 - T = 2T - 60 \\Rightarrow 3T = 150 \\Rightarrow T = 50\\,^\\circ\\text{C}$.",
+      "verified_answer_value": "50\\,^\\circ\\text{C}",
+      "claimed_answer_value": "50\\,^\\circ\\text{C}",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "link_power_to_heat_capacity",
+        "extract_ratio",
+        "solve_equilibrium_equation"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "derived_relationship_audit": {
+      "requires_nontrivial_derivation": false,
+      "number_of_linked_relationships": 0,
+      "relationships_given_in_stem": [],
+      "safe_for_esat": true
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a",
+      "derived_relationship_safety": "pass"
+    },
+    "notes": [
+      "The question is well-constructed, adheres to ESAT syllabus, and requires logical proportional reasoning rather than complex derivation."
+    ]
+  },
+  "style_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "similar",
+      "notes": "The difficulty is perfectly calibrated for a 'Hard' ESAT question. It avoids complex algebra while demanding a clear conceptual bridge."
+    },
+    "selectivity_audit": {
+      "main_trap": "The assumption that equal masses and temperature changes imply equal heat capacities, leading to the simple average (60°C).",
+      "why_not_plug_and_chug": "The specific heat capacities are not provided as constants; they must be derived from the heating time ratio, which is the core reasoning hinge.",
+      "expected_mid_student_error": "Averaging the temperatures (60°C) or inverting the ratio (70°C).",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 2,
+      "estimated_solution_steps": 3,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "Excellent use of proportional reasoning. The question is concise, authentic to the ESAT style, and tests conceptual understanding of calorimetry rather than rote memorization."
+    ]
+  },
+  "models": {
+    "designer": "gemini-3.1-pro-preview",
+    "implementer": "gemini-3.1-pro-preview",
+    "verifier": "gemini-3.1-flash-lite",
+    "style_judge": "gemini-3.1-flash-lite"
+  },
+  "attempts": 1,
+  "created_at": "2026-05-18T16:02:33.897508",
+  "token_usage": {
+    "prompt_tokens": 37682,
+    "candidates_tokens": 6103,
+    "total_tokens": 58858
+  },
+  "tags": {
+    "primary_tag": "4",
+    "secondary_tags": [],
+    "primary_confidence": 0.95,
+    "reasoning": "The question primarily tests the understanding of specific heat capacity, thermal energy transfer ($E = mc\\Delta\\theta$), and the principle of thermal equilibrium (heat lost = heat gained). These are all core concepts within Thermal physics.",
+    "_raw_text": "```json\n{\n  \"primary_tag\": \"4\",\n  \"secondary_tags\": [],\n  \"primary_confidence\": 0.95,\n  \"reasoning\": \"The question primarily tests the understanding of specific heat capacity, thermal energy transfer ($E = mc\\\\Delta\\\\theta$), and the principle of thermal equilibrium (heat lost = heat gained). These are all core concepts within Thermal physics.\"\n}\n```"
+  },
+  "schema_block_snapshot": "## **P_ae6afb3b. Calorimetry and Thermal Energy Conservation**\n\n**Core move:** Apply the principle of conservation of thermal energy by equating the heat lost by hotter components to the heat gained by cooler components (Q_lost = Q_gained) using specific heat capacity and temperature changes.\n\n**Seen in / context:**\n- Determining initial or final temperatures in mixtures reaching thermal equilibrium\nFinding specific heat capacities of unknown materials through mixing\nCalculating mass of components in calorimetry experiments\nProblems involving phase changes (latent heat) alongside specific heat capacity\n\n**Possible wrong paths:**\n- Incorrectly assigning positive/negative signs to heat changes, leading to subtraction instead of equating magnitudes of heat transfer\nForgetting to convert units (e.g., grams to kilograms) to match the units of specific heat capacity\nUsing the specific heat capacity of the wrong material for a given component\nConfusing initial and final temperatures when calculating temperature change (ΔT)\n\n**Notes for generation:**\n- Ensure all mass units are consistent with the specific heat capacity units (e.g., kg with J kg⁻¹ °C⁻¹).\nClearly identify which component loses heat and which gains heat.\nTemperature change (ΔT) for a component should be calculated as (final temperature - initial temperature); however, when equating 'heat lost' and 'heat gained', it's often more intuitive to use the magnitude of temperature change for each part: Q = mc|ΔT|.\n\n**Exemplar questions:**\n- `NSAA_2022_Section1_Q35_NSAA_Sec`: Initial exemplar for new schema.",
+  "pipeline": "v4",
+  "has_visual": true,
+  "visual_type": "concept_image",
+  "answer_depends_on_visual": false,
+  "question_stem_before_auto_diagram": "Two liquids, X and Y, are heated separately by identical electrical heaters.\n\nHeating $1.0\\text{ kg}$ of liquid X by $10\\,^\\circ\\text{C}$ takes $2.0\\text{ minutes}$.\nHeating $1.0\\text{ kg}$ of liquid Y by $10\\,^\\circ\\text{C}$ takes $4.0\\text{ minutes}$.\n\nAssume no thermal energy is lost to the surroundings and no phase changes occur.\n\nA $1.0\\text{ kg}$ sample of liquid X at $90\\,^\\circ\\text{C}$ is mixed with a $1.0\\text{ kg}$ sample of liquid Y at $30\\,^\\circ\\text{C}$.\n\nWhat is the final equilibrium temperature of the mixture?",
+  "visual_assets": [
+    {
+      "kind": "concept_image",
+      "spec_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260518_155652_6ac9f1\\concept_image_prompt.json",
+      "image_paths": [
+        "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_155652_6ac9f1/concept_image_v1.png"
+      ],
+      "renderer": "gemini_image_v1",
+      "qc_status": "pass",
+      "qc_source": "concept_image_verifier.json",
+      "answer_bearing": false,
+      "checksum": null
+    }
+  ]
+}

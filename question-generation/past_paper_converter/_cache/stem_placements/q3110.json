@@ -1,0 +1,28 @@
+{
+  "questionId": 3110,
+  "examName": "ENGAA",
+  "examYear": 2019,
+  "paperName": "Section 2",
+  "questionNumber": 1,
+  "stemBlocks": [
+    "The ray diagram shows light passing from a vacuum into a medium. Two angles, $x$ and $y$, are shown on the diagram. When $x$ is $60^\\circ$, $y$ is $45^\\circ$. When $x$ is $45^\\circ$, what is the value of $\\sin y$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:42:12.047797+00:00",
+  "sourceImageHash": "d4ced2e37ade437207026010040bfac879d8e387bffa4bbe86bedc382b3667fc",
+  "status": "ok"
+}

@@ -1,0 +1,28 @@
+{
+  "questionId": 3400,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 11,
+  "stemBlocks": [
+    "The resistors in the following four circuits are identical.\nThe cells are identical and have no internal resistance. Each cell can supply the same total amount of energy at a constant voltage before becoming exhausted.\n$t_1, t_2, t_3$ and $t_4$ are the lengths of time after which the cells in circuits 1, 2, 3 and 4, respectively, become exhausted.\nWhich comparison of $t_1, t_2, t_3$ and $t_4$ is correct?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.050189+00:00",
+  "sourceImageHash": "74248a355e41b50479ad69c59b05619bc9d4087f2805d15481d35cf68324e846",
+  "status": "ok"
+}

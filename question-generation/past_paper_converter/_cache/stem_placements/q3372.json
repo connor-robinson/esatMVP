@@ -1,0 +1,31 @@
+{
+  "questionId": 3372,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 43,
+  "stemBlocks": [
+    "An enzyme called EcoRI is used to cut out a gene from the middle of a human chromosome. This process produces sticky ends as shown in the diagram.",
+    "When guanine separates from its complementary base, three hydrogen bonds are broken, whereas two are broken when the other pair of bases separate.",
+    "Which row is correct?",
+    "|  | EcoRI is a | the number of base-pairing hydrogen bonds broken when this gene was cut out using EcoRI |\n| --- | --- | --- |\n| A | restriction enzyme | 16 |\n| B | restriction enzyme | 20 |\n| C | restriction enzyme | 24 |\n| D | ligase | 16 |\n| E | ligase | 20 |\n| F | ligase | 24 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:10.849885+00:00",
+  "sourceImageHash": "c57ae35f51bc5ea562f5b3e68cc1706096b1f03872b267b44ed596b7267bda40",
+  "status": "ok"
+}

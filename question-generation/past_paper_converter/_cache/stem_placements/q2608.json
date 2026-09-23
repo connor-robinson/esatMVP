@@ -1,0 +1,29 @@
+{
+  "questionId": 2608,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 39,
+  "stemBlocks": [
+    "Four samples, labelled W, X, Y and Z, were investigated using paper chromatography with a solvent that caused any mixtures present to be fully separated. The results are shown in the chromatogram.",
+    "What is the $R_f$ value of the spot with the strongest attraction to the mobile phase relative to the stationary phase and that is from a sample containing only one substance?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Chromatogram showing separation of samples W, X, Y, and Z.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:19.013930+00:00",
+  "sourceImageHash": "19de5416f2509e9c0ec15e7cf83f1cb6ed4cafb179bba1c75cae7a681ea32ad1",
+  "status": "ok"
+}

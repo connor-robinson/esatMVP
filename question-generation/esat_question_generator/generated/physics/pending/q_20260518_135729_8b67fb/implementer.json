@@ -1,0 +1,104 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_d4f05622",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Medium",
+      "task_signature": "implement_P_d4f05622_medium",
+      "primary_tag": "5",
+      "secondary_tags": [
+        "4"
+      ]
+    },
+    "question": {
+      "stem": "A simple circuit consists of a 6.0 V cell, a 3.0 $\\Omega$ resistor, and a straight wire segment of length 20 cm, all connected in series. The straight wire segment is placed in a uniform magnetic field of flux density 0.50 T. The magnetic field is perpendicular to the wire.\n\n<DIAGRAM id=\"d1\" />\n\nWhat is the magnitude of the magnetic force on the wire segment?",
+      "options": {
+        "A": "0.050 N",
+        "B": "0.20 N",
+        "C": "0.30 N",
+        "D": "0.60 N",
+        "E": "1.0 N",
+        "F": "20 N"
+      },
+      "correct_option": "B"
+    },
+    "visual_requirements": {
+      "visual_need": "accurate_schematic_json",
+      "visual_role": "supportive",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": {
+        "style": "standard_physics",
+        "elements": [
+          {
+            "type": "circuit_series",
+            "components": [
+              {
+                "type": "dc_source",
+                "label": "V = 6.0 V"
+              },
+              {
+                "type": "resistor",
+                "label": "R = 3.0 Ω"
+              },
+              {
+                "type": "wire_segment",
+                "id": "w1",
+                "label": "L = 20 cm"
+              }
+            ]
+          },
+          {
+            "type": "uniform_field",
+            "field_type": "magnetic",
+            "direction": "into_page",
+            "symbol": "cross",
+            "region": {
+              "covers": "w1"
+            },
+            "label": "B = 0.50 T"
+          }
+        ],
+        "annotations": [
+          "The magnetic field B is perpendicular to the wire segment L."
+        ]
+      },
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "The magnetic force depends on the current in the wire. This current is not given directly but can be found using Ohm's law with the provided voltage and resistance of the circuit.",
+      "reasoning": "This is a two-step problem. First, calculate the current ($I$) flowing through the circuit using Ohm's law, $V = IR$.\n\n1.  Rearrange Ohm's law to find the current: $I = V / R$.\n    $I = 6.0\\ \\text{V} / 3.0\\ \\Omega = 2.0\\ \\text{A}$.\n\n2.  Next, calculate the magnetic force ($F$) on the wire segment using the formula $F = BIL$, where $B$ is the magnetic field strength and $L$ is the length of the wire in the field. The field is perpendicular to the wire, so $\\sin(\\theta) = 1$.\n    Remember to convert the length from cm to m: $L = 20\\ \\text{cm} = 0.20\\ \\text{m}$.\n\n3.  Substitute the values into the force equation:\n    $F = (0.50\\ \\text{T}) \\times (2.0\\ \\text{A}) \\times (0.20\\ \\text{m})$\n    $F = 1.0 \\times 0.20\\ \\text{N} = 0.20\\ \\text{N}$.\n\nTherefore, the magnitude of the magnetic force is 0.20 N."
+    },
+    "distractor_map": {
+      "A": "This result is obtained by incorrectly inverting Ohm's law, calculating the current as $I = R/V = 3.0/6.0 = 0.5$ A, and then calculating the force as $F = 0.50 \\times 0.5 \\times 0.20 = 0.050$ N.",
+      "B": "Correct. The current is calculated as $I = V/R = 2.0$ A, and the force is calculated as $F = BIL = 0.50 \\times 2.0 \\times 0.20 = 0.20$ N.",
+      "C": "This result comes from incorrectly substituting the resistance for the current in the force formula: $F = BRL = 0.50 \\times 3.0 \\times 0.20 = 0.30$ N. This is a formula-mashing error.",
+      "D": "This result comes from incorrectly substituting the voltage for the current in the force formula: $F = BVL = 0.50 \\times 6.0 \\times 0.20 = 0.60$ N. This is a formula-mashing error.",
+      "E": "This result is obtained by correctly calculating the current ($I=2.0$ A) but then omitting the length from the force calculation: $F = BI = 0.50 \\times 2.0 = 1.0$ N. This is the force per unit length.",
+      "F": "This result is obtained by failing to convert the length from centimetres to metres: $F = BIL = 0.50 \\times 2.0 \\times 20 = 20$ N."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "The candidate must realise that the current (I) for the magnetic force equation (F=BIL) is not a given value and must be derived from the circuit's voltage and resistance using Ohm's Law (I=V/R).",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 2,
+        "estimated_solution_steps": 2,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-pro",
+  "attempts": 1
+}

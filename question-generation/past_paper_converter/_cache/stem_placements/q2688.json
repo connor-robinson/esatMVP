@@ -1,0 +1,33 @@
+{
+  "questionId": 2688,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 29,
+  "stemBlocks": [
+    "Two fixed horizontal metal rails are side by side and $12 \\text{ cm}$ apart. The rails are connected to a dc power supply by a switch that is initially open.\nA freely moveable metal rod of length $20 \\text{ cm}$ is placed on the rails as shown in the diagram.",
+    "The diagram shows the arrangement seen from above.\nThe angle between the rod and the rails is $90^{\\circ}$.\nThe whole arrangement is placed in a uniform magnetic field of magnitude $0.50 \\text{ T}$ that is directed perpendicularly into the page.\nThe moveable rod has a weight of $0.40 \\text{ N}$.",
+    "The switch is now closed. As a result, there is a current of $2.4 \\text{ A}$ in the circuit and the rod moves.",
+    "What is the initial magnitude of the acceleration of the rod and what is its direction?",
+    "(gravitational field strength = $10 \\text{ N kg}^{-1}$)",
+    "|  | acceleration / \\text{m s}^{-2} | direction |\n| --- | --- | --- |\n| A | 0.36 | to the left |\n| B | 0.36 | to the right |\n| C | 0.60 | to the left |\n| D | 0.60 | to the right |\n| E | 3.6 | to the left |\n| F | 3.6 | to the right |\n| G | 6.0 | to the left |\n| H | 6.0 | to the right |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 2,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:58.198344+00:00",
+  "sourceImageHash": "2c44db51424b55f75634d6377c6a819b34a76084c5434180ebe976598973bc8e",
+  "status": "ok"
+}

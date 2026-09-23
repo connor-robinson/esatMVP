@@ -1,0 +1,29 @@
+{
+  "questionId": 1935,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 34,
+  "stemBlocks": [
+    "The diagram shows four objects W, X, Y and Z, of masses 3.0 kg, 4.0 kg, 6.0 kg and 2.0 kg respectively, connected by light, inextensible rods.\nThe objects are pulled along a smooth, horizontal surface by a constant force of 30 N in the direction indicated.",
+    "What is the tension in the rod connecting X and Y?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:28:14.907694+00:00",
+  "sourceImageHash": "338b5351ee6d3d3e9e54776a99dec44b823542d618c35604d7da357ed3e49fca",
+  "status": "ok"
+}

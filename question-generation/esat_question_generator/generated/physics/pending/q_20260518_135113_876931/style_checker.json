@@ -1,0 +1,59 @@
+{
+  "stage": "style_checker",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "similar",
+      "notes": "The question is well-calibrated for a 'Medium' difficulty. It requires setting up a force balance equation and performing algebraic rearrangement, which is a step beyond direct formula application but uses standard school-level physics."
+    },
+    "selectivity_audit": {
+      "main_trap": "Neglecting the buoyancy force. This is a common misconception in fluid dynamics problems, leading to a plausible distractor (Option A).",
+      "why_not_plug_and_chug": "The question requires the student to construct the force balance equation (Weight = Buoyancy + Drag) and then rearrange it to solve for the object's density. There is no single pre-existing formula for this specific scenario, making it reasoning-driven rather than plug-and-chug.",
+      "expected_mid_student_error": "The most common error would be to neglect buoyancy, assuming only weight and drag are relevant. Other errors might include algebraic mistakes during rearrangement or confusing the object's density with the fluid's density.",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 2,
+      "estimated_solution_steps": 4,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "The question is concise, clear, and uses standard school-level physics concepts (Newton's First Law, Archimedes' Principle, density).",
+      "The numerical values are perfectly chosen for a no-calculator environment, with `g=10` simplifying calculations.",
+      "The 'reverse inference' nature of solving for density rather than terminal velocity makes it an excellent test of conceptual understanding and algebraic manipulation.",
+      "The distractors are well-designed, targeting common errors like neglecting buoyancy or making algebraic slips, enhancing the question's selectivity."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

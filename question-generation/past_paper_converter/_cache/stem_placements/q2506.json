@@ -1,0 +1,30 @@
+{
+  "questionId": 2506,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 27,
+  "stemBlocks": [
+    "A radioactive isotope decays in a single step to a stable isotope. A radiation detector is placed very near to a sample of the radioactive isotope in a laboratory. The count rate on the detector changes as time elapses. The graph shows how the measured count rate changes with time.",
+    "What is the background count rate and what is the half-life of the isotope?",
+    "|  | background count rate / counts per minute | half-life of isotope / minutes |\n| --- | --- | --- |\n| A | 20 | 40 |\n| B | 20 | 50 |\n| C | 20 | 60 |\n| D | 20 | 65 |\n| E | 120 | 40 |\n| F | 120 | 50 |\n| G | 120 | 60 |\n| H | 120 | 65 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.802770+00:00",
+  "sourceImageHash": "2eddcc406ca3e2e2c400a8d930363cd50af391baba2c13aaa58ccea0ca115afb",
+  "status": "ok"
+}

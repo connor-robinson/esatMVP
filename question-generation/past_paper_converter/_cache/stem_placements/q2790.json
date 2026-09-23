@@ -1,0 +1,29 @@
+{
+  "questionId": 2790,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 51,
+  "stemBlocks": [
+    "An experiment was carried out to separate the four amino acids present in a mixture of amino acids. A spot of this mixture was placed on chromatography paper. The bottom of the paper was placed in solvent 1 and left until the solvent nearly reached the top of the paper. The paper was then thoroughly dried and turned by 90°. The procedure was then repeated with solvent 2. The amino acids were then identified with reference to known $R_f$ values in the respective solvents. The final positions of the amino acids on the chromatograph are shown on the following diagram.",
+    "Which of the following statements is correct?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.376734+00:00",
+  "sourceImageHash": "8df2deeed2389f68cf3490e84257c1473bc24ca45ff6b40ae62f1f32e9da4fe9",
+  "status": "ok"
+}

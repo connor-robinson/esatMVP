@@ -1,0 +1,29 @@
+{
+  "questionId": 2101,
+  "examName": "ENGAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 26,
+  "stemBlocks": [
+    "A ray of light is incident on a boundary between a vacuum and medium X at an angle $\\theta$ as shown:\nThe incident ray is partially reflected and partially refracted. The angle between the reflected and refracted rays is $90^{\\circ}$.",
+    "What is the refractive index of medium X?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:34:34.990828+00:00",
+  "sourceImageHash": "c1fe227e2871e0a6588d85b72976734e9eb73bbebf8ed60df720f1b708878a7a",
+  "status": "ok"
+}

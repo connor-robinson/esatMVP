@@ -1,0 +1,29 @@
+{
+  "questionId": 2494,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 15,
+  "stemBlocks": [
+    "The line segment $RT$ is a tangent at the point $S$ to a circle with centre $O$. $Q$ and $P$ are points on the circumference of the circle such that $QS = QP$. Angle $PST = 75^\\circ$.",
+    "What is the size of angle $QSO$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.788669+00:00",
+  "sourceImageHash": "4f36566de90908975fe960a30778b1490d867322ed9422395b189701e75c8e60",
+  "status": "ok"
+}

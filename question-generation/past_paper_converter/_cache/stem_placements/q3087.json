@@ -1,0 +1,29 @@
+{
+  "questionId": 3087,
+  "examName": "ENGAA",
+  "examYear": 2017,
+  "paperName": "Section 2",
+  "questionNumber": 13,
+  "stemBlocks": [
+    "An unstretched $0.25\\ \\text{m}$ length of the same type of cord is used in a catapult to propel a mass $m$, as illustrated in Fig. 3(b).",
+    "What is the maximum speed $V_{\\text{max}}$ at which the mass can be propelled (where $U$ is the work done calculated in part b))?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Fig. 3(b)",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:39:07.385731+00:00",
+  "sourceImageHash": "69dcbb085989f5f442e3334f8582a0377e431e2c58a5fdc9e3ec1cba2cc8511c",
+  "status": "ok"
+}

@@ -1,0 +1,17 @@
+{
+  "stage": "tag_labeler",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "primary_tag": "4",
+    "secondary_tags": [],
+    "primary_confidence": 0.95,
+    "reasoning": "The question primarily tests the understanding of specific heat capacity, thermal energy transfer ($E = mc\\Delta\\theta$), and the principle of thermal equilibrium (heat lost = heat gained). These are all core concepts within Thermal physics.",
+    "_raw_text": "```json\n{\n  \"primary_tag\": \"4\",\n  \"secondary_tags\": [],\n  \"primary_confidence\": 0.95,\n  \"reasoning\": \"The question primarily tests the understanding of specific heat capacity, thermal energy transfer ($E = mc\\\\Delta\\\\theta$), and the principle of thermal equilibrium (heat lost = heat gained). These are all core concepts within Thermal physics.\"\n}\n```"
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

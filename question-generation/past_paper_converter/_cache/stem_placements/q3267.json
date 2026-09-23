@@ -1,0 +1,30 @@
+{
+  "questionId": 3267,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 58,
+  "stemBlocks": [
+    "The diagram shows a cylinder with two compartments, X and Y, separated by a sliding partially permeable membrane which is impermeable to glucose.\nCompartment X contains $100 \\text{ mmol dm}^{-3}$ glucose solution and compartment Y contains $200 \\text{ mmol dm}^{-3}$ glucose solution. The initial volume of the solution in each of the two compartments is the same, $10 \\text{ cm}^3$.\nAfter three hours, there is no further change in the volumes of X and Y.",
+    "Which of the following statements describe(s) the results of the experiment?",
+    "1 The volume of Y increases during the first three hours.\n2 During the first three hours, the average rate of osmosis is $\\frac{10}{9} \\text{ cm}^3$ per hour.\n3 During the first three hours, the average rate of change in glucose concentration in compartment X is $50 \\text{ mmol dm}^{-3}$ per hour."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A cylinder is divided into two compartments, X and Y, by a sliding partially permeable membrane. Compartment Y is above compartment X. Double-headed arrows indicate the membrane can slide up and down.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:13.974306+00:00",
+  "sourceImageHash": "21fc02bd68747992c4386b4b387cd9198133f8677ff906bcd483657525bfef53",
+  "status": "ok"
+}

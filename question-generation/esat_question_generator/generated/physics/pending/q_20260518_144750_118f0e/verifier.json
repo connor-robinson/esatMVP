@@ -1,0 +1,53 @@
+{
+  "stage": "verifier",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "A",
+    "independent_solution": {
+      "main_law_or_principle": "Newton's First Law (equilibrium at terminal velocity) and Archimedes' Principle.",
+      "calculation_or_logic": "At terminal velocity, the net force is zero. The object is rising, so the forces are: Upthrust (upwards) = Weight (downwards) + Drag (downwards). Upthrust $U = V \\rho_L g$. Weight $W = V \\rho g$. Drag $F_D = kv$. Thus, $V \\rho_L g = V \\rho g + kv$. Rearranging for $k$: $kv = V g (\\rho_L - \\rho) \\implies k = \\frac{V g (\\rho_L - \\rho)}{v}$.",
+      "verified_answer_value": "A",
+      "claimed_answer_value": "A",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Identify forces on a submerged object",
+        "Apply Archimedes' principle",
+        "Apply Newton's first law for terminal velocity",
+        "Vector addition of forces"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "derived_relationship_audit": {
+      "requires_nontrivial_derivation": false,
+      "number_of_linked_relationships": 0,
+      "relationships_given_in_stem": [],
+      "safe_for_esat": true
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a",
+      "derived_relationship_safety": "pass"
+    },
+    "notes": [
+      "The question is physically sound and tests the conceptual understanding of force directions in fluid dynamics."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

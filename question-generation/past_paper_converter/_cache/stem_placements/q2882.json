@@ -1,0 +1,30 @@
+{
+  "questionId": 2882,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 63,
+  "stemBlocks": [
+    "The arrow in the diagram shows the net movement of molecule X out of a healthy mammalian cell. The maximum cell width is $10 \\ \\mu \\text{m}$. The cell membrane accounts for $0.2\\%$ of this width.",
+    "What is the width of a single cell membrane, in nm, and which process is represented by the arrow in the diagram?",
+    "|  | width of a single cell membrane / nm | process represented by the arrow in the diagram |\n| --- | --- | --- |\n| A | 0.01 | diffusion |\n| B | 0.01 | active transport |\n| C | 0.02 | diffusion |\n| D | 0.02 | active transport |\n| E | 10 | diffusion |\n| F | 10 | active transport |\n| G | 20 | diffusion |\n| H | 20 | active transport |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:27:59.389401+00:00",
+  "sourceImageHash": "ea1ba182a73a4252122aefb21efd73f259a2de293420f6ac92302d9ed15b0bab",
+  "status": "ok"
+}

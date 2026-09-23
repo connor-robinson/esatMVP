@@ -1,0 +1,29 @@
+{
+  "questionId": 3554,
+  "examName": "TMUA",
+  "examYear": 2023,
+  "paperName": "Paper 1",
+  "questionNumber": 5,
+  "stemBlocks": [
+    "The following shape has two lines of reflectional symmetry.\n$MNOP$ is a square of perimeter 40 cm.\nThe vertices of rectangle $RSTU$ lie on the edge of square $MNOP$.\n$MR$ has length $x$ cm.",
+    "What is the largest possible value of $x$ such that $RSTU$ has area 20 cm$^2$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:21.980771+00:00",
+  "sourceImageHash": "6f12b5d35a350ecd4ab0837d3fabb9296d3fffb3a9739167162208475d8bf392",
+  "status": "ok"
+}

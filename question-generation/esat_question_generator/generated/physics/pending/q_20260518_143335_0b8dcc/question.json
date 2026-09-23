@@ -1,0 +1,270 @@
+{
+  "id": "P_a9a3eea7-Medium-68cb77c83c",
+  "schema_id": "P_a9a3eea7",
+  "difficulty": "Medium",
+  "idea_plan": {
+    "schema_id": "P_a9a3eea7",
+    "module": "physics",
+    "variation_mode": "SIBLING",
+    "target_difficulty": "Medium",
+    "idea_summary": "Compare the terminal velocities of the same object falling through two different fluids to find the object's density in terms of the fluid density.",
+    "schema_invariant": {
+      "core_move": "Apply Newton's first law (Weight = Upthrust + Drag) at terminal velocity, expanding weight and upthrust in terms of density.",
+      "what_must_not_change": [
+        "Object reaching terminal velocity",
+        "Drag force model dependent on velocity",
+        "Upthrust dependent on fluid density"
+      ],
+      "what_can_change": [
+        "The unknown variable being solved for",
+        "Number of scenarios compared",
+        "Whether the given values are absolute or proportional"
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "proportional_reasoning",
+      "reasoning_hinge": "Setting up the force balance for both fluid scenarios and taking the ratio of the two equations to eliminate the unknown drag constant and object volume.",
+      "why_top_students_win": "They construct the full equilibrium equation (kv = Weight - Upthrust) for both cases, correctly substituting fluid density for upthrust, and divide them to find the object's density.",
+      "why_mid_students_miss": "They may forget the upthrust term entirely, or incorrectly assume terminal velocity is inversely proportional to fluid density without accounting for the subtractive upthrust term."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Newton's First Law at terminal velocity (Net force = 0).",
+      "supporting_idea_if_any": "Archimedes' principle (Upthrust = fluid density * volume * g).",
+      "estimated_solution_steps": 3,
+      "number_of_core_physics_principles": 2,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 3,
+      "must_include": [
+        "model_selection",
+        "proportional_comparison",
+        "short_calculation_or_comparison"
+      ]
+    },
+    "reference_alignment": "Preserves the core requirement to balance weight, buoyancy, and drag, but elevates it to Medium by requiring a comparison between two states rather than a single direct calculation.",
+    "task_signature": "compare_scenarios",
+    "tool_footprint": [
+      "force_balance",
+      "archimedes_principle",
+      "ratio_reasoning"
+    ],
+    "primary_tag": "3",
+    "secondary_tags": [
+      "4"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "Instead of providing all parameters to calculate a single terminal velocity, it gives the relative terminal velocities in two different fluids to find the object's density.",
+    "why_still_on_spec": "Force balance, terminal velocity, and upthrust are standard ESAT topics. Comparing two scenarios to eliminate constants is a standard mathematical technique expected at this level.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Ignoring upthrust entirely, assuming Drag = Weight.",
+        "distractor_role": "Leads to a contradictory or impossible result, or a specific incorrect ratio if they try to force a relationship."
+      },
+      {
+        "mistake": "Calculating upthrust using the object's density instead of the fluid's density.",
+        "distractor_role": "Produces an incorrect algebraic relationship, leading to a wrong multiple for the density."
+      },
+      {
+        "mistake": "Assuming terminal velocity scales linearly or inversely with fluid density without setting up the force balance.",
+        "distractor_role": "Leads to a tempting but physically baseless simple fraction."
+      }
+    ],
+    "difficulty_rationale": "It requires synthesizing the correct physical model (including the often-forgotten upthrust) and applying it twice. The algebra is clean if the ratio is taken, punishing candidates who try to plug in arbitrary numbers or use shallow proportionality rules.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "The candidate must construct the force balance equation themselves and realize they need to divide two instances of it to eliminate unknowns; there is no single formula to plug into."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The final answer is a clean integer or simple fractional multiple of the fluid density, making it perfect for a set of plausible multiple-choice options."
+    }
+  },
+  "question_package": {
+    "metadata": {
+      "schema_id": "P_a9a3eea7",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Medium",
+      "task_signature": "compare_scenarios",
+      "primary_tag": "3",
+      "secondary_tags": [
+        "4"
+      ]
+    },
+    "question": {
+      "stem": "An object falls from rest through a fluid until it reaches terminal velocity. The drag force on the object is given by $F = kv$, where $v$ is the velocity and $k$ is a constant that is the same for all fluids.\n\nWhen the object falls through a fluid of density $\\rho$, its terminal velocity is $5v_0$.\n\nWhen the same object falls through a different fluid of density $3\\rho$, its terminal velocity is $v_0$.\n\nWhat is the density of the object?",
+      "options": {
+        "A": "$\\frac{1}{2}\\rho$",
+        "B": "$\\frac{5}{2}\\rho$",
+        "C": "$3\\rho$",
+        "D": "$\\frac{7}{2}\\rho$",
+        "E": "$4\\rho$",
+        "F": "$5\\rho$"
+      },
+      "correct_option": "D"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "At terminal velocity, the drag force balances the net downward force (weight minus upthrust). By taking the ratio of this force balance in both fluids, the unknown object volume and drag constant cancel out.",
+      "reasoning": "1. The force balance at terminal velocity is $kv = W - U = V\\rho_x g - V\\rho_{\\text{fluid}}g = Vg(\\rho_x - \\rho_{\\text{fluid}})$.\n2. For the first fluid: $k(5v_0) = Vg(\\rho_x - \\rho)$.\n3. For the second fluid: $k(v_0) = Vg(\\rho_x - 3\\rho)$.\n4. Dividing the first equation by the second gives: $5 = \\frac{\\rho_x - \\rho}{\\rho_x - 3\\rho}$.\n5. Solving for $\\rho_x$:\n   $5(\\rho_x - 3\\rho) = \\rho_x - \\rho$\n   $5\\rho_x - 15\\rho = \\rho_x - \\rho$\n   $4\\rho_x = 14\\rho \\implies \\rho_x = \\frac{14}{4}\\rho = \\frac{7}{2}\\rho$."
+    },
+    "distractor_map": {
+      "A": "Results from inverting the velocity ratio or mixing up the fluids in the equation: $1/5 = (\\rho_x - \\rho) / (\\rho_x - 3\\rho)$.",
+      "B": "Results from an algebraic error where the right-hand side upthrust term is multiplied by 5: $5\\rho_x - 15\\rho = \\rho_x - 5\\rho$.",
+      "C": "Results from incorrectly assuming a $v^2$ drag force, which gives $\\rho_x \\approx 3.08\\rho$, or guessing based on the second fluid's density.",
+      "D": "Correct. At terminal velocity, Drag = Weight - Upthrust. Setting up the ratio eliminates unknowns and yields $\\rho_x = 3.5\\rho$.",
+      "E": "Results from a sign error where upthrust is added instead of subtracted for the first fluid: $5 = (\\rho_x + \\rho) / (\\rho_x - 3\\rho)$.",
+      "F": "Results from incorrectly assuming the density scales directly with the velocity multiplier ($5v_0 \\rightarrow 5\\rho$)."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Setting up the force balance for both fluid scenarios and taking the ratio of the two equations to eliminate the unknown drag constant and object volume.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 2,
+        "estimated_solution_steps": 3,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "verifier_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "D",
+    "independent_solution": {
+      "main_law_or_principle": "Newton's First Law at terminal velocity (Drag = Weight - Upthrust)",
+      "calculation_or_logic": "Let $V$ be the volume of the object and $\\rho_x$ be its density. Weight $W = V\\rho_x g$. Upthrust $U = V\\rho_f g$. Drag $F_d = kv$. At terminal velocity, $kv = Vg(\\rho_x - \\rho_f)$.\nCase 1: $k(5v_0) = Vg(\\rho_x - \\rho)$.\nCase 2: $k(v_0) = Vg(\\rho_x - 3\\rho)$.\nDividing Case 1 by Case 2: $5 = (\\rho_x - \\rho) / (\\rho_x - 3\\rho)$.\n$5(\\rho_x - 3\\rho) = \\rho_x - \\rho \\implies 5\\rho_x - 15\\rho = \\rho_x - \\rho \\implies 4\\rho_x = 14\\rho \\implies \\rho_x = 3.5\\rho = \\frac{7}{2}\\rho$.",
+      "verified_answer_value": "7/2 rho",
+      "claimed_answer_value": "7/2 rho",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Force balance at terminal velocity",
+        "Archimedes' principle",
+        "Algebraic ratio comparison"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "derived_relationship_audit": {
+      "requires_nontrivial_derivation": false,
+      "number_of_linked_relationships": 0,
+      "relationships_given_in_stem": [],
+      "safe_for_esat": true
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a",
+      "derived_relationship_safety": "pass"
+    },
+    "notes": [
+      "The physics is sound and the algebraic manipulation is appropriate for the target level."
+    ]
+  },
+  "style_report": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "similar",
+      "notes": "The question is perfectly calibrated for a medium-difficulty ESAT item. It requires a clear conceptual model (force balance) and a standard algebraic technique (ratio) without becoming a long-winded derivation."
+    },
+    "selectivity_audit": {
+      "main_trap": "The main trap is the 'upthrust' term. Students who ignore it or treat it incorrectly will fail to reach the correct ratio, and those who try to guess based on simple proportionality (e.g., 5:1 velocity ratio implies 5:1 density ratio) will be caught by the distractors.",
+      "why_not_plug_and_chug": "There is no single formula for terminal velocity in a fluid that includes upthrust that a student would simply 'know' and plug values into. They must derive the equilibrium condition for the specific system described.",
+      "expected_mid_student_error": "Forgetting the upthrust term (leading to $5 = \\rho_x / \\rho_x$ which is nonsense) or failing to subtract the fluid density from the object density in the force balance.",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 2,
+      "estimated_solution_steps": 3,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "Excellent use of the ratio method to keep the algebra clean and avoid the need for a calculator.",
+      "The distractors are well-constructed to catch common conceptual errors regarding buoyancy and proportionality."
+    ]
+  },
+  "models": {
+    "designer": "gemini-3.1-pro-preview",
+    "implementer": "gemini-3.1-pro-preview",
+    "verifier": "gemini-3.1-flash-lite",
+    "style_judge": "gemini-3.1-flash-lite"
+  },
+  "attempts": 1,
+  "created_at": "2026-05-18T14:38:02.649182",
+  "token_usage": {
+    "prompt_tokens": 23937,
+    "candidates_tokens": 4343,
+    "total_tokens": 49509
+  },
+  "tags": {
+    "primary_tag": "3",
+    "secondary_tags": [
+      "5"
+    ],
+    "primary_confidence": 0.95,
+    "reasoning": "The problem centers on the concept of terminal velocity, which requires setting up a force balance (weight, drag, and upthrust) on a moving object, making Mechanics the primary topic. The calculation of upthrust and the object's density are crucial applications of concepts from Matter.",
+    "_raw_text": "```json\n{\n  \"primary_tag\": \"3\",\n  \"secondary_tags\": [\"5\"],\n  \"primary_confidence\": 0.95,\n  \"reasoning\": \"The problem centers on the concept of terminal velocity, which requires setting up a force balance (weight, drag, and upthrust) on a moving object, making Mechanics the primary topic. The calculation of upthrust and the object's density are crucial applications of concepts from Matter.\"\n}\n```"
+  },
+  "schema_block_snapshot": "## **P_a9a3eea7. Calculating Terminal Velocity with Drag and Buoyancy**\n\n**Core move:** Apply Newton's first law (equilibrium of forces) to determine the terminal velocity of an object falling through a fluid, considering its weight, buoyant force, and a given drag force model.\n\n**Seen in / context:**\n- Fluid dynamics problems involving objects moving through viscous media.\nCalculating terminal velocity for objects falling or rising.\nProblems where densities and volumes are used to determine weight and buoyant force.\nApplications of Stokes' Law or similar empirical drag force equations.\n\n**Possible wrong paths:**\n- Incorrectly setting up the force balance equation (e.g., adding drag force in the wrong direction or neglecting upthrust).\nUsing the wrong density for calculating the object's weight (e.g., liquid density instead of object density).\nUsing the wrong density for calculating the upthrust (e.g., object density instead of liquid density).\nAlgebraic errors when rearranging the force balance equation to solve for terminal velocity.\nMisinterpreting the condition for 'terminal speed' (i.e., not setting the net force to zero).\n\n**Notes for generation:**\n- Ensure all forces (weight, upthrust, drag) are correctly identified and their directions are properly accounted for in the force balance.\nEmphasize the definition of upthrust as the weight of the fluid displaced by the object.\nThe form of the drag force equation (e.g., linear with velocity, quadratic with velocity) will be provided and must be incorporated correctly.\nQuestions should require quantitative calculation and algebraic manipulation to solve for an unknown variable like velocity.\n\n**Exemplar questions:**\n- `NSAA_2020_Section1_Q38_NSAA_Sec`: Initial exemplar for new schema.",
+  "pipeline": "v4",
+  "has_visual": false,
+  "visual_type": "none",
+  "answer_depends_on_visual": false
+}

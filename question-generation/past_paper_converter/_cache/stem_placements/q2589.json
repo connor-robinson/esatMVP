@@ -1,0 +1,29 @@
+{
+  "questionId": 2589,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 20,
+  "stemBlocks": [
+    "A builder lifts bags of cement onto the back of a lorry. Each bag has a mass of $25 \\text{ kg}$. It takes the builder $2.5 \\text{ minutes}$ to load ten bags.\nWhat are the total work done, $T$, on the ten bags and the average power required for $T$?\n(gravitational field strength = $10 \\text{ N kg}^{-1}$)",
+    "|  | total work done $T / \\text{J}$ | average power $/ \\text{W}$ |\n| --- | --- | --- |\n| A | 375 | 2.5 |\n| B | 375 | 150 |\n| C | 625 | 4.2 |\n| D | 625 | 250 |\n| E | 3750 | 25 |\n| F | 3750 | 1500 |\n| G | 6250 | 42 |\n| H | 6250 | 2500 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:18.982213+00:00",
+  "sourceImageHash": "00963f5a52afcc75ff7e3cc77f21bf6c5bbcb63a41a90c53400626c266fe2a10",
+  "status": "ok"
+}

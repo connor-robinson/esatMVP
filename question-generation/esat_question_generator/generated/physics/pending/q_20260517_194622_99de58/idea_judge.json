@@ -1,0 +1,32 @@
+{
+  "stage": "idea_judge",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "selectivity_score": 0,
+    "checks": {
+      "schema_preserved": "pass",
+      "on_spec": "pass",
+      "reasoning_hinge_present": "pass",
+      "not_direct_substitution": "pass",
+      "wrong_paths_specific": "pass",
+      "visual_feasible": "pass",
+      "mcq_viable": "pass",
+      "difficulty_match": "pass"
+    },
+    "reasoning_hinge_summary": "The core reasoning hinge is the interpretation of 'change in reading' on a force sensor. Candidates must recognize that this directly represents the magnetic force (F=BIL) and is independent of the wire's weight, which is a constant background force.",
+    "expected_mid_student_error": "Mid-level students are likely to be confused by the mechanics context, attempting to incorporate the wire's weight (mg) into the magnetic force calculation, leading to distractors like mg + BIL or |mg - BIL|. They might also struggle to derive current (I) from charge (Q) and time (t) if not explicitly stated as 'current'.",
+    "notes": [
+      "The FAR mode successfully elevates the difficulty from a direct application to a conceptual understanding within a new context.",
+      "The visual brief is appropriate and non-answer-bearing, supporting the problem setup without giving away solutions.",
+      "The wrong paths are well-defined and target common misconceptions, ensuring good discrimination."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 1933,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 32,
+  "stemBlocks": [
+    "The diagram represents a mass that is moving in a straight line at constant speed up a slope of constant gradient.",
+    "Which statement about the forces acting on the mass must be correct?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:28:14.905094+00:00",
+  "sourceImageHash": "fc0a04ff4f67b40b4c375efb6af3c23a025c41c6fb9bff04c6743a5dc2daf7a1",
+  "status": "ok"
+}

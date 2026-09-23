@@ -1,0 +1,30 @@
+{
+  "questionId": 1839,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 46,
+  "stemBlocks": [
+    "The diagram shows a ball P, of mass $4.0 \\text{ kg}$, moving to the right at $10 \\text{ms}^{-1}$ directly towards a stationary ball Q, of mass $2.0 \\text{ kg}$. The balls collide but do not join together. Immediately after the collision ball Q moves at $10 \\text{ms}^{-1}$ to the right.",
+    "What is the velocity of ball P immediately after the collision, and how much kinetic energy in total is lost during the collision?",
+    "|  | velocity of ball P after collision | kinetic energy lost during collision / J |\n| --- | --- | --- |\n| A | 0 | 50 |\n| B | 0 | 150 |\n| C | $10 \\text{ms}^{-1}$ to the left | 50 |\n| D | $10 \\text{ms}^{-1}$ to the left | 150 |\n| E | $5.0 \\text{ms}^{-1}$ to the right | 50 |\n| F | $5.0 \\text{ms}^{-1}$ to the right | 150 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:23:52.656243+00:00",
+  "sourceImageHash": "42d1dcb19213694b5aa1182615c563d61dcd2bd071680be1a3875751aaa3c3ba",
+  "status": "ok"
+}

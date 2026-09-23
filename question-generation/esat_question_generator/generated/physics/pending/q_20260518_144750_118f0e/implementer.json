@@ -1,0 +1,69 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_a9a3eea7",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Medium",
+      "task_signature": "force_motion_reasoning",
+      "primary_tag": "3",
+      "secondary_tags": [
+        "2"
+      ]
+    },
+    "question": {
+      "stem": "An object of volume $V$ and density $\\rho$ is released from rest at the bottom of a tank containing a liquid of density $\\rho_L$.\n\nThe object rises and reaches a constant terminal velocity $v$.\n\nThe magnitude of the drag force acting on the object is given by $k v$, where $k$ is a constant.\n\nWhich of the following is the correct expression for $k$?\n\n(Acceleration of free fall is $g$.)",
+      "options": {
+        "A": "$\\frac{V g (\\rho_L - \\rho)}{v}$",
+        "B": "$\\frac{V g (\\rho - \\rho_L)}{v}$",
+        "C": "$\\frac{V g (\\rho_L + \\rho)}{v}$",
+        "D": "$\\frac{V g \\rho_L}{v}$",
+        "E": "$\\frac{V g \\rho}{v}$",
+        "F": "$\\frac{V (\\rho_L - \\rho)}{v}$"
+      },
+      "correct_option": "A"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "Because the object is rising, the drag force acts downwards, meaning the correct force balance is Upthrust = Weight + Drag.",
+      "reasoning": "At terminal velocity, the net force on the object is zero. The upward force is upthrust ($U = V \\rho_L g$). The downward forces are the object's weight ($W = V \\rho g$) and the drag force ($F_D = k v$), since drag opposes the upward motion.\nEquating the forces gives: $U = W + F_D$.\nSubstituting the expressions: $V \\rho_L g = V \\rho g + k v$.\nRearranging for $k$: $k v = V g (\\rho_L - \\rho)$, so $k = \\frac{V g (\\rho_L - \\rho)}{v}$."
+    },
+    "distractor_map": {
+      "A": "Correct. Correctly identifies that drag acts downwards, adding to weight.",
+      "B": "Assumes the force balance for a falling object ($W = U + F_D$), leading to a reversed sign for the density difference.",
+      "C": "Assumes drag acts upwards alongside upthrust, leading to $U + W = F_D$ (or simply adds the densities).",
+      "D": "Ignores the weight of the object, assuming upthrust is balanced entirely by drag ($U = F_D$).",
+      "E": "Ignores the upthrust, assuming weight is balanced entirely by drag ($W = F_D$).",
+      "F": "Omits the acceleration of free fall $g$ from the weight and upthrust expressions."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Recognising that drag acts downwards for a rising object, altering the standard falling-object force balance.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 2,
+        "estimated_solution_steps": 3,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

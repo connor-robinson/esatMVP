@@ -1,0 +1,63 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_121b9ac8",
+      "module": "physics",
+      "variation_mode": "FAR",
+      "target_difficulty": "Medium",
+      "task_signature": "compare_scenarios",
+      "primary_tag": "4",
+      "secondary_tags": [
+        "7"
+      ]
+    },
+    "question": {
+      "stem": "A pulse of light with total energy $E$ is incident on a stationary object of mass $M$ which is free to move. The total momentum of the light pulse is $p = E/c$, where $c$ is the speed of light.\n\nConsider two separate cases:\n1. The light is perfectly absorbed by the object. The object's final momentum is $p_\\text{abs}$.\n2. The light is perfectly reflected back along its original path. The object's final momentum is $p_\\text{refl}$.\n\nWhat is the value of the ratio $p_\\text{refl} / p_\\text{abs}$?",
+      "options": {
+        "A": "0",
+        "B": "1/2",
+        "C": "1",
+        "D": "$\\sqrt{2}$",
+        "E": "2",
+        "F": "4"
+      },
+      "correct_option": "E"
+    },
+    "visual_requirements": {
+      "visual_need": "concept_image_only",
+      "visual_role": "supportive",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": "Two simple, side-by-side diagrams. Left diagram: An arrow representing a light pulse moves towards a block. The arrow stops at the block, indicating absorption. Right diagram: An arrow representing a light pulse moves towards a block, and another arrow of the same size is shown moving away from the block in the opposite direction, indicating reflection."
+    },
+    "solution": {
+      "key_insight": "The momentum gained by the object is equal to the momentum lost by the light pulse. For reflection, the light's momentum vector reverses, resulting in a change twice the magnitude of its initial momentum. For absorption, the light's momentum simply becomes zero.",
+      "reasoning": "This problem is an application of the principle of conservation of momentum.\nLet the initial direction of the light pulse be the positive direction. The initial momentum of the light pulse is $p = E/c$. The initial momentum of the stationary object is 0.\n\nCase 1: Absorption\nThe initial momentum of the system is $p$. After the interaction, the light is absorbed, so its momentum is 0. The object gains momentum $p_\\text{abs}$.\nBy conservation of momentum: $p + 0 = 0 + p_\\text{abs}$.\nTherefore, $p_\\text{abs} = p$.\n\nCase 2: Reflection\nThe initial momentum of the system is again $p$. After the interaction, the light is reflected and travels in the opposite direction, so its final momentum is $-p$. The object gains momentum $p_\\text{refl}$.\nBy conservation of momentum: $p + 0 = -p + p_\\text{refl}$.\nTherefore, $p_\\text{refl} = p - (-p) = 2p$.\n\nNow, we can find the ratio:\n$$ \\frac{p_\\text{refl}}{p_\\text{abs}} = \\frac{2p}{p} = 2 $$"
+    },
+    "distractor_map": {
+      "A": "This would be the case if reflection transferred no momentum. This might arise from incorrectly calculating the change in momentum as the change in magnitude, $|p| - |-p| = 0$.",
+      "B": "This is the inverse of the correct ratio, $p_\\text{abs} / p_\\text{refl}$.",
+      "C": "This is the most common mistake. It results from assuming that because the initial light pulse is the same in both cases, the momentum transferred must also be the same. This ignores the momentum carried away by the reflected pulse.",
+      "D": "This answer might arise from incorrectly confusing momentum and kinetic energy. If the energy transferred in reflection were double that in absorption, one might incorrectly reason that momentum is proportional to the square root of energy, leading to a factor of $\\sqrt{2}$.",
+      "E": "Correct. The change in momentum of the light during reflection is $\\Delta p_\\text{light} = p_\\text{final} - p_\\text{initial} = (-p) - p = -2p$. By momentum conservation, the object gains momentum $2p$. For absorption, the change is $\\Delta p_\\text{light} = 0 - p = -p$, so the object gains momentum $p$. The ratio is $2p/p = 2$.",
+      "F": "This could be a calculation error, such as squaring the correct ratio of 2, possibly through a mistaken analogy with energy relationships involving squared terms."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "The core hinge is realising that the change in momentum for reflection is from +p to -p, a total change of 2p, whereas for absorption it is from +p to 0, a change of p.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-pro",
+  "attempts": 1
+}

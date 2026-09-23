@@ -1,0 +1,29 @@
+{
+  "questionId": 1874,
+  "examName": "ENGAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 27,
+  "stemBlocks": [
+    "A cylindrical hollow metal pipe is 16 cm long. It has an external diameter of 10 cm and an internal diameter of 8 cm. The density of the metal from which the pipe is made is 8 grams per cm$^3$.",
+    "What is the mass of the pipe in grams?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 1.0
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:26:26.100934+00:00",
+  "sourceImageHash": "de456714ce68e089b9cbfaf6dca53c245173aaff36200b8d12f2fad44e8927b9",
+  "status": "ok"
+}

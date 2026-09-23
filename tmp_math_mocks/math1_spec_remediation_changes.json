@@ -1,0 +1,150 @@
+{
+  "apply": true,
+  "changes": [
+    {
+      "slot": "B7",
+      "action": "replace",
+      "reason": "Uses log_2 (MM5 / Math 2)",
+      "oldQuestionId": "30c2cdba-0c80-47f0-95f7-43ba0ff742a2",
+      "newQuestionId": "17e93d1b-c2b2-4d29-baeb-64f359993a2c",
+      "oldPreview": "Let $x$ and $y$ be positive real numbers such that: $$u = \\log_2 \\left( \\frac{x^3 y^2}{32} \\right)$$ and $$v = \\log_2 \\left( \\frac{x y^2}{8} \\right)$$ Given that $u - v = 4$, what ",
+      "newPreview": "The graphs of the functions $y = (k-1)x^2 + 6x$ and $y = -k - 7$ intersect at exactly one point. What is the sum of all possible real values of the constant $k$?",
+      "answer": "B",
+      "topic": "M4",
+      "difficulty": 4
+    },
+    {
+      "slot": "B18",
+      "action": "replace",
+      "reason": "Needs arithmetic-series sum 1+…+50 (MM2.2)",
+      "oldQuestionId": "cd21ee99-1a65-4e51-9c99-6bde3ccd165d",
+      "newQuestionId": "256d416f-86bd-411a-a705-76b54b591a5f",
+      "oldPreview": "An exam paper is formatted in sections. For any integer $k \\ge 1$, Section $k$ contains exactly $k$ pages. The paper is printed such that every section must begin on an odd-numbere",
+      "newPreview": "How many integer values of $x$ are there such that the value of the expression $$\\frac{3x + 31}{3x + 1}$$ is an integer?",
+      "answer": "B",
+      "topic": "M2",
+      "difficulty": 3
+    },
+    {
+      "slot": "B19",
+      "action": "replace",
+      "reason": "Flagged for replacement",
+      "oldQuestionId": "378be343-cf50-4398-8e35-2441d78fbcaf",
+      "newQuestionId": "6a9ae4a4-df82-4826-b963-05c7847d089c",
+      "oldPreview": "A region in the $xy$ -plane is defined by the following inequalities: $$ 0 \\le x \\le a $$ $$ 0 \\le y \\le a $$ $$ x^2 + y^2 \\ge a^2 $$ where $a$ is a positive constant. What is the ",
+      "newPreview": "A fair six-sided die is rolled three times. The result of each roll, $d$, is used to form a quadratic equation $x^2 + dx + 9 = 0$. What is the probability that at least one of the ",
+      "answer": "B",
+      "topic": "M7",
+      "difficulty": 4,
+      "note": "Re-picked after excluding ejected B18 stem"
+    },
+    {
+      "slot": "C3",
+      "action": "replace",
+      "reason": "Uses log_2 (MM5 / Math 2)",
+      "oldQuestionId": "e02a7e28-c656-452a-9be6-8958006bd2e8",
+      "newQuestionId": "98f0e33e-abdb-44f4-a072-8aff29e931f7",
+      "oldPreview": "The curve with equation $$ y = \\log_2(x) $$ meets the curve with equation $$ y = 3 - \\log_2(k-x) $$ where $k$ is a positive constant, at two distinct points. The $x$ -coordinates o",
+      "newPreview": "A square has side length $x$ cm. A rectangle is formed by doubling one dimension of the square and decreasing the other dimension by 4 cm. The area of the resulting rectangle is 15",
+      "answer": "E",
+      "topic": "M4",
+      "difficulty": 3
+    },
+    {
+      "slot": "C11",
+      "action": "fix",
+      "reason": "Supply sphere/cone volume formulae",
+      "oldQuestionId": "8cafbdf2-ed42-4471-80f9-510c9305c6d3",
+      "newQuestionId": "8cafbdf2-ed42-4471-80f9-510c9305c6d3",
+      "oldPreview": "A solid metal sphere of diameter 6 cm and a solid metal cylinder of diameter 8 cm and height 3 cm are melted down. The molten metal is used to cast a number of identical solid cone",
+      "newPreview": "A solid metal sphere of diameter 6 cm and a solid metal cylinder of diameter 8 cm and height 3 cm are melted down. The molten metal is used to cast a number of identical solid cone",
+      "answer": "E",
+      "topic": "M5",
+      "difficulty": 3
+    },
+    {
+      "slot": "C21",
+      "action": "replace",
+      "reason": "Too long / Math-2-style tangent-circle geometry",
+      "oldQuestionId": "72ebeb7b-732c-4bcc-ad30-447c7d38053b",
+      "newQuestionId": "c04ff38c-b943-4d56-8b98-3f6b6961f47d",
+      "oldPreview": "A circle is tangent to the line $y = 0$ and the line $3x - 4y = 0$. The circle passes through the point $(6, 3)$. What is the sum of the possible values for the radius of the circl",
+      "newPreview": "A tank is filled by a tap and emptied by a drain. The drain takes 10 minutes longer to empty the full tank than the tap takes to fill the empty tank. Starting with an empty tank, b",
+      "answer": "A",
+      "topic": "M4",
+      "difficulty": 4
+    },
+    {
+      "slot": "D13",
+      "action": "replace",
+      "reason": "Heavy formal combinatorics (Math 2 style)",
+      "oldQuestionId": "211de947-5858-4030-b536-96e4b51fe8bd",
+      "newQuestionId": "ed241f47-8956-4552-a801-bc77353ee52f",
+      "oldPreview": "Seven distinct items are arranged in a row. How many arrangements are possible in which no two of three specific items are adjacent?",
+      "newPreview": "Three fair, six-sided dice are rolled. Let $p$ be the probability that the sum of the numbers obtained is 6, and let $q$ be the probability that the sum of the numbers obtained is ",
+      "answer": "D",
+      "topic": "M7",
+      "difficulty": 3
+    },
+    {
+      "slot": "D16",
+      "action": "fix",
+      "reason": "Supply cone volume formula",
+      "oldQuestionId": "22016305-e510-4f37-ad46-2ad780603111",
+      "newQuestionId": "22016305-e510-4f37-ad46-2ad780603111",
+      "oldPreview": "Two cones have the same volume. The height of the second cone is twice the height of the first cone. If the base radius of the first cone is $r$, what is the base radius of the sec",
+      "newPreview": "Two cones have the same volume. The height of the second cone is twice the height of the first cone. You may use the formula $$V = \\dfrac{1}{3}\\pi r^{2}h.$$ If the base radius of t",
+      "answer": "A",
+      "topic": "M3",
+      "difficulty": 2
+    },
+    {
+      "slot": "D22",
+      "action": "replace",
+      "reason": "General circle equation (MM3.2)",
+      "oldQuestionId": "fc51bef2-c3cc-44c4-83af-b7aa928aa4e5",
+      "newQuestionId": "88472cf2-548f-4060-8c35-f4812324fcea",
+      "oldPreview": "In a mathematical investigation, a shape is defined by the equation: $$ x^2 + y^2 - 4tx - 2ky + 4t^2 = 0 $$ The parameter $k$ is a fixed positive constant. The parameter $t$ is a v",
+      "newPreview": "A composite solid cylinder is formed from two metals, P and Q. The volume of metal P is 60 cm³ and the volume of metal Q is 90 cm³. The density of metal P is 5 g/cm³ and the densit",
+      "answer": "E",
+      "topic": "M1",
+      "difficulty": 4
+    },
+    {
+      "slot": "E6",
+      "action": "rewrite",
+      "reason": "Ambiguous whether cuts retain one piece or all",
+      "oldQuestionId": "86248555-5e15-4d9d-8168-4b10c7bc6d51",
+      "newQuestionId": "86248555-5e15-4d9d-8168-4b10c7bc6d51",
+      "oldPreview": "A solid cuboid has side lengths $2^a$, $2^b$, and $2^c$, where $a, b, c$ are integers such that $a > b > c > 0$. A process is applied repeatedly: the cuboid is cut in half by a pla",
+      "newPreview": "A solid cuboid has side lengths $2^a$, $2^b$, and $2^c$, where $a$, $b$, and $c$ are integers such that $a > b > c > 0$. The following process is applied repeatedly to a **single**",
+      "answer": "D",
+      "topic": "M2",
+      "difficulty": 2
+    },
+    {
+      "slot": "E25",
+      "action": "replace",
+      "reason": "Radians / sector formulae (MM4.2)",
+      "oldQuestionId": "07653e48-1747-449d-849f-649ae79618b8",
+      "newQuestionId": "495bda7b-6421-46e4-b46f-6a145f8ab5f3",
+      "oldPreview": "A circular sector has a fixed radius $r$ and a variable angle $\\theta$ radians. Its perimeter is $P$ and its area is $A$. A graph of $A$ against $P$ is a straight line which passes",
+      "newPreview": "Let the function $f$ be defined by $f(x) = x^2 - 2$. The function $f^n(x)$ is defined by $f^1(x)=f(x)$ and $f^{n+1}(x) = f(f^n(x))$ for $n \\ge 1$. Find the number of distinct real ",
+      "answer": "E",
+      "topic": "M4",
+      "difficulty": 5
+    },
+    {
+      "slot": "E26",
+      "action": "replace",
+      "reason": "Modulus inequality (Math 2)",
+      "oldQuestionId": "0120d098-6eca-425a-8fa5-1eaaec33fda8",
+      "newQuestionId": "60e18208-ff3e-4f90-8242-731174f22cdf",
+      "oldPreview": "Which inequality defines the complete set of values of $x$ satisfying $|3 - 2x| < 9$?",
+      "newPreview": "The quantities $x$, $y$, $P$, $Q$ and $R$ in a physical system are related by the equation: $$y = \\frac{Px + Q}{x - R}$$ Which expression gives $x$ in terms of $y$, $P$, $Q$ and $R",
+      "answer": "D",
+      "topic": "M4",
+      "difficulty": 1
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "stage": "tag_labeler",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "primary_tag": "3",
+    "secondary_tags": [],
+    "primary_confidence": 1.0,
+    "reasoning": "The question requires analyzing forces (weight, upthrust, drag, engine thrust) acting on a submersible and applying the principle of force equilibrium for constant velocity. This is a fundamental concept within Mechanics.",
+    "_raw_text": "```json\n{\n  \"primary_tag\": \"3\",\n  \"secondary_tags\": [],\n  \"primary_confidence\": 1.0,\n  \"reasoning\": \"The question requires analyzing forces (weight, upthrust, drag, engine thrust) acting on a submersible and applying the principle of force equilibrium for constant velocity. This is a fundamental concept within Mechanics.\"\n}\n```"
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

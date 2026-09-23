@@ -1,0 +1,60 @@
+{
+  "stage": "style_checker",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "similar",
+      "notes": "This question perfectly aligns with a Medium difficulty ESAT question. It's concise, requires conceptual understanding, and targets a common misconception without needing complex calculations or derivations."
+    },
+    "selectivity_audit": {
+      "main_trap": "The primary trap is the common misconception that heating a fluid makes it 'lighter' in terms of its mass or weight, rather than just less dense due to thermal expansion. Students might incorrectly conclude that the mass or weight of the heated parcel decreases.",
+      "why_not_plug_and_chug": "There are no numerical values provided, so the question cannot be solved by formula substitution. It requires a conceptual understanding of mass, weight, upthrust, and thermal expansion.",
+      "expected_mid_student_error": "A mid-level student might incorrectly choose an option where the mass or weight of the parcel decreases (e.g., C, D, E, F), or incorrectly assume upthrust decreases because the parcel's density decreases (B).",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 3,
+      "estimated_solution_steps": 3,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "The question is an excellent example of an ESAT-style physics problem.",
+      "It is short, clear, and directly tests fundamental concepts of thermal physics and mechanics.",
+      "The question effectively targets a robust misconception regarding the 'lightness' of hot fluids, making it highly selective.",
+      "No calculations are required, making it suitable for a no-calculator exam.",
+      "The distractors are well-designed to capture common errors in reasoning."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

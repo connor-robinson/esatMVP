@@ -1,0 +1,570 @@
+{
+  "diagram_questions": 75,
+  "diagram_assets": 88,
+  "flagged_questions": [],
+  "expected_ids_missing": [],
+  "sheets": [
+    "past_paper_converter\\_cache\\diagram_audit\\sheet_01.jpg",
+    "past_paper_converter\\_cache\\diagram_audit\\sheet_02.jpg",
+    "past_paper_converter\\_cache\\diagram_audit\\sheet_03.jpg",
+    "past_paper_converter\\_cache\\diagram_audit\\sheet_04.jpg",
+    "past_paper_converter\\_cache\\diagram_audit\\sheet_05.jpg",
+    "past_paper_converter\\_cache\\diagram_audit\\sheet_06.jpg",
+    "past_paper_converter\\_cache\\diagram_audit\\sheet_07.jpg",
+    "past_paper_converter\\_cache\\diagram_audit\\sheet_08.jpg",
+    "past_paper_converter\\_cache\\diagram_audit\\sheet_09.jpg",
+    "past_paper_converter\\_cache\\diagram_audit\\sheet_10.jpg",
+    "past_paper_converter\\_cache\\diagram_audit\\sheet_11.jpg",
+    "past_paper_converter\\_cache\\diagram_audit\\sheet_12.jpg",
+    "past_paper_converter\\_cache\\diagram_audit\\sheet_13.jpg",
+    "past_paper_converter\\_cache\\diagram_audit\\sheet_14.jpg",
+    "past_paper_converter\\_cache\\diagram_audit\\sheet_15.jpg",
+    "past_paper_converter\\_cache\\diagram_audit\\sheet_16.jpg",
+    "past_paper_converter\\_cache\\diagram_audit\\sheet_17.jpg",
+    "past_paper_converter\\_cache\\diagram_audit\\sheet_18.jpg",
+    "past_paper_converter\\_cache\\diagram_audit\\sheet_19.jpg"
+  ],
+  "questions": [
+    {
+      "question_id": 1797,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q004.png"
+    },
+    {
+      "question_id": 1799,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q006.png"
+    },
+    {
+      "question_id": 1807,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q014.png"
+    },
+    {
+      "question_id": 1808,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q015.png"
+    },
+    {
+      "question_id": 1809,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q016.png"
+    },
+    {
+      "question_id": 1811,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q018.png"
+    },
+    {
+      "question_id": 1812,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q019.png"
+    },
+    {
+      "question_id": 1813,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q020.png"
+    },
+    {
+      "question_id": 1815,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q022.png"
+    },
+    {
+      "question_id": 1819,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q026.png"
+    },
+    {
+      "question_id": 1820,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q027.png"
+    },
+    {
+      "question_id": 1821,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q028.png"
+    },
+    {
+      "question_id": 1823,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q030.png"
+    },
+    {
+      "question_id": 1825,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q032.png"
+    },
+    {
+      "question_id": 1827,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q034.png"
+    },
+    {
+      "question_id": 1828,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q035.png"
+    },
+    {
+      "question_id": 1829,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q036.png"
+    },
+    {
+      "question_id": 1831,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q038.png"
+    },
+    {
+      "question_id": 1833,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q040.png"
+    },
+    {
+      "question_id": 1834,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q041.png"
+    },
+    {
+      "question_id": 1835,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q042.png"
+    },
+    {
+      "question_id": 1839,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q046.png"
+    },
+    {
+      "question_id": 1843,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2016-section-1-official/q050.png"
+    },
+    {
+      "question_id": 1849,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2017-section-1-official/q002.png"
+    },
+    {
+      "question_id": 1853,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2017-section-1-official/q006.png"
+    },
+    {
+      "question_id": 1859,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2017-section-1-official/q012.png"
+    },
+    {
+      "question_id": 1865,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2017-section-1-official/q018.png"
+    },
+    {
+      "question_id": 1872,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2017-section-1-official/q025.png"
+    },
+    {
+      "question_id": 1874,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2017-section-1-official/q027.png"
+    },
+    {
+      "question_id": 1877,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2017-section-1-official/q030.png"
+    },
+    {
+      "question_id": 1879,
+      "asset_count": 8,
+      "graphical_option_letters": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H"
+      ],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2017-section-1-official/q032.png"
+    },
+    {
+      "question_id": 1882,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2017-section-1-official/q035.png"
+    },
+    {
+      "question_id": 1883,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2017-section-1-official/q036.png"
+    },
+    {
+      "question_id": 1887,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2017-section-1-official/q040.png"
+    },
+    {
+      "question_id": 1891,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2017-section-1-official/q044.png"
+    },
+    {
+      "question_id": 1893,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2017-section-1-official/q046.png"
+    },
+    {
+      "question_id": 1895,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2017-section-1-official/q048.png"
+    },
+    {
+      "question_id": 1899,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2017-section-1-official/q052.png"
+    },
+    {
+      "question_id": 1901,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2017-section-1-official/q054.png"
+    },
+    {
+      "question_id": 1905,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2018-section-1-official/q004.png"
+    },
+    {
+      "question_id": 1908,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2018-section-1-official/q007.png"
+    },
+    {
+      "question_id": 1910,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2018-section-1-official/q009.png"
+    },
+    {
+      "question_id": 1915,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2018-section-1-official/q014.png"
+    },
+    {
+      "question_id": 1916,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2018-section-1-official/q015.png"
+    },
+    {
+      "question_id": 1922,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2018-section-1-official/q021.png"
+    },
+    {
+      "question_id": 1923,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2018-section-1-official/q022.png"
+    },
+    {
+      "question_id": 1924,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2018-section-1-official/q023.png"
+    },
+    {
+      "question_id": 1927,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2018-section-1-official/q026.png"
+    },
+    {
+      "question_id": 1933,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2018-section-1-official/q032.png"
+    },
+    {
+      "question_id": 1935,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2018-section-1-official/q034.png"
+    },
+    {
+      "question_id": 1937,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2018-section-1-official/q036.png"
+    },
+    {
+      "question_id": 1939,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2018-section-1-official/q038.png"
+    },
+    {
+      "question_id": 1945,
+      "asset_count": 7,
+      "graphical_option_letters": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+      ],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2018-section-1-official/q044.png"
+    },
+    {
+      "question_id": 1947,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2018-section-1-official/q046.png"
+    },
+    {
+      "question_id": 1949,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2018-section-1-official/q048.png"
+    },
+    {
+      "question_id": 1953,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2018-section-1-official/q052.png"
+    },
+    {
+      "question_id": 1957,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2019-section-1-official/q002.png"
+    },
+    {
+      "question_id": 1965,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2019-section-1-official/q010.png"
+    },
+    {
+      "question_id": 1968,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2019-section-1-official/q013.png"
+    },
+    {
+      "question_id": 1971,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2019-section-1-official/q016.png"
+    },
+    {
+      "question_id": 1972,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2019-section-1-official/q017.png"
+    },
+    {
+      "question_id": 1973,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2019-section-1-official/q018.png"
+    },
+    {
+      "question_id": 1974,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2019-section-1-official/q019.png"
+    },
+    {
+      "question_id": 1983,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2019-section-1-official/q028.png"
+    },
+    {
+      "question_id": 1984,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2019-section-1-official/q029.png"
+    },
+    {
+      "question_id": 1985,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2019-section-1-official/q030.png"
+    },
+    {
+      "question_id": 1989,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2019-section-1-official/q034.png"
+    },
+    {
+      "question_id": 1993,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2019-section-1-official/q038.png"
+    },
+    {
+      "question_id": 1995,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2019-section-1-official/q040.png"
+    },
+    {
+      "question_id": 1999,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2020-section-1-official/q004.png"
+    },
+    {
+      "question_id": 2002,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2020-section-1-official/q007.png"
+    },
+    {
+      "question_id": 2006,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/past-papers/2006/source_recovered_8629fc6e9ba7.png"
+    },
+    {
+      "question_id": 2087,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2022-section-1-official/q012.png"
+    },
+    {
+      "question_id": 2119,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2023-section-1-official/q004.png"
+    },
+    {
+      "question_id": 2121,
+      "asset_count": 1,
+      "graphical_option_letters": [],
+      "flags": [],
+      "source_image_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/engaa-2023-section-1-official/q006.png"
+    }
+  ]
+}

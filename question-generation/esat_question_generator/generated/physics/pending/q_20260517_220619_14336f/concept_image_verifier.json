@@ -1,0 +1,35 @@
+{
+  "stage": "concept_image_verifier",
+  "status": "fail",
+  "verdict": "DELETE",
+  "payload": {
+    "verdict": "DELETE",
+    "confidence": "high",
+    "checks": {
+      "exam_style_match": "fail",
+      "serif_font_match": "fail",
+      "math_label_quality": "fail",
+      "no_overlap": "fail",
+      "label_accuracy": "fail",
+      "no_extra_labels": "fail",
+      "monochrome_style": "fail",
+      "layout_cleanliness": "fail",
+      "illustrative_only_safety": "fail",
+      "professionalism": "fail",
+      "object_relation_accuracy": "fail",
+      "measurement_anchor_clarity": "fail",
+      "relative_magnitude_plausibility": "fail",
+      "simplification_level": "fail"
+    },
+    "reasons": [
+      "The image content was not provided, making it impossible to perform any visual verification checks."
+    ],
+    "regen_feedback": "",
+    "delete_reason": "The generated image content is missing. As a visual quality controller, I cannot perform any verification without the image itself. Therefore, the task cannot be completed, and the item must be deleted."
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

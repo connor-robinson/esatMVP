@@ -1,0 +1,60 @@
+{
+  "stage": "style_checker",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 40,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5,
+        "goldilocks_calibration": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "similar",
+      "notes": "The question aligns well with the 'Medium' target difficulty. It requires two distinct, but fundamental, physics principles to be applied sequentially, which is a standard approach for medium-difficulty ESAT questions. The calculation is simple and fast."
+    },
+    "selectivity_audit": {
+      "main_trap": "The primary trap is the need to first calculate the current (I) using Ohm's Law (I=V/R) before applying the magnetic force formula (F=BIL). Students might incorrectly try to substitute voltage (V) or resistance (R) directly into the force formula, or make an error in applying Ohm's Law (e.g., I=R/V).",
+      "why_not_plug_and_chug": "The current (I) is not explicitly given in the problem statement. A direct plug-and-chug into F=BIL is not possible. The candidate must infer the current from the given voltage and resistance, requiring the application of Ohm's Law.",
+      "expected_mid_student_error": "A mid-level student might correctly identify F=BIL but then struggle to find 'I', potentially substituting V or R, or inverting Ohm's Law. Another common error would be forgetting the unit conversion for length or omitting the length term entirely.",
+      "verdict": "selective"
+    },
+    "complexity_audit": {
+      "estimated_core_principles": 2,
+      "estimated_solution_steps": 3,
+      "overstacked": false,
+      "goldilocks_verdict": "good"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "over_advanced_chain": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "This question is an excellent example of an ESAT-authentic physics problem.",
+      "It is concise, clear, and tests the ability to link two fundamental school-level physics concepts (Ohm's Law and magnetic force on a current-carrying wire).",
+      "The arithmetic is simple and suitable for a no-calculator environment.",
+      "The distractors are well-engineered to target specific, common misconceptions and calculation errors, making the question highly selective.",
+      "The visual is supportive but not strictly necessary, as all numerical information is provided in the text, which is appropriate for ESAT."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

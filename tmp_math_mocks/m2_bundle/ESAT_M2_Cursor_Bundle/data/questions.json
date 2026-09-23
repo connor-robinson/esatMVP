@@ -1,0 +1,4037 @@
+{
+  "metadata": {
+    "id": "esat-mathematics-2-two-practice-modules",
+    "title": "ESAT Mathematics 2: Two Original Practice Modules",
+    "subject": "Mathematics 2",
+    "questionCount": 54,
+    "moduleCount": 2,
+    "contentFormat": "mixed-text-tex",
+    "texDelimiters": {
+      "inline": [
+        "\\(",
+        "\\)"
+      ],
+      "display": [
+        "\\[",
+        "\\]"
+      ]
+    },
+    "notice": "Original unofficial practice material. Not affiliated with or endorsed by UAT-UK or Pearson VUE.",
+    "officialSources": [
+      {
+        "label": "ESAT content specification",
+        "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/03165424/ESAT_Content_Specification.pdf"
+      },
+      {
+        "label": "Official Mathematics notes",
+        "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf"
+      },
+      {
+        "label": "Official preparation page",
+        "url": "https://www.pearsonvue.com/us/en/uatuk.html"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "id": "esat-mathematics-2-practice-module-1",
+      "moduleNumber": 1,
+      "title": "ESAT Mathematics 2 Practice Module 1",
+      "durationMinutes": 40,
+      "calculatorAllowed": false,
+      "questions": [
+        {
+          "id": "esat-m2-module-1-q01",
+          "module": 1,
+          "questionNumber": 1,
+          "difficulty": "easy",
+          "syllabus": {
+            "primaryCode": "MM1.1",
+            "primaryTopic": "Algebra and functions: rational indices",
+            "secondaryTopic": null
+          },
+          "estimatedSeconds": 45,
+          "strongQuestion": false,
+          "stemPlain": "For x > 0, simplify\n\n(16x⁶)^(3/4) / (2x^(1/2)).",
+          "stem": [
+            {
+              "type": "text",
+              "content": "For x > 0, simplify"
+            },
+            {
+              "type": "math",
+              "content": "\\[(16x^{6})^{3/4} / (2x^{1/2}).\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "2x³",
+              "tex": "\\(2x^{3}\\)"
+            },
+            {
+              "id": "B",
+              "text": "2x⁴",
+              "tex": "\\(2x^{4}\\)"
+            },
+            {
+              "id": "C",
+              "text": "4x³",
+              "tex": "\\(4x^{3}\\)"
+            },
+            {
+              "id": "D",
+              "text": "4x⁴",
+              "tex": "\\(4x^{4}\\)"
+            },
+            {
+              "id": "E",
+              "text": "8x⁴",
+              "tex": "\\(8x^{4}\\)"
+            }
+          ],
+          "correctOptionId": "D",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "16^(3/4) = 8 and (x⁶)^(3/4) = x^(9/2). Dividing by 2x^(1/2) gives 4x⁴.",
+            "tip": "Apply the outside power to both the number and x before dividing.",
+            "distractors": {
+              "A": "Uses 16^(3/4) = 4 and also loses one power of x.",
+              "B": "Gets the power of x right but evaluates 16^(3/4) as 4.",
+              "C": "Evaluates the numerical factor correctly but subtracts the powers incorrectly.",
+              "E": "Forgets to divide the coefficient by 2."
+            },
+            "calibration": "ENGAA 2022 Section 1, Q1, rational-index simplification style.",
+            "calibrationSource": {
+              "label": "ENGAA 2022",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07115611/ENGAA_2022_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q02",
+          "module": 1,
+          "questionNumber": 2,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM1.3",
+            "primaryTopic": "Algebra and functions: quadratics and discriminant",
+            "secondaryTopic": "MM8.7 intersections"
+          },
+          "estimatedSeconds": 65,
+          "strongQuestion": false,
+          "stemPlain": "The line y = 2x + 3 is tangent to the curve y = x² - 4x + k.\n\nWhat is the value of k?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "The line y = 2x + 3 is tangent to the curve y = x² - 4x + k."
+            },
+            {
+              "type": "math",
+              "content": "\\[What is the value of k?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "12",
+              "tex": "\\(12\\)"
+            },
+            {
+              "id": "B",
+              "text": "9",
+              "tex": "\\(9\\)"
+            },
+            {
+              "id": "C",
+              "text": "6",
+              "tex": "\\(6\\)"
+            },
+            {
+              "id": "D",
+              "text": "3",
+              "tex": "\\(3\\)"
+            },
+            {
+              "id": "E",
+              "text": "0",
+              "tex": "\\(0\\)"
+            }
+          ],
+          "correctOptionId": "A",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "At an intersection, x² - 4x + k = 2x + 3, so x² - 6x + k - 3 = 0. Tangency means one repeated root, so 36 - 4(k - 3) = 0. Hence k = 12.",
+            "tip": "For a line tangent to a quadratic, set the discriminant of the intersection equation to zero.",
+            "distractors": {
+              "B": "Uses the repeated x-coordinate, x = 3, as k.",
+              "C": "Sets the coefficient of x, rather than the discriminant, to zero.",
+              "D": "Drops k when rearranging and keeps only the line's constant term.",
+              "E": "Assumes tangency occurs only when the quadratic has no constant term."
+            },
+            "calibration": "NSAA 2018 Section 1, Q77, tangent line to a quadratic; ENGAA 2021 Section 1, Q11, line-quadratic intersections.",
+            "calibrationSource": {
+              "label": "NSAA 2018",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07120537/NSAA_2018_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q03",
+          "module": 1,
+          "questionNumber": 3,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM1.6",
+            "primaryTopic": "Algebra and functions: Remainder Theorem",
+            "secondaryTopic": null
+          },
+          "estimatedSeconds": 65,
+          "strongQuestion": false,
+          "stemPlain": "The polynomial p(x) = 2x³ + ax² - 3x + 6 leaves the same remainder when divided by x - 1 and by x + 2.\n\nWhat is a?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "The polynomial p(x) = 2x³ + ax² - 3x + 6 leaves the same remainder when divided by x - 1 and by x + 2."
+            },
+            {
+              "type": "math",
+              "content": "\\[What is a?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "-3",
+              "tex": "\\(-3\\)"
+            },
+            {
+              "id": "B",
+              "text": "-1",
+              "tex": "\\(-1\\)"
+            },
+            {
+              "id": "C",
+              "text": "-1/3",
+              "tex": "\\(-1/3\\)"
+            },
+            {
+              "id": "D",
+              "text": "0",
+              "tex": "\\(0\\)"
+            },
+            {
+              "id": "E",
+              "text": "1",
+              "tex": "\\(1\\)"
+            },
+            {
+              "id": "F",
+              "text": "3",
+              "tex": "\\(3\\)"
+            }
+          ],
+          "correctOptionId": "F",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "Equal remainders give p(1) = p(-2). Now p(1) = a + 5 and p(-2) = 4a - 4. Thus a + 5 = 4a - 4, so a = 3.",
+            "tip": "Translate each divisor into the value to substitute before expanding anything.",
+            "distractors": {
+              "A": "Uses x = 2 instead of x = -2 for the divisor x + 2.",
+              "B": "Changes the sign of the cubic term at x = -2 incorrectly.",
+              "C": "Divides by 3 too early after forming the wrong linear equation.",
+              "D": "Assumes equal remainders mean both remainders are zero.",
+              "E": "Evaluates (-2)² as -4."
+            },
+            "calibration": "ENGAA 2023 Section 1, Q21, polynomial-factor information used to determine coefficients.",
+            "calibrationSource": {
+              "label": "ENGAA 2023",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07115605/ENGAA_2023_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q04",
+          "module": 1,
+          "questionNumber": 4,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM1.7",
+            "primaryTopic": "Algebra and functions: function composition",
+            "secondaryTopic": "MM8.2 graph transformations and composition"
+          },
+          "estimatedSeconds": 70,
+          "strongQuestion": true,
+          "stemPlain": "For x ≥ 2, let\n\nf(x) = x² - 4x + 7    and    g(x) = √(x - 3).\n\nWhich expression is equal to g(f(x))?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "For x ≥ 2, let"
+            },
+            {
+              "type": "math",
+              "content": "\\[f(x) = x^{2} - 4x + 7    and    g(x) = \\sqrt{x - 3}.\\]"
+            },
+            {
+              "type": "math",
+              "content": "\\[Which expression is equal to g(f(x))?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "x + 2",
+              "tex": "\\(x + 2\\)"
+            },
+            {
+              "id": "B",
+              "text": "|x - 2|",
+              "tex": "\\(|x - 2|\\)"
+            },
+            {
+              "id": "C",
+              "text": "x - 2",
+              "tex": "\\(x - 2\\)"
+            },
+            {
+              "id": "D",
+              "text": "(x - 2)²",
+              "tex": "\\((x - 2)^{2}\\)"
+            },
+            {
+              "id": "E",
+              "text": "√(x² - 4x + 7)",
+              "tex": "\\(\\sqrt{x^{2} - 4x + 7}\\)"
+            }
+          ],
+          "correctOptionId": "C",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "g(f(x)) = √(f(x) - 3) = √((x - 2)²) = |x - 2|. Since x ≥ 2, this is x - 2.",
+            "tip": "Remember that √(u²) = |u|, then use the stated domain.",
+            "distractors": {
+              "A": "Reverses the sign when completing the square.",
+              "B": "Stops before using the restriction x ≥ 2.",
+              "D": "Forgets that the outer function takes a square root.",
+              "E": "Substitutes f(x) into √x rather than into √(x - 3)."
+            },
+            "calibration": "Official 2026 Notes on Mathematics, MM1.7 and MM8.2 composition style; no close single archive question was used.",
+            "calibrationSource": {
+              "label": "Official ESAT Mathematics 2 guidance",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q05",
+          "module": 1,
+          "questionNumber": 5,
+          "difficulty": "hard",
+          "syllabus": {
+            "primaryCode": "MM1.3",
+            "primaryTopic": "Algebra and functions: quadratic roots",
+            "secondaryTopic": "MM1.5 inequalities"
+          },
+          "estimatedSeconds": 80,
+          "strongQuestion": false,
+          "stemPlain": "Both roots of\n\nx² - 2kx + k² - 1 = 0\n\nare strictly between 0 and 4. Which condition on k is correct?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "Both roots of"
+            },
+            {
+              "type": "math",
+              "content": "\\[x^{2} - 2kx + k^{2} - 1 = 0\\]"
+            },
+            {
+              "type": "math",
+              "content": "\\[are strictly between 0 and 4. Which condition on k is correct?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "k < 1",
+              "tex": "\\(k < 1\\)"
+            },
+            {
+              "id": "B",
+              "text": "k > 3",
+              "tex": "\\(k > 3\\)"
+            },
+            {
+              "id": "C",
+              "text": "-3 < k < -1",
+              "tex": "\\(-3 < k < -1\\)"
+            },
+            {
+              "id": "D",
+              "text": "-1 < k < 3",
+              "tex": "\\(-1 < k < 3\\)"
+            },
+            {
+              "id": "E",
+              "text": "k < 1 or k > 3",
+              "tex": "\\(k < 1\\text{ or }k > 3\\)"
+            },
+            {
+              "id": "F",
+              "text": "1 ≤ k ≤ 3",
+              "tex": "\\(1 \\le  k \\le  3\\)"
+            },
+            {
+              "id": "G",
+              "text": "1 < k < 3",
+              "tex": "\\(1 < k < 3\\)"
+            }
+          ],
+          "correctOptionId": "G",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "The quadratic is (x - k)² = 1, so the roots are k - 1 and k + 1. Requiring 0 < k - 1 and k + 1 < 4 gives 1 < k < 3.",
+            "tip": "Complete the square before reaching for the quadratic formula.",
+            "distractors": {
+              "A": "Checks only that the smaller root is below 4.",
+              "B": "Checks only that the larger root is positive.",
+              "C": "Uses roots -k ± 1 instead of k ± 1.",
+              "D": "Applies the bounds to k itself rather than to both roots.",
+              "E": "Chooses the exterior of the required interval after reversing both inequalities.",
+              "F": "Includes k = 1 and k = 3, where a root equals an excluded endpoint."
+            },
+            "calibration": "ENGAA 2022 Section 1, Q31, complete-set inequality style; NSAA 2019 Section 1, Q89, polynomial sign intervals.",
+            "calibrationSource": {
+              "label": "ENGAA 2022",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07115611/ENGAA_2022_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q06",
+          "module": 1,
+          "questionNumber": 6,
+          "difficulty": "easy",
+          "syllabus": {
+            "primaryCode": "MM2.1",
+            "primaryTopic": "Sequences and series: recurrence relations",
+            "secondaryTopic": null
+          },
+          "estimatedSeconds": 35,
+          "strongQuestion": false,
+          "stemPlain": "A sequence is defined by u₁ = 2 and uₙ₊₁ = 1 - uₙ.\n\nWhat is u₂₀₂₆?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "A sequence is defined by u₁ = 2 and uₙ₊₁ = 1 - uₙ."
+            },
+            {
+              "type": "math",
+              "content": "\\[What is u₂₀₂₆?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "-2",
+              "tex": "\\(-2\\)"
+            },
+            {
+              "id": "B",
+              "text": "-1",
+              "tex": "\\(-1\\)"
+            },
+            {
+              "id": "C",
+              "text": "1",
+              "tex": "\\(1\\)"
+            },
+            {
+              "id": "D",
+              "text": "2",
+              "tex": "\\(2\\)"
+            }
+          ],
+          "correctOptionId": "B",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "The sequence alternates 2, -1, 2, -1, ... . Every even-numbered term is -1.",
+            "tip": "Write the first three terms and look for a short cycle.",
+            "distractors": {
+              "A": "Changes the sign but forgets the added 1.",
+              "C": "Treats the recurrence as uₙ₊₁ = 1 - n.",
+              "D": "Uses the value of the odd-numbered terms."
+            },
+            "calibration": "Official 2026 Notes on Mathematics, MM2.1 recurrence exercises; broader ESAT sequence style.",
+            "calibrationSource": {
+              "label": "Official ESAT Mathematics 2 guidance",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q07",
+          "module": 1,
+          "questionNumber": 7,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM2.2",
+            "primaryTopic": "Sequences and series: arithmetic series",
+            "secondaryTopic": null
+          },
+          "estimatedSeconds": 70,
+          "strongQuestion": false,
+          "stemPlain": "An arithmetic progression has first term a, non-zero common difference d, and sum Sₙ of its first n terms.\n\nGiven that S₁₀ = 3S₅, what is a/d?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "An arithmetic progression has first term a, non-zero common difference d, and sum Sₙ of its first n terms."
+            },
+            {
+              "type": "math",
+              "content": "\\[Given that S₁₀ = 3S₅, what is a/d?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "-3",
+              "tex": "\\(-3\\)"
+            },
+            {
+              "id": "B",
+              "text": "-1",
+              "tex": "\\(-1\\)"
+            },
+            {
+              "id": "C",
+              "text": "0",
+              "tex": "\\(0\\)"
+            },
+            {
+              "id": "D",
+              "text": "1",
+              "tex": "\\(1\\)"
+            },
+            {
+              "id": "E",
+              "text": "3",
+              "tex": "\\(3\\)"
+            },
+            {
+              "id": "F",
+              "text": "5",
+              "tex": "\\(5\\)"
+            }
+          ],
+          "correctOptionId": "E",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "S₁₀ = 5(2a + 9d) and S₅ = (5/2)(2a + 4d). Setting S₁₀ = 3S₅ gives 10(2a + 9d) = 15(2a + 4d), so a = 3d.",
+            "tip": "Cancel the common factor 5 before doing the algebra.",
+            "distractors": {
+              "A": "Moves the d terms across with the wrong sign.",
+              "B": "Uses 10d and 5d instead of 9d and 4d in the sum formula.",
+              "C": "Cancels a from both sides even though it is inside brackets.",
+              "D": "Uses Sₙ = n(a + d)/2.",
+              "F": "Equates the tenth term to three times the fifth term instead of the sums."
+            },
+            "calibration": "ENGAA 2023 Section 1, Q23, linked arithmetic sums; NSAA 2018 Section 1, Q79, conditions on an arithmetic progression.",
+            "calibrationSource": {
+              "label": "ENGAA 2023",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07115605/ENGAA_2023_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q08",
+          "module": 1,
+          "questionNumber": 8,
+          "difficulty": "easy",
+          "syllabus": {
+            "primaryCode": "MM2.4",
+            "primaryTopic": "Sequences and series: binomial expansion",
+            "secondaryTopic": null
+          },
+          "estimatedSeconds": 50,
+          "strongQuestion": false,
+          "stemPlain": "What is the coefficient of x² in\n\n(1 - 2x)⁵ + (1 + 2x)⁵?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "What is the coefficient of x² in"
+            },
+            {
+              "type": "math",
+              "content": "\\[(1 - 2x)^{5} + (1 + 2x)^{5}?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "0",
+              "tex": "\\(0\\)"
+            },
+            {
+              "id": "B",
+              "text": "40",
+              "tex": "\\(40\\)"
+            },
+            {
+              "id": "C",
+              "text": "80",
+              "tex": "\\(80\\)"
+            },
+            {
+              "id": "D",
+              "text": "160",
+              "tex": "\\(160\\)"
+            },
+            {
+              "id": "E",
+              "text": "320",
+              "tex": "\\(320\\)"
+            }
+          ],
+          "correctOptionId": "C",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "Each expansion contributes C(5,2)(2x)² = 10 × 4x² = 40x². The signs are positive for an even power, so the total coefficient is 80.",
+            "tip": "Odd-power terms cancel, but even-power terms add.",
+            "distractors": {
+              "A": "Assumes every non-constant term cancels.",
+              "B": "Finds the coefficient from only one expansion.",
+              "D": "Adds the two contributions and then doubles once more.",
+              "E": "Uses 2⁵ instead of 2² for the x² term."
+            },
+            "calibration": "NSAA 2018 Section 1, Q85, coefficient extraction with paired binomial factors.",
+            "calibrationSource": {
+              "label": "NSAA 2018",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07120537/NSAA_2018_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q09",
+          "module": 1,
+          "questionNumber": 9,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM3.1",
+            "primaryTopic": "Coordinate geometry: perpendicular lines",
+            "secondaryTopic": null
+          },
+          "estimatedSeconds": 60,
+          "strongQuestion": false,
+          "stemPlain": "The line through A(1, 4) and B(5, 2) is perpendicular to line L. Line L passes through A.\n\nWhat is the equation of L?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "The line through A(1, 4) and B(5, 2) is perpendicular to line L. Line L passes through A."
+            },
+            {
+              "type": "math",
+              "content": "\\[What is the equation of L?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "y = 2x + 2",
+              "tex": "\\(y = 2x + 2\\)"
+            },
+            {
+              "id": "B",
+              "text": "y = 2x - 2",
+              "tex": "\\(y = 2x - 2\\)"
+            },
+            {
+              "id": "C",
+              "text": "y = x/2 + 7/2",
+              "tex": "\\(y = x/2 + 7/2\\)"
+            },
+            {
+              "id": "D",
+              "text": "y = -x/2 + 9/2",
+              "tex": "\\(y = -x/2 + 9/2\\)"
+            },
+            {
+              "id": "E",
+              "text": "y = -2x + 6",
+              "tex": "\\(y = -2x + 6\\)"
+            }
+          ],
+          "correctOptionId": "A",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "The gradient of AB is (2 - 4)/(5 - 1) = -1/2, so the perpendicular gradient is 2. Through A, y - 4 = 2(x - 1), hence y = 2x + 2.",
+            "tip": "Find the gradient first, then use the negative reciprocal.",
+            "distractors": {
+              "B": "Uses the correct gradient but substitutes A incorrectly.",
+              "C": "Changes the sign of the gradient but does not take the reciprocal.",
+              "D": "Uses the equation of AB itself.",
+              "E": "Takes the reciprocal but keeps the negative sign."
+            },
+            "calibration": "ENGAA 2018 Section 1, Q5, parallel-gradient reasoning; ENGAA 2022 Section 1, Q37, point-to-line geometry.",
+            "calibrationSource": {
+              "label": "ENGAA 2018",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07113017/ENGAA_2018_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q10",
+          "module": 1,
+          "questionNumber": 10,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM3.2",
+            "primaryTopic": "Coordinate geometry: circles",
+            "secondaryTopic": "MM3.3 tangent-radius property"
+          },
+          "estimatedSeconds": 70,
+          "strongQuestion": false,
+          "stemPlain": "The circle (x - 2)² + (y + 1)² = 9 has centre C. A tangent from P(8, -1) touches the circle at T, as shown.\n\nWhat is PT?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "The circle (x - 2)² + (y + 1)² = 9 has centre C. A tangent from P(8, -1) touches the circle at T, as shown."
+            },
+            {
+              "type": "math",
+              "content": "\\[What is PT?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "3/2",
+              "tex": "\\(3/2\\)"
+            },
+            {
+              "id": "B",
+              "text": "√3",
+              "tex": "\\(\\sqrt{3}\\)"
+            },
+            {
+              "id": "C",
+              "text": "3",
+              "tex": "\\(3\\)"
+            },
+            {
+              "id": "D",
+              "text": "2√3",
+              "tex": "\\(2\\sqrt{3}\\)"
+            },
+            {
+              "id": "E",
+              "text": "√15",
+              "tex": "\\(\\sqrt{15}\\)"
+            },
+            {
+              "id": "F",
+              "text": "3√3",
+              "tex": "\\(3\\sqrt{3}\\)"
+            }
+          ],
+          "correctOptionId": "F",
+          "diagram": {
+            "id": "m1_q10_circle_tangent",
+            "svgPath": "/diagrams/svg/esat-m2-module-1-q10.svg",
+            "pngPath": "/diagrams/png/esat-m2-module-1-q10.png",
+            "alt": "Coordinate diagram of a circle centred at C(2,-1), an external point P(8,-1), and tangent PT.",
+            "notToScale": true
+          },
+          "authorNotes": {
+            "solution": "CP = 6 and CT = 3. Since CT is perpendicular to the tangent, triangle CTP is right-angled. Thus PT² = 6² - 3² = 27, so PT = 3√3.",
+            "tip": "Join the external point to the centre to create a right-angled triangle.",
+            "distractors": {
+              "A": "Uses the difference of the two lengths and then halves it.",
+              "B": "Calculates √(6 - 3) instead of using squares.",
+              "C": "Assumes the tangent length equals the radius.",
+              "D": "Uses PT² = CP × CT.",
+              "E": "Uses PT² = CP² - CT rather than CP² - CT²."
+            },
+            "calibration": "NSAA 2018 Section 1, Q83, tangent length from an external point to a circle.",
+            "calibrationSource": {
+              "label": "NSAA 2018",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07120537/NSAA_2018_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q11",
+          "module": 1,
+          "questionNumber": 11,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM3.2",
+            "primaryTopic": "Coordinate geometry: equation of a circle",
+            "secondaryTopic": null
+          },
+          "estimatedSeconds": 65,
+          "strongQuestion": false,
+          "stemPlain": "The points A(-1, 2) and B(5, 6) are the endpoints of a diameter of a circle.\n\nWhich is the equation of the circle?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "The points A(-1, 2) and B(5, 6) are the endpoints of a diameter of a circle."
+            },
+            {
+              "type": "math",
+              "content": "\\[Which is the equation of the circle?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "(x - 2)² + (y - 4)² = 52",
+              "tex": "\\((x - 2)^{2} + (y - 4)^{2} = 52\\)"
+            },
+            {
+              "id": "B",
+              "text": "(x + 2)² + (y + 4)² = 13",
+              "tex": "\\((x + 2)^{2} + (y + 4)^{2} = 13\\)"
+            },
+            {
+              "id": "C",
+              "text": "(x - 2)² + (y - 4)² = 26",
+              "tex": "\\((x - 2)^{2} + (y - 4)^{2} = 26\\)"
+            },
+            {
+              "id": "D",
+              "text": "(x - 2)² + (y - 4)² = 13",
+              "tex": "\\((x - 2)^{2} + (y - 4)^{2} = 13\\)"
+            },
+            {
+              "id": "E",
+              "text": "(x - 3)² + (y - 2)² = 13",
+              "tex": "\\((x - 3)^{2} + (y - 2)^{2} = 13\\)"
+            }
+          ],
+          "correctOptionId": "D",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "The centre is the midpoint (2, 4). Also AB² = 6² + 4² = 52, so r² = AB²/4 = 13. Therefore (x - 2)² + (y - 4)² = 13.",
+            "tip": "The diameter is twice the radius, so square lengths with care.",
+            "distractors": {
+              "A": "Uses the squared diameter as r².",
+              "B": "Uses the right radius but reverses both centre signs.",
+              "C": "Divides the squared diameter by 2 instead of 4.",
+              "E": "Finds the wrong midpoint by pairing unlike coordinates."
+            },
+            "calibration": "Official 2026 Notes on Mathematics, MM3.2 circle-equation examples; broader coordinate-geometry style in ENGAA 2022 Q37.",
+            "calibrationSource": {
+              "label": "ENGAA 2022",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07115611/ENGAA_2022_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q12",
+          "module": 1,
+          "questionNumber": 12,
+          "difficulty": "easy",
+          "syllabus": {
+            "primaryCode": "MM4.3",
+            "primaryTopic": "Trigonometry: exact values",
+            "secondaryTopic": null
+          },
+          "estimatedSeconds": 40,
+          "strongQuestion": false,
+          "stemPlain": "Evaluate\n\n(sin 30° + cos 60°) / tan 45°.",
+          "stem": [
+            {
+              "type": "text",
+              "content": "Evaluate"
+            },
+            {
+              "type": "math",
+              "content": "\\[(sin 30° + cos 60°) / tan 45°.\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "1/2",
+              "tex": "\\(1/2\\)"
+            },
+            {
+              "id": "B",
+              "text": "1",
+              "tex": "\\(1\\)"
+            },
+            {
+              "id": "C",
+              "text": "√2",
+              "tex": "\\(\\sqrt{2}\\)"
+            },
+            {
+              "id": "D",
+              "text": "2",
+              "tex": "\\(2\\)"
+            },
+            {
+              "id": "E",
+              "text": "2√2",
+              "tex": "\\(2\\sqrt{2}\\)"
+            }
+          ],
+          "correctOptionId": "B",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "sin 30° = cos 60° = 1/2 and tan 45° = 1. The value is (1/2 + 1/2)/1 = 1.",
+            "tip": "Recall the exact values before doing any manipulation.",
+            "distractors": {
+              "A": "Uses only one term in the numerator.",
+              "C": "Confuses sin 45° with tan 45°.",
+              "D": "Divides each half by 1/2 instead of by 1.",
+              "E": "Uses tan 45° = 1/√2 and also doubles the numerator."
+            },
+            "calibration": "Official Pearson ESAT Mathematics 2 specimen, exact-trigonometric-value style; specification MM4.3.",
+            "calibrationSource": {
+              "label": "Official ESAT Mathematics 2 guidance",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q13",
+          "module": 1,
+          "questionNumber": 13,
+          "difficulty": "hard",
+          "syllabus": {
+            "primaryCode": "MM4.2",
+            "primaryTopic": "Trigonometry: radians, sectors and segments",
+            "secondaryTopic": "MM4.3 exact values"
+          },
+          "estimatedSeconds": 85,
+          "strongQuestion": false,
+          "stemPlain": "A circle has radius 6. A minor arc AB has length 4π, and the minor segment cut off by chord AB is shaded.\n\nWhat is the exact area of the shaded segment?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "A circle has radius 6. A minor arc AB has length 4π, and the minor segment cut off by chord AB is shaded."
+            },
+            {
+              "type": "math",
+              "content": "\\[What is the exact area of the shaded segment?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "4π - 3√3",
+              "tex": "\\(4\\pi - 3\\sqrt{3}\\)"
+            },
+            {
+              "id": "B",
+              "text": "8π - 9√3",
+              "tex": "\\(8\\pi - 9\\sqrt{3}\\)"
+            },
+            {
+              "id": "C",
+              "text": "9π - 6√3",
+              "tex": "\\(9\\pi - 6\\sqrt{3}\\)"
+            },
+            {
+              "id": "D",
+              "text": "12π - 18√3",
+              "tex": "\\(12\\pi - 18\\sqrt{3}\\)"
+            },
+            {
+              "id": "E",
+              "text": "12π + 9√3",
+              "tex": "\\(12\\pi + 9\\sqrt{3}\\)"
+            },
+            {
+              "id": "F",
+              "text": "18π - 9√3",
+              "tex": "\\(18\\pi - 9\\sqrt{3}\\)"
+            },
+            {
+              "id": "G",
+              "text": "12π - 9√3",
+              "tex": "\\(12\\pi - 9\\sqrt{3}\\)"
+            }
+          ],
+          "correctOptionId": "G",
+          "diagram": {
+            "id": "m1_q13_segment",
+            "svgPath": "/diagrams/svg/esat-m2-module-1-q13.svg",
+            "pngPath": "/diagrams/png/esat-m2-module-1-q13.png",
+            "alt": "Circle sector with central angle two pi over three and the minor segment shaded.",
+            "notToScale": true
+          },
+          "authorNotes": {
+            "solution": "The angle is θ = s/r = 4π/6 = 2π/3. Sector area is (1/2)r²θ = 12π. Triangle AOB has area (1/2)(6)(6)sin(2π/3) = 9√3. The segment area is 12π - 9√3.",
+            "tip": "A segment is a sector minus the triangle formed by the two radii.",
+            "distractors": {
+              "A": "Uses the arc length as if it were the angle.",
+              "B": "Uses θ = π/3 rather than 2π/3.",
+              "C": "Uses πrθ/2 for the sector area.",
+              "D": "Forgets the factor 1/2 in the triangle area.",
+              "E": "Adds the triangle instead of subtracting it.",
+              "F": "Uses the whole 18π half-circle area as the sector."
+            },
+            "calibration": "ENGAA 2021 Section 1, Q27, exact area of a circular segment; official specification MM4.2.",
+            "calibrationSource": {
+              "label": "ENGAA 2021",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07115611/ENGAA_2021_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q14",
+          "module": 1,
+          "questionNumber": 14,
+          "difficulty": "hard",
+          "syllabus": {
+            "primaryCode": "MM4.6",
+            "primaryTopic": "Trigonometry: equations in an interval",
+            "secondaryTopic": "MM4.5 identities"
+          },
+          "estimatedSeconds": 85,
+          "strongQuestion": true,
+          "stemPlain": "How many solutions of\n\n2sin²x + cos x = 3/2\n\nlie in 0 ≤ x < 2π?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "How many solutions of"
+            },
+            {
+              "type": "math",
+              "content": "\\[2sin^{2}x + cos x = 3/2\\]"
+            },
+            {
+              "type": "math",
+              "content": "\\[lie in 0 \\le  x < 2\\pi?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "0",
+              "tex": "\\(0\\)"
+            },
+            {
+              "id": "B",
+              "text": "1",
+              "tex": "\\(1\\)"
+            },
+            {
+              "id": "C",
+              "text": "2",
+              "tex": "\\(2\\)"
+            },
+            {
+              "id": "D",
+              "text": "3",
+              "tex": "\\(3\\)"
+            },
+            {
+              "id": "E",
+              "text": "4",
+              "tex": "\\(4\\)"
+            }
+          ],
+          "correctOptionId": "E",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "Let c = cos x and use sin²x = 1 - c². This gives 4c² - 2c - 1 = 0, with roots c = (1 ± √5)/4. Both lie strictly between -1 and 1, so each cosine value gives two x-values in the interval. Total: 4.",
+            "tip": "You only need to check whether the cosine roots lie in [-1, 1]; you do not need their angles.",
+            "distractors": {
+              "A": "Rejects the irrational cosine values because they are not standard angles.",
+              "B": "Keeps only one root of the quadratic and one angle.",
+              "C": "Keeps both cosine roots but gives one angle for each.",
+              "D": "Treats one valid cosine root as an endpoint value with only one angle."
+            },
+            "calibration": "NSAA 2018 Section 1, Q75, counting trigonometric solutions in a radian interval.",
+            "calibrationSource": {
+              "label": "NSAA 2018",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07120537/NSAA_2018_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q15",
+          "module": 1,
+          "questionNumber": 15,
+          "difficulty": "easy",
+          "syllabus": {
+            "primaryCode": "MM4.5",
+            "primaryTopic": "Trigonometry: identities",
+            "secondaryTopic": "MM4.3 exact triangles"
+          },
+          "estimatedSeconds": 45,
+          "strongQuestion": false,
+          "stemPlain": "An acute angle θ satisfies tan θ = 3/4.\n\nWhat is sin θ - cos θ?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "An acute angle θ satisfies tan θ = 3/4."
+            },
+            {
+              "type": "math",
+              "content": "\\[What is sin θ - cos θ?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "-1",
+              "tex": "\\(-1\\)"
+            },
+            {
+              "id": "B",
+              "text": "-4/5",
+              "tex": "\\(-4/5\\)"
+            },
+            {
+              "id": "C",
+              "text": "-1/5",
+              "tex": "\\(-1/5\\)"
+            },
+            {
+              "id": "D",
+              "text": "1/5",
+              "tex": "\\(1/5\\)"
+            },
+            {
+              "id": "E",
+              "text": "7/5",
+              "tex": "\\(7/5\\)"
+            }
+          ],
+          "correctOptionId": "C",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "Use a 3-4-5 triangle. Then sin θ = 3/5 and cos θ = 4/5, so sin θ - cos θ = -1/5.",
+            "tip": "Turn a positive tangent ratio into a right triangle.",
+            "distractors": {
+              "A": "Subtracts 4 from 3 without dividing by the hypotenuse.",
+              "B": "Uses sin θ = 0.",
+              "D": "Reverses the order of subtraction.",
+              "E": "Adds sine and cosine instead of subtracting."
+            },
+            "calibration": "NSAA 2019 Section 1, Q77, reducing a trigonometric condition to algebraic ratios.",
+            "calibrationSource": {
+              "label": "NSAA 2019",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07120534/NSAA_2019_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q16",
+          "module": 1,
+          "questionNumber": 16,
+          "difficulty": "easy",
+          "syllabus": {
+            "primaryCode": "MM5.3",
+            "primaryTopic": "Exponentials and logarithms: exponential equations",
+            "secondaryTopic": null
+          },
+          "estimatedSeconds": 45,
+          "strongQuestion": false,
+          "stemPlain": "Solve\n\n4^(x - 1) = 8^(x + 1).",
+          "stem": [
+            {
+              "type": "text",
+              "content": "Solve"
+            },
+            {
+              "type": "math",
+              "content": "\\[4^{x - 1} = 8^{x + 1}.\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "-5",
+              "tex": "\\(-5\\)"
+            },
+            {
+              "id": "B",
+              "text": "-3",
+              "tex": "\\(-3\\)"
+            },
+            {
+              "id": "C",
+              "text": "-1",
+              "tex": "\\(-1\\)"
+            },
+            {
+              "id": "D",
+              "text": "1",
+              "tex": "\\(1\\)"
+            },
+            {
+              "id": "E",
+              "text": "5",
+              "tex": "\\(5\\)"
+            }
+          ],
+          "correctOptionId": "A",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "Write both sides in base 2: 2^(2x - 2) = 2^(3x + 3). Hence 2x - 2 = 3x + 3, giving x = -5.",
+            "tip": "Convert both sides to the same base before comparing exponents.",
+            "distractors": {
+              "B": "Drops the factor 2 multiplying x - 1.",
+              "C": "Equates x - 1 and x + 1 directly.",
+              "D": "Changes 8 to 2² instead of 2³.",
+              "E": "Moves the constants across with the wrong sign."
+            },
+            "calibration": "NSAA 2019 Section 1, Q81, exponential equation reduced using a substitution or common base.",
+            "calibrationSource": {
+              "label": "NSAA 2019",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07120534/NSAA_2019_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q17",
+          "module": 1,
+          "questionNumber": 17,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM5.2",
+            "primaryTopic": "Exponentials and logarithms: logarithm laws",
+            "secondaryTopic": null
+          },
+          "estimatedSeconds": 60,
+          "strongQuestion": false,
+          "stemPlain": "Evaluate\n\nlog₂(3/2) + log₂(4/3) + log₂(5/4) + ... + log₂(32/31).",
+          "stem": [
+            {
+              "type": "text",
+              "content": "Evaluate"
+            },
+            {
+              "type": "math",
+              "content": "\\[log₂(3/2) + log₂(4/3) + log₂(5/4) + ... + log₂(32/31).\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "-4",
+              "tex": "\\(-4\\)"
+            },
+            {
+              "id": "B",
+              "text": "-1",
+              "tex": "\\(-1\\)"
+            },
+            {
+              "id": "C",
+              "text": "1",
+              "tex": "\\(1\\)"
+            },
+            {
+              "id": "D",
+              "text": "4",
+              "tex": "\\(4\\)"
+            },
+            {
+              "id": "E",
+              "text": "5",
+              "tex": "\\(5\\)"
+            }
+          ],
+          "correctOptionId": "D",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "Combine the logarithms. The product telescopes to (3/2)(4/3)...(32/31) = 32/2 = 16. Therefore the sum is log₂16 = 4.",
+            "tip": "Combine first, then cancel the product before evaluating the logarithm.",
+            "distractors": {
+              "A": "Reverses every fraction before combining.",
+              "B": "Keeps only the first and last denominators in the wrong order.",
+              "C": "Assumes a telescoping product must equal the base 2.",
+              "E": "Uses 32 = 2⁵ and forgets the remaining division by 2."
+            },
+            "calibration": "NSAA 2018 Section 1, Q81, telescoping sum of logarithms.",
+            "calibrationSource": {
+              "label": "NSAA 2018",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07120537/NSAA_2018_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q18",
+          "module": 1,
+          "questionNumber": 18,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM5.3",
+            "primaryTopic": "Exponentials and logarithms: exponential models",
+            "secondaryTopic": "MM8.7 intersections"
+          },
+          "estimatedSeconds": 65,
+          "strongQuestion": false,
+          "stemPlain": "Two quantities are modelled by\n\nP = 3 × 2ᵗ    and    Q = 96 × 2^(-t).\n\nFor what value of t are P and Q equal?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "Two quantities are modelled by"
+            },
+            {
+              "type": "math",
+              "content": "\\[P = 3 \\times  2ᵗ    and    Q = 96 \\times  2^{-t}.\\]"
+            },
+            {
+              "type": "math",
+              "content": "\\[For what value of t are P and Q equal?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "-5/2",
+              "tex": "\\(-5/2\\)"
+            },
+            {
+              "id": "B",
+              "text": "-1",
+              "tex": "\\(-1\\)"
+            },
+            {
+              "id": "C",
+              "text": "0",
+              "tex": "\\(0\\)"
+            },
+            {
+              "id": "D",
+              "text": "1",
+              "tex": "\\(1\\)"
+            },
+            {
+              "id": "E",
+              "text": "2",
+              "tex": "\\(2\\)"
+            },
+            {
+              "id": "F",
+              "text": "5/2",
+              "tex": "\\(5/2\\)"
+            }
+          ],
+          "correctOptionId": "F",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "Set the models equal: 3 × 2ᵗ = 96 × 2^(-t). Hence 2^(2t) = 32 = 2⁵, so 2t = 5 and t = 5/2.",
+            "tip": "Bring equal bases together before comparing exponents.",
+            "distractors": {
+              "A": "Moves 2^(-t) across but keeps the exponent negative.",
+              "B": "Uses 96/3 = 2⁻².",
+              "C": "Assumes the increasing and decreasing models meet at t = 0.",
+              "D": "Uses 32 = 2².",
+              "E": "Finds 2t = 4 after treating 32 as 16."
+            },
+            "calibration": "Official 2026 Notes on Mathematics, MM5.3 exponential-equation modelling; broader ESAT intersection style.",
+            "calibrationSource": {
+              "label": "Official ESAT Mathematics 2 guidance",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q19",
+          "module": 1,
+          "questionNumber": 19,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM6.3",
+            "primaryTopic": "Differentiation: tangents and normals",
+            "secondaryTopic": "MM3.1 straight lines"
+          },
+          "estimatedSeconds": 70,
+          "strongQuestion": false,
+          "stemPlain": "The curve y = x³ - 3x has a normal at the point where x = 2.\n\nWhich is the equation of the normal?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "The curve y = x³ - 3x has a normal at the point where x = 2."
+            },
+            {
+              "type": "math",
+              "content": "\\[Which is the equation of the normal?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "y - 2 = 9(x - 2)",
+              "tex": "\\(y - 2 = 9(x - 2)\\)"
+            },
+            {
+              "id": "B",
+              "text": "y - 2 = -(x - 2)/9",
+              "tex": "\\(y - 2 = -(x - 2)/9\\)"
+            },
+            {
+              "id": "C",
+              "text": "y + 2 = -(x + 2)/9",
+              "tex": "\\(y + 2 = -(x + 2)/9\\)"
+            },
+            {
+              "id": "D",
+              "text": "y - 2 = -(x - 2)/6",
+              "tex": "\\(y - 2 = -(x - 2)/6\\)"
+            },
+            {
+              "id": "E",
+              "text": "y - 2 = (x - 2)/9",
+              "tex": "\\(y - 2 = (x - 2)/9\\)"
+            }
+          ],
+          "correctOptionId": "B",
+          "diagram": {
+            "id": "m1_q19_normal",
+            "svgPath": "/diagrams/svg/esat-m2-module-1-q19.svg",
+            "pngPath": "/diagrams/png/esat-m2-module-1-q19.png",
+            "alt": "Graph of y equals x cubed minus 3x with tangent and normal at (2,2).",
+            "notToScale": true
+          },
+          "authorNotes": {
+            "solution": "At x = 2, y = 2. Also dy/dx = 3x² - 3, so the tangent gradient is 9 and the normal gradient is -1/9. Thus y - 2 = -(x - 2)/9.",
+            "tip": "Find both the point and the negative reciprocal gradient.",
+            "distractors": {
+              "A": "Uses the tangent gradient instead of the normal gradient.",
+              "C": "Uses (-2, -2) instead of (2, 2).",
+              "D": "Differentiates x³ as 3x instead of 3x².",
+              "E": "Takes the reciprocal but forgets the negative sign."
+            },
+            "calibration": "ENGAA 2021 Section 1, Q21, efficient derivative evaluation; official MM6.3 tangent and normal style.",
+            "calibrationSource": {
+              "label": "ENGAA 2021",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07115611/ENGAA_2021_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q20",
+          "module": 1,
+          "questionNumber": 20,
+          "difficulty": "hard",
+          "syllabus": {
+            "primaryCode": "MM6.3",
+            "primaryTopic": "Differentiation: stationary points",
+            "secondaryTopic": "MM1.3 cubic functions"
+          },
+          "estimatedSeconds": 80,
+          "strongQuestion": false,
+          "stemPlain": "For a > 0, the curve\n\ny = x³ - 3ax + 2\n\nhas a stationary point on the x-axis. What is a?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "For a > 0, the curve"
+            },
+            {
+              "type": "math",
+              "content": "\\[y = x^{3} - 3ax + 2\\]"
+            },
+            {
+              "type": "math",
+              "content": "\\[has a stationary point on the x-axis. What is a?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "-4",
+              "tex": "\\(-4\\)"
+            },
+            {
+              "id": "B",
+              "text": "-2",
+              "tex": "\\(-2\\)"
+            },
+            {
+              "id": "C",
+              "text": "-1",
+              "tex": "\\(-1\\)"
+            },
+            {
+              "id": "D",
+              "text": "0",
+              "tex": "\\(0\\)"
+            },
+            {
+              "id": "E",
+              "text": "1",
+              "tex": "\\(1\\)"
+            },
+            {
+              "id": "F",
+              "text": "2",
+              "tex": "\\(2\\)"
+            },
+            {
+              "id": "G",
+              "text": "4",
+              "tex": "\\(4\\)"
+            }
+          ],
+          "correctOptionId": "E",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "At a stationary point, 3x² - 3a = 0, so a = x². Being on the x-axis also gives x³ - 3x³ + 2 = 0, hence x³ = 1. Therefore x = 1 and a = 1.",
+            "tip": "Use the derivative equation to remove the parameter from the curve equation.",
+            "distractors": {
+              "A": "Uses a = -x² and x = 2.",
+              "B": "Substitutes x³ = 2 instead of x³ = 1.",
+              "C": "Takes x = -1 even though it does not make the point lie on the axis.",
+              "D": "Assumes a stationary point on an axis must occur at the origin.",
+              "F": "Uses x³ = 2 after missing the factor -2x³.",
+              "G": "Squares the constant term 2 to obtain a."
+            },
+            "calibration": "Official 2026 Notes on Mathematics, MM6.3 stationary-point parameter exercises; tangent condition style also seen in NSAA 2018 Q77.",
+            "calibrationSource": {
+              "label": "NSAA 2018",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07120537/NSAA_2018_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q21",
+          "module": 1,
+          "questionNumber": 21,
+          "difficulty": "hard",
+          "syllabus": {
+            "primaryCode": "MM6.3",
+            "primaryTopic": "Differentiation: optimisation",
+            "secondaryTopic": "MM1.3 quadratics"
+          },
+          "estimatedSeconds": 90,
+          "strongQuestion": true,
+          "stemPlain": "An open box is made from a 12 by 8 rectangular sheet by cutting a square of side x from each corner and folding up the sides.\n\nFor 0 < x < 4, which value of x gives the maximum volume?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "An open box is made from a 12 by 8 rectangular sheet by cutting a square of side x from each corner and folding up the sides."
+            },
+            {
+              "type": "math",
+              "content": "\\[For 0 < x < 4, which value of x gives the maximum volume?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "(10 + 2√7)/3",
+              "tex": "\\((10 + 2\\sqrt{7})/3\\)"
+            },
+            {
+              "id": "B",
+              "text": "(10 - √7)/3",
+              "tex": "\\((10 - \\sqrt{7})/3\\)"
+            },
+            {
+              "id": "C",
+              "text": "(8 - 2√7)/3",
+              "tex": "\\((8 - 2\\sqrt{7})/3\\)"
+            },
+            {
+              "id": "D",
+              "text": "4 - √7",
+              "tex": "\\(4 - \\sqrt{7}\\)"
+            },
+            {
+              "id": "E",
+              "text": "2√7/3",
+              "tex": "\\(2\\sqrt{7}/3\\)"
+            },
+            {
+              "id": "F",
+              "text": "2",
+              "tex": "\\(2\\)"
+            },
+            {
+              "id": "G",
+              "text": "(10 - 2√7)/3",
+              "tex": "\\((10 - 2\\sqrt{7})/3\\)"
+            }
+          ],
+          "correctOptionId": "G",
+          "diagram": {
+            "id": "m1_q21_box",
+            "svgPath": "/diagrams/svg/esat-m2-module-1-q21.svg",
+            "pngPath": "/diagrams/png/esat-m2-module-1-q21.png",
+            "alt": "Twelve by eight rectangular sheet with four corner squares of side x marked for removal.",
+            "notToScale": true
+          },
+          "authorNotes": {
+            "solution": "V = x(12 - 2x)(8 - 2x) = 4x(6 - x)(4 - x). Differentiating gives V' = 12x² - 80x + 96. Thus 3x² - 20x + 24 = 0, so x = (10 ± 2√7)/3. Only the minus sign lies in 0 < x < 4, so it gives the maximum.",
+            "tip": "Use the physical interval to reject the second stationary value immediately.",
+            "distractors": {
+              "A": "Keeps the stationary value outside the physical domain.",
+              "B": "Loses the factor 2 when applying the quadratic formula.",
+              "C": "Uses 8 rather than 10 in the quadratic-formula numerator.",
+              "D": "Differentiates the three factors separately but does not use the product rule correctly.",
+              "E": "Keeps only the square-root part of the solution.",
+              "F": "Assumes the best cut is half the smaller side's half-width."
+            },
+            "calibration": "ENGAA 2022 Section 1, Q23, forming an area model from a diagram; official 2026 Notes MM6.3 optimisation style.",
+            "calibrationSource": {
+              "label": "ENGAA 2022",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07115611/ENGAA_2022_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q22",
+          "module": 1,
+          "questionNumber": 22,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM7.1",
+            "primaryTopic": "Integration: area and signed integral",
+            "secondaryTopic": "MM8.1 graphs"
+          },
+          "estimatedSeconds": 55,
+          "strongQuestion": false,
+          "stemPlain": "The line y = x - 1 is shown for 0 ≤ x ≤ 3. The two regions between the line and the x-axis are shaded.\n\nWhat is the total shaded area?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "The line y = x - 1 is shown for 0 ≤ x ≤ 3. The two regions between the line and the x-axis are shaded."
+            },
+            {
+              "type": "math",
+              "content": "\\[What is the total shaded area?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "3/2",
+              "tex": "\\(3/2\\)"
+            },
+            {
+              "id": "B",
+              "text": "2",
+              "tex": "\\(2\\)"
+            },
+            {
+              "id": "C",
+              "text": "5/2",
+              "tex": "\\(5/2\\)"
+            },
+            {
+              "id": "D",
+              "text": "3",
+              "tex": "\\(3\\)"
+            },
+            {
+              "id": "E",
+              "text": "7/2",
+              "tex": "\\(7/2\\)"
+            }
+          ],
+          "correctOptionId": "C",
+          "diagram": {
+            "id": "m1_q22_area_line",
+            "svgPath": "/diagrams/svg/esat-m2-module-1-q22.svg",
+            "pngPath": "/diagrams/png/esat-m2-module-1-q22.png",
+            "alt": "Graph of y equals x minus 1 from x equals zero to three with both regions to the x-axis shaded.",
+            "notToScale": true
+          },
+          "authorNotes": {
+            "solution": "From 0 to 1 the triangle has area 1/2. From 1 to 3 the triangle has area (1/2)(2)(2) = 2. Total area = 1/2 + 2 = 5/2.",
+            "tip": "Areas below the axis still count positively in a total geometric area.",
+            "distractors": {
+              "A": "Calculates the signed integral, 2 - 1/2.",
+              "B": "Counts only the region above the axis.",
+              "D": "Adds the two triangle bases but omits the factor 1/2.",
+              "E": "Treats the smaller triangle as having area 3/2."
+            },
+            "calibration": "ENGAA 2018 Section 1, Q29, area enclosed by a curve and a line; official MM7.1 signed-area distinction.",
+            "calibrationSource": {
+              "label": "ENGAA 2018",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07113017/ENGAA_2018_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q23",
+          "module": 1,
+          "questionNumber": 23,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM7.5",
+            "primaryTopic": "Integration: trapezium rule",
+            "secondaryTopic": "MM8.5 curve shape"
+          },
+          "estimatedSeconds": 65,
+          "strongQuestion": false,
+          "stemPlain": "The area under y = x² from x = 0 to x = 2 is estimated using the trapezium rule with ordinates at x = 0, 1 and 2.\n\nWhich row is correct?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "The area under y = x² from x = 0 to x = 2 is estimated using the trapezium rule with ordinates at x = 0, 1 and 2."
+            },
+            {
+              "type": "math",
+              "content": "\\[Which row is correct?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "estimate 3; overestimate",
+              "tex": null
+            },
+            {
+              "id": "B",
+              "text": "estimate 3; underestimate",
+              "tex": null
+            },
+            {
+              "id": "C",
+              "text": "estimate 8/3; exact",
+              "tex": null
+            },
+            {
+              "id": "D",
+              "text": "estimate 5/2; underestimate",
+              "tex": null
+            },
+            {
+              "id": "E",
+              "text": "estimate 4; overestimate",
+              "tex": null
+            }
+          ],
+          "correctOptionId": "A",
+          "diagram": {
+            "id": "m1_q23_trapezium",
+            "svgPath": "/diagrams/svg/esat-m2-module-1-q23.svg",
+            "pngPath": "/diagrams/png/esat-m2-module-1-q23.png",
+            "alt": "Graph of y equals x squared with two trapezia on intervals zero to one and one to two.",
+            "notToScale": true
+          },
+          "authorNotes": {
+            "solution": "With width 1, the trapezium estimate is (1/2)[0 + 2(1) + 4] = 3. Since y = x² is convex, the chords lie above the curve, so this is an overestimate.",
+            "tip": "For a convex curve, trapezium tops sit above the curve.",
+            "distractors": {
+              "B": "Gets the numerical estimate right but reverses the convexity judgement.",
+              "C": "Uses the exact integral instead of the trapezium estimate.",
+              "D": "Uses the midpoint value as an average height.",
+              "E": "Adds the three ordinates without endpoint half-weights."
+            },
+            "calibration": "Official 2026 Notes on Mathematics, MM7.5 trapezium-rule and overestimate style; no close archive item was used.",
+            "calibrationSource": {
+              "label": "Official ESAT Mathematics 2 guidance",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q24",
+          "module": 1,
+          "questionNumber": 24,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM7.6",
+            "primaryTopic": "Integration: differential equations",
+            "secondaryTopic": "MM7.2 indefinite integration"
+          },
+          "estimatedSeconds": 65,
+          "strongQuestion": false,
+          "stemPlain": "A curve satisfies dy/dx = 6x - 4 and passes through (1, 5).\n\nWhat is the value of y when x = 2?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "A curve satisfies dy/dx = 6x - 4 and passes through (1, 5)."
+            },
+            {
+              "type": "math",
+              "content": "\\[What is the value of y when x = 2?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "5",
+              "tex": "\\(5\\)"
+            },
+            {
+              "id": "B",
+              "text": "6",
+              "tex": "\\(6\\)"
+            },
+            {
+              "id": "C",
+              "text": "7",
+              "tex": "\\(7\\)"
+            },
+            {
+              "id": "D",
+              "text": "8",
+              "tex": "\\(8\\)"
+            },
+            {
+              "id": "E",
+              "text": "9",
+              "tex": "\\(9\\)"
+            },
+            {
+              "id": "F",
+              "text": "10",
+              "tex": "\\(10\\)"
+            }
+          ],
+          "correctOptionId": "F",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "Integrating gives y = 3x² - 4x + C. Using (1, 5), 5 = 3 - 4 + C, so C = 6. At x = 2, y = 12 - 8 + 6 = 10.",
+            "tip": "Find the constant before substituting the requested x-value.",
+            "distractors": {
+              "A": "Assumes the initial y-value remains constant.",
+              "B": "Finds C correctly but reports it as the answer.",
+              "C": "Integrates 6x as 3x rather than 3x².",
+              "D": "Omits the constant of integration.",
+              "E": "Uses C = 5 without applying the point to the other terms."
+            },
+            "calibration": "Official 2026 Notes on Mathematics, MM7.6 first-order differential-equation examples.",
+            "calibrationSource": {
+              "label": "Official ESAT Mathematics 2 guidance",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q25",
+          "module": 1,
+          "questionNumber": 25,
+          "difficulty": "easy",
+          "syllabus": {
+            "primaryCode": "MM8.2",
+            "primaryTopic": "Graphs of functions: transformations",
+            "secondaryTopic": "MM8.4 quadratics"
+          },
+          "estimatedSeconds": 55,
+          "strongQuestion": false,
+          "stemPlain": "The graph of y = f(x) has a maximum at (-2, 3) and x-intercepts at (-4, 0) and (0, 0), as shown.\n\nWhat is the turning point of y = -2f(x + 1) + 5?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "The graph of y = f(x) has a maximum at (-2, 3) and x-intercepts at (-4, 0) and (0, 0), as shown."
+            },
+            {
+              "type": "math",
+              "content": "\\[What is the turning point of y = -2f(x + 1) + 5?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "(-1, -1)",
+              "tex": "\\((-1, -1)\\)"
+            },
+            {
+              "id": "B",
+              "text": "(-3, 11)",
+              "tex": "\\((-3, 11)\\)"
+            },
+            {
+              "id": "C",
+              "text": "(-1, 11)",
+              "tex": "\\((-1, 11)\\)"
+            },
+            {
+              "id": "D",
+              "text": "(-3, -1)",
+              "tex": "\\((-3, -1)\\)"
+            },
+            {
+              "id": "E",
+              "text": "(3, -1)",
+              "tex": "\\((3, -1)\\)"
+            }
+          ],
+          "correctOptionId": "D",
+          "diagram": {
+            "id": "m1_q25_transform",
+            "svgPath": "/diagrams/svg/esat-m2-module-1-q25.svg",
+            "pngPath": "/diagrams/png/esat-m2-module-1-q25.png",
+            "alt": "Downward parabola with roots (-4,0) and (0,0) and maximum (-2,3).",
+            "notToScale": true
+          },
+          "authorNotes": {
+            "solution": "Replacing x by x + 1 shifts the graph left by 1, so the x-coordinate becomes -3. The y-value transforms as -2(3) + 5 = -1. The turning point is (-3, -1).",
+            "tip": "Do the horizontal transformation first, and remember its direction is reversed.",
+            "distractors": {
+              "A": "Shifts the graph right instead of left.",
+              "B": "Shifts left but uses 2(3) + 5.",
+              "C": "Shifts right and also misses the reflection.",
+              "E": "Changes the sign of the original x-coordinate instead of shifting it."
+            },
+            "calibration": "Official Pearson ESAT Mathematics 2 specimen and 2026 Notes MM8.2 graph-transformation style.",
+            "calibrationSource": {
+              "label": "Official ESAT Mathematics 2 guidance",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q26",
+          "module": 1,
+          "questionNumber": 26,
+          "difficulty": "hard",
+          "syllabus": {
+            "primaryCode": "MM8.7",
+            "primaryTopic": "Graphs of functions: intersections",
+            "secondaryTopic": "MM1.6 polynomial factorisation"
+          },
+          "estimatedSeconds": 80,
+          "strongQuestion": true,
+          "stemPlain": "How many distinct real solutions does\n\nx³ - 3x = 2\n\nhave?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "How many distinct real solutions does"
+            },
+            {
+              "type": "math",
+              "content": "\\[x^{3} - 3x = 2\\]"
+            },
+            {
+              "type": "math",
+              "content": "\\[have?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "1",
+              "tex": "\\(1\\)"
+            },
+            {
+              "id": "B",
+              "text": "2",
+              "tex": "\\(2\\)"
+            },
+            {
+              "id": "C",
+              "text": "3",
+              "tex": "\\(3\\)"
+            },
+            {
+              "id": "D",
+              "text": "4",
+              "tex": "\\(4\\)"
+            }
+          ],
+          "correctOptionId": "B",
+          "diagram": {
+            "id": "m1_q26_intersections",
+            "svgPath": "/diagrams/svg/esat-m2-module-1-q26.svg",
+            "pngPath": "/diagrams/png/esat-m2-module-1-q26.png",
+            "alt": "Graph of y equals x cubed minus 3x and horizontal line y equals 2, tangent at x equals -1 and crossing at x equals 2.",
+            "notToScale": true
+          },
+          "authorNotes": {
+            "solution": "Rearrange to x³ - 3x - 2 = 0. This factorises as (x - 2)(x + 1)² = 0, giving the two distinct roots x = 2 and x = -1. The repeated root represents tangency to y = 2.",
+            "tip": "The question asks for distinct roots, so inspect multiplicity after factorising.",
+            "distractors": {
+              "A": "Counts only the crossing at x = 2 and misses the tangent root.",
+              "C": "Counts the repeated root x = -1 twice.",
+              "D": "Assumes a cubic and a line can meet in four places."
+            },
+            "calibration": "NSAA 2018 Section 1, Q77, tangency as a repeated algebraic solution; ENGAA 2021 Section 1, Q11, intersections encoded by a quadratic.",
+            "calibrationSource": {
+              "label": "NSAA 2018",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07120537/NSAA_2018_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-1-q27",
+          "module": 1,
+          "questionNumber": 27,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM8.1",
+            "primaryTopic": "Graphs of functions: exponential graphs",
+            "secondaryTopic": "MM8.2 transformations"
+          },
+          "estimatedSeconds": 65,
+          "strongQuestion": false,
+          "stemPlain": "The graph shown is decreasing, has horizontal asymptote y = -3, and passes through (0, -1).\n\nWhich is its equation?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "The graph shown is decreasing, has horizontal asymptote y = -3, and passes through (0, -1)."
+            },
+            {
+              "type": "math",
+              "content": "\\[Which is its equation?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "y = 2ˣ - 3",
+              "tex": "\\(y = 2ˣ - 3\\)"
+            },
+            {
+              "id": "B",
+              "text": "y = 2^(-x) + 3",
+              "tex": "\\(y = 2^{-x} + 3\\)"
+            },
+            {
+              "id": "C",
+              "text": "y = 2^(x + 1) - 3",
+              "tex": "\\(y = 2^{x + 1} - 3\\)"
+            },
+            {
+              "id": "D",
+              "text": "y = 2^(-x) - 1",
+              "tex": "\\(y = 2^{-x} - 1\\)"
+            },
+            {
+              "id": "E",
+              "text": "y = 2^(1 - x) - 3",
+              "tex": "\\(y = 2^{1 - x} - 3\\)"
+            }
+          ],
+          "correctOptionId": "E",
+          "diagram": {
+            "id": "m1_q27_exponential",
+            "svgPath": "/diagrams/svg/esat-m2-module-1-q27.svg",
+            "pngPath": "/diagrams/png/esat-m2-module-1-q27.png",
+            "alt": "Decreasing exponential through (0,-1) with horizontal asymptote y equals -3.",
+            "notToScale": true
+          },
+          "authorNotes": {
+            "solution": "A decreasing base-2 exponential needs a negative coefficient of x in the exponent. The asymptote -3 fixes the vertical shift. At x = 0, 2^(1 - 0) - 3 = -1, so y = 2^(1 - x) - 3.",
+            "tip": "Use the asymptote and direction first, then check one point.",
+            "distractors": {
+              "A": "Has the right asymptote but is increasing and has y-intercept -2.",
+              "B": "Is decreasing but has asymptote y = 3.",
+              "C": "Has the right intercept and asymptote but is increasing.",
+              "D": "Is decreasing and has the right intercept, but its asymptote is y = -1."
+            },
+            "calibration": "Official 2026 Notes on Mathematics, MM5.1 and MM8.1-2 exponential-graph style; official Pearson specimen graph interpretation.",
+            "calibrationSource": {
+              "label": "Official ESAT Mathematics 2 guidance",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "esat-mathematics-2-practice-module-2",
+      "moduleNumber": 2,
+      "title": "ESAT Mathematics 2 Practice Module 2",
+      "durationMinutes": 40,
+      "calculatorAllowed": false,
+      "questions": [
+        {
+          "id": "esat-m2-module-2-q01",
+          "module": 2,
+          "questionNumber": 1,
+          "difficulty": "easy",
+          "syllabus": {
+            "primaryCode": "MM1.2",
+            "primaryTopic": "Algebra and functions: surds",
+            "secondaryTopic": null
+          },
+          "estimatedSeconds": 50,
+          "strongQuestion": false,
+          "stemPlain": "Simplify\n\n1/(√5 - 2) - 1/(√5 + 2).",
+          "stem": [
+            {
+              "type": "text",
+              "content": "Simplify"
+            },
+            {
+              "type": "math",
+              "content": "\\[1/(\\sqrt{5} - 2) - 1/(\\sqrt{5} + 2).\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "2",
+              "tex": "\\(2\\)"
+            },
+            {
+              "id": "B",
+              "text": "4",
+              "tex": "\\(4\\)"
+            },
+            {
+              "id": "C",
+              "text": "2√5",
+              "tex": "\\(2\\sqrt{5}\\)"
+            },
+            {
+              "id": "D",
+              "text": "4√5",
+              "tex": "\\(4\\sqrt{5}\\)"
+            },
+            {
+              "id": "E",
+              "text": "8",
+              "tex": "\\(8\\)"
+            }
+          ],
+          "correctOptionId": "B",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "The common denominator is (√5 - 2)(√5 + 2) = 1. The numerator is (√5 + 2) - (√5 - 2) = 4, so the value is 4.",
+            "tip": "Conjugate denominators often collapse to a small integer.",
+            "distractors": {
+              "A": "Subtracts the two 2s instead of accounting for the outer minus sign.",
+              "C": "Adds the surd parts and cancels the rational parts.",
+              "D": "Uses 5 + 4 as the denominator rather than the difference of squares.",
+              "E": "Doubles the numerator again after rationalising both fractions."
+            },
+            "calibration": "ENGAA 2022 Section 1, Q27, exact simplification of a surd expression.",
+            "calibrationSource": {
+              "label": "ENGAA 2022",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07115611/ENGAA_2022_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q02",
+          "module": 2,
+          "questionNumber": 2,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM1.4",
+            "primaryTopic": "Algebra and functions: simultaneous equations",
+            "secondaryTopic": "MM1.3 quadratic roots"
+          },
+          "estimatedSeconds": 75,
+          "strongQuestion": false,
+          "stemPlain": "The line y = x + 2 intersects the curve y = x² - k at two points. The difference between their x-coordinates is 4.\n\nWhat is k?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "The line y = x + 2 intersects the curve y = x² - k at two points. The difference between their x-coordinates is 4."
+            },
+            {
+              "type": "math",
+              "content": "\\[What is k?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "-7/4",
+              "tex": "\\(-7/4\\)"
+            },
+            {
+              "id": "B",
+              "text": "-1/4",
+              "tex": "\\(-1/4\\)"
+            },
+            {
+              "id": "C",
+              "text": "1/4",
+              "tex": "\\(1/4\\)"
+            },
+            {
+              "id": "D",
+              "text": "3/4",
+              "tex": "\\(3/4\\)"
+            },
+            {
+              "id": "E",
+              "text": "7/4",
+              "tex": "\\(7/4\\)"
+            }
+          ],
+          "correctOptionId": "E",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "Intersections satisfy x² - x - (k + 2) = 0. For a monic quadratic, the root difference has square equal to the discriminant: 1 + 4(k + 2) = 4k + 9. Hence 4k + 9 = 16 and k = 7/4.",
+            "tip": "For roots r and s of a monic quadratic, (r - s)² equals the discriminant.",
+            "distractors": {
+              "A": "Moves 9 across with the wrong sign.",
+              "B": "Uses the difference 4 as the discriminant rather than 4².",
+              "C": "Drops the +2 when equating the graphs.",
+              "D": "Uses 4k + 1 for the discriminant."
+            },
+            "calibration": "ENGAA 2021 Section 1, Q11, deducing a line-curve parameter from the separation of intersection roots.",
+            "calibrationSource": {
+              "label": "ENGAA 2021",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07115611/ENGAA_2021_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q03",
+          "module": 2,
+          "questionNumber": 3,
+          "difficulty": "easy",
+          "syllabus": {
+            "primaryCode": "MM1.6",
+            "primaryTopic": "Algebra and functions: polynomial factors",
+            "secondaryTopic": null
+          },
+          "estimatedSeconds": 55,
+          "strongQuestion": false,
+          "stemPlain": "The polynomial x² + x - 6 is a factor of\n\nx³ + ax² + bx + 12.\n\nWhat is a + b?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "The polynomial x² + x - 6 is a factor of"
+            },
+            {
+              "type": "math",
+              "content": "\\[x^{3} + ax^{2} + bx + 12.\\]"
+            },
+            {
+              "type": "math",
+              "content": "\\[What is a + b?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "-9",
+              "tex": "\\(-9\\)"
+            },
+            {
+              "id": "B",
+              "text": "-6",
+              "tex": "\\(-6\\)"
+            },
+            {
+              "id": "C",
+              "text": "-3",
+              "tex": "\\(-3\\)"
+            },
+            {
+              "id": "D",
+              "text": "3",
+              "tex": "\\(3\\)"
+            },
+            {
+              "id": "E",
+              "text": "9",
+              "tex": "\\(9\\)"
+            }
+          ],
+          "correctOptionId": "A",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "Since x² + x - 6 = (x + 3)(x - 2), the remaining factor is x + c. The constant term is -6c = 12, so c = -2. Expanding (x² + x - 6)(x - 2) gives a = -1 and b = -8, hence a + b = -9.",
+            "tip": "Use the constant term to find the linear quotient before expanding.",
+            "distractors": {
+              "B": "Reports the constant coefficient of the quadratic factor.",
+              "C": "Uses c = 2 instead of c = -2.",
+              "D": "Adds the roots 3 and -2 rather than the required coefficients.",
+              "E": "Finds the correct magnitude but loses the negative signs."
+            },
+            "calibration": "ENGAA 2023 Section 1, Q21, a quadratic factor used to determine cubic coefficients.",
+            "calibrationSource": {
+              "label": "ENGAA 2023",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07115605/ENGAA_2023_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q04",
+          "module": 2,
+          "questionNumber": 4,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM1.5",
+            "primaryTopic": "Algebra and functions: inequalities",
+            "secondaryTopic": "MM1.6 factorisation"
+          },
+          "estimatedSeconds": 65,
+          "strongQuestion": true,
+          "stemPlain": "What is the complete set of real values of x satisfying\n\n(x - 1)(x + 3) ≥ 4(x - 1)?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "What is the complete set of real values of x satisfying"
+            },
+            {
+              "type": "math",
+              "content": "\\[(x - 1)(x + 3) \\ge  4(x - 1)?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "x ≤ -3",
+              "tex": "\\(x \\le  -3\\)"
+            },
+            {
+              "id": "B",
+              "text": "x ≥ 1",
+              "tex": "\\(x \\ge  1\\)"
+            },
+            {
+              "id": "C",
+              "text": "x ≤ 1",
+              "tex": "\\(x \\le  1\\)"
+            },
+            {
+              "id": "D",
+              "text": "x ≠ 1",
+              "tex": "\\(x \\ne  1\\)"
+            },
+            {
+              "id": "E",
+              "text": "-3 ≤ x ≤ 1",
+              "tex": "\\(-3 \\le  x \\le  1\\)"
+            },
+            {
+              "id": "F",
+              "text": "x ≤ -3 or x ≥ 1",
+              "tex": "\\(x \\le  -3\\text{ or }x \\ge  1\\)"
+            },
+            {
+              "id": "G",
+              "text": "all real x",
+              "tex": null
+            }
+          ],
+          "correctOptionId": "G",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "Move the right side across and factor: (x - 1)[(x + 3) - 4] = (x - 1)² ≥ 0. A square is non-negative for every real x, including x = 1.",
+            "tip": "Do not divide by an expression whose sign, or zero value, is unknown.",
+            "distractors": {
+              "A": "Keeps the original root -3 after failing to combine the two sides.",
+              "B": "Divides by x - 1 and assumes it is positive.",
+              "C": "Divides by x - 1 and assumes it is negative.",
+              "D": "Recognises a square but incorrectly excludes the zero case despite ≥.",
+              "E": "Uses the roots -3 and 1 as if the original product were compared with zero.",
+              "F": "Uses an exterior sign pattern for roots that disappear after simplification."
+            },
+            "calibration": "ENGAA 2022 Section 1, Q31, complete-set inequality selection; NSAA 2019 Section 1, Q89, polynomial sign analysis.",
+            "calibrationSource": {
+              "label": "ENGAA 2022",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07115611/ENGAA_2022_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q05",
+          "module": 2,
+          "questionNumber": 5,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM1.7",
+            "primaryTopic": "Algebra and functions: function composition",
+            "secondaryTopic": "MM1.3 quadratics"
+          },
+          "estimatedSeconds": 65,
+          "strongQuestion": false,
+          "stemPlain": "Let f(x) = x² + 1 and g(x) = 2x - 3.\n\nWhat is the complete solution set of f(g(x)) = 5?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "Let f(x) = x² + 1 and g(x) = 2x - 3."
+            },
+            {
+              "type": "math",
+              "content": "\\[What is the complete solution set of f(g(x)) = 5?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "{1/2}",
+              "tex": "\\({1/2}\\)"
+            },
+            {
+              "id": "B",
+              "text": "{5/2}",
+              "tex": "\\({5/2}\\)"
+            },
+            {
+              "id": "C",
+              "text": "{-1/2, 5/2}",
+              "tex": "\\({-1/2, 5/2}\\)"
+            },
+            {
+              "id": "D",
+              "text": "{1/2, 5/2}",
+              "tex": "\\({1/2, 5/2}\\)"
+            },
+            {
+              "id": "E",
+              "text": "{-5/2, -1/2}",
+              "tex": "\\({-5/2, -1/2}\\)"
+            }
+          ],
+          "correctOptionId": "D",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "f(g(x)) = (2x - 3)² + 1. Setting this equal to 5 gives (2x - 3)² = 4, so 2x - 3 = ±2. Hence x = 1/2 or 5/2.",
+            "tip": "When a square equals a positive number, keep both signs.",
+            "distractors": {
+              "A": "Keeps only the negative square-root branch.",
+              "B": "Keeps only the positive square-root branch.",
+              "C": "Solves 2x + 3 = ±2 after reversing the sign in g.",
+              "E": "Changes both solutions' signs after solving correctly."
+            },
+            "calibration": "Official 2026 Notes on Mathematics, MM1.7 composition exercises; official Pearson specimen function style.",
+            "calibrationSource": {
+              "label": "Official ESAT Mathematics 2 guidance",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q06",
+          "module": 2,
+          "questionNumber": 6,
+          "difficulty": "easy",
+          "syllabus": {
+            "primaryCode": "MM2.1",
+            "primaryTopic": "Sequences and series: recurrence relations",
+            "secondaryTopic": "MM1.6 algebraic pattern"
+          },
+          "estimatedSeconds": 55,
+          "strongQuestion": false,
+          "stemPlain": "A sequence is defined by u₁ = 2 and\n\nuₙ₊₁ = uₙ + 2n + 1.\n\nWhat is u₁₀?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "A sequence is defined by u₁ = 2 and"
+            },
+            {
+              "type": "math",
+              "content": "\\[uₙ₊₁ = uₙ + 2n + 1.\\]"
+            },
+            {
+              "type": "math",
+              "content": "\\[What is u₁₀?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "82",
+              "tex": "\\(82\\)"
+            },
+            {
+              "id": "B",
+              "text": "100",
+              "tex": "\\(100\\)"
+            },
+            {
+              "id": "C",
+              "text": "101",
+              "tex": "\\(101\\)"
+            },
+            {
+              "id": "D",
+              "text": "102",
+              "tex": "\\(102\\)"
+            },
+            {
+              "id": "E",
+              "text": "121",
+              "tex": "\\(121\\)"
+            }
+          ],
+          "correctOptionId": "C",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "The increments 2n + 1 are the differences between consecutive squares. Since u₁ = 1² + 1, it follows that uₙ = n² + 1. Thus u₁₀ = 101.",
+            "tip": "Recognise 2n + 1 as (n + 1)² - n².",
+            "distractors": {
+              "A": "Adds only the odd numbers from 1 to 9 rather than from 3 to 19.",
+              "B": "Recognises n² but forgets the extra 1.",
+              "D": "Adds the initial 2 to 10² instead of tracking the offset.",
+              "E": "Uses (n + 1)²."
+            },
+            "calibration": "Official 2026 Notes on Mathematics, MM2.1 recurrence and nth-term connection style.",
+            "calibrationSource": {
+              "label": "Official ESAT Mathematics 2 guidance",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q07",
+          "module": 2,
+          "questionNumber": 7,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM2.3",
+            "primaryTopic": "Sequences and series: geometric series",
+            "secondaryTopic": null
+          },
+          "estimatedSeconds": 65,
+          "strongQuestion": false,
+          "stemPlain": "A convergent geometric series has positive common ratio and begins\n\n3 + 3r + 3r² + ... .\n\nIts sum to infinity is 12. What is the sum of its first two terms?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "A convergent geometric series has positive common ratio and begins"
+            },
+            {
+              "type": "math",
+              "content": "\\[3 + 3r + 3r^{2} + ... .\\]"
+            },
+            {
+              "type": "math",
+              "content": "\\[Its sum to infinity is 12. What is the sum of its first two terms?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "3",
+              "tex": "\\(3\\)"
+            },
+            {
+              "id": "B",
+              "text": "15/4",
+              "tex": "\\(15/4\\)"
+            },
+            {
+              "id": "C",
+              "text": "4",
+              "tex": "\\(4\\)"
+            },
+            {
+              "id": "D",
+              "text": "9/2",
+              "tex": "\\(9/2\\)"
+            },
+            {
+              "id": "E",
+              "text": "5",
+              "tex": "\\(5\\)"
+            },
+            {
+              "id": "F",
+              "text": "21/4",
+              "tex": "\\(21/4\\)"
+            }
+          ],
+          "correctOptionId": "F",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "3/(1 - r) = 12, so 1 - r = 1/4 and r = 3/4. The first two terms sum to 3 + 9/4 = 21/4.",
+            "tip": "Find the common ratio from the infinite sum before using only the terms requested.",
+            "distractors": {
+              "A": "Reports only the first term.",
+              "B": "Uses r = 1/4.",
+              "C": "Adds 3 and the missing amount 1.",
+              "D": "Uses the second term as 3/2.",
+              "E": "Rounds 21/4 down or uses r = 2/3."
+            },
+            "calibration": "ENGAA 2021 Section 1, Q37, compact series evaluation; official 2026 Notes MM2.3.",
+            "calibrationSource": {
+              "label": "ENGAA 2021",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07115611/ENGAA_2021_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q08",
+          "module": 2,
+          "questionNumber": 8,
+          "difficulty": "easy",
+          "syllabus": {
+            "primaryCode": "MM2.4",
+            "primaryTopic": "Sequences and series: binomial expansion",
+            "secondaryTopic": "MM1.1 indices"
+          },
+          "estimatedSeconds": 55,
+          "strongQuestion": false,
+          "stemPlain": "What is the constant term in the expansion of\n\n(2x + 1/x)⁴?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "What is the constant term in the expansion of"
+            },
+            {
+              "type": "math",
+              "content": "\\[(2x + 1/x)^{4}?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "16",
+              "tex": "\\(16\\)"
+            },
+            {
+              "id": "B",
+              "text": "24",
+              "tex": "\\(24\\)"
+            },
+            {
+              "id": "C",
+              "text": "32",
+              "tex": "\\(32\\)"
+            },
+            {
+              "id": "D",
+              "text": "48",
+              "tex": "\\(48\\)"
+            },
+            {
+              "id": "E",
+              "text": "96",
+              "tex": "\\(96\\)"
+            }
+          ],
+          "correctOptionId": "B",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "The general term contains x^(4 - 2r), so the constant term occurs when r = 2. Its coefficient is C(4,2) × 2² = 6 × 4 = 24.",
+            "tip": "Track the power of x before calculating the coefficient.",
+            "distractors": {
+              "A": "Uses only 2⁴ and ignores the binomial coefficient.",
+              "C": "Uses C(4,1) × 2³, which belongs to a non-constant term.",
+              "D": "Uses C(4,2) × 2³.",
+              "E": "Multiplies the correct result by the binomial coefficient a second time."
+            },
+            "calibration": "NSAA 2018 Section 1, Q85, targeted binomial coefficient extraction.",
+            "calibrationSource": {
+              "label": "NSAA 2018",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07120537/NSAA_2018_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q09",
+          "module": 2,
+          "questionNumber": 9,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM3.2",
+            "primaryTopic": "Coordinate geometry: equation of a circle",
+            "secondaryTopic": "MM3.3 tangent-radius property"
+          },
+          "estimatedSeconds": 65,
+          "strongQuestion": false,
+          "stemPlain": "The point Q(4, 2) lies on the circle (x - 1)² + (y + 2)² = 25.\n\nWhich is the equation of the tangent at Q?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "The point Q(4, 2) lies on the circle (x - 1)² + (y + 2)² = 25."
+            },
+            {
+              "type": "math",
+              "content": "\\[Which is the equation of the tangent at Q?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "3x - 4y = 4",
+              "tex": "\\(3x - 4y = 4\\)"
+            },
+            {
+              "id": "B",
+              "text": "4x + 3y = 22",
+              "tex": "\\(4x + 3y = 22\\)"
+            },
+            {
+              "id": "C",
+              "text": "3x + 4y = 25",
+              "tex": "\\(3x + 4y = 25\\)"
+            },
+            {
+              "id": "D",
+              "text": "4x - 3y = 10",
+              "tex": "\\(4x - 3y = 10\\)"
+            },
+            {
+              "id": "E",
+              "text": "3x + 4y = 18",
+              "tex": "\\(3x + 4y = 18\\)"
+            },
+            {
+              "id": "F",
+              "text": "4x + 3y = 18",
+              "tex": "\\(4x + 3y = 18\\)"
+            },
+            {
+              "id": "G",
+              "text": "3x + 4y = 20",
+              "tex": "\\(3x + 4y = 20\\)"
+            }
+          ],
+          "correctOptionId": "G",
+          "diagram": {
+            "id": "m2_q09_tangent",
+            "svgPath": "/diagrams/svg/esat-m2-module-2-q09.svg",
+            "pngPath": "/diagrams/png/esat-m2-module-2-q09.png",
+            "alt": "Circle centred at (1,-2) with radius to Q(4,2) and tangent at Q.",
+            "notToScale": true
+          },
+          "authorNotes": {
+            "solution": "The radius from (1, -2) to Q has direction (3, 4), which is normal to the tangent. Therefore 3(x - 4) + 4(y - 2) = 0, giving 3x + 4y = 20.",
+            "tip": "Use the radius vector directly as a normal vector to the tangent.",
+            "distractors": {
+              "A": "Uses the radius direction as the tangent direction.",
+              "B": "Swaps the normal-vector components.",
+              "C": "Uses r² = 25 as the line constant.",
+              "D": "Uses a perpendicular direction but substitutes Q incorrectly.",
+              "E": "Substitutes the centre rather than Q into 3x + 4y = c.",
+              "F": "Swaps the components and also uses the wrong constant."
+            },
+            "calibration": "NSAA 2018 Section 1, Q83, tangent-radius geometry; official 2026 Notes MM3.2-3.",
+            "calibrationSource": {
+              "label": "NSAA 2018",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07120537/NSAA_2018_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q10",
+          "module": 2,
+          "questionNumber": 10,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM3.3",
+            "primaryTopic": "Coordinate geometry: circle chords",
+            "secondaryTopic": "MM3.2 equation of a circle"
+          },
+          "estimatedSeconds": 60,
+          "strongQuestion": false,
+          "stemPlain": "The line x = 5 cuts the circle\n\n(x - 2)² + (y + 1)² = 25\n\nin a chord. What is the length of the chord?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "The line x = 5 cuts the circle"
+            },
+            {
+              "type": "math",
+              "content": "\\[(x - 2)^{2} + (y + 1)^{2} = 25\\]"
+            },
+            {
+              "type": "math",
+              "content": "\\[in a chord. What is the length of the chord?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "4",
+              "tex": "\\(4\\)"
+            },
+            {
+              "id": "B",
+              "text": "5",
+              "tex": "\\(5\\)"
+            },
+            {
+              "id": "C",
+              "text": "6",
+              "tex": "\\(6\\)"
+            },
+            {
+              "id": "D",
+              "text": "8",
+              "tex": "\\(8\\)"
+            },
+            {
+              "id": "E",
+              "text": "10",
+              "tex": "\\(10\\)"
+            }
+          ],
+          "correctOptionId": "D",
+          "diagram": {
+            "id": "m2_q10_chord",
+            "svgPath": "/diagrams/svg/esat-m2-module-2-q10.svg",
+            "pngPath": "/diagrams/png/esat-m2-module-2-q10.png",
+            "alt": "Circle centred at (2,-1) with vertical chord x equals 5 from y equals -5 to y equals 3.",
+            "notToScale": true
+          },
+          "authorNotes": {
+            "solution": "On x = 5, (x - 2)² = 9, so (y + 1)² = 16. The endpoints have y = 3 and y = -5, giving chord length 8.",
+            "tip": "Substitute the fixed coordinate and use both square-root signs.",
+            "distractors": {
+              "A": "Finds the half-chord and reports it as the full length.",
+              "B": "Reports the radius.",
+              "C": "Uses the horizontal distance 3 twice.",
+              "E": "Assumes the chord is a diameter."
+            },
+            "calibration": "Official 2026 Notes on Mathematics, MM3.2 circle-coordinate examples and MM3.3 chord property.",
+            "calibrationSource": {
+              "label": "Official ESAT Mathematics 2 guidance",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q11",
+          "module": 2,
+          "questionNumber": 11,
+          "difficulty": "hard",
+          "syllabus": {
+            "primaryCode": "MM3.2",
+            "primaryTopic": "Coordinate geometry: tangents to a circle",
+            "secondaryTopic": "MM1.3 discriminant"
+          },
+          "estimatedSeconds": 85,
+          "strongQuestion": true,
+          "stemPlain": "The two lines y = mx through the origin are tangent to the circle\n\n(x - 4)² + y² = 4.\n\nWhat is m²?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "The two lines y = mx through the origin are tangent to the circle"
+            },
+            {
+              "type": "math",
+              "content": "\\[(x - 4)^{2} + y^{2} = 4.\\]"
+            },
+            {
+              "type": "math",
+              "content": "\\[What is m^{2}?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "1/3",
+              "tex": "\\(1/3\\)"
+            },
+            {
+              "id": "B",
+              "text": "1/2",
+              "tex": "\\(1/2\\)"
+            },
+            {
+              "id": "C",
+              "text": "1",
+              "tex": "\\(1\\)"
+            },
+            {
+              "id": "D",
+              "text": "2",
+              "tex": "\\(2\\)"
+            },
+            {
+              "id": "E",
+              "text": "3",
+              "tex": "\\(3\\)"
+            }
+          ],
+          "correctOptionId": "A",
+          "diagram": {
+            "id": "m2_q11_two_tangents",
+            "svgPath": "/diagrams/svg/esat-m2-module-2-q11.svg",
+            "pngPath": "/diagrams/png/esat-m2-module-2-q11.png",
+            "alt": "Circle centred at (4,0), radius two, with two tangents drawn from the origin.",
+            "notToScale": true
+          },
+          "authorNotes": {
+            "solution": "Substitute y = mx into the circle: (1 + m²)x² - 8x + 12 = 0. Tangency requires discriminant zero, so 64 - 48(1 + m²) = 0. Hence 16 = 48m² and m² = 1/3.",
+            "tip": "Tangency turns the substituted intersection equation into a repeated-root quadratic.",
+            "distractors": {
+              "B": "Uses 4² instead of the circle's r² = 4 when expanding.",
+              "C": "Assumes the tangent gradients are ±1 from the sketch.",
+              "D": "Solves 16 = 8m² after losing the factor 1 + m².",
+              "E": "Finds the reciprocal after rearranging the discriminant equation."
+            },
+            "calibration": "NSAA 2018 Section 1, Q83, external tangents to a circle; ENGAA 2021 Q11, repeated-root intersection condition.",
+            "calibrationSource": {
+              "label": "NSAA 2018",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07120537/NSAA_2018_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q12",
+          "module": 2,
+          "questionNumber": 12,
+          "difficulty": "easy",
+          "syllabus": {
+            "primaryCode": "MM4.1",
+            "primaryTopic": "Trigonometry: cosine rule",
+            "secondaryTopic": null
+          },
+          "estimatedSeconds": 45,
+          "strongQuestion": false,
+          "stemPlain": "In a triangle, two sides of lengths 4 and 5 enclose angle θ. The side opposite θ has length 3.\n\nWhat is cos θ?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "In a triangle, two sides of lengths 4 and 5 enclose angle θ. The side opposite θ has length 3."
+            },
+            {
+              "type": "math",
+              "content": "\\[What is cos θ?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "1/5",
+              "tex": "\\(1/5\\)"
+            },
+            {
+              "id": "B",
+              "text": "2/5",
+              "tex": "\\(2/5\\)"
+            },
+            {
+              "id": "C",
+              "text": "3/5",
+              "tex": "\\(3/5\\)"
+            },
+            {
+              "id": "D",
+              "text": "3/4",
+              "tex": "\\(3/4\\)"
+            },
+            {
+              "id": "E",
+              "text": "4/5",
+              "tex": "\\(4/5\\)"
+            }
+          ],
+          "correctOptionId": "E",
+          "diagram": {
+            "id": "m2_q12_triangle",
+            "svgPath": "/diagrams/svg/esat-m2-module-2-q12.svg",
+            "pngPath": "/diagrams/png/esat-m2-module-2-q12.png",
+            "alt": "Right triangle with side lengths three, four and five, with angle theta between sides four and five.",
+            "notToScale": true
+          },
+          "authorNotes": {
+            "solution": "By the cosine rule, 3² = 4² + 5² - 2(4)(5)cos θ. Thus 9 = 41 - 40cos θ, so cos θ = 32/40 = 4/5.",
+            "tip": "The side opposite the angle is the one that appears alone on the left of the cosine rule.",
+            "distractors": {
+              "A": "Uses the smallest side divided by the largest as the cosine.",
+              "B": "Uses 16/40 after omitting 5².",
+              "C": "Uses sin θ from a 3-4-5 triangle.",
+              "D": "Uses adjacent/opposite rather than adjacent/hypotenuse in the right triangle."
+            },
+            "calibration": "Official 2026 Notes on Mathematics, MM4.1 cosine-rule examples; broader diagram-led ESAT trigonometry style.",
+            "calibrationSource": {
+              "label": "Official ESAT Mathematics 2 guidance",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q13",
+          "module": 2,
+          "questionNumber": 13,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM4.1",
+            "primaryTopic": "Trigonometry: sine rule ambiguous case",
+            "secondaryTopic": null
+          },
+          "estimatedSeconds": 70,
+          "strongQuestion": false,
+          "stemPlain": "A triangle ABC satisfies A = 30°, a = 4 and b = 6, where side a is opposite A and side b is opposite B.\n\nHow many different triangles satisfy these data?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "A triangle ABC satisfies A = 30°, a = 4 and b = 6, where side a is opposite A and side b is opposite B."
+            },
+            {
+              "type": "math",
+              "content": "\\[How many different triangles satisfy these data?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "0",
+              "tex": "\\(0\\)"
+            },
+            {
+              "id": "B",
+              "text": "1",
+              "tex": "\\(1\\)"
+            },
+            {
+              "id": "C",
+              "text": "2",
+              "tex": "\\(2\\)"
+            },
+            {
+              "id": "D",
+              "text": "3",
+              "tex": "\\(3\\)"
+            }
+          ],
+          "correctOptionId": "C",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "The sine rule gives sin B = b sin A/a = 6(1/2)/4 = 3/4. There is an acute value B and its obtuse supplement. Since the acute B is greater than 30°, its supplement still leaves A + B < 180°. Both triangles are valid.",
+            "tip": "In an angle-side-side problem, check both B and 180° - B.",
+            "distractors": {
+              "A": "Treats b > a as impossible even though B is also larger than A.",
+              "B": "Keeps only the principal acute value of B.",
+              "D": "Counts the acute angle, its supplement and a reflected drawing as three different triangles."
+            },
+            "calibration": "Official 2026 Notes on Mathematics and specification MM4.1, which explicitly includes the ambiguous sine-rule case.",
+            "calibrationSource": {
+              "label": "Official ESAT Mathematics 2 guidance",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q14",
+          "module": 2,
+          "questionNumber": 14,
+          "difficulty": "hard",
+          "syllabus": {
+            "primaryCode": "MM4.6",
+            "primaryTopic": "Trigonometry: equations and periodicity",
+            "secondaryTopic": "MM4.4 tangent graph"
+          },
+          "estimatedSeconds": 80,
+          "strongQuestion": true,
+          "stemPlain": "How many solutions of\n\ntan x (tan²x - 1) = 0\n\nlie in 0 ≤ x ≤ 2π?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "How many solutions of"
+            },
+            {
+              "type": "math",
+              "content": "\\[tan x (tan^{2}x - 1) = 0\\]"
+            },
+            {
+              "type": "math",
+              "content": "\\[lie in 0 \\le  x \\le  2\\pi?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "1",
+              "tex": "\\(1\\)"
+            },
+            {
+              "id": "B",
+              "text": "2",
+              "tex": "\\(2\\)"
+            },
+            {
+              "id": "C",
+              "text": "3",
+              "tex": "\\(3\\)"
+            },
+            {
+              "id": "D",
+              "text": "4",
+              "tex": "\\(4\\)"
+            },
+            {
+              "id": "E",
+              "text": "5",
+              "tex": "\\(5\\)"
+            },
+            {
+              "id": "F",
+              "text": "6",
+              "tex": "\\(6\\)"
+            },
+            {
+              "id": "G",
+              "text": "7",
+              "tex": "\\(7\\)"
+            }
+          ],
+          "correctOptionId": "G",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "Either tan x = 0 or tan x = ±1. In the closed interval, tan x = 0 at 0, π and 2π, giving three solutions. The equations tan x = 1 and tan x = -1 give two each, for four more. The undefined points π/2 and 3π/2 are not solutions. Total: 7.",
+            "tip": "Count endpoints carefully and exclude the vertical asymptotes of tan x.",
+            "distractors": {
+              "A": "Counts only the factor tan x = 0 at x = 0.",
+              "B": "Counts only the two tan x = 1 solutions.",
+              "C": "Counts tan x = 0 but omits both ±1 branches.",
+              "D": "Counts the ±1 branches but omits tan x = 0.",
+              "E": "Counts two zeros of tan and the four ±1 solutions, then loses one branch.",
+              "F": "Omits one of the equal endpoints 0 or 2π."
+            },
+            "calibration": "NSAA 2018 Section 1, Q75, counting all trigonometric solutions in a specified interval.",
+            "calibrationSource": {
+              "label": "NSAA 2018",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07120537/NSAA_2018_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q15",
+          "module": 2,
+          "questionNumber": 15,
+          "difficulty": "hard",
+          "syllabus": {
+            "primaryCode": "MM4.2",
+            "primaryTopic": "Trigonometry: radians and segments",
+            "secondaryTopic": null
+          },
+          "estimatedSeconds": 80,
+          "strongQuestion": false,
+          "stemPlain": "A sector of radius 3 has perimeter 12. The minor segment between its arc and chord is shaded.\n\nWhat is the exact shaded area?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "A sector of radius 3 has perimeter 12. The minor segment between its arc and chord is shaded."
+            },
+            {
+              "type": "math",
+              "content": "\\[What is the exact shaded area?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "9sin 2",
+              "tex": "\\(9sin 2\\)"
+            },
+            {
+              "id": "B",
+              "text": "9 - 9sin 2",
+              "tex": "\\(9 - 9sin 2\\)"
+            },
+            {
+              "id": "C",
+              "text": "9 + (9/2)sin 2",
+              "tex": "\\(9 + (9/2)sin 2\\)"
+            },
+            {
+              "id": "D",
+              "text": "18 - (9/2)sin 2",
+              "tex": "\\(18 - (9/2)sin 2\\)"
+            },
+            {
+              "id": "E",
+              "text": "9 - 9sin 1",
+              "tex": "\\(9 - 9sin 1\\)"
+            },
+            {
+              "id": "F",
+              "text": "9 - (9/2)sin 2",
+              "tex": "\\(9 - (9/2)sin 2\\)"
+            }
+          ],
+          "correctOptionId": "F",
+          "diagram": {
+            "id": "m2_q15_segment",
+            "svgPath": "/diagrams/svg/esat-m2-module-2-q15.svg",
+            "pngPath": "/diagrams/png/esat-m2-module-2-q15.png",
+            "alt": "Circle sector of radius three and angle two radians with its minor segment shaded.",
+            "notToScale": true
+          },
+          "authorNotes": {
+            "solution": "The arc length is 12 - 2(3) = 6, so the angle is θ = 6/3 = 2 radians. The sector area is (1/2)(3²)(2) = 9. The triangle area is (1/2)(3²)sin 2 = (9/2)sin 2. Subtracting gives 9 - (9/2)sin 2.",
+            "tip": "Use the perimeter to find the arc length before finding the angle.",
+            "distractors": {
+              "A": "Reports twice the triangle area.",
+              "B": "Omits the factor 1/2 in the triangle area.",
+              "C": "Adds the triangle to the sector.",
+              "D": "Uses 18 as the sector area.",
+              "E": "Halves the angle inside the sine as well as in the triangle formula."
+            },
+            "calibration": "ENGAA 2021 Section 1, Q27, circular segment area; official specification MM4.2 radian measure.",
+            "calibrationSource": {
+              "label": "ENGAA 2021",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07115611/ENGAA_2021_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q16",
+          "module": 2,
+          "questionNumber": 16,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM5.2",
+            "primaryTopic": "Exponentials and logarithms: logarithmic equations",
+            "secondaryTopic": "MM1.3 quadratics"
+          },
+          "estimatedSeconds": 70,
+          "strongQuestion": false,
+          "stemPlain": "Solve\n\nlog₂(x - 1) + log₂(x - 3) = 3.",
+          "stem": [
+            {
+              "type": "text",
+              "content": "Solve"
+            },
+            {
+              "type": "math",
+              "content": "\\[log₂(x - 1) + log₂(x - 3) = 3.\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "x = -1 only",
+              "tex": "\\(x = -1\\text{ only}\\)"
+            },
+            {
+              "id": "B",
+              "text": "x = 5 only",
+              "tex": "\\(x = 5\\text{ only}\\)"
+            },
+            {
+              "id": "C",
+              "text": "x = -1 or 5",
+              "tex": "\\(x = -1\\text{ or }5\\)"
+            },
+            {
+              "id": "D",
+              "text": "x = 3 or 5",
+              "tex": "\\(x = 3\\text{ or }5\\)"
+            },
+            {
+              "id": "E",
+              "text": "no real solution",
+              "tex": null
+            }
+          ],
+          "correctOptionId": "B",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "Combine logs: (x - 1)(x - 3) = 8. Hence x² - 4x - 5 = 0, so x = -1 or 5. The logarithms require x > 3, leaving x = 5 only.",
+            "tip": "Apply the logarithm domain after solving the algebraic equation.",
+            "distractors": {
+              "A": "Keeps only the algebraic root that makes both log arguments negative.",
+              "C": "Keeps both quadratic roots without checking the domain.",
+              "D": "Treats the boundary x = 3 as a solution even though log 0 is undefined.",
+              "E": "Rejects both roots after using x > 0 rather than x > 3."
+            },
+            "calibration": "ENGAA 2023 Section 1, Q35, logarithmic equation with a necessary domain check.",
+            "calibrationSource": {
+              "label": "ENGAA 2023",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07115605/ENGAA_2023_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q17",
+          "module": 2,
+          "questionNumber": 17,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM5.3",
+            "primaryTopic": "Exponentials and logarithms: reducible exponential equations",
+            "secondaryTopic": "MM1.3 quadratics"
+          },
+          "estimatedSeconds": 65,
+          "strongQuestion": false,
+          "stemPlain": "What is the complete solution set of\n\n4ˣ - 5 × 2ˣ + 4 = 0?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "What is the complete solution set of"
+            },
+            {
+              "type": "math",
+              "content": "\\[4ˣ - 5 \\times  2ˣ + 4 = 0?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "{-2, 0}",
+              "tex": "\\({-2, 0}\\)"
+            },
+            {
+              "id": "B",
+              "text": "{0}",
+              "tex": "\\({0}\\)"
+            },
+            {
+              "id": "C",
+              "text": "{2}",
+              "tex": "\\({2}\\)"
+            },
+            {
+              "id": "D",
+              "text": "{0, 2}",
+              "tex": "\\({0, 2}\\)"
+            },
+            {
+              "id": "E",
+              "text": "{1, 4}",
+              "tex": "\\({1, 4}\\)"
+            }
+          ],
+          "correctOptionId": "D",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "Let u = 2ˣ > 0. Then u² - 5u + 4 = 0, so u = 1 or 4. Therefore 2ˣ = 1 gives x = 0, and 2ˣ = 4 gives x = 2.",
+            "tip": "When two powers are related, substitute for the smaller base power.",
+            "distractors": {
+              "A": "Converts u = 4 to x = -2.",
+              "B": "Keeps only u = 1.",
+              "C": "Keeps only u = 4.",
+              "E": "Reports the u-values rather than converting back to x."
+            },
+            "calibration": "NSAA 2019 Section 1, Q81, reducing an exponential equation to a quadratic.",
+            "calibrationSource": {
+              "label": "NSAA 2019",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07120534/NSAA_2019_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q18",
+          "module": 2,
+          "questionNumber": 18,
+          "difficulty": "easy",
+          "syllabus": {
+            "primaryCode": "MM5.1",
+            "primaryTopic": "Exponentials and logarithms: exponential models",
+            "secondaryTopic": null
+          },
+          "estimatedSeconds": 40,
+          "strongQuestion": false,
+          "stemPlain": "A quantity is modelled by\n\nN(t) = 1600 × 2^(-t/3).\n\nFor what value of t is N(t) = 800?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "A quantity is modelled by"
+            },
+            {
+              "type": "math",
+              "content": "\\[N(t) = 1600 \\times  2^{-t/3}.\\]"
+            },
+            {
+              "type": "math",
+              "content": "\\[For what value of t is N(t) = 800?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "3",
+              "tex": "\\(3\\)"
+            },
+            {
+              "id": "B",
+              "text": "6",
+              "tex": "\\(6\\)"
+            },
+            {
+              "id": "C",
+              "text": "9",
+              "tex": "\\(9\\)"
+            },
+            {
+              "id": "D",
+              "text": "12",
+              "tex": "\\(12\\)"
+            },
+            {
+              "id": "E",
+              "text": "24",
+              "tex": "\\(24\\)"
+            }
+          ],
+          "correctOptionId": "A",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "800/1600 = 1/2 = 2⁻¹. Hence -t/3 = -1, so t = 3.",
+            "tip": "Compare the model with its initial value before solving the exponent.",
+            "distractors": {
+              "B": "Treats one halving as two periods.",
+              "C": "Uses the denominator 3 as a multiplier twice.",
+              "D": "Uses 800/1600 = 1/4.",
+              "E": "Divides 1600 by the exponent denominator instead of using the ratio."
+            },
+            "calibration": "Official 2026 Notes on Mathematics, MM5.1 exponential graphs and simple growth-decay models.",
+            "calibrationSource": {
+              "label": "Official ESAT Mathematics 2 guidance",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q19",
+          "module": 2,
+          "questionNumber": 19,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM6.2",
+            "primaryTopic": "Differentiation: rational powers",
+            "secondaryTopic": "MM1.1 indices"
+          },
+          "estimatedSeconds": 70,
+          "strongQuestion": false,
+          "stemPlain": "Given\n\ny = (x³ + 2x)/√x,\n\nfind dy/dx when x = 4.",
+          "stem": [
+            {
+              "type": "text",
+              "content": "Given"
+            },
+            {
+              "type": "math",
+              "content": "\\[y = (x^{3} + 2x)/\\sqrt{x},\\]"
+            },
+            {
+              "type": "math",
+              "content": "\\[find dy/dx when x = 4.\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "9/2",
+              "tex": "\\(9/2\\)"
+            },
+            {
+              "id": "B",
+              "text": "10",
+              "tex": "\\(10\\)"
+            },
+            {
+              "id": "C",
+              "text": "21/2",
+              "tex": "\\(21/2\\)"
+            },
+            {
+              "id": "D",
+              "text": "20",
+              "tex": "\\(20\\)"
+            },
+            {
+              "id": "E",
+              "text": "41/2",
+              "tex": "\\(41/2\\)"
+            }
+          ],
+          "correctOptionId": "E",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "First simplify: y = x^(5/2) + 2x^(1/2). Thus dy/dx = (5/2)x^(3/2) + x^(-1/2). At x = 4, this is (5/2)(8) + 1/2 = 41/2.",
+            "tip": "Simplify powers before differentiating.",
+            "distractors": {
+              "A": "Substitutes x = 4 before differentiating and differentiates the resulting number.",
+              "B": "Uses x^(3/2) = 4.",
+              "C": "Uses (5/2)(4) + 1/2.",
+              "D": "Drops the derivative of 2x^(1/2)."
+            },
+            "calibration": "ENGAA 2021 Section 1, Q21, differentiating an expression after index simplification.",
+            "calibrationSource": {
+              "label": "ENGAA 2021",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07115611/ENGAA_2021_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q20",
+          "module": 2,
+          "questionNumber": 20,
+          "difficulty": "hard",
+          "syllabus": {
+            "primaryCode": "MM6.3",
+            "primaryTopic": "Differentiation: strictly increasing functions",
+            "secondaryTopic": "MM1.3 discriminant"
+          },
+          "estimatedSeconds": 85,
+          "strongQuestion": false,
+          "stemPlain": "For which values of a is\n\nf'(x) > 0 for every real x, where\n\nf(x) = x³ + ax² + 3x?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "For which values of a is"
+            },
+            {
+              "type": "math",
+              "content": "\\[f'(x) > 0 for every real x, where\\]"
+            },
+            {
+              "type": "math",
+              "content": "\\[f(x) = x^{3} + ax^{2} + 3x?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "a < -3",
+              "tex": "\\(a < -3\\)"
+            },
+            {
+              "id": "B",
+              "text": "a > 3",
+              "tex": "\\(a > 3\\)"
+            },
+            {
+              "id": "C",
+              "text": "-3 < a < 3",
+              "tex": "\\(-3 < a < 3\\)"
+            },
+            {
+              "id": "D",
+              "text": "a ≤ -3 or a ≥ 3",
+              "tex": "\\(a \\le  -3\\text{ or }a \\ge  3\\)"
+            },
+            {
+              "id": "E",
+              "text": "-3 ≤ a ≤ 3",
+              "tex": "\\(-3 \\le  a \\le  3\\)"
+            }
+          ],
+          "correctOptionId": "C",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "f'(x) = 3x² + 2ax + 3. This upward-opening quadratic is positive for every real x exactly when it has no real roots, so its discriminant is negative: (2a)² - 36 < 0. Hence a² < 9, giving -3 < a < 3.",
+            "tip": "A positive quadratic for all real x needs positive leading coefficient and negative discriminant.",
+            "distractors": {
+              "A": "Chooses one exterior interval after reversing the discriminant inequality.",
+              "B": "Chooses the other exterior interval.",
+              "D": "Uses discriminant ≥ 0 instead of < 0.",
+              "E": "Includes a = ±3, where f'(x) equals zero at one x and so fails the stated > 0 condition."
+            },
+            "calibration": "Official 2026 Notes on Mathematics, MM6.3 increasing-function and parameter style; discriminant reasoning calibrated against NSAA 2018 Q77.",
+            "calibrationSource": {
+              "label": "NSAA 2018",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07120537/NSAA_2018_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q21",
+          "module": 2,
+          "questionNumber": 21,
+          "difficulty": "hard",
+          "syllabus": {
+            "primaryCode": "MM6.3",
+            "primaryTopic": "Differentiation: rates of change",
+            "secondaryTopic": "MM8.5 graph shape"
+          },
+          "estimatedSeconds": 80,
+          "strongQuestion": false,
+          "stemPlain": "A particle has displacement\n\ns(t) = t³ - 6t² + 9t\n\nfor 0 ≤ t ≤ 4. At which time or times is its velocity greatest?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "A particle has displacement"
+            },
+            {
+              "type": "math",
+              "content": "\\[s(t) = t^{3} - 6t^{2} + 9t\\]"
+            },
+            {
+              "type": "math",
+              "content": "\\[for 0 \\le  t \\le  4. At which time or times is its velocity greatest?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "t = 0 only",
+              "tex": "\\(t = 0\\text{ only}\\)"
+            },
+            {
+              "id": "B",
+              "text": "t = 1 only",
+              "tex": "\\(t = 1\\text{ only}\\)"
+            },
+            {
+              "id": "C",
+              "text": "t = 2 only",
+              "tex": "\\(t = 2\\text{ only}\\)"
+            },
+            {
+              "id": "D",
+              "text": "t = 3 only",
+              "tex": "\\(t = 3\\text{ only}\\)"
+            },
+            {
+              "id": "E",
+              "text": "t = 4 only",
+              "tex": "\\(t = 4\\text{ only}\\)"
+            },
+            {
+              "id": "F",
+              "text": "t = 1 and t = 3",
+              "tex": "\\(t = 1\\text{ and }t = 3\\)"
+            },
+            {
+              "id": "G",
+              "text": "t = 0 and t = 4",
+              "tex": "\\(t = 0\\text{ and }t = 4\\)"
+            }
+          ],
+          "correctOptionId": "G",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "Velocity is v(t) = 3t² - 12t + 9, an upward-opening quadratic. Its stationary point at t = 2 is a minimum, so compare the endpoints: v(0) = 9 and v(4) = 9. The greatest velocity occurs at both t = 0 and t = 4.",
+            "tip": "On a closed interval, a maximum can occur at an endpoint rather than at a stationary point.",
+            "distractors": {
+              "A": "Checks the first endpoint but not the second.",
+              "B": "Uses a zero of velocity rather than its maximum.",
+              "C": "Assumes every stationary point is a maximum.",
+              "D": "Uses the other zero of velocity.",
+              "E": "Checks the second endpoint but not the first.",
+              "F": "Uses the two times when displacement is stationary."
+            },
+            "calibration": "Official 2026 Notes on Mathematics, MM6.1 rate interpretation and MM6.3 endpoint-aware optimisation style.",
+            "calibrationSource": {
+              "label": "Official ESAT Mathematics 2 guidance",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q22",
+          "module": 2,
+          "questionNumber": 22,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM7.4",
+            "primaryTopic": "Integration: combining and reversing ranges",
+            "secondaryTopic": null
+          },
+          "estimatedSeconds": 60,
+          "strongQuestion": false,
+          "stemPlain": "It is given that\n\n∫₋₁² f(x) dx = 5    and    ∫₄² f(x) dx = -3.\n\nWhat is ∫₋₁⁴ f(x) dx?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "It is given that"
+            },
+            {
+              "type": "math",
+              "content": "\\[∫₋₁^{2} f(x) dx = 5    and    ∫₄^{2} f(x) dx = -3.\\]"
+            },
+            {
+              "type": "math",
+              "content": "\\[What is ∫₋₁^{4} f(x) dx?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "-8",
+              "tex": "\\(-8\\)"
+            },
+            {
+              "id": "B",
+              "text": "-5",
+              "tex": "\\(-5\\)"
+            },
+            {
+              "id": "C",
+              "text": "-2",
+              "tex": "\\(-2\\)"
+            },
+            {
+              "id": "D",
+              "text": "2",
+              "tex": "\\(2\\)"
+            },
+            {
+              "id": "E",
+              "text": "5",
+              "tex": "\\(5\\)"
+            },
+            {
+              "id": "F",
+              "text": "8",
+              "tex": "\\(8\\)"
+            }
+          ],
+          "correctOptionId": "F",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "Reversing the second integral gives ∫₂⁴ f(x) dx = 3. Therefore ∫₋₁⁴ f(x) dx = 5 + 3 = 8.",
+            "tip": "Reverse the limits before joining contiguous intervals.",
+            "distractors": {
+              "A": "Adds the magnitudes and then keeps the reversed sign.",
+              "B": "Uses only the first integral and changes its sign.",
+              "C": "Adds 5 and -3 without reversing the second integral.",
+              "D": "Subtracts 3 from 5 after recognising the intervals are contiguous.",
+              "E": "Ignores the second interval."
+            },
+            "calibration": "NSAA 2019 Section 1, Q83, combining definite integrals with different orientations.",
+            "calibrationSource": {
+              "label": "NSAA 2019",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07120534/NSAA_2019_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q23",
+          "module": 2,
+          "questionNumber": 23,
+          "difficulty": "hard",
+          "syllabus": {
+            "primaryCode": "MM7.1",
+            "primaryTopic": "Integration: total area between curve and axis",
+            "secondaryTopic": "MM8.6 roots"
+          },
+          "estimatedSeconds": 85,
+          "strongQuestion": true,
+          "stemPlain": "The curve y = (3/2)x(x - 1) is shown from x = 0 to x = 2. The regions between the curve and the x-axis are shaded.\n\nWhat is the total shaded area?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "The curve y = (3/2)x(x - 1) is shown from x = 0 to x = 2. The regions between the curve and the x-axis are shaded."
+            },
+            {
+              "type": "math",
+              "content": "\\[What is the total shaded area?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "1",
+              "tex": "\\(1\\)"
+            },
+            {
+              "id": "B",
+              "text": "3/2",
+              "tex": "\\(3/2\\)"
+            },
+            {
+              "id": "C",
+              "text": "2",
+              "tex": "\\(2\\)"
+            },
+            {
+              "id": "D",
+              "text": "5/2",
+              "tex": "\\(5/2\\)"
+            },
+            {
+              "id": "E",
+              "text": "3",
+              "tex": "\\(3\\)"
+            }
+          ],
+          "correctOptionId": "B",
+          "diagram": {
+            "id": "m2_q23_area_curve",
+            "svgPath": "/diagrams/svg/esat-m2-module-2-q23.svg",
+            "pngPath": "/diagrams/png/esat-m2-module-2-q23.png",
+            "alt": "Graph of y equals three halves x times x minus one from zero to two, with both axis regions shaded.",
+            "notToScale": true
+          },
+          "authorNotes": {
+            "solution": "An antiderivative is F(x) = x³/2 - 3x²/4. From 0 to 1, the integral is -1/4, so that area is 1/4. From 1 to 2, the integral is F(2) - F(1) = 1 - (-1/4) = 5/4. The total area is 1/4 + 5/4 = 3/2.",
+            "tip": "Split at every x-intercept and make each geometric contribution positive.",
+            "distractors": {
+              "A": "Uses only F(2), the signed integral from 0 to 2.",
+              "C": "Adds the magnitudes but doubles the smaller region.",
+              "D": "Adds 5/4 and 5/4, treating the two regions as equal.",
+              "E": "Omits the factor 1/2 when integrating the leading term."
+            },
+            "calibration": "ENGAA 2018 Section 1, Q29, exact enclosed area; official MM7.1 distinction between signed integral and geometric area.",
+            "calibrationSource": {
+              "label": "ENGAA 2018",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2024/05/07113017/ENGAA_2018_S1_QuestionPaper.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q24",
+          "module": 2,
+          "questionNumber": 24,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM7.3",
+            "primaryTopic": "Integration: Fundamental Theorem of Calculus",
+            "secondaryTopic": "MM1.5 inequalities"
+          },
+          "estimatedSeconds": 70,
+          "strongQuestion": false,
+          "stemPlain": "Let\n\nF(x) = ∫₀ˣ (3t² - 12t + 9) dt.\n\nOn which interval is F decreasing?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "Let"
+            },
+            {
+              "type": "math",
+              "content": "\\[F(x) = ∫₀ˣ (3t^{2} - 12t + 9) dt.\\]"
+            },
+            {
+              "type": "math",
+              "content": "\\[On which interval is F decreasing?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "x < 1",
+              "tex": "\\(x < 1\\)"
+            },
+            {
+              "id": "B",
+              "text": "x > 3",
+              "tex": "\\(x > 3\\)"
+            },
+            {
+              "id": "C",
+              "text": "x < 1 or x > 3",
+              "tex": "\\(x < 1\\text{ or }x > 3\\)"
+            },
+            {
+              "id": "D",
+              "text": "1 < x < 3",
+              "tex": "\\(1 < x < 3\\)"
+            },
+            {
+              "id": "E",
+              "text": "-1 < x < 3",
+              "tex": "\\(-1 < x < 3\\)"
+            }
+          ],
+          "correctOptionId": "D",
+          "diagram": null,
+          "authorNotes": {
+            "solution": "By the Fundamental Theorem, F'(x) = 3x² - 12x + 9 = 3(x - 1)(x - 3). This is negative between its roots, so F decreases for 1 < x < 3.",
+            "tip": "Differentiate the integral by reading off its integrand.",
+            "distractors": {
+              "A": "Uses only the interval to the left of the first root.",
+              "B": "Uses only the interval to the right of the second root.",
+              "C": "Selects where the upward-opening derivative is positive.",
+              "E": "Uses -1 as a root after a sign error in factorisation."
+            },
+            "calibration": "Official 2026 Notes on Mathematics, MM7.3 Fundamental Theorem examples combined with MM6.3 monotonicity.",
+            "calibrationSource": {
+              "label": "Official ESAT Mathematics 2 guidance",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q25",
+          "module": 2,
+          "questionNumber": 25,
+          "difficulty": "easy",
+          "syllabus": {
+            "primaryCode": "MM8.2",
+            "primaryTopic": "Graphs of functions: horizontal transformations",
+            "secondaryTopic": "MM8.6 roots"
+          },
+          "estimatedSeconds": 50,
+          "strongQuestion": false,
+          "stemPlain": "The graph of y = f(x) has vertical asymptote x = 2 and crosses the x-axis at x = 5, as shown.\n\nFor y = f(2x + 1), which pair is correct?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "The graph of y = f(x) has vertical asymptote x = 2 and crosses the x-axis at x = 5, as shown."
+            },
+            {
+              "type": "math",
+              "content": "\\[For y = f(2x + 1), which pair is correct?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "asymptote x = 1/2; root x = 2",
+              "tex": null
+            },
+            {
+              "id": "B",
+              "text": "asymptote x = 3/2; root x = 3",
+              "tex": null
+            },
+            {
+              "id": "C",
+              "text": "asymptote x = 1; root x = 5/2",
+              "tex": null
+            },
+            {
+              "id": "D",
+              "text": "asymptote x = 3; root x = 6",
+              "tex": null
+            },
+            {
+              "id": "E",
+              "text": "asymptote x = 4; root x = 10",
+              "tex": null
+            }
+          ],
+          "correctOptionId": "A",
+          "diagram": {
+            "id": "m2_q25_rational_transform",
+            "svgPath": "/diagrams/svg/esat-m2-module-2-q25.svg",
+            "pngPath": "/diagrams/png/esat-m2-module-2-q25.png",
+            "alt": "Rational graph with vertical asymptote x equals 2 and root x equals 5.",
+            "notToScale": true
+          },
+          "authorNotes": {
+            "solution": "The asymptote occurs when 2x + 1 = 2, giving x = 1/2. The root occurs when 2x + 1 = 5, giving x = 2.",
+            "tip": "Transform important input values by solving the inside equation, not by shifting the picture by inspection.",
+            "distractors": {
+              "B": "Adds 1 before dividing both original x-values by 2.",
+              "C": "Divides the original x-values by 2 but ignores the +1.",
+              "D": "Adds 1 directly to both original x-values.",
+              "E": "Multiplies both original x-values by 2."
+            },
+            "calibration": "Official Pearson ESAT Mathematics 2 specimen and 2026 Notes MM8.2 horizontal-transformation style.",
+            "calibrationSource": {
+              "label": "Official ESAT Mathematics 2 guidance",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q26",
+          "module": 2,
+          "questionNumber": 26,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM8.1",
+            "primaryTopic": "Graphs of functions: modulus graphs",
+            "secondaryTopic": "MM8.2 transformations"
+          },
+          "estimatedSeconds": 65,
+          "strongQuestion": false,
+          "stemPlain": "The graph shown is V-shaped, has vertex (2, -1), and passes through (0, 3).\n\nWhich is its equation?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "The graph shown is V-shaped, has vertex (2, -1), and passes through (0, 3)."
+            },
+            {
+              "type": "math",
+              "content": "\\[Which is its equation?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "y = |x - 2| - 1",
+              "tex": "\\(y = |x - 2| - 1\\)"
+            },
+            {
+              "id": "B",
+              "text": "y = 2|x + 2| - 1",
+              "tex": "\\(y = 2|x + 2| - 1\\)"
+            },
+            {
+              "id": "C",
+              "text": "y = |2x - 2| - 1",
+              "tex": "\\(y = |2x - 2| - 1\\)"
+            },
+            {
+              "id": "D",
+              "text": "y = 2|x - 2| + 1",
+              "tex": "\\(y = 2|x - 2| + 1\\)"
+            },
+            {
+              "id": "E",
+              "text": "y = 2|x - 2| - 1",
+              "tex": "\\(y = 2|x - 2| - 1\\)"
+            }
+          ],
+          "correctOptionId": "E",
+          "diagram": {
+            "id": "m2_q26_modulus",
+            "svgPath": "/diagrams/svg/esat-m2-module-2-q26.svg",
+            "pngPath": "/diagrams/png/esat-m2-module-2-q26.png",
+            "alt": "V-shaped modulus graph with vertex (2,-1) and point (0,3).",
+            "notToScale": true
+          },
+          "authorNotes": {
+            "solution": "A modulus graph with vertex (2, -1) has form y = a|x - 2| - 1. Using (0, 3), 3 = 2a - 1, so a = 2. Hence y = 2|x - 2| - 1.",
+            "tip": "Use the vertex to fix the shifts, then one point to fix the stretch.",
+            "distractors": {
+              "A": "Has the correct vertex but slope magnitude 1, so it passes through (0, 1).",
+              "B": "Places the vertex at (-2, -1).",
+              "C": "Places the vertex at (1, -1).",
+              "D": "Places the vertex at (2, 1)."
+            },
+            "calibration": "Official 2026 Notes on Mathematics, MM8.1 modulus graphs and MM8.2 transformations.",
+            "calibrationSource": {
+              "label": "Official ESAT Mathematics 2 guidance",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf"
+            }
+          }
+        },
+        {
+          "id": "esat-m2-module-2-q27",
+          "module": 2,
+          "questionNumber": 27,
+          "difficulty": "medium",
+          "syllabus": {
+            "primaryCode": "MM8.7",
+            "primaryTopic": "Graphs of functions: intersections",
+            "secondaryTopic": "MM8.1 modulus"
+          },
+          "estimatedSeconds": 75,
+          "strongQuestion": false,
+          "stemPlain": "How many real solutions does\n\n|x² - 1| = x + 1\n\nhave?",
+          "stem": [
+            {
+              "type": "text",
+              "content": "How many real solutions does"
+            },
+            {
+              "type": "math",
+              "content": "\\[|x^{2} - 1| = x + 1\\]"
+            },
+            {
+              "type": "math",
+              "content": "\\[have?\\]"
+            }
+          ],
+          "options": [
+            {
+              "id": "A",
+              "text": "1",
+              "tex": "\\(1\\)"
+            },
+            {
+              "id": "B",
+              "text": "2",
+              "tex": "\\(2\\)"
+            },
+            {
+              "id": "C",
+              "text": "3",
+              "tex": "\\(3\\)"
+            },
+            {
+              "id": "D",
+              "text": "4",
+              "tex": "\\(4\\)"
+            },
+            {
+              "id": "E",
+              "text": "5",
+              "tex": "\\(5\\)"
+            }
+          ],
+          "correctOptionId": "C",
+          "diagram": {
+            "id": "m2_q27_intersections",
+            "svgPath": "/diagrams/svg/esat-m2-module-2-q27.svg",
+            "pngPath": "/diagrams/png/esat-m2-module-2-q27.png",
+            "alt": "Graphs of y equals absolute x squared minus one and y equals x plus one, meeting at three labelled points.",
+            "notToScale": true
+          },
+          "authorNotes": {
+            "solution": "For -1 ≤ x ≤ 1, 1 - x² = x + 1, so x(x + 1) = 0 and x = -1 or 0. For x ≥ 1, x² - 1 = x + 1, so (x - 2)(x + 1) = 0 and only x = 2 fits this region. For x < -1 the right side is negative, so there are no solutions. Total: 3.",
+            "tip": "Split where the expression inside the modulus changes sign, and respect each region.",
+            "distractors": {
+              "A": "Keeps only the positive solution x = 2.",
+              "B": "Solves only the central modulus branch.",
+              "D": "Keeps x = -1 twice, once from each algebraic branch.",
+              "E": "Counts every algebraic root before checking branch conditions."
+            },
+            "calibration": "Official 2026 Notes on Mathematics, MM8.1 modulus graphs and MM8.7 graph-intersection interpretation.",
+            "calibrationSource": {
+              "label": "Official ESAT Mathematics 2 guidance",
+              "url": "https://uat-wp.s3.eu-west-2.amazonaws.com/wp-content/uploads/2026/06/30103537/Notes_on_Mathematics_-for_TMUA_and_ESAT_M2.pdf"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

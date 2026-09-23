@@ -1,0 +1,267 @@
+{
+  "spec_version": "1.0",
+  "needs_diagram": true,
+  "diagram_type": "geometry",
+  "diagram_id": "nsaa-2494-fixed",
+  "not_to_scale": true,
+  "coordinate_system": {
+    "x_min": 0.5,
+    "x_max": 9.5,
+    "y_min": 0.6,
+    "y_max": 7.6,
+    "equal_aspect": true,
+    "show_axes": false
+  },
+  "objects": [
+    {
+      "id": "circle",
+      "type": "circle",
+      "center": [
+        5.0,
+        4.2
+      ],
+      "radius": 2.3,
+      "fill": false
+    },
+    {
+      "id": "tangent",
+      "type": "line",
+      "start": [
+        1.2,
+        1.9000000000000004
+      ],
+      "end": [
+        8.8,
+        1.9000000000000004
+      ],
+      "style": "solid"
+    },
+    {
+      "id": "oa",
+      "type": "line",
+      "start": [
+        5.0,
+        4.2
+      ],
+      "end": [
+        5.0,
+        1.9000000000000004
+      ],
+      "style": "solid"
+    },
+    {
+      "id": "oc",
+      "type": "line",
+      "start": [
+        5.0,
+        4.2
+      ],
+      "end": [
+        2.734942175,
+        4.599390814
+      ],
+      "style": "solid"
+    },
+    {
+      "id": "ab",
+      "type": "line",
+      "start": [
+        5.0,
+        1.9000000000000004
+      ],
+      "end": [
+        6.761902212,
+        5.6784115029999995
+      ],
+      "style": "solid"
+    },
+    {
+      "id": "bc",
+      "type": "line",
+      "start": [
+        6.761902212,
+        5.6784115029999995
+      ],
+      "end": [
+        2.734942175,
+        4.599390814
+      ],
+      "style": "solid"
+    },
+    {
+      "id": "ca",
+      "type": "line",
+      "start": [
+        2.734942175,
+        4.599390814
+      ],
+      "end": [
+        5.0,
+        1.9000000000000004
+      ],
+      "style": "solid"
+    },
+    {
+      "id": "pt_o",
+      "type": "point",
+      "at": [
+        5.0,
+        4.2
+      ],
+      "size": 4
+    },
+    {
+      "id": "pt_a",
+      "type": "point",
+      "at": [
+        5.0,
+        1.9000000000000004
+      ],
+      "size": 4
+    },
+    {
+      "id": "pt_b",
+      "type": "point",
+      "at": [
+        6.761902212,
+        5.6784115029999995
+      ],
+      "size": 4
+    },
+    {
+      "id": "pt_c",
+      "type": "point",
+      "at": [
+        2.734942175,
+        4.599390814
+      ],
+      "size": 4
+    },
+    {
+      "id": "ang_yab",
+      "type": "angle_arc",
+      "vertex": [
+        5.0,
+        1.9000000000000004
+      ],
+      "point1": [
+        6.5,
+        1.9000000000000004
+      ],
+      "point2": [
+        6.761902212,
+        5.6784115029999995
+      ],
+      "radius": 0.85
+    },
+    {
+      "id": "ang_oca",
+      "type": "angle_arc",
+      "vertex": [
+        2.734942175,
+        4.599390814
+      ],
+      "point1": [
+        5.0,
+        4.2
+      ],
+      "point2": [
+        5.0,
+        1.9000000000000004
+      ],
+      "radius": 0.55
+    },
+    {
+      "id": "eq_ab_bc",
+      "type": "equal_length_ticks",
+      "seg1_start": [
+        5.0,
+        1.9000000000000004
+      ],
+      "seg1_end": [
+        6.761902212,
+        5.6784115029999995
+      ],
+      "seg2_start": [
+        6.761902212,
+        5.6784115029999995
+      ],
+      "seg2_end": [
+        2.734942175,
+        4.599390814
+      ]
+    }
+  ],
+  "labels": [
+    {
+      "id": "lab_o",
+      "text": "O",
+      "anchor": [
+        5.0,
+        4.2
+      ],
+      "preferred_position": "upper_right"
+    },
+    {
+      "id": "lab_a",
+      "text": "A",
+      "anchor": [
+        5.0,
+        1.9000000000000004
+      ],
+      "preferred_position": "below"
+    },
+    {
+      "id": "lab_b",
+      "text": "B",
+      "anchor": [
+        6.761902212,
+        5.6784115029999995
+      ],
+      "preferred_position": "upper_right"
+    },
+    {
+      "id": "lab_c",
+      "text": "C",
+      "anchor": [
+        2.734942175,
+        4.599390814
+      ],
+      "preferred_position": "left"
+    },
+    {
+      "id": "lab_x",
+      "text": "X",
+      "anchor": [
+        1.3499999999999999,
+        1.9000000000000004
+      ],
+      "preferred_position": "below"
+    },
+    {
+      "id": "lab_y",
+      "text": "Y",
+      "anchor": [
+        8.65,
+        1.9000000000000004
+      ],
+      "preferred_position": "below"
+    },
+    {
+      "id": "lab_65",
+      "text": "65\u00b0",
+      "anchor": [
+        6.15,
+        2.2500000000000004
+      ],
+      "preferred_position": "center"
+    }
+  ],
+  "annotations": [
+    {
+      "type": "caption",
+      "text": "Diagram not to scale",
+      "position": "bottom_center"
+    }
+  ]
+}

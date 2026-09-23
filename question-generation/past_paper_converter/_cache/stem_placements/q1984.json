@@ -1,0 +1,29 @@
+{
+  "questionId": 1984,
+  "examName": "ENGAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 29,
+  "stemBlocks": [
+    "An equilateral triangle of side 8 cm is drawn so that its vertices lie on the circumference of a circle, as shown in the diagram.",
+    "What is the total of the three areas shaded in the diagram, in cm$^2$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:42.193831+00:00",
+  "sourceImageHash": "346f94718729751081686bd5dee7119f6684fa2c1a18a21bd98616d1c7eb1c05",
+  "status": "ok"
+}

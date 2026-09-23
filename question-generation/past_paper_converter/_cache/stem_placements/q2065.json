@@ -1,0 +1,28 @@
+{
+  "questionId": 2065,
+  "examName": "ENGAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 30,
+  "stemBlocks": [
+    "A lorry accelerates along a straight, horizontal road with uniform acceleration.\nOil droplets from the lorry fall a small distance onto the road at a constant rate. The time interval between successive drips is $t$.\nThe diagram shows four successive oil droplets on the road after the lorry has passed.\nThe distance between the first two of these droplets is $x$ and the distance between the final two is $y$.\nWhich expression gives the acceleration of the lorry?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:32:52.518338+00:00",
+  "sourceImageHash": "7f164d92d03129c165b4304d96ccc68f4ad38fb984d313aa514658b341de89e0",
+  "status": "ok"
+}

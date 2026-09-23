@@ -1,0 +1,39 @@
+{
+  "stage": "idea_judge",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "selectivity_score": 0,
+    "checks": {
+      "schema_preserved": "pass",
+      "on_spec": "pass",
+      "reasoning_hinge_present": "pass",
+      "not_direct_substitution": "pass",
+      "wrong_paths_specific": "pass",
+      "visual_feasible": "pass",
+      "mcq_viable": "pass",
+      "difficulty_match": "pass",
+      "goldilocks_complexity": "pass"
+    },
+    "complexity_audit": {
+      "number_of_core_physics_principles": 2,
+      "estimated_solution_steps": 4,
+      "requires_derived_relationship": true,
+      "uses_multi_topic_chain": false,
+      "goldilocks_verdict": "good"
+    },
+    "reasoning_hinge_summary": "The candidate must synthesize the force balance condition (Weight = Drag) with geometric scaling laws (Mass ∝ r³, Area ∝ r²) to determine how terminal velocity scales with mass.",
+    "expected_mid_student_error": "Students will likely fail to correctly link the mass ratio to the area ratio, often assuming linear scaling (e.g., Area ∝ Mass) or failing to account for the square root dependency of velocity on the drag force.",
+    "notes": [
+      "The logic is compact and avoids multi-law extension by focusing purely on the proportionality chain.",
+      "The use of ratios makes this an ideal 'no-calculator' problem that tests conceptual fluency over arithmetic."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

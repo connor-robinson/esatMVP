@@ -1,0 +1,29 @@
+{
+  "questionId": 3388,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 59,
+  "stemBlocks": [
+    "The family tree shows inheritance of the alleles for one characteristic in a mammal. The gene for this characteristic was found on a non-sex chromosome in the nucleus.",
+    "What is the probability that individual 5 is homozygous for the allele R?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:10.881822+00:00",
+  "sourceImageHash": "9ccbbff07fae9e1d40aa6d6b4db1221e9ecc1759880dc1d364a1c238adf2da11",
+  "status": "ok"
+}

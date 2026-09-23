@@ -1,0 +1,30 @@
+{
+  "questionId": 2689,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 30,
+  "stemBlocks": [
+    "A circuit contains a $12\\text{V}$ battery, a thermistor and a fixed resistor connected in series.",
+    "The graph shows how the resistance of the thermistor varies with temperature.\nWhen the temperature of the thermistor is $10\\text{°C}$ the current in the circuit is $25\\text{ mA}$.",
+    "What is the current when the temperature of the thermistor is $80 \\text{°C}$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing resistance of a thermistor versus temperature.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 2,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:58.204197+00:00",
+  "sourceImageHash": "e3cebb33405623500a5f5b57035d5fbdde4cda1b90989a0df3da18fa3b4c7438",
+  "status": "ok"
+}

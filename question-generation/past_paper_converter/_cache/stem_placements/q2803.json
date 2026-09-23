@@ -1,0 +1,29 @@
+{
+  "questionId": 2803,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 64,
+  "stemBlocks": [
+    "The diagram shows some of the ways in which glucose can be added to or removed from blood plasma in humans.\nWhich hormones stimulate the processes shown by the arrows?",
+    "|  | process 1 | process 2 | process 3 |\n| --- | --- | --- | --- |\n| A | adrenaline | glucagon | insulin |\n| B | adrenaline | adrenaline glucagon | glucagon |\n| C | insulin | adrenaline | glucagon |\n| D | insulin | insulin | adrenaline glucagon |\n| E | glucagon | insulin | glucagon |\n| F | glucagon | glucagon | insulin |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.383310+00:00",
+  "sourceImageHash": "6b950244bf60fdf02f25c5095859993d8d0d09db311ee73184fda94ffc85f0f2",
+  "status": "ok"
+}

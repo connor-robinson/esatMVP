@@ -1,0 +1,30 @@
+{
+  "questionId": 2097,
+  "examName": "ENGAA",
+  "examYear": 2022,
+  "paperName": "Section 1",
+  "questionNumber": 22,
+  "stemBlocks": [
+    "The diagram represents a stationary wave in a medium.",
+    "The transverse waves that are creating the stationary wave travel at a speed of $300 \\text{ m s}^{-1}$ through the medium.",
+    "What is the frequency of the transverse waves?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "The diagram represents a stationary wave in a medium.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:34:34.979674+00:00",
+  "sourceImageHash": "c167eb317b6556dc8c65eca4ec7425f105f83887e18b42a5477bf66d51fb2e25",
+  "status": "ok"
+}

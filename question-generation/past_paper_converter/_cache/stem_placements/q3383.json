@@ -1,0 +1,30 @@
+{
+  "questionId": 3383,
+  "examName": "NSAA",
+  "examYear": 2022,
+  "paperName": "Section 2",
+  "questionNumber": 54,
+  "stemBlocks": [
+    "In cold conditions mice maintain their core body temperature by increased heat production.\nThe graph shows the effect of environmental temperature on oxygen consumption by one strain of mouse.\nMice of the same strain have been produced with a mutation that results in a thinner and less insulating layer of fat in their skin.",
+    "Which of the following statements is/are correct?",
+    "1 The homeostatic control of core body temperature only occurs in environmental temperatures between $28 \\text{ °C}$ and $40 \\text{ °C}$.\n2 Between $12 \\text{ °C}$ and $18 \\text{ °C}$, each $1 \\text{ °C}$ increase in temperature decreases the mean oxygen consumption by $1 \\frac{2}{3}$ arbitrary units.\n3 Between $10 \\text{ °C}$ and $20 \\text{ °C}$, the change in oxygen consumption for the mice with the mutation will decrease more than for the non-mutated mice."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing oxygen consumption vs environmental temperature.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:10.880072+00:00",
+  "sourceImageHash": "f9e31a48ffbc5d0a46d831e7319585254f422d40bcb6eb7e5bfc02d954e38d2c",
+  "status": "ok"
+}

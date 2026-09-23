@@ -1,0 +1,28 @@
+{
+  "questionId": 1797,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 4,
+  "stemBlocks": [
+    "The graph shown of quantity $y$ against quantity $x$ represents the motion of a body. (The scales on both axes are in the appropriate S.I. units, and the gravitational field strength $g$ is $10 \\text{ Nkg}^{-1}$.) Which two of the following could the graph represent? \\\\ 1 kinetic energy against velocity for an object of mass $10 \\text{ kg}$ undergoing free-fall \\\\ 2 potential energy against height for an object of mass $20 \\text{ kg}$ being lifted by a constant external force \\\\ 3 velocity against time for an object of mass $20 \\text{ kg}$ being accelerated by a resultant force of $100 \\text{ N}$ \\\\ 4 work done by an external force of $5 \\text{ N}$ against distance moved for an object of mass $12 \\text{ kg}$ being moved at constant speed by (and in the direction of) the external force"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:21:07.470425+00:00",
+  "sourceImageHash": "20023eda6f1a909c211a1b71d33b54c05200b069f0034f4f5c6574c718f96f20",
+  "status": "ok"
+}

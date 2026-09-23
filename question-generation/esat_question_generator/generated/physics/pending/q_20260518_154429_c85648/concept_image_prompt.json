@@ -1,0 +1,104 @@
+{
+  "image_id": "img1",
+  "model_purpose": "concept_visual",
+  "answer_depends_on_image": false,
+  "recommended_model": "MODEL_IMAGE_HIGH_QUALITY",
+  "prompt": "A brutally simple monochrome physics exam diagram showing two horizontal cylindrical wires, one positioned above the other. The top cylinder is shorter and thicker. The bottom cylinder is visibly longer and thinner than the top one. Place the label 'X' in an italic serif font just above the center of the top cylinder. Place the label 'Y' in an italic serif font just above the center of the bottom cylinder. Place the text '[diagram not to scale]' in an upright serif font centered at the very bottom of the image. The cylinders should be drawn with clean black outlines and simple elliptical ends to indicate they are wires, with no complex 3D shading or internal hatching. The background must be pure white #FFFFFF. No measurement arrows, no extra labels, no grid lines, and no photorealism.",
+  "negative_prompt": "Pure white background only; no grey paper, gradient, or texture. No extra labels. No overlap. No sans-serif fonts. No decorative shading. No photorealism. No colour unless explicitly requested. No exact answer-bearing measurements. No clutter. No malformed symbols. Do not place objects in the wrong support/location relationship. No unrequested arrows, force labels, field symbols, construction arcs, or explanatory overlays.",
+  "required_labels": [
+    "X",
+    "Y",
+    "[diagram not to scale]"
+  ],
+  "forbidden_labels": [
+    "L",
+    "2L",
+    "d",
+    "d/2",
+    "R"
+  ],
+  "label_anchors": [
+    {
+      "text": "X",
+      "label_type": "object",
+      "text_placement": "above_top_cylinder",
+      "leader_target": "none",
+      "must_not_point_at": [
+        "bottom cylinder"
+      ]
+    },
+    {
+      "text": "Y",
+      "label_type": "object",
+      "text_placement": "above_bottom_cylinder",
+      "leader_target": "none",
+      "must_not_point_at": [
+        "top cylinder"
+      ]
+    },
+    {
+      "text": "[diagram not to scale]",
+      "label_type": "apparatus_part",
+      "text_placement": "centered_bottom",
+      "leader_target": "none",
+      "must_not_point_at": [
+        "cylinders"
+      ]
+    }
+  ],
+  "layout_logic": {
+    "must_show_relations": [
+      "top cylinder (X) is above bottom cylinder (Y)",
+      "bottom cylinder (Y) is visibly longer than top cylinder (X)",
+      "bottom cylinder (Y) is visibly thinner (smaller diameter) than top cylinder (X)"
+    ],
+    "measurement_mapping": [],
+    "relative_size_constraints": [
+      "wire Y must appear longer than wire X",
+      "wire Y must appear thinner than wire X"
+    ]
+  },
+  "simplicity_limits": {
+    "max_object_types": 1,
+    "max_labels": 3,
+    "allow_force_arrows": false,
+    "allow_field_patterns": false,
+    "allow_construction_arcs": false,
+    "allow_mixed_representations": false
+  },
+  "hard_constraints": [
+    "wire Y must be longer and thinner than wire X",
+    "background must be pure white #FFFFFF with no grey fill or gradient",
+    "no measurement arrows or dimensions shown",
+    "no unrequested arrows, force labels, field symbols, or construction arcs"
+  ],
+  "style": {
+    "target_style": "tmua_engaa_exam_diagram",
+    "exam_style": true,
+    "black_and_white": true,
+    "background": "pure_white_#FFFFFF",
+    "serif_font": "Times New Roman-like",
+    "math_variables_italic": true,
+    "minimal": true,
+    "not_to_scale": true,
+    "no_overlap": true,
+    "logic_sensitive": true,
+    "brutally_simple": true
+  },
+  "post_generation_checks": {
+    "run_concept_image_verifier": true,
+    "verify_no_overlap": true,
+    "verify_font_exam_like": true,
+    "verify_no_extra_labels": true,
+    "verify_not_answer_bearing": true,
+    "verify_object_relations": true,
+    "verify_measurement_clarity": false,
+    "verify_relative_size_plausibility": true,
+    "verify_simplification_level": true,
+    "verify_no_unrequested_arrows_or_symbols": true,
+    "verify_visual_simplicity": true,
+    "verify_pure_white_background": true,
+    "verify_label_anchor_targets": true,
+    "verify_medium_labels_not_on_objects": true
+  }
+}

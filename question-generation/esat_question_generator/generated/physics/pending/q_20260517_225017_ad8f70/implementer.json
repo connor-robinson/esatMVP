@@ -1,0 +1,63 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_30453dc9",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Medium",
+      "task_signature": "compare_scenarios",
+      "primary_tag": "4",
+      "secondary_tags": [
+        "5"
+      ]
+    },
+    "question": {
+      "stem": "Two spheres of identical size and mass are placed in a cool room. One sphere has a matt black surface, and the other has a polished silver surface. Each sphere contains an internal electric heater.\n\nThe heaters supply the necessary power to keep both spheres at the same constant high temperature, which is well above the room temperature.\n\nLet $P_B$ be the electrical power supplied to the matt black sphere and $P_S$ be the electrical power supplied to the polished silver sphere.\n\nWhich statement correctly compares the powers?",
+      "options": {
+        "A": "$P_B > P_S$",
+        "B": "$P_S > P_B$",
+        "C": "$P_B = P_S$",
+        "D": "The relationship depends on the specific temperature of the spheres.",
+        "E": "The relationship depends on the material the spheres are made from, not just their surfaces.",
+        "F": "The powers cannot be compared without knowing the specific heat capacity of the spheres."
+      },
+      "correct_option": "A"
+    },
+    "visual_requirements": {
+      "visual_need": "concept_image_only",
+      "visual_role": "supportive",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": "A simple diagram showing two identical spheres in a room. One is labelled 'Matt Black', the other 'Polished Silver'. Each has a heater symbol inside. Arrows pointing away from the spheres indicate heat loss, with more/thicker arrows for the black sphere to visually represent higher heat loss."
+    },
+    "solution": {
+      "key_insight": "To maintain a constant temperature, the electrical power supplied must exactly balance the rate of thermal energy lost to the surroundings. A matt black surface is a better emitter of thermal radiation than a polished silver surface, so it loses energy faster and requires more power to compensate.",
+      "reasoning": "1. The spheres are maintained at a constant temperature. This implies a steady-state condition where the rate of energy input equals the rate of energy output (heat loss).\n2. The energy input is the electrical power from the heater, $P_{in} = P_{electrical}$.\n3. The energy output is the heat lost to the surroundings, $P_{out}$, which occurs via convection and radiation.\n4. Since the spheres are identical in size and at the same temperature, the rate of heat loss due to convection will be approximately the same for both.\n5. The rate of heat loss due to thermal radiation depends on the surface's emissivity. A matt black surface has a high emissivity, while a polished silver surface has a low emissivity.\n6. Therefore, the matt black sphere radiates thermal energy at a significantly higher rate than the polished silver sphere.\n7. The total rate of heat loss ($P_{out} = P_{convection} + P_{radiation}$) is therefore greater for the black sphere.\n8. To maintain the steady state, the power supplied to the black sphere must be greater than the power supplied to the silver sphere. Thus, $P_B > P_S$."
+    },
+    "distractor_map": {
+      "A": "Correct. The matt black sphere has a higher emissivity, causing it to lose heat more rapidly via radiation. To maintain a constant temperature, a greater input power ($P_B$) is required to balance this higher rate of heat loss.",
+      "B": "Incorrect. This reverses the principle of thermal radiation. Polished silver surfaces are poor emitters (and poor absorbers) of radiation, so the silver sphere loses less heat and requires less power.",
+      "C": "Incorrect. This mistake arises from focusing only on the identical size and temperature of the spheres, while neglecting the different rates of heat loss caused by their different surface properties.",
+      "D": "Incorrect. While the magnitude of the power required depends on the temperature, the black surface will always be a better emitter than the silver surface. Therefore, the relationship $P_B > P_S$ holds true for any temperature above that of the surroundings.",
+      "E": "Incorrect. Thermal radiation is a surface phenomenon. The rate of emission is determined by the properties of the surface (emissivity), not the bulk material underneath, assuming the surface is opaque.",
+      "F": "Incorrect. Specific heat capacity relates the energy required to *change* an object's temperature. Since the spheres are kept at a *constant* temperature, their specific heat capacity is irrelevant to the continuous power needed to balance heat loss."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Yes, the hinge is recognising that 'constant temperature' implies a steady state where input power must equal the rate of heat loss (P_in = P_out), which differs between the two spheres.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-pro",
+  "attempts": 1
+}

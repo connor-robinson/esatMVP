@@ -1,0 +1,30 @@
+{
+  "questionId": 3089,
+  "examName": "ENGAA",
+  "examYear": 2017,
+  "paperName": "Section 2",
+  "questionNumber": 15,
+  "stemBlocks": [
+    "The diagram shows the geometry for two slit diffraction of light, with the slits on the left and the viewing screen on the right; $d = 800 \\text{ nm}$, $L = 1 \\text{ m}$ and the speed of light is $3 \\times 10^8 \\text{ m s}^{-1}$.\nThe pair of slits is illuminated by laser light of wavelength $\\lambda = 600 \\text{ nm}$.",
+    "Which of the following statements are correct (where $n$ is an integer)?",
+    "1 Points of maximum brightness on the screen occur where the distances $r_1$ and $r_2$ differ by $n\\lambda$.\n2 Points of maximum brightness on the screen occur where the distances $r_1$ and $r_2$ differ by $(n + \\frac{1}{2})\\lambda$.\n3 Points of minimum brightness on the screen occur where the distances $r_1$ and $r_2$ differ by $(n + \\frac{1}{2})\\lambda$.\n4 For a diffraction pattern to appear, the light from the two slits must be coherent.\n5 The maxima are all of equal brightness."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:39:07.390730+00:00",
+  "sourceImageHash": "efc3f065a9dee156c40e36ce28854ae1bd48c686867fdc0ad34347b21bc6df17",
+  "status": "ok"
+}

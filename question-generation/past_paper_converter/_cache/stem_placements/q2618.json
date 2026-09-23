@@ -1,0 +1,29 @@
+{
+  "questionId": 2618,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 49,
+  "stemBlocks": [
+    "A 2.40 g lump of magnesium was added to 500 cm$^3$ of a 2.00 mol\\,dm$^{-3}$ solution of HCl in a conical flask that was on an electronic balance. The neck of the flask was plugged with cotton wool, and the decrease in mass of the flask and its contents was recorded at regular intervals. The mass of the hydrogen released (equal to the mass loss recorded) was plotted against time. The result is line 1 on the graph.",
+    "Which of the following experiments performed under the same conditions would give line 2? ($A_r$ value: Mg = 24.0)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:19.015333+00:00",
+  "sourceImageHash": "56075a82916c44b4a2eae5e3910591bd5511cc6825b536552d5b94d8ace88014",
+  "status": "ok"
+}

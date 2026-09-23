@@ -1,0 +1,30 @@
+{
+  "questionId": 2810,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 71,
+  "stemBlocks": [
+    "Two identical plant cells were removed from a leaf. One was placed in a concentrated sugar solution and the other was placed in distilled water, and both were left for 2 hours.\nAll other factors were kept constant during the experiment. The diagram shows the results, with regions of each cell labelled Q and S.",
+    "Which of the following statements is/are correct?",
+    "1 In the cell in distilled water, Q contains only distilled water.\n2 In the cell in concentrated sugar solution, the number of solute particles in Q increased over the two hours.\n3 S is a vacuum."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "cell in distilled water; cell in concentrated sugar solution",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.400014+00:00",
+  "sourceImageHash": "3b9393720cac1f19ce6305ef507f56c1cca2547309f783f96bf70556ac0400e2",
+  "status": "ok"
+}

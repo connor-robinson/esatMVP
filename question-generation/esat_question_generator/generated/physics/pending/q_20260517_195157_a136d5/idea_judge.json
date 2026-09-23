@@ -1,0 +1,32 @@
+{
+  "stage": "idea_judge",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "selectivity_score": 0,
+    "checks": {
+      "schema_preserved": "pass",
+      "on_spec": "pass",
+      "reasoning_hinge_present": "pass",
+      "not_direct_substitution": "pass",
+      "wrong_paths_specific": "pass",
+      "visual_feasible": "pass",
+      "mcq_viable": "pass",
+      "difficulty_match": "pass"
+    },
+    "reasoning_hinge_summary": "The core reasoning hinge is the understanding that when an electromagnetic wave crosses a boundary into a new medium, its frequency remains constant, while its speed and wavelength change according to the refractive index of the medium.",
+    "expected_mid_student_error": "Mid-performing students are likely to incorrectly assume that wavelength is invariant, or that frequency changes, or they might confuse the relationship between speed, wavelength, and refractive index, potentially leading to an inverted change in wavelength (e.g., increasing instead of decreasing, or vice versa).",
+    "notes": [
+      "The idea successfully elevates the schema's core move by shifting the invariant quantity from the speed of light in vacuum (c) to the frequency (f) when a medium change occurs, requiring a deeper conceptual understanding.",
+      "The proposed distractors are well-aligned with common misconceptions regarding wave behavior at a boundary, particularly the invariance of frequency.",
+      "The difficulty justification is sound, relying on a specific conceptual insight rather than complex arithmetic."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

@@ -1,0 +1,99 @@
+{
+  "stage": "designer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "schema_id": "P_ad97dfb5",
+    "module": "physics",
+    "variation_mode": "FAR",
+    "target_difficulty": "Medium",
+    "idea_summary": "Given the ratio of momentum and the ratio of kinetic energy for two objects, candidates must determine the ratio of their masses by applying power-law scaling to the relationship E_k = p^2 / (2m).",
+    "schema_invariant": {
+      "core_move": "Calculate the scaling factor of a target variable by combining the scaling factors of other variables, applying the correct exponents from the governing physical law.",
+      "what_must_not_change": [
+        "The necessity to apply a power (e.g., squaring) to one scaling factor.",
+        "The necessity to handle an inverse or direct proportional relationship correctly.",
+        "The use of ratios or scaling factors rather than absolute values."
+      ],
+      "what_can_change": [
+        "The physical domain (shifting from gravity/astrophysics to mechanics).",
+        "Which variable is the subject of the scaling (solving for an independent linear variable rather than the dependent squared variable)."
+      ]
+    },
+    "discrimination_mechanism": {
+      "type": "proportional_reasoning",
+      "reasoning_hinge": "Recognizing that mass scales proportionally with the square of momentum and inversely with kinetic energy (m ∝ p^2 / E_k), and correctly applying the ratios without algebraic slip-ups.",
+      "why_top_students_win": "Top students immediately construct the proportional relationship m_A/m_B = (p_A/p_B)^2 * (E_kB/E_kA) and compute the result in one fast step.",
+      "why_mid_students_miss": "Mid students often forget to square the momentum ratio, or they incorrectly multiply by the kinetic energy ratio instead of its inverse."
+    },
+    "goldilocks_complexity_audit": {
+      "main_physics_principle": "Kinetic energy and momentum relationship (E_k = p^2 / 2m, or E_k = 1/2 mv^2 combined with p = mv).",
+      "supporting_idea_if_any": "Proportional scaling across multiple variables.",
+      "estimated_solution_steps": 3,
+      "number_of_core_physics_principles": 1,
+      "requires_derived_relationship": false,
+      "too_easy_risk": "low",
+      "too_hard_risk": "low",
+      "goldilocks_verdict": "good"
+    },
+    "minimum_reasoning_depth": {
+      "steps": 3,
+      "must_include": [
+        "recall_or_derive_relationship",
+        "isolate_target_variable",
+        "apply_scaling_factors_with_exponents"
+      ]
+    },
+    "reference_alignment": "Matches the mathematical cognitive load of scaling a density or gravitational force, but shifts the context to mechanics, maintaining the ESAT style of testing fundamental fluency.",
+    "task_signature": "proportional_change",
+    "tool_footprint": [
+      "algebraic_manipulation",
+      "proportional_reasoning",
+      "ratio_calculation"
+    ],
+    "primary_tag": "2",
+    "secondary_tags": [
+      "1"
+    ],
+    "visual_need": "none",
+    "visual_role": "none",
+    "visual_brief": "",
+    "surface_twist": "Instead of predicting a dependent variable (like force or intensity) from changing spatial dimensions, the task asks to find an intrinsic property (mass) given the ratios of two dynamical variables (momentum and energy).",
+    "why_still_on_spec": "The definitions of kinetic energy and momentum are core GCSE/A-level mechanics. Combining them or reasoning about their ratios is standard ESAT territory.",
+    "constraints_used": [
+      "short condition descriptions only",
+      "no final numbers",
+      "no full equations unless the schema requires them",
+      "no exact geometric diagram dependence",
+      "no multi-law derivation chain"
+    ],
+    "intended_wrong_paths": [
+      {
+        "mistake": "Failing to square the momentum ratio (using m ∝ p / E_k).",
+        "distractor_role": "Produces a linearly scaled incorrect ratio."
+      },
+      {
+        "mistake": "Applying a direct proportion for kinetic energy instead of an inverse proportion (using m ∝ p^2 * E_k).",
+        "distractor_role": "Produces an inverted incorrect ratio."
+      },
+      {
+        "mistake": "Squaring the kinetic energy ratio instead of the momentum ratio.",
+        "distractor_role": "Produces an exponent-swapped incorrect ratio."
+      }
+    ],
+    "difficulty_rationale": "The difficulty is Medium because the underlying physics is very familiar, but handling a squared ratio and an inverse ratio simultaneously in a completely abstract (no units/values) setting tests working memory and algebraic discipline.",
+    "anti_plug_and_chug_check": {
+      "would_formula_substitution_alone_solve_it": false,
+      "why_not": "No absolute values are provided. The candidate must either execute proportional reasoning algebraically or invent their own valid set of dummy numbers for both objects, which requires understanding the physical constraint."
+    },
+    "mcq_viability": {
+      "viable": true,
+      "reason": "The combination of squaring and inverting operations naturally generates a set of highly plausible, distinct integer or simple fraction distractors."
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

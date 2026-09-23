@@ -1,0 +1,30 @@
+{
+  "questionId": 3318,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 49,
+  "stemBlocks": [
+    "The oxygen saturation of red blood cells is the percentage of haemoglobin binding sites in red blood cells with oxygen bound to them.\nCamels and llamas have evolved from the same ancestor. Camels live at low altitude and llamas live at high altitude.\nThe graph shows the effect of oxygen concentration on the oxygen saturation of red blood cells in camels and llamas.",
+    "Which of the following statements is/are correct?",
+    "1 The difference in oxygen binding properties of the red blood cells of camels and llamas is an example of different phenotypes.\n2 The different oxygen binding properties evolved because of mutations caused by different oxygen concentrations.\n3 50% oxygen saturation of llama red blood cells occurs at $\\frac{3}{4}$ of the oxygen concentration required for 50% oxygen saturation of camel red blood cells."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:13.298380+00:00",
+  "sourceImageHash": "7ab498929acbf2933a08f2e3052e9d87aea4a45f1ffcf4b7fa8e022d103df3d8",
+  "status": "ok"
+}

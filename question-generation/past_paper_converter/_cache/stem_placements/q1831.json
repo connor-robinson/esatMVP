@@ -1,0 +1,29 @@
+{
+  "questionId": 1831,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 38,
+  "stemBlocks": [
+    "A car of mass $200 \\text{ kg}$ on a fairground ride travels at a speed of $5.0 \\text{ m s}^{-1}$ at point X. The car is allowed to move down a sloping section of track without any energy input. The heights above the ground of points X and Y are shown. When the car reaches point Y its speed is $9.0 \\text{ m s}^{-1}$.",
+    "How much energy is transferred in overcoming resistive forces as the car travels from X to Y? (The gravitational field strength $g$ is $10 \\text{ N kg}^{-1}$.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:23:52.645765+00:00",
+  "sourceImageHash": "e83145c731704620647372530666856c1017b2e2e1f30f9d4ee3cecb1d0bb8eb",
+  "status": "ok"
+}

@@ -1,0 +1,28 @@
+{
+  "questionId": 3412,
+  "examName": "NSAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 23,
+  "stemBlocks": [
+    "Part of an organic reaction mechanism is shown: What is produced by this part of the mechanism?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:54.082960+00:00",
+  "sourceImageHash": "21801486e54ec5b4d70d3f19737e2b31fb89ef9003bfc1c545c65652cd23f730",
+  "status": "ok"
+}

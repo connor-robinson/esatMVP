@@ -1,0 +1,518 @@
+{
+  "question_id": "q_20260518_143333_ceaa09",
+  "subject": "physics",
+  "schema_id": "P_a9a3eea7",
+  "difficulty": "Medium",
+  "status": "accepted",
+  "failure_gate": null,
+  "failure_reasons": [],
+  "has_visual": false,
+  "visual_type": "none",
+  "answer_depends_on_visual": false,
+  "assets": [],
+  "model_trace": {
+    "designer": "gemini-3.1-pro-preview",
+    "idea_judge": "gemini-3.1-flash-lite",
+    "implementer": "gemini-3.1-pro-preview",
+    "verifier": "gemini-3.1-flash-lite",
+    "implementer_regen": "gemini-3.1-pro-preview",
+    "style_checker": "gemini-3.1-flash-lite",
+    "visual_router": "gemini-3.1-flash-lite",
+    "tag_labeler": "gemini-2.5-flash"
+  },
+  "retry_counts": {
+    "implementer": 1
+  },
+  "stages": [
+    {
+      "stage": "designer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "schema_id": "P_a9a3eea7",
+        "module": "physics",
+        "variation_mode": "FAR",
+        "target_difficulty": "Medium",
+        "idea_summary": "A charged object in a fluid falls at terminal velocity, then rises at the same terminal velocity when an electric field is turned on. The candidate must deduce the object's weight in terms of the electric force and upthrust.",
+        "schema_invariant": {
+          "core_move": "Setting net force to zero (Newton's First Law) for an object at terminal velocity, correctly balancing constant forces (weight, upthrust) and a velocity-dependent drag force.",
+          "what_must_not_change": [
+            "The requirement to equate forces to zero.",
+            "The inclusion of weight, upthrust, and drag.",
+            "The fact that drag magnitude depends on speed."
+          ],
+          "what_can_change": [
+            "Adding an external driving force (electric).",
+            "Comparing two steady states instead of calculating a single numerical velocity.",
+            "The physical direction of motion (falling vs rising)."
+          ]
+        },
+        "discrimination_mechanism": {
+          "type": "vector_direction",
+          "reasoning_hinge": "Recognising that because the terminal speed is the same in both cases, the drag force has the same magnitude but flips direction (downwards when rising, upwards when falling).",
+          "why_top_students_win": "They quickly write two equilibrium equations (W = U + D for falling, F + U = W + D for rising), realise D is identical, and substitute to eliminate D.",
+          "why_mid_students_miss": "They may forget to flip the direction of the drag force, ignore upthrust entirely, or get tangled in algebra because they try to find a formula for the drag coefficient instead of treating D as a constant to be eliminated."
+        },
+        "goldilocks_complexity_audit": {
+          "main_physics_principle": "Newton's First Law (translational equilibrium).",
+          "supporting_idea_if_any": "Fluid drag always acts in the opposite direction to velocity.",
+          "estimated_solution_steps": 3,
+          "number_of_core_physics_principles": 1,
+          "requires_derived_relationship": false,
+          "too_easy_risk": "low",
+          "too_hard_risk": "low",
+          "goldilocks_verdict": "good"
+        },
+        "minimum_reasoning_depth": {
+          "steps": 2,
+          "must_include": [
+            "model_selection",
+            "non_obvious_inference",
+            "short_calculation_or_comparison"
+          ]
+        },
+        "reference_alignment": "Matches the cognitive load of standard ESAT fluids/mechanics questions by requiring a firm grasp of force directions, replacing tedious density arithmetic with a clean algebraic comparison.",
+        "task_signature": "compare_scenarios",
+        "tool_footprint": [
+          "force_balance",
+          "vector_signs",
+          "algebraic_elimination"
+        ],
+        "primary_tag": "2",
+        "secondary_tags": [
+          "1"
+        ],
+        "visual_need": "none",
+        "visual_role": "none",
+        "visual_brief": "",
+        "surface_twist": "Instead of calculating terminal velocity from given densities and drag constants, the candidate is given two terminal states (one falling, one rising due to an electric force) and must find the weight algebraically.",
+        "why_still_on_spec": "Newton's first law, weight, upthrust, and the directional nature of fluid resistance are all core ESAT Physics topics. The addition of a generic 'upward electric force F' is a standard mechanics extension that requires no specific electromagnetism knowledge.",
+        "constraints_used": [
+          "short condition descriptions only",
+          "no final numbers",
+          "no full equations unless the schema requires them",
+          "no exact geometric diagram dependence",
+          "no multi-law derivation chain"
+        ],
+        "intended_wrong_paths": [
+          {
+            "mistake": "Ignoring the upthrust completely and just balancing Weight, Electric Force, and Drag.",
+            "distractor_role": "Yields W = F/2."
+          },
+          {
+            "mistake": "Incorrectly assuming upthrust also flips direction when the object rises.",
+            "distractor_role": "Yields W = F/2 - U."
+          },
+          {
+            "mistake": "Setting up the rising equation as F = W + U + D, misassigning the direction of upthrust as opposing the upward motion.",
+            "distractor_role": "Yields W = F/2 + U/2 or similar incorrect algebraic arrangement."
+          }
+        ],
+        "difficulty_rationale": "It is selective because it requires translating a physical scenario into two precise directional equations. It is fast because once the equations are written, eliminating the drag term takes one line of algebra. No messy numbers or complex derivations are needed.",
+        "anti_plug_and_chug_check": {
+          "would_formula_substitution_alone_solve_it": false,
+          "why_not": "There is no standard formula for this specific two-state setup. The candidate must build the force balance equations themselves based on the physical directions in each case."
+        },
+        "mcq_viability": {
+          "viable": true,
+          "reason": "The solution is a simple algebraic expression (e.g., W = F/2 + U), allowing for clean, distinct options based on common sign or omission errors."
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-pro-preview",
+      "attempts": 1
+    },
+    {
+      "stage": "idea_judge",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "selectivity_score": 0,
+        "checks": {
+          "schema_preserved": "pass",
+          "on_spec": "pass",
+          "reasoning_hinge_present": "pass",
+          "not_direct_substitution": "pass",
+          "wrong_paths_specific": "pass",
+          "visual_feasible": "pass",
+          "mcq_viable": "pass",
+          "difficulty_match": "pass",
+          "goldilocks_complexity": "pass"
+        },
+        "complexity_audit": {
+          "number_of_core_physics_principles": 1,
+          "estimated_solution_steps": 3,
+          "requires_derived_relationship": false,
+          "uses_multi_topic_chain": false,
+          "goldilocks_verdict": "good"
+        },
+        "reasoning_hinge_summary": "The candidate must recognize that terminal velocity implies zero net force, and that the drag force magnitude is constant (due to constant speed) but its direction must be reversed relative to the object's motion in the two scenarios.",
+        "expected_mid_student_error": "Failing to reverse the direction of the drag force in the second scenario, or incorrectly treating upthrust as a force that changes direction based on the object's velocity.",
+        "notes": [
+          "The idea is elegant and avoids the 'plug-and-chug' trap by focusing on the conceptual understanding of force vectors in equilibrium.",
+          "The algebraic elimination of the drag term is a high-quality, efficient way to test physics intuition without requiring tedious arithmetic."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "implementer",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "metadata": {
+          "schema_id": "P_a9a3eea7",
+          "module": "physics",
+          "variation_mode": "FAR",
+          "target_difficulty": "Medium",
+          "task_signature": "compare_scenarios",
+          "primary_tag": "2",
+          "secondary_tags": [
+            "1"
+          ]
+        },
+        "question": {
+          "stem": "A small charged object falls through a fluid at its terminal speed.\n\nA constant upward electric force $F$ is then applied to the object. The object now rises through the fluid at the same terminal speed.\n\nThe upthrust on the object is $U$.\n\nWhich expression gives the weight $W$ of the object?",
+          "options": {
+            "A": "$W = \\frac{F}{2} - U$",
+            "B": "$W = \\frac{F}{2}$",
+            "C": "$W = \\frac{F + U}{2}$",
+            "D": "$W = \\frac{F}{2} + U$",
+            "E": "$W = F - U$",
+            "F": "$W = F + U$"
+          },
+          "correct_option": "D"
+        },
+        "visual_requirements": {
+          "visual_need": "none",
+          "visual_role": "none",
+          "answer_depends_on_visual": false,
+          "graph_request": null,
+          "schematic_request": null,
+          "concept_image_request": null
+        },
+        "solution": {
+          "key_insight": "The drag force has the same magnitude in both cases because the terminal speed is the same, but it acts upwards when falling and downwards when rising.",
+          "reasoning": "When falling at terminal speed, the forces are balanced: Weight acts down, upthrust and drag act up. So, $W = U + D$, which gives $D = W - U$.\n\nWhen rising at terminal speed, the forces are again balanced: Electric force and upthrust act up, weight and drag act down. So, $F + U = W + D$.\n\nSubstitute the expression for $D$ into the second equation:\n$F + U = W + (W - U)$\n$F + U = 2W - U$\n$2W = F + 2U$\n$W = \\frac{F}{2} + U$"
+        },
+        "distractor_map": {
+          "A": "Assumes upthrust acts downwards (like weight) in both cases, yielding $W + U = D$ and $F = W + U + D$.",
+          "B": "Ignores upthrust entirely, or incorrectly assumes upthrust flips direction and acts downwards when the object rises.",
+          "C": "Includes upthrust in one equation but forgets it in the other (e.g., $W = U + D$ for falling, but $F = W + D$ for rising).",
+          "D": "Correct. Sets up $W = U + D$ (falling) and $F + U = W + D$ (rising), then eliminates $D$.",
+          "E": "Ignores drag entirely, assuming the object is stationary and forces balance as $F = W + U$.",
+          "F": "Ignores drag entirely and incorrectly equates forces as $W = F + U$."
+        },
+        "quality_self_check": {
+          "reasoning_hinge_used": "Recognising that drag flips direction but maintains the same magnitude, while upthrust remains constant and upwards.",
+          "not_direct_substitution": true,
+          "exactly_one_correct": true,
+          "no_calculator_friendly": true,
+          "on_spec": true,
+          "visual_dependency_safe": true,
+          "goldilocks_complexity": {
+            "number_of_core_physics_principles": 1,
+            "estimated_solution_steps": 3,
+            "requires_derived_relationship": false,
+            "not_overstacked": true
+          }
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-pro-preview",
+      "attempts": 1
+    },
+    {
+      "stage": "deterministic_validator",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "ok": true,
+        "errors": [],
+        "warnings": [],
+        "option_keys": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F"
+        ],
+        "summary": "ok"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": null,
+      "attempts": 1
+    },
+    {
+      "stage": "verifier",
+      "status": "error",
+      "verdict": null,
+      "payload": null,
+      "notes": [],
+      "error": "No parseable JSON object in model output.",
+      "raw_text": "{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"correct_option_verified\": \"D\",\n  \"independent_solution\": {\n    \"main_law_or_principle\": \"Newton's First Law (Translational Equilibrium)\",\n    \"calculation_or_logic\": \"Let $D$ be the magnitude of the drag force. Since terminal speed is the same in both cases, $D$ is constant. \\nCase 1 (Falling): $W = U + D \\implies D = W - U$.\\nCase 2 (Rising): $F + U = W + D \\implies D = F + U - W$.\\nEquating the two expressions for $D$: $W - U = F + U - W \\implies 2W = F + 2U \\implies W = F/2 + U$.\",\n    \"verified_answer_value\": \"D\",\n    \"claimed_answer_value\": \"D\",\n    \"matches_claim\": true\n  },\n  \"spec_audit\": {\n    \"required_physics_moves\": [\n      \"Force balance for terminal velocity\",\n      \"Vector addition/subtraction\",\n      \"Algebraic substitution\"\n    ],\n    \"all_explicitly_on_spec\": true,\n    \"borderline_or_offspec_moves\": []\n  },\n  \"derived_relationship_audit\": {\n    \"requires_nontrivial_derivation\": false,\n    \"number_of_linked_relationships\": 0,\n    \"relationships_given_in_stem\": [],\n    \"safe_for_esat\": true\n  },\n  \"checks\": {\n    \"correctness\": \"pass\",\n    \"uniqueness\": \"pass\",\n    \"syllabus\": \"pass\",\n    \"no_calc_feasibility\": \"pass\",\n    \"ambiguity\": \"pass\",\n    \"diagram_dependency\": \"pass\",\n    \"distractor_safety\": \"pass\",\n    \"katex_formatting\": \"pass\",\n    \"graph_or_visual_validation\": \"n/a\",\n    \"derived_relationship_safety\": \"pass\"\n  },\n  \"notes\": [\n    \"The physics is sound. The question correctly identifies that upthrust is a constant upward force and drag is a velocity-dependent force that changes direction with the motion of the object.\"\n  ]\n}",
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "implementer_regen",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "metadata": {
+          "schema_id": "P_a9a3eea7",
+          "module": "physics",
+          "variation_mode": "FAR",
+          "target_difficulty": "Medium",
+          "task_signature": "compare_scenarios",
+          "primary_tag": "2",
+          "secondary_tags": [
+            "1"
+          ]
+        },
+        "question": {
+          "stem": "A small submersible in the ocean descends at a constant terminal speed. Its weight is $W$ and the upthrust on it is $U$.\n\nThe submersible's engines are then switched on, providing a constant vertical upward thrust $T$. The submersible now ascends at the same terminal speed.\n\nWhich expression gives the required thrust $T$?",
+          "options": {
+            "A": "$T = W - U$",
+            "B": "$T = 2W - U$",
+            "C": "$T = 2W$",
+            "D": "$T = 2(W - U)$",
+            "E": "$T = 2W + U$",
+            "F": "$T = 2(W + U)$"
+          },
+          "correct_option": "D"
+        },
+        "visual_requirements": {
+          "visual_need": "none",
+          "visual_role": "none",
+          "answer_depends_on_visual": false,
+          "graph_request": null,
+          "schematic_request": null,
+          "concept_image_request": null
+        },
+        "solution": {
+          "key_insight": "The drag force has the same magnitude in both cases because the terminal speed is the same, but it always acts in the opposite direction to the motion.",
+          "reasoning": "When descending at terminal speed, the forces are balanced. Weight acts downwards, while upthrust and drag act upwards. Therefore, $W = U + D$, which gives $D = W - U$.\n\nWhen ascending at the same terminal speed, the forces are again balanced. The upward thrust and upthrust act upwards, while weight and drag act downwards. Therefore, $T + U = W + D$.\n\nSubstitute the expression for $D$ into the ascending equation:\n$T + U = W + (W - U)$\n$T + U = 2W - U$\n$T = 2W - 2U$\n$T = 2(W - U)$"
+        },
+        "distractor_map": {
+          "A": "Ignores drag entirely when ascending, assuming the forces balance as $T + U = W$.",
+          "B": "Includes upthrust when descending ($D = W - U$) but forgets it when ascending ($T = W + D$), yielding $T = 2W - U$.",
+          "C": "Ignores upthrust entirely in both cases. Descending gives $W = D$, ascending gives $T = W + D$, yielding $T = 2W$.",
+          "D": "Correct. Sets up $W = U + D$ for descending and $T + U = W + D$ for ascending, then eliminates $D$.",
+          "E": "Ignores upthrust when descending ($D = W$) but incorrectly assumes upthrust acts downwards when ascending ($T = W + U + D$), yielding $T = 2W + U$.",
+          "F": "Assumes upthrust acts downwards in both cases. Descending gives $D = W + U$, ascending gives $T = W + U + D$, yielding $T = 2(W + U)$."
+        },
+        "quality_self_check": {
+          "reasoning_hinge_used": "Recognising that drag flips direction but maintains the same magnitude, while upthrust remains constant and upwards.",
+          "not_direct_substitution": true,
+          "exactly_one_correct": true,
+          "no_calculator_friendly": true,
+          "on_spec": true,
+          "visual_dependency_safe": true,
+          "goldilocks_complexity": {
+            "number_of_core_physics_principles": 1,
+            "estimated_solution_steps": 3,
+            "requires_derived_relationship": false,
+            "not_overstacked": true
+          }
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-pro-preview",
+      "attempts": 2
+    },
+    {
+      "stage": "deterministic_validator",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "ok": true,
+        "errors": [],
+        "warnings": [],
+        "option_keys": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F"
+        ],
+        "summary": "ok"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": null,
+      "attempts": 2
+    },
+    {
+      "stage": "verifier",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "correct_option_verified": "D",
+        "independent_solution": {
+          "main_law_or_principle": "Newton's First Law (Translational Equilibrium)",
+          "calculation_or_logic": "Case 1 (Descending): Forces are Weight (W) down, Upthrust (U) up, Drag (D) up. Equilibrium: W = U + D => D = W - U. Case 2 (Ascending): Forces are Thrust (T) up, Upthrust (U) up, Weight (W) down, Drag (D) down. Equilibrium: T + U = W + D. Substituting D = W - U into the second equation: T + U = W + (W - U) => T + U = 2W - U => T = 2W - 2U = 2(W - U).",
+          "verified_answer_value": "D",
+          "claimed_answer_value": "D",
+          "matches_claim": true
+        },
+        "spec_audit": {
+          "required_physics_moves": [
+            "Force balance (Newton's First Law)",
+            "Vector addition/subtraction",
+            "Algebraic substitution"
+          ],
+          "all_explicitly_on_spec": true,
+          "borderline_or_offspec_moves": []
+        },
+        "derived_relationship_audit": {
+          "requires_nontrivial_derivation": false,
+          "number_of_linked_relationships": 0,
+          "relationships_given_in_stem": [],
+          "safe_for_esat": true
+        },
+        "checks": {
+          "correctness": "pass",
+          "uniqueness": "pass",
+          "syllabus": "pass",
+          "no_calc_feasibility": "pass",
+          "ambiguity": "pass",
+          "diagram_dependency": "pass",
+          "distractor_safety": "pass",
+          "katex_formatting": "pass",
+          "graph_or_visual_validation": "n/a",
+          "derived_relationship_safety": "pass"
+        },
+        "notes": [
+          "The physics is sound. The logic correctly identifies that drag magnitude is constant due to constant speed, but direction flips, while upthrust remains constant in direction."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 2
+    },
+    {
+      "stage": "style_checker",
+      "status": "pass",
+      "verdict": "PASS",
+      "payload": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "style_score": {
+          "total": 40,
+          "breakdown": {
+            "stem_tone": 5,
+            "physics_authenticity": 5,
+            "reasoning_quality": 5,
+            "selectivity": 5,
+            "no_calc_engineering": 5,
+            "option_realism": 5,
+            "distractor_plausibility": 5,
+            "goldilocks_calibration": 5
+          }
+        },
+        "difficulty_calibration": {
+          "difficulty_vs_reference": "similar",
+          "length_feel_vs_reference": "shorter",
+          "notes": "The question is perfectly calibrated for ESAT. It avoids the 'plug-and-chug' trap by requiring the student to construct two distinct force-balance equations and recognize the invariant (drag magnitude) versus the variant (drag direction)."
+        },
+        "selectivity_audit": {
+          "main_trap": "The student must correctly identify that the drag force flips direction while the upthrust force remains constant in direction. Many students will incorrectly assume upthrust flips or that drag magnitude changes.",
+          "why_not_plug_and_chug": "There is no single formula to apply. The student must derive the relationship between the forces based on the physical constraints of the two scenarios.",
+          "expected_mid_student_error": "Forgetting to flip the drag force direction or incorrectly applying the upthrust direction, leading to one of the plausible distractors.",
+          "verdict": "selective"
+        },
+        "complexity_audit": {
+          "estimated_core_principles": 1,
+          "estimated_solution_steps": 3,
+          "overstacked": false,
+          "goldilocks_verdict": "good"
+        },
+        "flags": {
+          "too_easy": false,
+          "too_hard": false,
+          "too_wordy": false,
+          "too_recall_heavy": false,
+          "too_plug_and_chug": false,
+          "over_advanced_chain": false,
+          "possible_verifier_miss": false
+        },
+        "notes": [
+          "Excellent use of algebraic elimination to test conceptual understanding of Newton's First Law without requiring tedious numerical calculation."
+        ]
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 2
+    },
+    {
+      "stage": "visual_router",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "visual_route": "none",
+        "answer_depends_on_visual": false,
+        "required_files": [],
+        "reason": "The problem is a standard force-balance word problem that is clearly described in the text. No diagram is required to understand the directions of the forces or the physical setup.",
+        "next_prompt_file": null,
+        "style_target_if_image": null,
+        "blocking_issue": null,
+        "simplicity_audit": {
+          "visual_needed": false,
+          "can_be_described_in_one_sentence": true,
+          "estimated_object_types": 0,
+          "estimated_labels": 0,
+          "requires_unwanted_arrows_or_symbols": false,
+          "route_is_conservative": true
+        }
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-3.1-flash-lite",
+      "attempts": 1
+    },
+    {
+      "stage": "tag_labeler",
+      "status": "pass",
+      "verdict": null,
+      "payload": {
+        "primary_tag": "3",
+        "secondary_tags": [],
+        "primary_confidence": 1.0,
+        "reasoning": "The question requires analyzing forces (weight, upthrust, drag, engine thrust) acting on a submersible and applying the principle of force equilibrium for constant velocity. This is a fundamental concept within Mechanics.",
+        "_raw_text": "```json\n{\n  \"primary_tag\": \"3\",\n  \"secondary_tags\": [],\n  \"primary_confidence\": 1.0,\n  \"reasoning\": \"The question requires analyzing forces (weight, upthrust, drag, engine thrust) acting on a submersible and applying the principle of force equilibrium for constant velocity. This is a fundamental concept within Mechanics.\"\n}\n```"
+      },
+      "notes": [],
+      "error": null,
+      "raw_text": null,
+      "model": "gemini-2.5-flash",
+      "attempts": 1
+    }
+  ],
+  "pipeline": "v4",
+  "created_at": "2026-05-18T14:41:38+01:00"
+}

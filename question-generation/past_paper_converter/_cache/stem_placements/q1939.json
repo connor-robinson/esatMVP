@@ -1,0 +1,28 @@
+{
+  "questionId": 1939,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 38,
+  "stemBlocks": [
+    "A block of mass $m$ slides a distance $l$ down a slope that is inclined at angle $\\theta$ to the horizontal, as shown: The block experiences a friction force of $kW\\sin\\theta$, where $W$ is the weight of the block and $k$ is a constant. The block starts from rest at the top of the slope and slides down a distance $l$ to the bottom, where its potential energy is zero. What fraction of the initial potential energy at the top has become kinetic energy as the block reaches the bottom?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:28:14.912584+00:00",
+  "sourceImageHash": "8ac4752ccd302a23503ef9cbdf12f6fea06f0c8032c6d22357e5cb8138e30342",
+  "status": "ok"
+}

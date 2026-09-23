@@ -1,0 +1,29 @@
+{
+  "questionId": 2143,
+  "examName": "ENGAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 28,
+  "stemBlocks": [
+    "The diagram shows a battery with no internal resistance and four identical resistors P, Q, R and S. Resistor Q dissipates 4.0W of power.",
+    "What is the total power supplied by the battery?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:06.355837+00:00",
+  "sourceImageHash": "7cdc8c3f0bdf6124393151967e05545d450c3930c40eb86c0e0e3082e47e85a6",
+  "status": "ok"
+}

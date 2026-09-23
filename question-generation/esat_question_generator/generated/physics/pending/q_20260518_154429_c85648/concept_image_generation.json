@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260518_154429_c85648\\assets\\concept_image_v1.png",
+    "bytes": 331436,
+    "model": "imagen-4.0-ultra-generate-001",
+    "aspect_ratio": "4:3",
+    "seed": null,
+    "duration_s": 12.127
+  },
+  "prompt_used": "A brutally simple monochrome physics exam diagram showing two horizontal cylindrical wires, one positioned above the other. The top cylinder is shorter and thicker. The bottom cylinder is visibly longer and thinner than the top one. Place the label 'X' in an italic serif font just above the center of the top cylinder. Place the label 'Y' in an italic serif font just above the center of the bottom cylinder. Place the text '[diagram not to scale]' in an upright serif font centered at the very bottom of the image. The cylinders should be drawn with clean black outlines and simple elliptical ends to indicate they are wires, with no complex 3D shading or internal hatching. The background must be pure white #FFFFFF. No measurement arrows, no extra labels, no grid lines, and no photorealism.",
+  "public_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_154429_c85648/concept_image_v1.png"
+}

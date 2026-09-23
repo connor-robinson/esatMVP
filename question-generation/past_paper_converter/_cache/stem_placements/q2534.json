@@ -1,0 +1,29 @@
+{
+  "questionId": 2534,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 55,
+  "stemBlocks": [
+    "The graph shows how four variables change with the distance down a river, after a source of pollution flowed in.\\nWhich indicator species could be expected to be found in large numbers at 1, 2 and 3?",
+    "|  | 1 | 2 | 3 |\n| --- | --- | --- | --- |\n| A | bloodworm | bloodworm | bloodworm |\n| B | bloodworm | bloodworm | stonefly |\n| C | bloodworm | stonefly | bloodworm |\n| D | bloodworm | stonefly | stonefly |\n| E | stonefly | bloodworm | bloodworm |\n| F | stonefly | bloodworm | stonefly |\n| G | stonefly | stonefly | bloodworm |\n| H | stonefly | stonefly | stonefly |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "The graph shows how four variables change with the distance down a river, after a source of pollution flowed in. The variables are oxygen, fish, algae, and bacteria. The x-axis is 'distance downstream' and the y-axis is 'quantities'. An arrow indicates the 'point at which pollution flowed into the river'. Three points, 1, 2, and 3, are marked above the graph.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.829508+00:00",
+  "sourceImageHash": "3816e9fbacc63547f060322ca6436a5343e8e8cb73381c19c41993c443af99e7",
+  "status": "ok"
+}

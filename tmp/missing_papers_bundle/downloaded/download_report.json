@@ -1,0 +1,122 @@
+{
+  "generated_at": "2026-08-30T16:50:00Z",
+  "summary": {
+    "integrated": 13,
+    "rejected_mislabeled": 10,
+    "unresolved": 9
+  },
+  "integrated": [
+    {
+      "source": "NSAA/past-papers/2016/nsaa-2016-section-2-worked-solutions.pdf",
+      "site": "/downloads/past-papers/nsaa/section-2/2016/nsaa-2016-section-2-worked-solutions.pdf",
+      "label": "Solutions",
+      "note": "PMT model solutions; image-based PDF"
+    },
+    {
+      "source": "NSAA/past-papers/2017/nsaa-2017-section-2-worked-solutions.pdf",
+      "site": "/downloads/past-papers/nsaa/section-2/2017/nsaa-2017-section-2-worked-solutions.pdf",
+      "label": "Solutions",
+      "note": "Verified header: NSAA 2017 Section 2 Model Solutions"
+    },
+    {
+      "source": "NSAA/past-papers/2018/nsaa-2018-section-2-worked-solutions.pdf",
+      "site": "/downloads/past-papers/nsaa/section-2/2018/nsaa-2018-section-2-worked-solutions.pdf",
+      "label": "Solutions",
+      "note": "Contains examiner comments plus written answers; labeled Solutions not Answer Key"
+    },
+    {
+      "source": "NSAA/past-papers/2019/nsaa-2019-section-2-worked-solutions.pdf",
+      "site": "/downloads/past-papers/nsaa/section-2/2019/nsaa-2019-section-2-worked-solutions.pdf",
+      "label": "Solutions",
+      "note": "Verified answers pages present"
+    },
+    {
+      "source": "NSAA/specimens/2016/nsaa-specimen-2016-section-1-paper.pdf",
+      "site": "/downloads/past-papers/nsaa/section-1/specimen/nsaa-specimen-2016-section-1-paper.pdf"
+    },
+    {
+      "source": "NSAA/specimens/2016/nsaa-specimen-2016-section-1-answer-key.pdf",
+      "site": "/downloads/past-papers/nsaa/section-1/specimen/nsaa-specimen-2016-section-1-answer-key.pdf"
+    },
+    {
+      "source": "NSAA/specimens/2020/nsaa-specimen-2020-section-1-paper.pdf",
+      "site": "/downloads/past-papers/nsaa/section-1/specimen/nsaa-specimen-2020-section-1-paper.pdf"
+    },
+    {
+      "source": "NSAA/specimens/2020/nsaa-specimen-2020-section-1-answer-key.pdf",
+      "site": "/downloads/past-papers/nsaa/section-1/specimen/nsaa-specimen-2020-section-1-answer-key.pdf"
+    },
+    {
+      "source": "NSAA/specimens/2016/nsaa-specimen-2016-section-2-worked-solutions.pdf",
+      "site": "/downloads/past-papers/nsaa/section-2/specimen/nsaa-specimen-2016-section-2-worked-solutions.pdf",
+      "label": "Solutions"
+    },
+    {
+      "source": "ENGAA/specimens/engaa-specimen-section-1-paper.pdf",
+      "site": "/downloads/past-papers/engaa/section-1/specimen/engaa-specimen-section-1-paper.pdf"
+    },
+    {
+      "source": "ENGAA/specimens/engaa-specimen-section-1-answer-key.pdf",
+      "site": "/downloads/past-papers/engaa/section-1/specimen/engaa-specimen-section-1-answer-key.pdf"
+    },
+    {
+      "source": "NSAA/specifications/nsaa-specification-2018.pdf",
+      "site": "/downloads/past-papers/nsaa/specifications/2018/nsaa-2018-specification.pdf",
+      "note": "Only year-matched NSAA specification retained"
+    },
+    {
+      "source": "ENGAA/specifications/engaa-specification-2018.pdf",
+      "site": "/downloads/past-papers/engaa/specifications/2018/engaa-2018-specification.pdf",
+      "note": "Only year-matched ENGAA specification retained"
+    }
+  ],
+  "rejected_mislabeled": [
+    {
+      "target": "NSAA/specifications/nsaa-specification-2016.pdf",
+      "reason": "Content is 2017 specification, not 2016"
+    },
+    {
+      "target": "NSAA/specifications/nsaa-specification-2017.pdf",
+      "reason": "Same generic 2017 fallback file reused across years"
+    },
+    {
+      "target": "NSAA/specifications/nsaa-specification-2019.pdf",
+      "reason": "Content is 2017 specification"
+    },
+    {
+      "target": "NSAA/specifications/nsaa-specification-2020.pdf",
+      "reason": "Content is 2017 specification"
+    },
+    {
+      "target": "NSAA/specifications/nsaa-specification-2021.pdf",
+      "reason": "Content is 2017 specification"
+    },
+    {
+      "target": "NSAA/specifications/nsaa-specification-2022.pdf",
+      "reason": "Content is 2017 specification"
+    },
+    {
+      "target": "NSAA/specifications/nsaa-specification-2023.pdf",
+      "reason": "Content is 2017 specification"
+    },
+    {
+      "target": "ENGAA/specifications/engaa-specification-2016.pdf",
+      "reason": "File is ENGAA Specimen Section 2 paper, not a specification"
+    },
+    {
+      "target": "ENGAA/specifications/engaa-specification-2017.pdf",
+      "reason": "Same specimen Section 2 paper as 2016 label"
+    }
+  ],
+  "unresolved": [
+    "NSAA/past-papers/2023/nsaa-2023-section-2-paper.pdf",
+    "NSAA/past-papers/2023/nsaa-2023-section-2-answer-key.pdf",
+    "NSAA/specimens/2022/nsaa-specimen-2022-section-2-paper.pdf",
+    "NSAA/specimens/2022/nsaa-specimen-2022-section-2-answer-key.pdf",
+    "ENGAA/past-papers/2023/engaa-2023-section-2-paper.pdf",
+    "ENGAA/past-papers/2023/engaa-2023-section-2-answer-key.pdf",
+    "ENGAA/past-papers/2021/engaa-2021-section-2-answer-key.pdf",
+    "ENGAA/past-papers/2022/engaa-2022-section-2-answer-key.pdf",
+    "ENGAA/NSAA specifications for years other than 2018 (Dropbox returned HTML)"
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_ad97dfb5",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Extreme",
+      "task_signature": "proportional_change",
+      "primary_tag": "1",
+      "secondary_tags": [
+        "2"
+      ]
+    },
+    "question": {
+      "stem": "Two solid spheres, X and Y, are made of the same material and fall through a fluid. The drag force on a sphere of radius $r$ moving at velocity $v$ is proportional to $r^2 v^2$.\n\nSphere Y has $8$ times the mass of sphere X.\n\nWhat is the ratio of the terminal velocity of sphere Y to the terminal velocity of sphere X?",
+      "options": {
+        "A": "$1/2$",
+        "B": "$1$",
+        "C": "$\\sqrt{2}$",
+        "D": "$2$",
+        "E": "$2\\sqrt{2}$",
+        "F": "$4$"
+      },
+      "correct_option": "C"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "At terminal velocity, weight (proportional to $r^3$) balances drag (proportional to $r^2 v^2$), which simplifies to $v \\propto \\sqrt{r}$.",
+      "reasoning": "1. Since the spheres are made of the same material, they have the same density. Therefore, mass $m \\propto r^3$. \n2. Sphere Y has $8$ times the mass of X, meaning its radius is $\\sqrt[3]{8} = 2$ times larger ($r_Y = 2r_X$).\n3. At terminal velocity, the downward force (weight, proportional to $m$ and thus $r^3$) equals the upward drag force (proportional to $r^2 v^2$).\n4. Equating the proportionalities gives $r^3 \\propto r^2 v^2$, which simplifies to $r \\propto v^2$, or $v \\propto \\sqrt{r}$.\n5. Since the radius of Y is $2$ times that of X, its terminal velocity is $\\sqrt{2}$ times that of X."
+    },
+    "distractor_map": {
+      "A": "Incorrect. This results from inverting the relationship, assuming the larger mass falls slower.",
+      "B": "Incorrect. This stems from confusing terminal velocity with free fall in a vacuum, assuming all masses fall at the same rate.",
+      "C": "Correct. $m \\propto r^3$ means $r$ increases by a factor of 2. Weight balances drag ($r^3 \\propto r^2 v^2 \\implies v \\propto \\sqrt{r}$), so $v$ increases by $\\sqrt{2}$.",
+      "D": "Incorrect. This comes from correctly finding the radius ratio ($2$) but assuming $v \\propto r$ instead of $v \\propto \\sqrt{r}$.",
+      "E": "Incorrect. This occurs if the candidate ignores the $r^2$ term in the drag proportionality, assuming drag $\\propto v^2$. This leads to $v^2 \\propto m$, giving a ratio of $\\sqrt{8} = 2\\sqrt{2}$.",
+      "F": "Incorrect. This results from assuming $v \\propto r^2$ or making a squaring error when solving $r \\propto v^2$."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Equating the scaling of weight ($r^3$) with the scaling of drag ($r^2 v^2$) to deduce that terminal velocity $v$ scales with $\\sqrt{r}$.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 1,
+        "estimated_solution_steps": 3,
+        "requires_derived_relationship": true,
+        "not_overstacked": true
+      }
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

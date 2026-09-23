@@ -1,0 +1,30 @@
+{
+  "questionId": 3254,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 45,
+  "stemBlocks": [
+    "A study was carried out into the effect of liver protein Z on the risk of developing coronary heart disease, which is often associated with high blood cholesterol. Z binds to another protein in the membrane of liver cells that transports cholesterol from the blood into cells. This binding blocks the function of the transport protein. Blood cholesterol levels were measured in three different groups of people. One group was a control group and contained no mutations in the gene for Z. The second group all had the same mutation in the gene (called mutation 1). This mutation occurs in the final section of the gene. A third group all had a different mutation in the gene (called mutation 2), but this was in the first section of the gene. The results are shown in the graph.",
+    "Which of the following can be correctly concluded from these results?",
+    "1. Changes in the first section of protein Z stop it from binding to the cholesterol transport protein.\n2. Mutation 1 could result in an increase in the concentration of cholesterol inside liver cells.\n3. Of the three groups, people in the control group are least likely to develop coronary heart disease."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Bar chart showing percentage of people within each group (control, mutation 1, mutation 2) across different blood cholesterol concentration ranges ($mg\\,dL^{-1}$).",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 1.0
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:13.933505+00:00",
+  "sourceImageHash": "dc0449d90fd07c3b57caeb271d2e01087eb27aa310bcd5c8081988d937d30457",
+  "status": "ok"
+}

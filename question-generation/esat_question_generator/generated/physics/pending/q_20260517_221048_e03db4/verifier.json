@@ -1,0 +1,48 @@
+{
+  "stage": "verifier",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "B",
+    "independent_solution": {
+      "main_law_or_principle": "Force equilibrium at terminal velocity (Newton's First Law) and conservation of energy (power input equals power dissipated).",
+      "calculation_or_logic": "1. Identify the constant driving force: The component of gravity along the incline, $F_g = mg \\sin\\theta$. This force is constant.\n2. Identify the resistive magnetic force: The induced EMF is $\\varepsilon = BLv_t$. The induced current is $I = \\varepsilon/R = BLv_t/R$. The magnetic force is $F_m = BIL = B(BLv_t/R)L = B^2L^2v_t/R$.\n3. Apply force equilibrium at terminal velocity: $F_g = F_m \\implies mg \\sin\\theta = B^2L^2v_t/R$.\n4. Determine the relationship between terminal velocity and magnetic field strength: From the equilibrium equation, $v_t = \\frac{mgR\\sin\\theta}{B^2L^2}$. Thus, $v_t \\propto 1/B^2$.\n5. Determine the power dissipated: At terminal velocity, the power dissipated as heat must equal the rate at which gravitational potential energy is lost, which is $P = F_g v_t$. Since $F_g$ is constant, $P \\propto v_t$.\n6. Combine the proportionalities: Since $P \\propto v_t$ and $v_t \\propto 1/B^2$, it follows that $P \\propto 1/B^2$.\n7. Calculate the new power when B is doubled: If $B' = 2B$, then $P' = P \\times (B/B')^2 = P \\times (B/2B)^2 = P \\times (1/2)^2 = P/4$.",
+      "verified_answer_value": "P/4",
+      "claimed_answer_value": "P/4",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Force balance (Newton's Laws)",
+        "Electromagnetic induction (Faraday's Law, Lorentz force)",
+        "Power dissipation (Joule heating, work-energy theorem)",
+        "Proportional reasoning"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a"
+    },
+    "notes": [
+      "The question correctly identifies the core concept of terminal velocity and power balance in an electromagnetic context.",
+      "The distractors are well-designed to target common misconceptions, particularly assuming constant velocity when B changes, or incorrect proportional relationships.",
+      "The solution is concise and relies on fundamental principles, making it suitable for a no-calculator, conceptual-heavy exam."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 1
+}

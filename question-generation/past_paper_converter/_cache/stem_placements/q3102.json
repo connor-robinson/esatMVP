@@ -1,0 +1,29 @@
+{
+  "questionId": 3102,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 2",
+  "questionNumber": 11,
+  "stemBlocks": [
+    "A block of mass $3.60 \\text{ kg}$ is held stationary on a rough slope inclined at $30.0^\\circ$ to the horizontal. The edge X of the block is $1.50 \\text{ m}$ from the bottom of the slope. The block is released and it accelerates uniformly down the slope. When X reaches the bottom of the slope, the speed of the block is $2.00 \\text{ m s}^{-1}$.",
+    "What is the average rate at which work is done against resistive forces? (gravitational field strength = $10 \\text{ N kg}^{-1}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:40:49.349773+00:00",
+  "sourceImageHash": "52a2d147346dbf7497f14a85eb2b6d916db50837baeb8a3473f0ed1661dfeb6b",
+  "status": "ok"
+}

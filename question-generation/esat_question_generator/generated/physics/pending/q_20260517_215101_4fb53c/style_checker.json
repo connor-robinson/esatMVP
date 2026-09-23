@@ -1,0 +1,50 @@
+{
+  "stage": "style_checker",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "style_score": {
+      "total": 35,
+      "breakdown": {
+        "stem_tone": 5,
+        "physics_authenticity": 5,
+        "reasoning_quality": 5,
+        "selectivity": 5,
+        "no_calc_engineering": 5,
+        "option_realism": 5,
+        "distractor_plausibility": 5
+      }
+    },
+    "difficulty_calibration": {
+      "difficulty_vs_reference": "similar",
+      "length_feel_vs_reference": "similar",
+      "notes": "The question is well-calibrated for a Medium difficulty ESAT question. It requires a key insight (the circuit analogy and Thévenin simplification) to solve efficiently, which elevates it beyond a simple application of formulas. The calculations are manageable without a calculator, fitting the ESAT style."
+    },
+    "selectivity_audit": {
+      "main_trap": "The primary trap is failing to recognize the underlying DC circuit analogy and/or failing to apply a simplification technique like Thévenin's theorem. Students might attempt to solve the full system of simultaneous equations, which is time-consuming and prone to arithmetic errors. Even if the analogy is recognized, common errors in calculating the Thévenin equivalent pressure or resistance, or misinterpreting the power calculation, lead to plausible distractors.",
+      "why_not_plug_and_chug": "This is not a plug-and-chug question. There is no single formula to directly apply. Candidates must first model the fluid system as an electrical circuit, then choose an appropriate circuit analysis method (Thévenin's theorem is the most efficient) to simplify the source network before calculating the power in the load.",
+      "expected_mid_student_error": "A mid-level student might recognize the circuit analogy but make a mistake in calculating either the Thévenin equivalent pressure (P_Th) or resistance (R_Th). For instance, they might incorrectly average the pump pressures or fail to 'short' the ideal pressure sources when calculating R_Th. Alternatively, they might attempt a full nodal analysis, which is more complex and time-consuming, leading to errors or running out of time. Another error could be confusing the power dissipated in the load with the power dissipated in the internal equivalent resistance or the total power.",
+      "verdict": "selective"
+    },
+    "flags": {
+      "too_easy": false,
+      "too_hard": false,
+      "too_wordy": false,
+      "too_recall_heavy": false,
+      "too_plug_and_chug": false,
+      "possible_verifier_miss": false
+    },
+    "notes": [
+      "The question effectively disguises a standard circuit analysis problem within a fluid dynamics context, which is a classic ESAT technique for testing conceptual understanding and problem-solving flexibility.",
+      "The definitions for pressure drop and power dissipation are clearly provided, ensuring no prior advanced fluid dynamics knowledge is required beyond basic interpretation.",
+      "The options are well-engineered to catch specific, common errors in circuit analysis, making the question highly selective."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-flash",
+  "attempts": 2
+}

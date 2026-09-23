@@ -1,0 +1,30 @@
+{
+  "questionId": 2632,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 63,
+  "stemBlocks": [
+    "A student set up an experiment to measure the rate of photosynthesis, as shown in the diagram.",
+    "Data was collected and plotted on a graph.\nIf plotted, which of the following variables would give a gradient that is directly proportional to the rate of photosynthesis?\n(All other variables were kept constant.)",
+    "|  | x-axis | y-axis |\n| --- | --- | --- |\n| 1 | time | volume of CO$_2$ released |\n| 2 | time | number of gas bubbles released per minute |\n| 3 | volume of oxygen released | time |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:19.040269+00:00",
+  "sourceImageHash": "d0d89a9b3f0f010797ccbe331429ff7f357c8f7e538e48b040bb5e0dbe0da6ed",
+  "status": "ok"
+}

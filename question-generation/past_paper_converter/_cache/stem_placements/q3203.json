@@ -1,0 +1,31 @@
+{
+  "questionId": 3203,
+  "examName": "ENGAA",
+  "examYear": 2023,
+  "paperName": "Section 2",
+  "questionNumber": 14,
+  "stemBlocks": [
+    "A triangular ramp with angles to the horizontal of $60^\\circ$ and $30^\\circ$ is placed with its largest face horizontal. A block of mass $1.5 \\text{kg}$ and a block of mass $m$ are joined by a light, inextensible string and placed on the ramp as shown.",
+    "The string passes over a light, frictionless pulley.\nThe maximum force of friction between the block of mass $1.5 \\text{kg}$ and the surface of the ramp is $3.5 \\text{ N}$.\nThe maximum force of friction between the block of mass $m$ and the surface of the ramp is $5.0 \\text{ N}$.",
+    "What is the maximum value of $m$ that allows the blocks to remain stationary on the surfaces?",
+    "(gravitational field strength $= 10 \\text{ N kg}^{-1}$)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A triangular ramp with two blocks connected by a string over a pulley. One block is labeled '1.5 kg' and the other 'm'. The ramp has angles of 60 degrees and 30 degrees to the horizontal.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 1.0
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:48:58.245645+00:00",
+  "sourceImageHash": "37657a7946b65ccf15f1cbd5e0337e8a88e596cc84ff2e3649fbf7ca3165bdb4",
+  "status": "ok"
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 2585,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 16,
+  "stemBlocks": [
+    "Three towns Ryeton, Tonbridge and Uphampton are represented on the diagram by the points labelled R, T and U, respectively.\nThe distance from Tonbridge to Ryeton is the same as the distance from Tonbridge to Uphampton.\nUphampton is south of Tonbridge.\nRyeton is on a bearing of $210^{\\circ}$ from Tonbridge.",
+    "What is the bearing of Uphampton from Ryeton?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:18.973475+00:00",
+  "sourceImageHash": "8b72ea6b7bfc74d4de522508ec28884229dada31df4273b246a36288976a4f38",
+  "status": "ok"
+}

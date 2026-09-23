@@ -1,0 +1,50 @@
+﻿
+Math 2 - Mock 1 id=8ec78191-50dd-42f9-85e4-74a4d57aa821 status=review count=27 missing=[]
+
+Math 2 - Mock 2 id=c582a54e-ff64-412f-9959-d6e47d4e91c7 status=review count=27 missing=[]
+
+Math 2 - Mock 3 id=c4800180-7ab8-41aa-ac45-3b7d6ea49abc status=review count=26 missing=[17]
+
+Math 2 - Mock 4 id=d1e3c628-7702-4216-859a-f87a6c03a4be status=review count=27 missing=[]
+
+Math 2 - Mock 5 id=7ba0b43a-5624-4e1b-96c8-32ef98b9bab4 status=review count=27 missing=[]
+
+=== TARGET SLOTS ===
+
+A4 qid=4343cd5e-2f45-43ca-a778-e8cfd1d516af D=3 tag=MM7 ans=D
+What is the value of the definite integral $$\int_{-\frac{\pi}{2}}^{\frac{\pi}{2}} (3 + \cos x + x \cos x) \, \mathrm{d}x$$
+
+B9 qid=fe6c3318-cd97-419a-8a09-b9b3620f3339 D=3 tag=MM3 ans=C
+Given that $\sin(\theta) = \frac{3}{5}$ and $\frac{\pi}{2} < \theta < \pi$, find the exact value of $\cot(2\theta)$.
+
+B23 qid=09a6fe36-12fc-418a-a410-7aaa7ee4cc2a D=4 tag=MM5 ans=C
+A convergent geometric series has first term $\tan \theta$ and third term $\cot \theta$. The second term of the series is negative, and the sum to infinity is 1.
+
+What is the value of the first term?
+
+C17: MISSING SLOT
+
+C18 qid=d6e63880-cda4-4f37-937a-ac735dda912f D=5 tag=MM5 ans=B
+A geometric series has first term $\ln(\sqrt{2e} \cos x)$ and common ratio $\sin^2 x$, for an angle $x$ in the range $0 < x < \frac{\pi}{2}$.
+
+The sum to infinity of the series is 1.
+
+What is the value of $x$?
+
+C24 qid=5aaaabf7-42d5-4894-8942-8860242ad1fd D=5 tag=MM7 ans=A
+A triangle has vertices at $(0, 0)$, $(x, 0)$, and $(x, f(x))$ for $x > 0$. The area of the triangle, $A$, is a function of $x$.
+
+The rate of change of the area with respect to $x$ is given by
+$$ \frac{dA}{dx} = 2 \sin^2(x) $$ 
+Given that $A=0$ when $x=0$, what is the value of $f
+
+D17 qid=dbe599f2-cef6-4d60-9683-b9a7aeb4f422 D=4 tag=MM5 ans=A
+What is the value of the sum $$S = \sum_{n=2}^{49} \log_{10} \left( 1 - \frac{1}{n^2} \right)$$
+
+D23 qid=79eca23c-4894-46db-8b0c-4d478ec3c356 D=4 tag=MM5 ans=D
+A function $f(x)$ is defined for all real $x$, is differentiable at $x=0$, and satisfies the equation: $$f(x) = 2f\left(\frac{x}{3}\right) + x^2 + x$$ What is the value of $f(7)$?
+
+
+E1 qid=27dbb43a-a1f4-44cd-836c-d46fe573697b D=3 tag=MM7 ans=D
+The value of the definite integral $$\int_1^2 \ln\left( \frac{e^{2x}}{x^2} \right) \, \mathrm{d}x$$ is
+

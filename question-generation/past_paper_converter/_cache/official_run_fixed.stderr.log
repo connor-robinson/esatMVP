@@ -1,0 +1,111 @@
+ERROR question 2049: 'charmap' codec can't encode character '\u03a9' in position 443: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\Users\anson\Desktop\nocalcMVP2_real\question-generation\past_paper_converter\run_with_progress.py", line 171, in process_job
+    return process_single_job(job, dry_run=dry_run, force=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\Desktop\nocalcMVP2_real\question-generation\past_paper_converter\runner.py", line 135, in process_single_job
+    report, hard_fail = validate_extraction(
+                        ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\Desktop\nocalcMVP2_real\question-generation\past_paper_converter\validate.py", line 168, in validate_extraction
+    katex_errors = validate_question_content(stem, options)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\Desktop\nocalcMVP2_real\question-generation\past_paper_converter\katex_validate.py", line 50, in validate_question_content
+    return validate_katex_fields(fields)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\Desktop\nocalcMVP2_real\question-generation\past_paper_converter\katex_validate.py", line 21, in validate_katex_fields
+    result = subprocess.run(
+             ^^^^^^^^^^^^^^^
+  File "C:\Users\anson\AppData\Local\Programs\Python\Python312\Lib\subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\AppData\Local\Programs\Python\Python312\Lib\subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\AppData\Local\Programs\Python\Python312\Lib\subprocess.py", line 1622, in _communicate
+    self._stdin_write(input)
+  File "C:\Users\anson\AppData\Local\Programs\Python\Python312\Lib\subprocess.py", line 1143, in _stdin_write
+    self.stdin.write(input)
+  File "C:\Users\anson\AppData\Local\Programs\Python\Python312\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u03a9' in position 443: character maps to <undefined>
+ERROR question 2402: Expecting ',' delimiter: line 10 column 3 (char 413)
+Traceback (most recent call last):
+  File "C:\Users\anson\Desktop\nocalcMVP2_real\question-generation\past_paper_converter\run_with_progress.py", line 171, in process_job
+    return process_single_job(job, dry_run=dry_run, force=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\Desktop\nocalcMVP2_real\question-generation\past_paper_converter\runner.py", line 105, in process_single_job
+    parsed, raw, usage = extract_from_image(job.image_bytes, job_meta(job), pdf_hint=job.pdf_text_hint)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\Desktop\nocalcMVP2_real\question-generation\past_paper_converter\extract.py", line 179, in extract_from_image
+  File "C:\Users\anson\Desktop\nocalcMVP2_real\question-generation\past_paper_converter\extract.py", line 88, in extract_json_object
+    if start == -1 or end == -1:
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+json.decoder.JSONDecodeError: Expecting ',' delimiter: line 10 column 3 (char 413)
+Temporary network pause at question 2418; all workers retry at 2026-08-24T19:25:20.396022+00:00
+ERROR question 2441: Invalid \escape: line 5 column 18 (char 424)
+Traceback (most recent call last):
+  File "C:\Users\anson\Desktop\nocalcMVP2_real\question-generation\past_paper_converter\run_with_progress.py", line 171, in process_job
+    return process_single_job(job, dry_run=dry_run, force=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\Desktop\nocalcMVP2_real\question-generation\past_paper_converter\runner.py", line 105, in process_single_job
+    parsed, raw, usage = extract_from_image(job.image_bytes, job_meta(job), pdf_hint=job.pdf_text_hint)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\Desktop\nocalcMVP2_real\question-generation\past_paper_converter\extract.py", line 179, in extract_from_image
+  File "C:\Users\anson\Desktop\nocalcMVP2_real\question-generation\past_paper_converter\extract.py", line 88, in extract_json_object
+    if start == -1 or end == -1:
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+json.decoder.JSONDecodeError: Invalid \escape: line 5 column 18 (char 424)
+ERROR question 3004: Expecting value: line 1 column 1 (char 0)
+Traceback (most recent call last):
+  File "C:\Users\anson\Desktop\nocalcMVP2_real\question-generation\past_paper_converter\run_with_progress.py", line 171, in process_job
+    return process_single_job(job, dry_run=dry_run, force=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\Desktop\nocalcMVP2_real\question-generation\past_paper_converter\runner.py", line 127, in process_single_job
+    stem, diagram_assets, diagram_crop_failed = process_diagrams(
+                                                ^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\Desktop\nocalcMVP2_real\question-generation\past_paper_converter\diagram.py", line 548, in process_diagrams
+    if isinstance(raw_stem_assets, list) and raw_stem_assets
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\Desktop\nocalcMVP2_real\question-generation\past_paper_converter\diagram.py", line 502, in add_asset
+    failed = True
+  File "C:\Users\anson\Desktop\nocalcMVP2_real\question-generation\past_paper_converter\diagram.py", line 423, in upload_diagram
+  File "C:\Users\anson\AppData\Local\Programs\Python\Python312\Lib\site-packages\storage3\_sync\file_api.py", line 545, in upload
+    return self._upload_or_update("POST", path_parts, file, file_options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\AppData\Local\Programs\Python\Python312\Lib\site-packages\storage3\_sync\file_api.py", line 517, in _upload_or_update
+    response = self._request(
+               ^^^^^^^^^^^^^^
+  File "C:\Users\anson\AppData\Local\Programs\Python\Python312\Lib\site-packages\storage3\_sync\file_api.py", line 78, in _request
+    resp = exc.response.json()
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\AppData\Local\Programs\Python\Python312\Lib\site-packages\httpx\_models.py", line 832, in json
+    return jsonlib.loads(self.content, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anson\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)

@@ -1,0 +1,29 @@
+{
+  "questionId": 2183,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 28,
+  "stemBlocks": [
+    "A sound wave is produced by a loudspeaker cone, which creates pulses of pressure by moving back and forth between two points $X$ and $Y$ as shown in the diagram.",
+    "The distance between points $X$ and $Y$ is $5.0 \\text{ mm}$ and the loudspeaker produces pulses of high pressure every $0.20 \\text{ milliseconds}$. The following statements about the sound wave produced are made:\nP It has a speed of $25 \\text{ m s}^{-1}$.\nQ It has an amplitude of $5.0 \\text{ mm}$.\nR It has a wavelength of $5.5 \\text{ mm}$.\nS It has a frequency of $5.0 \\text{ kHz}$.\nWhich of these statements can be correctly deduced from the information given?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:37:46.648155+00:00",
+  "sourceImageHash": "07b94911d8f3689fc4d7a93490c8c0e84cb22ba2df77f254d4d7e6f1dc80563b",
+  "status": "ok"
+}

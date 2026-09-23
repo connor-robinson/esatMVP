@@ -1,0 +1,29 @@
+{
+  "questionId": 3239,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 30,
+  "stemBlocks": [
+    "Compound Z is known to have percentage composition by mass C: 80.0%, H: 6.7%, O: 13.3%. The mass spectrum of compound Z is given showing the mass-to-charge ratio ($m/z$) of the molecular ion and its fragments. The structures shown are representations of the same molecule.",
+    "Which of the following could be the structure of Z? ($A_r$ values: C = 12; H = 1; O = 16)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Mass spectrum of compound Z",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:13.910532+00:00",
+  "sourceImageHash": "307dcd40d27f6d3a2a24b8408e8b9d61df8fc123ed8a567d7d1e24601b928929",
+  "status": "ok"
+}

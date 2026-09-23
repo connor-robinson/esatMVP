@@ -1,0 +1,30 @@
+{
+  "questionId": 2811,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 72,
+  "stemBlocks": [
+    "The diagram shows some chemical processes involved in the carbon cycle. Three of these multi-stage processes are labelled P, Q and R.",
+    "Which of the following statements is/are correct?",
+    "1 P requires the presence of mitochondria.\n2 Overall, Q releases heat.\n3 R is sensitive to changes in pH and temperature."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A diagram illustrating the carbon cycle with processes P, Q, and R. CO2 in air is connected to plants by Q. Plants are connected to animals and bacteria. Animals and bacteria are connected to CO2 in air by P. Plants are connected to bacteria by R.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.402239+00:00",
+  "sourceImageHash": "1f447282783d0e51a66d9da0e581385074d43f6f1341ba043e899e36006eef99",
+  "status": "ok"
+}

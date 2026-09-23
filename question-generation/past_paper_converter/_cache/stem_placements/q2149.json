@@ -1,0 +1,39 @@
+{
+  "questionId": 2149,
+  "examName": "ENGAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 34,
+  "stemBlocks": [
+    "An object is released from rest at a height $H$ above the ground and falls freely in a uniform gravitational field. At time $t$ after being released, it has fallen a distance $s$ and is at a height $h$ above the ground, travelling at speed $v$.\nThe graph shows two quantities plotted.\nWhich of the rows show(s) a possible pair of quantities for the axes?\n(Assume that air resistance is negligible.)",
+    "|  | y-axis | x-axis |\n| --- | --- | --- |\n| 1 | $h$ | $t$ |\n| 2 | kinetic energy | $h$ |\n| 3 | gravitational potential energy | $s$ |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    },
+    {
+      "id": "d2",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    },
+    {
+      "assetId": "d2",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:06.368898+00:00",
+  "sourceImageHash": "9a2aa19cb93e83d93126e8de152383ef4609d4d9563b4a8545877b81ec4cd068",
+  "status": "ok"
+}

@@ -1,0 +1,75 @@
+[
+  {
+    "id": "109aafab-26ce-4524-8010-770650c64667",
+    "question_stem": "The skeletal structure of an organic compound, X, is shown below:\n\nWhich of the following statements about compound X is/are correct?\n\n1. $1\\text{ mol}$ of compound X reacts with an excess of sodium metal to produce $1\\text{ mol}$ of $\\ce{H2(g)}$.\n\n2. $1\\text{ mol}$ of compound X reacts completely with $2\\text{ mol}$ of aqueous sodium hydroxide ($\\ce{NaOH}$).\n\n3. Compound X exhibits both optical isomerism and $E/Z$ (geometric) isomerism.\n\n<figure class=\"qg-diagram\" style=\"margin:1em 0;text-align:center;\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa_review/nsaa-2861-far2/rendered.png\" alt=\"Exam diagram\" style=\"max-width:100%;height:auto;\" /></figure>",
+    "options": {
+      "A": "none of them",
+      "B": "1 only",
+      "C": "2 only",
+      "D": "3 only",
+      "E": "1 and 2 only",
+      "F": "1 and 3 only",
+      "G": "2 and 3 only",
+      "H": "1, 2 and 3"
+    },
+    "correct_option": "B",
+    "solution_reasoning": "Let us evaluate each statement:\n\n1. **Statement 1 is correct:** Compound X contains one alcohol group ($\\ce{-OH}$) and one carboxylic acid group ($\\ce{-COOH}$). Both of these groups react with sodium metal to release hydrogen gas:\n$$\\ce{R-OH + Na -> R-O- Na+ + 1/2 H2}$$\n$$\\ce{R-COOH + Na -> R-COO- Na+ + 1/2 H2}$$\nEach mole of compound X therefore releases $\\frac{1}{2} + \\frac{1}{2} = 1\\text{ mol}$ of $\\ce{H2(g)}$.\n\n2. **Statement 2 is incorrect:** Aqueous sodium hydroxide is a base that neutralises carboxylic acids ($\\ce{-COOH}$), but aliphatic alcohols are not acidic enough to react with aqueous $\\ce{NaOH}$. Therefore, $1\\text{ mol}$ of compound X reacts with only $1\\text{ mol}$ of $\\ce{NaOH}$.\n\n3. **Statement 3 is incorrect:** Carbon-2 (bonded to the $\\ce{-OH}$ group) is bonded to four different groups: $\\ce{-H}$, $\\ce{-OH}$, $\\ce{-COOH}$, and $\\ce{-C(CH3)=CH2}$. Hence, it is a chiral centre and compound X exhibits optical isomerism. However, the terminal carbon of the double bond is bonded to two identical hydrogen atoms ($\\ce{=CH2}$), so it cannot exhibit $E/Z$ (geometric) isomerism.\n\nTherefore, only statement 1 is correct.",
+    "solution_key_insight": "Let us evaluate each statement:",
+    "distractor_map": {}
+  },
+  {
+    "id": "b2b44f22-eb5e-4750-9b15-b8029f978787",
+    "question_stem": "The hydrolysis of one mole of triglyceride into glycerol and fatty acids has an enthalpy change of $\\Delta H = +15 \\text{ kJ mol}^{-1}$. The table gives the bond energies for the bonds involved, except for the ester C-O bond.\n\n| Bond | Bond Energy / $\\text{kJ mol}^{-1}$ |\n|---|---|\n| O-H (water) | 464 |\n| O-H (glycerol) | 455 |\n| C-O (fatty acid) | 358 |\n\nAssume that the hydrolysis of each ester linkage involves breaking one ester C-O bond and one water O-H bond, and forming one fatty acid C-O bond and one glycerol O-H bond.\n\nWhat is the bond energy of the ester C-O bond?",
+    "options": {
+      "A": "$344 \\text{ kJ mol}^{-1}$",
+      "B": "$354 \\text{ kJ mol}^{-1}$",
+      "C": "$362 \\text{ kJ mol}^{-1}$",
+      "D": "$363 \\text{ kJ mol}^{-1}$",
+      "E": "$364 \\text{ kJ mol}^{-1}$"
+    },
+    "correct_option": "B",
+    "solution_reasoning": "1. **Identify the stoichiometry**: A triglyceride contains 3 ester linkages. Hydrolysis requires 3 water molecules and produces 1 glycerol and 3 fatty acids.\n2. **Identify bonds broken and formed per mole of triglyceride**:\n   *   **Break**: 3 $\\times$ Ester C-O bonds (energy $x$) + 3 $\\times$ Water O-H bonds ( $464$).\n   *   **Form**: 3 $\\times$ Fatty acid C-O bonds ( $358$) + 3 $\\times$ Glycerol O-H bonds ( $455$).\n3. **Apply Hess's Law**: $\\Delta H = \\sum E_{\\text{broken}} - \\sum E_{\\text{formed}}$.\n\n   $$\n   +15 = [3x + 3(464)] - [3(358) + 3(455)]\n   $$\n\n4. **Solve**:\n\n   $$\n   15 = (3x + 1392) - (1074 + 1365)\n   $$\n\n   $$\n   15 = 3x + 1392 - 2439\n   $$\n\n   $$\n   15 = 3x - 1047\n   $$\n\n   $$\n   3x = 1062 \\implies x = 354 \\text{ kJ mol}^{-1}\n   $$",
+    "solution_key_insight": "Remember that a single triglyceride molecule contains three ester linkages, so the bond breaking and forming events must be multiplied by three for the molar calculation.",
+    "distractor_map": {
+      "A": "Used the wrong sign convention for enthalpy change (Formed - Broken).",
+      "B": "Correct answer.",
+      "C": "Swapped the bond energies for the ester C-O and fatty acid C-O in the calculation.",
+      "D": "Ignored the contribution of the O-H bonds, calculating only with C-O bonds.",
+      "E": "Failed to account for stoichiometry (used the molar enthalpy change of $+15$ for a single ester linkage instead of three)."
+    }
+  },
+  {
+    "id": "c69afc58-7f6f-4e40-ae1d-e92ed1bf69e9",
+    "question_stem": "An organic carboxylic acid $\\mathbf{X}$ has the structural formula shown below:\n\nA student dissolves $0.590\\text{ g}$ of acid $\\mathbf{X}$ in distilled water and makes the volume up to $250\\text{ cm}^3$ in a volumetric flask.\n\nA $25.0\\text{ cm}^3$ portion of this solution is transferred to a conical flask and titrated against aqueous potassium hydroxide, $\\ce{KOH(aq)}$. Exactly $20.0\\text{ cm}^3$ of the $\\ce{KOH(aq)}$ solution is required for complete neutralisation.\n\nWhat is the concentration of the potassium hydroxide solution in $\\text{mol dm}^{-3}$?\n\n($A_{\\text{r}}$ values: $\\ce{H} = 1.0$, $\\ce{C} = 12.0$, $\\ce{O} = 16.0$)\n\n<figure class=\"qg-diagram\" style=\"margin:1em 0;text-align:center;\"><img src=\"https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/nsaa_review/nsaa-2351-far3/rendered.png\" alt=\"Exam diagram\" style=\"max-width:100%;height:auto;\" /></figure>",
+    "options": {
+      "A": "$0.0125\\text{ mol dm}^{-3}$",
+      "B": "$0.0250\\text{ mol dm}^{-3}$",
+      "C": "$0.0500\\text{ mol dm}^{-3}$",
+      "D": "$0.100\\text{ mol dm}^{-3}$",
+      "E": "$0.250\\text{ mol dm}^{-3}$",
+      "F": "$0.500\\text{ mol dm}^{-3}$"
+    },
+    "correct_option": "C",
+    "solution_reasoning": "Step 1: Determine the molecular formula and relative molecular mass ($M_{\\text{r}}$) of $\\mathbf{X}$.\nFrom the displayed structure, acid $\\mathbf{X}$ is butanedioic acid, $\\ce{HOOC-CH2-CH2-COOH}$, which has the molecular formula $\\ce{C4H6O4}$.\n$$M_{\\text{r}}(\\ce{C4H6O4}) = (4 \\times 12.0) + (6 \\times 1.0) + (4 \\times 16.0) = 48.0 + 6.0 + 64.0 = 118.0\\text{ g mol}^{-1}$$\n\nStep 2: Calculate the amount of $\\mathbf{X}$ in the original $250\\text{ cm}^3$ solution.\n$$n(\\mathbf{X})_{\\text{total}} = \\frac{0.590\\text{ g}}{118.0\\text{ g mol}^{-1}} = 0.00500\\text{ mol}$$\n\nStep 3: Calculate the amount of $\\mathbf{X}$ in the $25.0\\text{ cm}^3$ portion used for titration.\n$$n(\\mathbf{X})_{\\text{titrated}} = 0.00500\\text{ mol} \\times \\frac{25.0\\text{ cm}^3}{250\\text{ cm}^3} = 5.00 \\times 10^{-4}\\text{ mol}$$\n\nStep 4: Determine the stoichiometry of neutralisation.\nAcid $\\mathbf{X}$ contains two carboxylic acid groups ($-\\ce{COOH}$), so it is diprotic:\n$$\\ce{HOOC(CH2)2COOH + 2KOH -> KOOC(CH2)2COOK + 2H2O}$$\n$$n(\\ce{KOH}) = 2 \\times n(\\mathbf{X})_{\\text{titrated}} = 2 \\times (5.00 \\times 10^{-4}\\text{ mol}) = 1.00 \\times 10^{-3}\\text{ mol}$$\n\nStep 5: Calculate the concentration of the $\\ce{KOH(aq)}$ solution.\n$$c(\\ce{KOH}) = \\frac{n(\\ce{KOH})}{V(\\ce{KOH})} = \\frac{1.00 \\times 10^{-3}\\text{ mol}}{0.0200\\text{ dm}^3} = 0.0500\\text{ mol dm}^{-3}$$\n\nTherefore, the correct option is C.",
+    "solution_key_insight": "Step 1: Determine the molecular formula and relative molecular mass ($M_{\\text{r}}$) of $\\mathbf{X}$.",
+    "distractor_map": {}
+  },
+  {
+    "id": "fd9dad82-3f7f-49a1-8725-0232ba411938",
+    "question_stem": "Three separate aqueous solutions are electrolysed using inert electrodes:\n\n- Solution 1: concentrated $\\ce{NaCl(aq)}$\n- Solution 2: dilute $\\ce{H2SO4(aq)}$\n- Solution 3: concentrated $\\ce{CuSO4(aq)}$\n\nThe same quantity of electrical charge is passed through each solution. Assume that all gases evolved behave ideally and are completely insoluble in water.\n\nWhich of the following statements is/are correct?\n\n1 The volume of gas evolved at the cathode in Solution 1 is equal to the volume of gas evolved at the cathode in Solution 2 (measured at the same temperature and pressure).\n\n2 The volume of gas evolved at the anode in Solution 2 is twice the volume of gas evolved at the cathode in Solution 2.\n\n3 As electrolysis proceeds, the pH of Solution 1 increases and the pH of Solution 3 decreases.",
+    "options": {
+      "A": "none of them",
+      "B": "1 only",
+      "C": "2 only",
+      "D": "3 only",
+      "E": "1 and 2 only",
+      "F": "1 and 3 only",
+      "G": "2 and 3 only",
+      "H": "1, 2 and 3"
+    },
+    "correct_option": "F",
+    "solution_reasoning": "Let $n$ be the moles of electrons passed through each electrolytic cell.\n\n**Solution 1 (concentrated $\\ce{NaCl(aq)}$):**\n- At the cathode: $\\ce{Na+}$ is more reactive than hydrogen, so water/$\\ce{H+}$ is reduced: $2\\ce{H2O(l)} + 2\\ce{e-} \\rightarrow \\ce{H2(g)} + 2\\ce{OH-(aq)}$. Moles of $\\ce{H2} = \\frac{n}{2}$.\n- At the anode: $\\ce{Cl-}$ is oxidised: $2\\ce{Cl-(aq)} \\rightarrow \\ce{Cl2(g)} + 2\\ce{e-}$.\n- The remaining solution contains $\\ce{Na+(aq)}$ and $\\ce{OH-(aq)}$ (aqueous $\\ce{NaOH}$), so $[\\ce{OH-}]$ increases and the pH increases.\n\n**Solution 2 (dilute $\\ce{H2SO4(aq)}$):**\n- At the cathode: $2\\ce{H+(aq)} + 2\\ce{e-} \\rightarrow \\ce{H2(g)}$. Moles of $\\ce{H2} = \\frac{n}{2}$.\n- At the anode: $2\\ce{H2O(l)} \\rightarrow \\ce{O2(g)} + 4\\ce{H+(aq)} + 4\\ce{e-}$. Moles of $\\ce{O2} = \\frac{n}{4}$.\n\n**Solution 3 (concentrated $\\ce{CuSO4(aq)}$):**\n- At the cathode: $\\ce{Cu^{2+}(aq)} + 2\\ce{e-} \\rightarrow \\ce{Cu(s)}$.\n- At the anode: $2\\ce{H2O(l)} \\rightarrow \\ce{O2(g)} + 4\\ce{H+(aq)} + 4\\ce{e-}$.\n- The generation of $\\ce{H+(aq)}$ ions at the anode (leaving $\\ce{H2SO4(aq)}$) increases $[\\ce{H+}]$, so the pH decreases.\n\n**Evaluating the statements:**\n- **Statement 1 is correct:** In both Solution 1 and Solution 2, $\\frac{n}{2}\\text{ mol}$ of $\\ce{H2(g)}$ is evolved at the cathode. At the same temperature and pressure, equal amounts of gas occupy equal volumes.\n- **Statement 2 is incorrect:** In Solution 2, $n(\\ce{H2}) = \\frac{n}{2}$ at the cathode and $n(\\ce{O2}) = \\frac{n}{4}$ at the anode. The volume of gas evolved at the cathode is twice that at the anode, not half.\n- **Statement 3 is correct:** Solution 1 accumulates $\\ce{OH-}$ (pH increases) while Solution 3 accumulates $\\ce{H+}$ (pH decreases).\n\nTherefore, statements 1 and 3 only are correct.",
+    "solution_key_insight": "Let $n$ be the moles of electrons passed through each electrolytic cell.",
+    "distractor_map": {}
+  }
+]

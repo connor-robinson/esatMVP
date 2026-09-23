@@ -1,0 +1,69 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_b51132c8",
+      "module": "physics",
+      "variation_mode": "SIBLING",
+      "target_difficulty": "Easy",
+      "task_signature": "reverse_reasoning",
+      "primary_tag": "6",
+      "secondary_tags": [
+        "3"
+      ]
+    },
+    "question": {
+      "stem": "A space probe in a vacuum transmits a microwave signal to a receiver on Earth. The receiver detects the signal at a higher frequency than the frequency at which it was emitted.\n\nLet $c$ be the speed of light in a vacuum.\n\nWhich of the following correctly describes the motion of the space probe relative to Earth, and the speed of the received microwaves as measured on Earth?",
+      "options": {
+        "A": "The probe is approaching Earth, and the speed of the microwaves is $c$.",
+        "B": "The probe is approaching Earth, and the speed of the microwaves is greater than $c$.",
+        "C": "The probe is approaching Earth, and the speed of the microwaves is less than $c$.",
+        "D": "The probe is moving away from Earth, and the speed of the microwaves is $c$.",
+        "E": "The probe is moving away from Earth, and the speed of the microwaves is greater than $c$.",
+        "F": "The probe is moving away from Earth, and the speed of the microwaves is less than $c$."
+      },
+      "correct_option": "A"
+    },
+    "visual_requirements": {
+      "visual_need": "none",
+      "visual_role": "none",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": null,
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "An increase in observed frequency means the source is approaching, but the speed of all electromagnetic waves in a vacuum is always exactly $c$.",
+      "reasoning": "First, consider the change in frequency. The Doppler effect dictates that an observed frequency higher than the emitted frequency (a blueshift) occurs when the source is moving towards the observer. Therefore, the probe is approaching Earth.\n\nSecond, consider the wave speed. Microwaves are a type of electromagnetic radiation. A fundamental property of electromagnetic waves is that their speed in a vacuum is constant ($c$) for all observers, regardless of the relative motion of the source. The wave speed does not undergo classical Galilean velocity addition. Thus, the speed remains $c$."
+    },
+    "distractor_map": {
+      "A": "Correct. Higher frequency indicates an approaching source, and the speed of EM waves in a vacuum is invariant ($c$).",
+      "B": "Correctly identifies the probe is approaching, but incorrectly applies classical velocity addition to light, assuming the wave is 'pushed' faster.",
+      "C": "Correctly identifies the probe is approaching, but incorrectly assumes the wave speed decreases.",
+      "D": "Incorrectly associates a higher frequency with a receding source (confusing blueshift with redshift), but correctly identifies the speed is $c$.",
+      "E": "Incorrectly associates a higher frequency with a receding source, and incorrectly assumes the wave speed increases.",
+      "F": "Incorrectly associates a higher frequency with a receding source, and incorrectly applies classical velocity subtraction to light."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Recognising that while frequency and wavelength change due to relative motion, the wave speed (c) does not undergo classical Galilean velocity addition.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true,
+      "goldilocks_complexity": {
+        "number_of_core_physics_principles": 2,
+        "estimated_solution_steps": 2,
+        "requires_derived_relationship": false,
+        "not_overstacked": true
+      }
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-pro-preview",
+  "attempts": 1
+}

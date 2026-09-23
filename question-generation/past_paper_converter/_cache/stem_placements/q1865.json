@@ -1,0 +1,40 @@
+{
+  "questionId": 1865,
+  "examName": "ENGAA",
+  "examYear": 2017,
+  "paperName": "Section 1",
+  "questionNumber": 18,
+  "stemBlocks": [
+    "Graph 1 shows how the displacement of one of the particles of a medium varies with time in seconds as a wave travels through the medium.",
+    "Graph 2 shows how the displacement varies with distance in metres at one time for the same wave.",
+    "Which expression gives the speed in m s$^{-1}$ of the wave?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph 1 shows displacement vs time, with a period $T = t_2 - t_1$. Graph 2 shows displacement vs distance, with half a wavelength $\\lambda/2 = x_2 - x_1$.",
+      "role": "stem_diagram"
+    },
+    {
+      "id": "d2",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    },
+    {
+      "assetId": "d2",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T17:15:45.149465+00:00",
+  "sourceImageHash": "29af3767e71ab714a98772d9cbe2a5c53f8727d08f43a10ea8aeb889aeb0c891",
+  "status": "ok"
+}

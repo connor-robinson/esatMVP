@@ -1,0 +1,29 @@
+{
+  "questionId": 1815,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 22,
+  "stemBlocks": [
+    "The diagram shows the velocity-time graph for an object travelling in a straight line over a period of $30 \\text{ s}$. What total distance did the object travel in the $30 \\text{ s}$, how far from its starting position was it at the end of the $30 \\text{ s}$, and what was its average speed over the $30 \\text{ s}$?",
+    "|  | total distance travelled / m | distance from starting position / m | average speed / ms^{-1} |\n| --- | --- | --- | --- |\n| A | 90 | 70 | 3.0 |\n| B | 90 | 70 | 5.0 |\n| C | 90 | 90 | 3.0 |\n| D | 90 | 90 | 5.0 |\n| E | 180 | 140 | 5.0 |\n| F | 180 | 140 | 6.0 |\n| G | 180 | 180 | 5.0 |\n| H | 180 | 180 | 6.0 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:23:52.617535+00:00",
+  "sourceImageHash": "114c39ebb138908635634f64c062267741b0d676061fa3ad2841a1a5534e2bd8",
+  "status": "ok"
+}

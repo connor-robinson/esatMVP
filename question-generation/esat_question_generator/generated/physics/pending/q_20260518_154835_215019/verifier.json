@@ -1,0 +1,52 @@
+{
+  "stage": "verifier",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "D",
+    "independent_solution": {
+      "main_law_or_principle": "Kinetic energy and momentum relationship: $E_k = \\frac{p^2}{2m}$",
+      "calculation_or_logic": "Given $p_X = 3p_Y$ and $E_{kX} = 4E_{kY}$. From $E_k = \\frac{p^2}{2m}$, we have $m = \\frac{p^2}{2E_k}$. Therefore, the ratio $\\frac{m_X}{m_Y} = \\frac{p_X^2 / (2E_{kX})}{p_Y^2 / (2E_{kY})} = \\left(\\frac{p_X}{p_Y}\\right)^2 \\cdot \\left(\\frac{E_{kY}}{E_{kX}}\\right)$. Substituting the given ratios: $\\frac{m_X}{m_Y} = (3)^2 \\cdot \\left(\\frac{1}{4}\\right) = \\frac{9}{4}$.",
+      "verified_answer_value": "9/4",
+      "claimed_answer_value": "9/4",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Recall $E_k = p^2/2m$",
+        "Isolate $m$",
+        "Apply ratio scaling"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "derived_relationship_audit": {
+      "requires_nontrivial_derivation": false,
+      "number_of_linked_relationships": 0,
+      "relationships_given_in_stem": [],
+      "safe_for_esat": true
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a",
+      "derived_relationship_safety": "pass"
+    },
+    "notes": [
+      "The question is a standard proportional reasoning task based on fundamental mechanics definitions."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}

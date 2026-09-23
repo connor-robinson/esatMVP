@@ -1,0 +1,30 @@
+{
+  "questionId": 2806,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 67,
+  "stemBlocks": [
+    "An enzyme-catalysed reaction was studied and the mass of product formed was measured over time. The results are shown in the graph.",
+    "Which of the following statements is/are correct?",
+    "1 The enzymes may have been used up in the reaction.\n2 The initial rate of reaction is $120 \\text{ g min}^{-1}$.\n3 At high concentrations, the product formed may inhibit the enzymes."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing total mass of product formed (g) versus time (s).",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.396969+00:00",
+  "sourceImageHash": "d5b7330c21a51eafe9a337ba0a635d2ce143f6b2829848d566eec1f0fc220259",
+  "status": "ok"
+}

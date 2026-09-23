@@ -1,0 +1,29 @@
+{
+  "questionId": 2596,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 27,
+  "stemBlocks": [
+    "Heat is supplied to an initially solid substance at a rate of $60 \\text{ W}$. The graph shows the variation of the temperature of the substance with time.",
+    "What is the mass of the substance? (specific latent heat of fusion of substance = $100 \\text{ Jg}^{-1}$; assume that there is no heat transferred to the surroundings)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:18.988681+00:00",
+  "sourceImageHash": "debd91ff6dbb61c1d65835d3c1cb746461d5b75ea672f1b75573cc95b051411b",
+  "status": "ok"
+}

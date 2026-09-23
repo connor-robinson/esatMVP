@@ -1,0 +1,29 @@
+{
+  "questionId": 2602,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 33,
+  "stemBlocks": [
+    "Two hovercraft travel horizontally in opposite directions along the same straight line. The mass and speed of each hovercraft are shown in the diagram. Horizontal resistive forces acting on each hovercraft are negligible.\nThe hovercraft collide and stick together. The collision lasts for $0.10 \\text{ s}$.\nJust before the collision, what is the total kinetic energy and the magnitude of the total momentum of the two hovercraft, and what is the magnitude of the average force acting horizontally on each hovercraft during the collision?",
+    "|  | total initial kinetic energy / $\\text{kJ}$ | total initial momentum / $\\text{kg m s}^{-1}$ | average force on each hovercraft / $\\text{kN}$ |\n| --- | --- | --- | --- |\n| A | $100$ | $0$ | $2.0$ |\n| B | $100$ | $0$ | $200$ |\n| C | $100$ | $4.0 \\times 10^4$ | $2.0$ |\n| D | $100$ | $4.0 \\times 10^4$ | $200$ |\n| E | $300$ | $0$ | $2.0$ |\n| F | $300$ | $0$ | $200$ |\n| G | $300$ | $4.0 \\times 10^4$ | $2.0$ |\n| H | $300$ | $4.0 \\times 10^4$ | $200$ |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:18.998606+00:00",
+  "sourceImageHash": "3ad5248aa4c867519799cd135c04a0ad607526e60a043ead47b154d89478cfe1",
+  "status": "ok"
+}

@@ -1,0 +1,66 @@
+{
+  "stage": "implementer",
+  "status": "pass",
+  "verdict": null,
+  "payload": {
+    "metadata": {
+      "schema_id": "P_a9a3eea7",
+      "module": "physics",
+      "variation_mode": "FAR",
+      "target_difficulty": "Hard",
+      "task_signature": "p_a9a3eea7_far_hard_1",
+      "primary_tag": "4",
+      "secondary_tags": [
+        "1",
+        "5"
+      ]
+    },
+    "question": {
+      "stem": "A conducting rod slides without friction down two parallel conducting rails, which are inclined at a fixed angle to the horizontal. The entire setup is in a uniform magnetic field, perpendicular to the plane of the rails. The rod falls and reaches a terminal velocity, at which point the power dissipated as heat in the rod is $P$. The experiment is repeated, but with the magnetic field strength doubled. What is the new power dissipated in the rod when it reaches its new terminal velocity?",
+      "options": {
+        "A": "$P/16$",
+        "B": "$P/4$",
+        "C": "$P/2$",
+        "D": "$P$",
+        "E": "$2P$",
+        "F": "$4P$"
+      },
+      "correct_option": "B"
+    },
+    "visual_requirements": {
+      "visual_need": "concept_image_only",
+      "visual_role": "supportive",
+      "answer_depends_on_visual": false,
+      "graph_request": null,
+      "schematic_request": {
+        "description": "A simple schematic showing two parallel conducting rails inclined at an angle. A horizontal conducting rod rests on the rails, free to slide down. Arrows indicate a uniform magnetic field perpendicular to the plane of the rails (e.g., into the page). An arrow should indicate the direction of gravity acting on the rod."
+      },
+      "concept_image_request": null
+    },
+    "solution": {
+      "key_insight": "At terminal velocity, the system is in a steady state where the power input from gravity equals the power dissipated as heat. To find how the power changes, one must first determine how the terminal velocity depends on the magnetic field strength.",
+      "reasoning": "Let the angle of inclination be $\\theta$ and the mass of the rod be $m$. The component of the gravitational force pulling the rod down the rails is constant: $F_g = mg \\sin\\theta$.\n\nAt terminal velocity $v_t$, this driving force is balanced by the magnetic braking force, $F_m$. The induced emf is $\\varepsilon = BLv_t$, where $L$ is the length of the rod and $B$ is the magnetic field strength. The induced current is $I = \\varepsilon/R = BLv_t/R$, where $R$ is the resistance.\nThe magnetic force is $F_m = BIL = B(BLv_t/R)L = \\frac{B^2L^2v_t}{R}$.\n\nAt terminal velocity, $F_g = F_m$: \n$$mg \\sin\\theta = \\frac{B^2L^2v_t}{R}$$\nSolving for $v_t$: \n$$v_t = \\frac{mgR\\sin\\theta}{B^2L^2}$$\nThis shows that the terminal velocity is inversely proportional to the square of the magnetic field strength: $v_t \\propto 1/B^2$.\n\nThe power dissipated as heat, $P$, must equal the rate of loss of gravitational potential energy at terminal velocity. This is given by $P = F_g \\times v_t = (mg \\sin\\theta) v_t$.\n\nSince $F_g$ is constant, the power $P$ is directly proportional to the terminal velocity $v_t$. Therefore, $P \\propto v_t$.\n\nCombining the two proportionalities, we find $P \\propto 1/B^2$.\n\nIf the magnetic field strength is doubled ($B' = 2B$), the new power $P'$ will be:\n$$P' = P \\times \\left(\\frac{B}{B'}\\right)^2 = P \\times \\left(\\frac{B}{2B}\\right)^2 = P \\times \\left(\\frac{1}{2}\\right)^2 = \\frac{P}{4}$$"
+    },
+    "distractor_map": {
+      "A": "This would be correct if $P \\propto 1/B^4$. This might arise from incorrectly using $P \\propto v_t^2$ (e.g. from $P=I^2R$ and $I \\propto v_t$) combined with the correct $v_t \\propto 1/B^2$, leading to $P \\propto (1/B^2)^2 = 1/B^4$.",
+      "B": "Correct. The power dissipated equals the rate of GPE loss, $P = F_g v_t$. Since $F_g$ is constant, $P \\propto v_t$. The force balance shows $v_t \\propto 1/B^2$, so $P \\propto 1/B^2$. Doubling $B$ reduces $P$ by a factor of 4.",
+      "C": "This would be correct if $P \\propto 1/B$. This mistake arises from incorrectly deriving the velocity dependence as $v_t \\propto 1/B$ (e.g. by assuming $F_m \\propto Bv_t$) and then correctly relating power to velocity, $P \\propto v_t$.",
+      "D": "This implies the power is unchanged. This is incorrect. While the system reaches a new steady state (terminal velocity), the value of that velocity changes, and so does the associated power dissipation.",
+      "E": "This would be correct if $P \\propto B$. This could be an inversion of the correct logic, or some other combination of errors.",
+      "F": "This is the most common trap. It comes from using the formula $P = \\varepsilon^2/R = (BLv_t)^2/R$ and incorrectly assuming $v_t$ is constant. This leads to the false conclusion that $P \\propto B^2$. If $B$ doubles, this suggests power quadruples."
+    },
+    "quality_self_check": {
+      "reasoning_hinge_used": "Yes, the hinge is recognising that P_dissipated = P_gravitational and that terminal velocity changes. This avoids the trap of using P = (BLv)²/R and assuming v is constant.",
+      "not_direct_substitution": true,
+      "exactly_one_correct": true,
+      "no_calculator_friendly": true,
+      "on_spec": true,
+      "visual_dependency_safe": true
+    }
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-2.5-pro",
+  "attempts": 1
+}

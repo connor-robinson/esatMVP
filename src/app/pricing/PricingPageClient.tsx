@@ -17,13 +17,19 @@ import {
   SEASON_PASS_ACCESS_UNTIL_LABEL,
   type PlanId,
 } from "@/lib/stripe/best-value";
-import { VARIANT_CONFIGS, type PricingVariant } from "@/lib/pricing/abTest";
+import { 
+  VARIANT_CONFIGS, 
+  EXPRESS_DEAL_PRICE_GBP,
+  EXPRESS_DEAL_ORIGINAL_PRICE_GBP,
+  type PricingVariant 
+} from "@/lib/pricing/abTest";
+import { getOrAssignVariant } from "@/lib/pricing/abTestClient";
 import {
   buildCheckoutSignupUrl,
   isPaidPlanId,
   type PaidPlanId,
 } from "@/lib/pricing/checkoutAuth";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, MessageCircle } from "lucide-react";
 import {
   currentGaPath,
   readGaSourcePage,
@@ -50,74 +56,9 @@ const FEATURES = {
   ],
 };
 
-const LOCAL_VARIANTS: PricingVariant[] = [
-  "3day_original",
-  "3day_discounted",
-  "nodeal_original",
-  "nodeal_discounted",
-];
-
 function daysUntilEsat(): number {
   const diff = SEASON_PASS_ACCESS_UNTIL.getTime() - Date.now();
   return Math.max(0, Math.ceil(diff / 86_400_000));
-}
-
-function LocalPricingVariants() {
-  const days = daysUntilEsat();
-
-  return (
-    <section className="mb-8">
-      <p className="text-center text-xs font-semibold uppercase tracking-[0.14em] text-text-muted">
-        Localhost preview
-      </p>
-      <h2 className="mt-2 text-center font-heading text-xl font-semibold text-text">
-        {days} days until the ESAT
-      </h2>
-      <p className="mx-auto mt-2 max-w-lg text-center text-sm text-text-muted">
-        Four monthly offers, shown only while you are on localhost.
-      </p>
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {LOCAL_VARIANTS.map((id) => {
-          const config = VARIANT_CONFIGS[id];
-          const discounted = config.monthlyPriceGbp < MONTHLY_PRICE_GBP;
-          return (
-            <article
-              key={id}
-              className="rounded-organic-xl bg-surface-elevated px-5 py-5"
-            >
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">
-                {config.trialDays > 0
-                  ? `${config.trialDays}-day free trial`
-                  : "Pay today"}
-              </p>
-              <p className="mt-3 text-sm font-medium text-text">
-                {days} days until the ESAT
-              </p>
-              <div className="mt-3 flex flex-wrap items-baseline gap-x-2">
-                {discounted ? (
-                  <span className="text-base font-semibold text-text-subtle line-through">
-                    {formatGbpPrice(MONTHLY_PRICE_GBP)}
-                  </span>
-                ) : null}
-                <span className="text-3xl font-bold tracking-tight text-text">
-                  {formatGbpPrice(config.monthlyPriceGbp)}
-                </span>
-                <span className="text-sm text-text-muted">/month</span>
-              </div>
-              <p className="mt-3 text-sm leading-snug text-text-muted">
-                {discounted
-                  ? "Reduced while you prepare for the ESAT."
-                  : "Standard monthly price."}
-                {config.trialDays > 0
-                  ? " Card required. Cancel anytime."
-                  : " Access starts straight away."}
-              </p>
-            </article>
-          );
-        })}
-      </div>
-    </section>
-  );
 }
 
 const PAID_RECURRING = new Set(["weekly", "monthly"]);
@@ -185,13 +126,19 @@ export default function PricingPageClient() {
     source,
   } = useSubscription();
   const [loading, setLoading] = useState<string | null>(null);
-  const showVariantPreview = process.env.NODE_ENV === "development";
+  const [pricingVariant, setPricingVariant] = useState<PricingVariant | null>(null);
   const [banner, setBanner] = useState<string | null>(null);
   const [manualCodeInput, setManualCodeInput] = useState("");
   const [friendCodeStatus, setFriendCodeStatus] = useState<FriendCodeStatus>({
     state: "idle",
   });
   const autoCheckoutStarted = useRef(false);
+
+  // Load A/B test variant
+  useEffect(() => {
+    const { variant } = getOrAssignVariant();
+    setPricingVariant(variant);
+  }, []);
 
   const seasonPrice = getSeasonPassPrice();
   const perWeekSeason = seasonPrice / getWeeksUntilExam();
@@ -210,6 +157,10 @@ export default function PricingPageClient() {
     friendCodeStatus.state === "invalid" &&
     friendCodeStatus.reason === "own_code";
   const ownReferralBlocked = isOwnReferralCode;
+  const daysUntilExam = daysUntilEsat();
+  
+  // Check if Express Deal should be shown
+  const showExpressDeal = pricingVariant === 'express_deal';
 
   useEffect(() => {
     const sourcePage = readGaSourcePage() ?? currentGaPath() ?? "/pricing";
@@ -262,10 +213,13 @@ export default function PricingPageClient() {
     };
   }, [codeFromUrl, session?.user?.id]);
 
-  const paidCta = (planId: "weekly" | "monthly" | "season_pass", loadingLabel: string) => {
+  const paidCta = (planId: "weekly" | "monthly" | "season_pass" | "express_deal", loadingLabel: string) => {
     if (loading === planId) return "Loading…";
     if (isPartnerAccess) return "Included with your access";
-    if (tier === planId) return "Current plan";
+    
+    // Map express_deal to monthly for tier comparison (same product)
+    const tierToCompare = planId === "express_deal" ? "monthly" : planId;
+    if (tier === tierToCompare) return "Current plan";
 
     if (isSeasonPass) {
       return "Available after pass ends";
@@ -297,8 +251,18 @@ export default function PricingPageClient() {
           ? "Current plan"
           : "Downgrade via profile",
     },
-    {
-      id: "weekly",
+    ...(showExpressDeal ? [{
+      id: "express_deal" as const,
+      name: "Express Deal",
+      price: formatGbpPrice(EXPRESS_DEAL_PRICE_GBP),
+      compareAtPrice: formatGbpPrice(EXPRESS_DEAL_ORIGINAL_PRICE_GBP),
+      caption: "per month",
+      priceNote: `${daysUntilExam} days until ESAT. Access starts immediately`,
+      features: FEATURES.paid,
+      highlighted: true,
+      ctaLabel: paidCta("express_deal", "Get instant access"),
+    }] : [{
+      id: "weekly" as const,
       name: "Weekly",
       price: "£8",
       caption: "per week",
@@ -308,7 +272,7 @@ export default function PricingPageClient() {
           : undefined,
       features: FEATURES.paid,
       ctaLabel: paidCta("weekly", "Upgrade"),
-    },
+    }]),
     {
       id: "monthly",
       name: "Monthly",
@@ -322,7 +286,7 @@ export default function PricingPageClient() {
             ? "Friend discount applied at checkout"
             : "4-day free trial. Cancel anytime",
       features: FEATURES.paid,
-      highlighted: true,
+      highlighted: !showExpressDeal,
       ctaLabel: paidCta(
         "monthly",
         hasFriendCode ? "Upgrade" : "Start free trial",
@@ -347,22 +311,27 @@ export default function PricingPageClient() {
     },
   ];
 
-  const handleCheckout = async (planType: PaidPlanId) => {
+  const handleCheckout = async (planType: PaidPlanId | "express_deal") => {
     if (isPartnerAccess) {
       setBanner(
         "You already have full access through your institution programme. No payment is needed.",
       );
       return;
     }
+    
+    // Express Deal maps to monthly plan (same product, different price point)
+    const stripePlanType: PaidPlanId = planType === "express_deal" ? "monthly" : planType;
+    
     if (!session?.user) {
       const sourcePage = currentGaPath() ?? "/pricing";
       rememberGaSourcePage(sourcePage);
       trackEvent("checkout_signup_required", {
-        selected_plan: planType,
+        selected_plan: stripePlanType,
+        variant: planType === "express_deal" ? "express_deal" : "control",
         source_page: sourcePage,
       });
       // Preserve the URL code through signup even before validation finishes.
-      router.push(buildCheckoutSignupUrl(planType, codeFromUrl || null));
+      router.push(buildCheckoutSignupUrl(stripePlanType, codeFromUrl || null));
       return;
     }
     if (friendCodeStatus.state === "checking") {
@@ -381,7 +350,8 @@ export default function PricingPageClient() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          planType,
+          planType: stripePlanType,
+          isExpressDeal: planType === "express_deal",
           ...(validFriendCode ? { referralCode: validFriendCode } : {}),
           ...ga,
         }),
@@ -390,7 +360,8 @@ export default function PricingPageClient() {
       if (data.url) {
         // Genuine checkout: Stripe session created and redirect about to happen.
         trackEvent("begin_checkout", {
-          plan_type: planType,
+          plan_type: stripePlanType,
+          variant: planType === "express_deal" ? "express_deal" : "control",
           currency: "GBP",
         });
         window.location.href = data.url;
@@ -623,8 +594,6 @@ export default function PricingPageClient() {
           </form>
         ) : null}
 
-        {showVariantPreview ? <LocalPricingVariants /> : null}
-
         <PricingTable
           tiers={tiers}
           onSelect={(id) => {
@@ -632,7 +601,7 @@ export default function PricingPageClient() {
               if (tier !== "free") router.push("/profile");
               return;
             }
-            if (id !== "weekly" && id !== "monthly" && id !== "season_pass") return;
+            if (id !== "weekly" && id !== "monthly" && id !== "season_pass" && id !== "express_deal") return;
             if (ownReferralBlocked) return;
 
             // Season-pass holders keep prepaid access until Oct - no mid-pass switch
@@ -648,7 +617,9 @@ export default function PricingPageClient() {
             }
 
             if (isRecurringPaid) {
-              handleSwitch(id);
+              // Express Deal maps to monthly for plan switching
+              const planToSwitch = id === "express_deal" ? "monthly" : id;
+              handleSwitch(planToSwitch);
               return;
             }
 
@@ -686,6 +657,15 @@ export default function PricingPageClient() {
             </p>
           )}
         </div>
+        
+        {/* Contact Support Button */}
+        <Link
+          href="/support"
+          className="fixed bottom-6 right-6 flex h-12 w-12 items-center justify-center bg-primary text-black shadow-lg transition-opacity hover:opacity-90 sm:h-14 sm:w-14"
+          aria-label="Contact Support"
+        >
+          <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" aria-hidden />
+        </Link>
       </Container>
     </div>
   );

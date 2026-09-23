@@ -1,0 +1,65 @@
+{
+  "image_id": "img1",
+  "model_purpose": "concept_visual",
+  "answer_depends_on_image": false,
+  "recommended_model": "MODEL_IMAGE_HIGH_QUALITY",
+  "prompt": "### 1. Subject/content brief\nA high-fidelity exam diagram illustrating a wave travelling from a vacuum into a transparent medium. The diagram shows a continuous sine wave propagating horizontally from left to right across a vertical boundary.\n\n### 2. Object relation brief\nThe image is bisected by a clean, sharp vertical line. The region to the left of the line is a vacuum. The region to the right is a transparent medium, which can be distinguished by a very light, uniform grey fill. A single, continuous sine wave is drawn travelling horizontally from left to right, crossing the boundary. The wave must have a constant, longer wavelength in the left (vacuum) region and a constant, visibly shorter wavelength in the right (medium) region. The wave must connect smoothly at the boundary, with no discontinuity or reflection shown.\n\n### 3. Required labels / annotations\n- In the upper part of the left region, place the label: \"Vacuum ($n=1$)\"\n- In the upper part of the right region, place the label: \"Medium ($n>1$)\"\n\n### 4. Measurement brief\nThere are no measurement arrows, axes, or dimensional labels in this diagram.\n\n### 5. Style block\n- **Overall Style:** Create a professional monochrome diagram in the style of a printed UK admissions test paper (TMUA, ENGAA, NSAA). The image is illustrative only and not to scale.\n- **Line Work:** Use crisp, clean, black or dark charcoal vector-like lines on a plain, very light grey or off-white paper background. The boundary line and the wave should be clear and well-defined.\n- **Typography:** All text must use a Times New Roman-like serif font. The mathematical variable 'n' must be in italic serif font. All other text (words, numbers, parentheses) must be in upright serif font. Labels must not overlap with any lines or other diagram elements.\n- **Layout:** Ensure generous whitespace and a clean, uncluttered layout. Place labels clearly within their respective regions.\n\n### 6. Negative block\n- Do not include any labels or annotations other than those specified.\n- Do not label the wavelengths (e.g., with `λ` or `λ'`).\n- Do not show any reflection at the boundary.\n- Do not use any colour, gradients, or photorealistic textures.\n- Do not use sans-serif fonts.\n- Do not add any axes or grid lines.",
+  "negative_prompt": "No extra labels. No overlap. No sans-serif fonts. No decorative shading. No photorealism. No colour. No exact answer-bearing measurements. No clutter. No malformed symbols. Do not place objects in the wrong support/location relationship. Do not show reflection. Do not add axes or grids. Do not label the wavelengths.",
+  "required_labels": [
+    "Vacuum ($n=1$)",
+    "Medium ($n>1$)"
+  ],
+  "forbidden_labels": [
+    "λ",
+    "λ'",
+    "f",
+    "v",
+    "c",
+    "speed",
+    "frequency",
+    "wavelength"
+  ],
+  "layout_logic": {
+    "must_show_relations": [
+      "A vertical line divides the diagram into a left region and a right region.",
+      "A continuous sine wave travels horizontally from the left region to the right region, crossing the line.",
+      "The wavelength of the sine wave is visibly shorter in the right region compared to the left region.",
+      "The right region is visually distinct from the left, for example with a very light grey fill."
+    ],
+    "measurement_mapping": [],
+    "relative_size_constraints": [
+      "The drawn wavelength in the right part of the diagram must be visibly and unambiguously shorter than the drawn wavelength in the left part."
+    ]
+  },
+  "hard_constraints": [
+    "The label 'Vacuum ($n=1$)' must be in the left region.",
+    "The label 'Medium ($n>1$)' must be in the right region.",
+    "The sine wave must be continuous across the boundary.",
+    "The wavelength of the wave must visibly decrease as it crosses from left to right.",
+    "No labels may overlap with any lines or other elements.",
+    "The variable 'n' must be rendered in an italic serif font.",
+    "Words and numbers must be rendered in an upright serif font."
+  ],
+  "style": {
+    "target_style": "tmua_engaa_exam_diagram",
+    "exam_style": true,
+    "black_and_white": true,
+    "serif_font": "Times New Roman-like",
+    "math_variables_italic": true,
+    "minimal": true,
+    "not_to_scale": true,
+    "no_overlap": true,
+    "logic_sensitive": true
+  },
+  "post_generation_checks": {
+    "run_concept_image_verifier": true,
+    "verify_no_overlap": true,
+    "verify_font_exam_like": true,
+    "verify_no_extra_labels": true,
+    "verify_not_answer_bearing": true,
+    "verify_object_relations": true,
+    "verify_measurement_clarity": true,
+    "verify_relative_size_plausibility": true,
+    "verify_simplification_level": true
+  }
+}

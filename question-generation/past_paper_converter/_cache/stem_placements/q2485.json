@@ -1,0 +1,29 @@
+{
+  "questionId": 2485,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 6,
+  "stemBlocks": [
+    "At a cinema, drinks are sold in regular and large sizes. The cups for these are mathematically similar. The ratio of the heights of the cups and the ratio of the depths of the drinks are both $4:5$. The volume of drink in a regular size cup is $320 \\text{ cm}^3$.",
+    "What is the volume, in $\\text{cm}^3$, of drink in a large size cup?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 0,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.777849+00:00",
+  "sourceImageHash": "d56b38f5e79f970ffd3df4027c4c2767fcc2a5e78f19a829d3aeb785fbd111c5",
+  "status": "ok"
+}

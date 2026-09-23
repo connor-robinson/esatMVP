@@ -1,0 +1,29 @@
+{
+  "questionId": 3012,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 33,
+  "stemBlocks": [
+    "The diagrams below show either velocity–time or distance–time graphs for four different objects, P, Q, R and S.",
+    "Which graph(s) show an object accelerating at $2.4 \\text{ m s}^{-2}$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:15.976648+00:00",
+  "sourceImageHash": "6f09e9b8ec848d0a4d69d89d51957a00dba355abcf9c1aeca1a8717fde070294",
+  "status": "ok"
+}

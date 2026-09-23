@@ -1,0 +1,28 @@
+{
+  "questionId": 3462,
+  "examName": "TMUA",
+  "examYear": 2018,
+  "paperName": "Paper 1",
+  "questionNumber": 13,
+  "stemBlocks": [
+    "The function $f(x)$ has derivative $f'(x)$.\nThe diagram below shows the graph of $y = f'(x)$.\nWhich point corresponds to a local minimum of $f(x)$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:21.966033+00:00",
+  "sourceImageHash": "3824a94e82d36ed41c1dd8b1aa35e0e4a833ee5e363b7306d7fb508d61732827",
+  "status": "ok"
+}

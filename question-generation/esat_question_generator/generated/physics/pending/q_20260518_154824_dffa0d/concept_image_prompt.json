@@ -1,0 +1,107 @@
+{
+  "image_id": "img_terminal_velocity_spheres",
+  "model_purpose": "concept_visual",
+  "answer_depends_on_image": false,
+  "recommended_model": "MODEL_IMAGE_HIGH_QUALITY",
+  "prompt": "A brutally simple, monochrome 2D exam-style diagram of two spheres in a fluid. \n\nSetup: A tall rectangular tank, open at the top, is filled with fluid. The fluid surface is indicated by a simple horizontal straight line near the top of the tank. Inside the fluid, there are two solid spheres (drawn as simple empty circles) positioned side-by-side. The left sphere is smaller. The right sphere is visibly larger (approximately twice the diameter of the left one). Both spheres are fully submerged.\n\nLabels:\n- Label 'P' centred inside the smaller left sphere. No leader line.\n- Label 'Q' centred inside the larger right sphere. No leader line.\n- Label 'fluid' placed outside the tank to the right. A single straight leader line must enter the tank and terminate on an empty, homogeneous patch of fluid between the spheres and the surface. The leader must NOT point at or touch either sphere, the tank walls, or the surface line.\n\nStyle: Pure white background (#FFFFFF). Crisp black vector-like lines. Times New Roman-like serif font. No shading, no 3D rendering, no extra arrows, no force vectors, no velocity arrows, and no explanatory clutter. The diagram must look like a minimalist printed TMUA/ENGAA past-paper illustration.",
+  "negative_prompt": "Pure white background only; no grey paper, gradient, or texture. No extra labels. No overlap. No sans-serif fonts. No decorative shading. No photorealism. No colour. No exact answer-bearing measurements. No clutter. No malformed symbols. No medium label pointing at objects inside the medium. No fluid label terminating on a sphere, wall, or meniscus. No unrequested arrows, force labels, field symbols, construction arcs, or explanatory overlays. Do not draw velocity or force arrows.",
+  "required_labels": [
+    "P",
+    "Q",
+    "fluid"
+  ],
+  "forbidden_labels": [
+    "v",
+    "r",
+    "m",
+    "drag",
+    "weight"
+  ],
+  "label_anchors": [
+    {
+      "text": "P",
+      "label_type": "object",
+      "text_placement": "centred inside the smaller left sphere",
+      "leader_target": "none",
+      "must_not_point_at": [
+        "fluid",
+        "tank"
+      ]
+    },
+    {
+      "text": "Q",
+      "label_type": "object",
+      "text_placement": "centred inside the larger right sphere",
+      "leader_target": "none",
+      "must_not_point_at": [
+        "fluid",
+        "tank"
+      ]
+    },
+    {
+      "text": "fluid",
+      "label_type": "medium",
+      "text_placement": "outside container to the right",
+      "leader_target": "empty_medium_patch",
+      "must_not_point_at": [
+        "sphere P",
+        "sphere Q",
+        "tank walls",
+        "surface line only"
+      ]
+    }
+  ],
+  "layout_logic": {
+    "must_show_relations": [
+      "Both spheres must be fully submerged in the fluid.",
+      "Sphere Q must be visibly larger than sphere P."
+    ],
+    "measurement_mapping": [],
+    "relative_size_constraints": [
+      "Sphere Q diameter > Sphere P diameter"
+    ]
+  },
+  "simplicity_limits": {
+    "max_object_types": 3,
+    "max_labels": 3,
+    "allow_force_arrows": false,
+    "allow_field_patterns": false,
+    "allow_construction_arcs": false,
+    "allow_mixed_representations": false
+  },
+  "hard_constraints": [
+    "background must be pure white #FFFFFF with no grey fill or gradient",
+    "label fluid: text outside tank; leader ends on empty fluid, not on sphere P or Q",
+    "no unrequested arrows, force labels, or field symbols",
+    "sphere Q must be larger than sphere P"
+  ],
+  "style": {
+    "target_style": "tmua_engaa_exam_diagram",
+    "exam_style": true,
+    "black_and_white": true,
+    "background": "pure_white_#FFFFFF",
+    "serif_font": "Times New Roman-like",
+    "math_variables_italic": true,
+    "minimal": true,
+    "not_to_scale": true,
+    "no_overlap": true,
+    "logic_sensitive": true,
+    "brutally_simple": true
+  },
+  "post_generation_checks": {
+    "run_concept_image_verifier": true,
+    "verify_no_overlap": true,
+    "verify_font_exam_like": true,
+    "verify_no_extra_labels": true,
+    "verify_not_answer_bearing": true,
+    "verify_object_relations": true,
+    "verify_measurement_clarity": true,
+    "verify_relative_size_plausibility": true,
+    "verify_simplification_level": true,
+    "verify_no_unrequested_arrows_or_symbols": true,
+    "verify_visual_simplicity": true,
+    "verify_pure_white_background": true,
+    "verify_label_anchor_targets": true,
+    "verify_medium_labels_not_on_objects": true
+  }
+}

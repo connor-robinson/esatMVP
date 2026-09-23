@@ -1,0 +1,30 @@
+{
+  "questionId": 1809,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 16,
+  "stemBlocks": [
+    "A heater is connected in series with a resistor and a $6.0 \\ \\text{V}$ battery in the circuit shown. The total resistance of the circuit is $15 \\ \\Omega$. In $3.0$ minutes, $180 \\ \\text{J}$ of electrical energy is transferred into other forms in the heater.",
+    "How much charge flows through the heater in the $3.0$ minutes and what is the voltage across the heater?",
+    "|  | charge / C | voltage / V |\n| --- | --- | --- |\n| A | 1.2 | 150 |\n| B | 1.2 | 216 |\n| C | 7.5 | 0.041 |\n| D | 7.5 | 24 |\n| E | 72 | 0.40 |\n| F | 72 | 2.5 |\n| G | 450 | 0.40 |\n| H | 450 | 2.5 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:23:52.608413+00:00",
+  "sourceImageHash": "5b918a74b44f4694a2824a2412c16bacec1cd0a4bc56274c82f5f3b3e351b1f8",
+  "status": "ok"
+}

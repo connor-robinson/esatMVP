@@ -1,0 +1,29 @@
+{
+  "questionId": 3284,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 2",
+  "questionNumber": 15,
+  "stemBlocks": [
+    "The speed of light in a block of glass is $2.0 \\times 10^8 \\text{ ms}^{-1}$. The block of glass is immersed in a liquid of refractive index 1.2. The diagram shows a ray of light travelling in the glass block striking the side of the block at the point labelled X. The acute angle between the ray and the side of the block is $\\theta$.",
+    "What is the full range of values of the acute angle $\\theta$ for which light is refracted at X? (The speed of light in a vacuum is $3.0 \\times 10^8 \\text{ m s}^{-1}$.)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:13.256467+00:00",
+  "sourceImageHash": "32428cbb8faec98804ef63c8d39581d8e89b9bd9ec0c2e4f334091a4dbea4f1b",
+  "status": "ok"
+}

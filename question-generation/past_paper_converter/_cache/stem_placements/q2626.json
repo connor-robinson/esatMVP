@@ -1,0 +1,29 @@
+{
+  "questionId": 2626,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 57,
+  "stemBlocks": [
+    "The diagram represents a section of DNA. What do the parts labelled 1, 2 and 3 represent?",
+    "|  | 1 | 2 | 3 | 1 and 2 and 3 |\n| --- | --- | --- | --- | --- |\n| A | base | phosphate | glycerol | gene |\n| B | base | sugar | amino acid | gene |\n| C | phosphate | sugar | base | nucleotide |\n| D | phosphate | sugar | base | DNA strand |\n| E | sugar | phosphate | base | nucleotide |\n| F | sugar | phosphate | fatty acid | DNA strand |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:19.022300+00:00",
+  "sourceImageHash": "fb665789a38ca2bbe74da6dc27cd28738ccbd8eef381964758ed49705816e62b",
+  "status": "ok"
+}

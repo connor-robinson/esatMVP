@@ -1,0 +1,29 @@
+{
+  "questionId": 3095,
+  "examName": "ENGAA",
+  "examYear": 2018,
+  "paperName": "Section 2",
+  "questionNumber": 4,
+  "stemBlocks": [
+    "The diagram shows two bar magnets, X and Y, held at rest a short distance apart from one another on a smooth horizontal surface. They are aligned as shown in the diagram and both are released at the same time. They move towards each other, collide and coalesce. Just before they collide X has a velocity $v$ to the right. The mass of X is double the mass of Y.",
+    "|  | magnitude of velocity | direction of velocity |\n| --- | --- | --- |\n| A | 0 | not applicable |\n| B | $\\frac{1}{3}v$ | to the left |\n| C | $\\frac{2}{3}v$ | to the left |\n| D | $\\frac{4}{3}v$ | to the left |\n| E | $\\frac{1}{3}v$ | to the right |\n| F | $\\frac{2}{3}v$ | to the right |\n| G | $\\frac{4}{3}v$ | to the right |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:40:49.318158+00:00",
+  "sourceImageHash": "b198dd1a573ef2ffb07e3540ee06ee89636cacc8cd0c3ab27aed47042b7d2acc",
+  "status": "ok"
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 3787,
+  "examName": "TMUA",
+  "examYear": 2022,
+  "paperName": "Paper 2",
+  "questionNumber": 18,
+  "stemBlocks": [
+    "P, Q, R and S show the graphs of $y = (\\cos x)^{\\cos x}$, $y = (\\sin x)^{\\sin x}$, $y = (\\cos x)^{\\sin x}$ and $y = (\\sin x)^{\\cos x}$ for $0 < x < \\frac{\\pi}{2}$ in some order. Which row in the following table correctly identifies the graphs?",
+    "|  | $y = (\\cos x)^{\\cos x}$ | $y = (\\sin x)^{\\sin x}$ | $y = (\\cos x)^{\\sin x}$ | $y = (\\sin x)^{\\cos x}$ |\n| --- | --- | --- | --- | --- |\n| A | P | Q | R | S |\n| B | P | Q | S | R |\n| C | Q | P | R | S |\n| D | Q | P | S | R |\n| E | R | S | P | Q |\n| F | R | S | Q | P |\n| G | S | R | P | Q |\n| H | S | R | Q | P |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph P",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:22.025858+00:00",
+  "sourceImageHash": "eb8ca3c8d81d2e5b6444268cbfb5538fd6618c4f00e6e80c2dfa8cbf157300d6",
+  "status": "ok"
+}

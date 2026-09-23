@@ -1,0 +1,30 @@
+{
+  "questionId": 2567,
+  "examName": "NSAA",
+  "examYear": 2018,
+  "paperName": "Section 1",
+  "questionNumber": 88,
+  "stemBlocks": [
+    "A pendulum bob of mass 10g is suspended by a light, inextensible string of length 50 cm.\nThe bob is released from rest at position X.",
+    "What is the speed of the bob as it passes through position Y?",
+    "(gravitational field strength $g = 10 \\text{ N kg}^{-1}$; assume that resistive forces are negligible)"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "A pendulum with string length 50 cm. The bob is released from rest at position X. Position Y is the lowest point of the swing. The horizontal distance between the vertical line through X and the vertical line through Y is 30 cm.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:29:31.879814+00:00",
+  "sourceImageHash": "00fa059b7118181517e41f6f88f6ee4d7605f069e77936b3b88df317f474068e",
+  "status": "ok"
+}

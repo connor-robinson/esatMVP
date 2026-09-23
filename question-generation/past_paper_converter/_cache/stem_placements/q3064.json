@@ -1,0 +1,29 @@
+{
+  "questionId": 3064,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 2",
+  "questionNumber": 5,
+  "stemBlocks": [
+    "The figure below shows a network of three non-zero resistances $R_1$, $R_2$, $R_3$ connected to a voltage source $V$ with zero internal resistance.",
+    "Which of the following statements must be correct?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:38:20.011498+00:00",
+  "sourceImageHash": "5c98a30a69d9b97b20ba585a9cf4b4548af62980f007f07a3f93fc9f042f81b5",
+  "status": "ok"
+}

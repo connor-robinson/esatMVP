@@ -1,0 +1,29 @@
+{
+  "questionId": 2768,
+  "examName": "NSAA",
+  "examYear": 2021,
+  "paperName": "Section 1",
+  "questionNumber": 29,
+  "stemBlocks": [
+    "A train accelerates from rest along a straight, horizontal section of track.\nThe force exerted on the train due to its motors is constant and there is a constant friction force of $1.8 \\times 10^7 \\text{ N}$.\nThe graph shows how the momentum of the train changes with time.",
+    "What is the force exerted on the train due to its motors?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing momentum / $10^6 \\text{ kg m s}^{-1}$ versus time / s.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:24:07.361060+00:00",
+  "sourceImageHash": "9236a8351addb7d71faea3eb876cb8850b91f1e938f3692cfcb3d38b6f32c299",
+  "status": "ok"
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 2177,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 22,
+  "stemBlocks": [
+    "The diagrams below show either velocity-time or distance-time graphs for four different objects, P, Q, R and S.",
+    "Which graph(s) show an object accelerating at $2.4 \\text{ ms}^{-2}$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 1.0
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:37:46.640966+00:00",
+  "sourceImageHash": "e0eac179fd62854d5a4f56d5ff704c4fbf2394e4009d3e6d3ff0eed57e95463a",
+  "status": "ok"
+}

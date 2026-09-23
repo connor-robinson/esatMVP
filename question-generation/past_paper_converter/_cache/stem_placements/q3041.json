@@ -1,0 +1,29 @@
+{
+  "questionId": 3041,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 62,
+  "stemBlocks": [
+    "The graph shows oxygen supply and demand in muscle cells during exercise.",
+    "Which statement correctly describes what is happening in the muscle cells between 0 and 11 minutes?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "The graph shows oxygen supply and demand in muscle cells during exercise. The x-axis is 'time / minutes' from 0 to 18. The left y-axis is 'oxygen demand / dm³' from 0 to 2.5. The right y-axis is 'oxygen supply / dm³' from 0 to 2.5. A dashed line represents 'oxygen supply' and a solid line represents 'oxygen demand'.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:16.007652+00:00",
+  "sourceImageHash": "e7157563d9197d0a0da1e485817d3dddd3f4db9cc4fe26d17a205948126b8819",
+  "status": "ok"
+}

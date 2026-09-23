@@ -1,0 +1,29 @@
+{
+  "questionId": 2160,
+  "examName": "ENGAA",
+  "examYear": 2016,
+  "paperName": "Section 1",
+  "questionNumber": 5,
+  "stemBlocks": [
+    "A cube has sides of unit length.",
+    "What is the length of a line joining a vertex to the midpoint of one of the opposite faces (the dashed line in the diagram below)?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:37:46.624892+00:00",
+  "sourceImageHash": "a3b64937fd3f6c3fcf2d367bb2065e1ac2c9974caee3122d0a4a342e0d2b5286",
+  "status": "ok"
+}

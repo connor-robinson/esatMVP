@@ -1,0 +1,31 @@
+{
+  "questionId": 3262,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 53,
+  "stemBlocks": [
+    "Bacterial cells were grown in a laboratory experiment and the number of cells was recorded at regular intervals. The bacteria in this experiment reproduced asexually using a form of cell division. The growth medium was sterilised before it was used and the vessel containing the bacterial cells was sealed so that no other cells could enter.",
+    "The graph shows the results of the experiment.",
+    "Which of the following statements is/are correct?",
+    "1 After 4 hours, assuming that the rate of growth continues on the same curve, the predicted number of cells in the experiment is 1920.\n2 During the 80 minutes after the start of the experiment there was a 400% increase in the number of cells.\n3 The growth curve is of the form $y = 30k^x$"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "Graph showing the number of bacterial cells in the culture over time since the start of the experiment.",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:13.958559+00:00",
+  "sourceImageHash": "aedd4495546dfa5cea78493522b9b5b8e59729d1a1affcfe187a38a44a645df1",
+  "status": "ok"
+}

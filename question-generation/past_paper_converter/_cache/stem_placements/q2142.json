@@ -1,0 +1,29 @@
+{
+  "questionId": 2142,
+  "examName": "ENGAA",
+  "examYear": 2023,
+  "paperName": "Section 1",
+  "questionNumber": 27,
+  "stemBlocks": [
+    "The diagram shows a circle with centre $O$.",
+    "What is the value of $x$?"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:06.355837+00:00",
+  "sourceImageHash": "185fec2cf9bdc8e0fcc00ef0d4808e2a1a0a1b8a8920059c42f6066ca735ceb2",
+  "status": "ok"
+}

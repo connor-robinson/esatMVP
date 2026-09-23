@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260518_155707_f5010f\\assets\\concept_image_v1.png",
+    "bytes": 485688,
+    "model": "imagen-4.0-ultra-generate-001",
+    "aspect_ratio": "4:3",
+    "seed": null,
+    "duration_s": 16.681
+  },
+  "prompt_used": "A simple 2D cross-section diagram of a solid block submerged in a liquid inside an insulated container. Object relations: The container is a simple open-topped rectangular tank with a thick, diagonally-hatched outer wall representing insulation. The liquid fills the lower portion of the container. A simple rectangular solid block rests flat on the bottom of the container, fully submerged in the liquid. Label anchors: Label 'liquid' placed outside the container to the top-left; a single straight leader line enters the container and terminates on an empty patch of liquid above the block. It must not point at the block, the surface line, or the container walls. Label 'solid block' placed outside the container to the bottom-left; leader line points to the outline of the block. Label 'insulated container' placed outside to the right; leader line points to the hatched wall of the container. Style: Professional monochrome admissions-test diagram. Pure white background #FFFFFF. Crisp black vector-like line art. Times New Roman-like serif typography. Minimalist, no clutter. Negative constraints: No grey wash, gradient, or paper texture. No extra labels, no temperature values, no heat flow arrows, no 3D perspective, no photorealism, no overlapping lines.",
+  "public_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_155707_f5010f/concept_image_v1.png"
+}

@@ -1,0 +1,29 @@
+{
+  "questionId": 3265,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 2",
+  "questionNumber": 56,
+  "stemBlocks": [
+    "A plasmid contains genes Q and R. Gene Q codes for resistance to the antibiotic q. Gene R codes for resistance to antibiotic r. The plasmid was genetically engineered to contain the human gene P. This gene was inserted into gene Q in the plasmid preventing gene Q from working. A mixture of the original plasmid and the genetically-engineered plasmid were available to be taken up by bacterial cells. The bacterial cells took up either the original plasmid, or the genetically-engineered plasmid, or neither of the plasmids. All these bacteria were allowed to grow and form colonies on agar plates in the absence of both antibiotics. 40 colonies formed. Cells from each of the 40 colonies were grown on three agar plates with different contents. The table shows the number of colonies that grew on each of the three plates. What percentage of the original 40 bacteria now contain gene P? (Assume that no mutations occur.)",
+    "| contents of agar plate | number of bacterial colonies able to survive on the agar plate |\n| --- | --- |\n| no antibiotic | 40 |\n| antibiotic q only | 8 |\n| antibiotic r only | 24 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.95
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:35:13.958559+00:00",
+  "sourceImageHash": "c022bb13a7d4477b31088503c8cea98b893ebbebc46c691cf1f2c6d1c598fdc6",
+  "status": "ok"
+}

@@ -1,0 +1,28 @@
+{
+  "questionId": 2996,
+  "examName": "NSAA",
+  "examYear": 2020,
+  "paperName": "Section 1",
+  "questionNumber": 17,
+  "stemBlocks": [
+    "A design is set up by joining the points which are one third of the way along the sides of a square. This forms a second square as shown. This process is repeated. Calculate the area of the fourth square as a fraction of the original square."
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 1.0
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:31:15.948607+00:00",
+  "sourceImageHash": "20738f66ba1c28be9cafbd18b645d3341d81cbfda2256746ad6ffc740141cfe6",
+  "status": "ok"
+}

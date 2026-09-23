@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\question-generation\\esat_question_generator\\generated\\physics\\pending\\q_20260518_155104_877e0a\\assets\\concept_image_v1.png",
+    "bytes": 330834,
+    "model": "imagen-4.0-ultra-generate-001",
+    "aspect_ratio": "4:3",
+    "seed": null,
+    "duration_s": 14.856
+  },
+  "prompt_used": "A brutally simple, monochrome 2D exam-style diagram of two solid spheres falling through a fluid. Setup: A tall rectangular tank is partially filled with fluid, indicated by a simple horizontal surface line near the top. Completely submerged in the fluid are two spheres. The left sphere is small. The right sphere is visibly larger (about 3 to 4 times the diameter of the left sphere). Both spheres are positioned side-by-side at roughly the same depth. Labels: Label 'X' is centred inside the smaller left sphere. Label 'Y' is centred inside the larger right sphere. Label 'fluid' is placed outside the tank to the right. A single straight leader line goes from the text 'fluid', enters the tank, and ends on an empty patch of fluid between the right sphere and the tank wall. The leader must NOT point at or touch either sphere, the tank walls, or the surface line. Style: Pure white background (#FFFFFF). Crisp black vector-like line art. Times New Roman-like serif font. No extra labels, no force arrows, no velocity arrows, no motion lines, no 3D rendering, no shading. Illustrative only.",
+  "public_url": "https://bcbttpsokwoapjypwwwq.supabase.co/storage/v1/object/public/question-images/v4/q_20260518_155104_877e0a/concept_image_v1.png"
+}

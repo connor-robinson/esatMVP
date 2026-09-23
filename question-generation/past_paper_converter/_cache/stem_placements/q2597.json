@@ -1,0 +1,29 @@
+{
+  "questionId": 2597,
+  "examName": "NSAA",
+  "examYear": 2019,
+  "paperName": "Section 1",
+  "questionNumber": 28,
+  "stemBlocks": [
+    "Two tanks of water are connected by a solid cylindrical copper bar of length $l$ and diameter $d$. The bar is insulated. One tank contains water at $90 \\text{ °C}$ and the other tank contains water at temperature $\\theta$. For which of the following conditions is thermal energy conducted along the bar at the lowest rate?",
+    "|  | $l / \\text{m}$ | $d / \\text{cm}$ | $\\theta / \\text{°C}$ |\n| --- | --- | --- | --- |\n| A | 0.40 | 4.0 | 20 |\n| B | 0.40 | 4.0 | 40 |\n| C | 0.40 | 8.0 | 20 |\n| D | 0.40 | 8.0 | 40 |\n| E | 0.80 | 4.0 | 20 |\n| F | 0.80 | 4.0 | 40 |\n| G | 0.80 | 8.0 | 20 |\n| H | 0.80 | 8.0 | 40 |"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 1,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:33:18.988681+00:00",
+  "sourceImageHash": "4ea5b2b1e8c5d52e5418084950d934f3879229776eeb93c93d5e7ed892224ddc",
+  "status": "ok"
+}

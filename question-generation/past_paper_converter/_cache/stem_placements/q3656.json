@@ -1,0 +1,31 @@
+{
+  "questionId": 3656,
+  "examName": "TMUA",
+  "examYear": 2017,
+  "paperName": "Paper 2",
+  "questionNumber": 7,
+  "stemBlocks": [
+    "The graphs of two functions are shown here:",
+    "- $y = a^x$ is shown with a solid line, where $a$ is a positive real number\n- $y = f(x)$ is shown with a dashed line",
+    "Which of the following statements (1, 2, 3, 4) could be true?",
+    "1 $f(x) = b^x$ for some $b > a$\n2 $f(x) = b^x$ for some $b < a$\n3 $f(x) = a^{kx}$ for some $k > 1$\n4 $f(x) = a^{kx}$ for some $k < 1$"
+  ],
+  "assets": [
+    {
+      "id": "d1",
+      "alt": "diagram not to scale",
+      "role": "stem_diagram"
+    }
+  ],
+  "placements": [
+    {
+      "assetId": "d1",
+      "insertAfterBlock": 2,
+      "confidence": 0.98
+    }
+  ],
+  "model": "gemini-2.5-flash",
+  "placedAt": "2026-09-07T11:36:21.995729+00:00",
+  "sourceImageHash": "0b53d76016881c7493326b706280fb5db7327499cfde966ad6d1ea0443ad4a9c",
+  "status": "ok"
+}

@@ -1,0 +1,52 @@
+{
+  "stage": "verifier",
+  "status": "pass",
+  "verdict": "PASS",
+  "payload": {
+    "verdict": "PASS",
+    "confidence": "high",
+    "correct_option_verified": "A",
+    "independent_solution": {
+      "main_law_or_principle": "Conservation of thermal energy (Q_lost = Q_gained) and the specific heat capacity equation (Q = mcΔT).",
+      "calculation_or_logic": "Let m_b and c_b be the mass and specific heat of the block. Let m_l and c_l be the mass and specific heat of the liquid. Given: m_l = 2m_b, c_l = 3c_b. Energy balance: m_b * c_b * ΔT_b = m_l * c_l * ΔT_l. Substituting: m_b * c_b * ΔT = (2m_b) * (3c_b) * ΔT_l. This simplifies to: m_b * c_b * ΔT = 6 * m_b * c_b * ΔT_l. Solving for ΔT_l: ΔT_l = ΔT / 6.",
+      "verified_answer_value": "ΔT/6",
+      "claimed_answer_value": "ΔT/6",
+      "matches_claim": true
+    },
+    "spec_audit": {
+      "required_physics_moves": [
+        "Set up energy balance equation",
+        "Substitute proportional variables",
+        "Algebraic simplification"
+      ],
+      "all_explicitly_on_spec": true,
+      "borderline_or_offspec_moves": []
+    },
+    "derived_relationship_audit": {
+      "requires_nontrivial_derivation": false,
+      "number_of_linked_relationships": 0,
+      "relationships_given_in_stem": [],
+      "safe_for_esat": true
+    },
+    "checks": {
+      "correctness": "pass",
+      "uniqueness": "pass",
+      "syllabus": "pass",
+      "no_calc_feasibility": "pass",
+      "ambiguity": "pass",
+      "diagram_dependency": "pass",
+      "distractor_safety": "pass",
+      "katex_formatting": "pass",
+      "graph_or_visual_validation": "n/a",
+      "derived_relationship_safety": "pass"
+    },
+    "notes": [
+      "The question is a standard application of the principle of conservation of energy in thermal systems, perfectly aligned with the ESAT syllabus."
+    ]
+  },
+  "notes": [],
+  "error": null,
+  "raw_text": null,
+  "model": "gemini-3.1-flash-lite",
+  "attempts": 1
+}
