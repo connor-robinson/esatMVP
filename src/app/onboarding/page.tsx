@@ -32,6 +32,7 @@ type Step =
   | "universities"
   | "referral"
   | "emails"
+  | "smooth"
   | "trial";
 type SittingChoice = "october_2026" | "january_2027" | "not_sure" | "future";
 
@@ -44,6 +45,7 @@ const ALL_STEPS: Step[] = [
   "universities",
   "referral",
   "emails",
+  "smooth",
   "trial",
 ];
 const STEPS_WITHOUT_USERNAME: Step[] = [
@@ -52,6 +54,7 @@ const STEPS_WITHOUT_USERNAME: Step[] = [
   "universities",
   "referral",
   "emails",
+  "smooth",
   "trial",
 ];
 const PREVIEW_STEPS = new Set<Step>(ALL_STEPS);
@@ -196,6 +199,7 @@ function OnboardingContent() {
   const [universities, setUniversities] = useState<TargetUniversity[]>([]);
   const [referral, setReferral] = useState<ReferralSource | null>(null);
   const [marketingEmails, setMarketingEmails] = useState(false);
+  const [onboardingFeedback, setOnboardingFeedback] = useState("");
 
   const stepIndex = Math.max(0, steps.indexOf(step));
   const usesStepTitle =
@@ -203,6 +207,7 @@ function OnboardingContent() {
     step === "universities" ||
     step === "referral" ||
     step === "emails" ||
+    step === "smooth" ||
     step === "trial";
   const isLastStep = step === "trial";
 
@@ -398,7 +403,22 @@ function OnboardingContent() {
     }
   };
 
+  const sendOnboardingFeedback = async () => {
+    const message = onboardingFeedback.trim();
+    if (!message || isPreview) return;
+    try {
+      await fetch("/api/onboarding/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+      });
+    } catch {
+      // A failed note must not block finishing setup.
+    }
+  };
+
   const completeOnboardingPrefs = async () => {
+    await sendOnboardingFeedback();
     await savePrefs({
       exam_preference: exam,
       esat_subjects: exam === "ESAT" ? subjects : [],
@@ -908,6 +928,53 @@ function OnboardingContent() {
                   </>
                 ) : null}
 
+                {step === "smooth" ? (
+                  <>
+                    <div>
+                      <h1 className="text-2xl font-bold tracking-tight text-text sm:text-[1.75rem]">
+                        Was your onboarding process smooth?
+                      </h1>
+                      <p className="mt-1.5 text-xs text-text-muted">
+                        Optional. Skip this if you have nothing to add.
+                      </p>
+                    </div>
+
+                    <textarea
+                      value={onboardingFeedback}
+                      onChange={(event) =>
+                        setOnboardingFeedback(event.target.value.slice(0, 4000))
+                      }
+                      rows={5}
+                      maxLength={4000}
+                      placeholder="Tell us what felt smooth, or what got in the way."
+                      className="w-full resize-none rounded-xl bg-surface-mid px-4 py-3 text-sm text-text outline-none ring-0 placeholder:text-text-muted focus:outline-none focus:ring-0"
+                    />
+
+                    <div className="flex gap-2.5">
+                      <button
+                        type="button"
+                        onClick={goBack}
+                        className="flex-1 rounded-xl bg-surface-mid py-2.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral"
+                      >
+                        Back
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setError(null);
+                          goNext("smooth");
+                        }}
+                        className={cn(
+                          "flex-1 rounded-xl py-2.5 text-sm font-bold",
+                          ACCENT.btn,
+                        )}
+                      >
+                        Continue
+                      </button>
+                    </div>
+                  </>
+                ) : null}
+
                 {step === "emails" ? (
                   <>
                     <div>
@@ -1090,7 +1157,7 @@ function OnboardingContent() {
                 ) : null}
               </div>
 
-              {!isLastStep ? (
+              {!isLastStep && step !== "smooth" ? (
                 <p className="mt-4 shrink-0 text-center text-xs text-text-muted">
                   You can change this in settings later.
                 </p>
