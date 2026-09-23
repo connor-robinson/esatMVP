@@ -25,7 +25,7 @@ export function mapAuthError(error: unknown, fallback: string): string {
     raw.includes("over_email_send_rate_limit") ||
     raw.includes("too many requests")
   ) {
-    return "Too many attempts. Wait a minute and try again.";
+    return "Too many emails were sent. Wait a few minutes and try again, or use a different email.";
   }
   if (raw.includes("weak password") || raw.includes("pwned") || raw.includes("leaked")) {
     return "Choose a stronger password. Avoid common or leaked passwords.";

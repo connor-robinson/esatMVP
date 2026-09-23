@@ -337,7 +337,7 @@ export function QuestionBankSessionSettingsModal({
         const verified = outline.tags.filter(
           (t) =>
             t.tag !== UNTAGGED_TOPIC &&
-            t.count > 1 &&
+            t.count >= 1 &&
             isVerifiedCurriculumTag(t.tag, { subject: singleSubject }),
         );
         setTopicOptions(verified);
@@ -645,7 +645,7 @@ export function QuestionBankSessionSettingsModal({
         <p className="text-xs text-text-muted">{topicsError}</p>
       ) : topicOptions.length === 0 ? (
         <p className="text-xs text-text-muted">
-          No verified topics with more than one question for this subject yet.
+          No verified topics for this subject yet.
         </p>
       ) : (
         <div className="flex max-h-[min(28vh,240px)] flex-wrap content-start gap-2 overflow-y-auto overflow-x-hidden">

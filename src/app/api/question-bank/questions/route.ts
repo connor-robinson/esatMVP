@@ -8,6 +8,11 @@ import type {
 } from '@/types/questionBank';
 import { SUBJECT_TEST_TYPE } from '@/lib/questionBank/subjectTestTypes';
 import { applyPublishedQuestionBankFilter } from '@/lib/questionBank/libraryFilterServer';
+import { applyTopicTagFilter } from '@/lib/questionBank/topicQuery';
+import {
+  normalizeOptionalStringMap,
+  normalizeQuestionOptions,
+} from '@/lib/questionBank/normalizeOptions';
 import { shouldExcludeReservedMockQuestions } from '@/lib/mockBuilder/practiceExclusionCache';
 
 export const dynamic = 'force-dynamic';
@@ -272,7 +277,7 @@ export async function GET(request: NextRequest) {
     );
     const excludeReserved = await shouldExcludeReservedMockQuestions(supabase);
     let query = applyPublishedQuestionBankFilter(
-      supabase.from('ai_generated_questions').select('*', { count: 'exact' }),
+      supabase.from('ai_generated_questions').select('*'),
       { excludeReservedMockQuestions: excludeReserved },
     );
 
@@ -421,12 +426,7 @@ export async function GET(request: NextRequest) {
       query = query.is('primary_tag', null);
     } else if (tags) {
       debug('[Question Bank API] Stage 7: Applying tag filter:', tags);
-      const tagLower = tags.toLowerCase();
-      query = query.filter(
-        'or',
-        'or',
-        `(primary_tag.ilike.%${tagLower}%,secondary_tags.cs.{${tagLower}})`,
-      );
+      query = applyTopicTagFilter(query, tags, subjects);
     } else {
       debug('[Question Bank API] Stage 7: No tag filter');
     }
@@ -760,12 +760,8 @@ export async function GET(request: NextRequest) {
       try {
         return {
           ...q,
-          options:
-            typeof q.options === 'string' ? JSON.parse(q.options) : q.options,
-          distractor_map:
-            q.distractor_map && typeof q.distractor_map === 'string'
-              ? JSON.parse(q.distractor_map)
-              : q.distractor_map,
+          options: normalizeQuestionOptions(q.options),
+          distractor_map: normalizeOptionalStringMap(q.distractor_map),
         };
       } catch (parseError) {
         debug(

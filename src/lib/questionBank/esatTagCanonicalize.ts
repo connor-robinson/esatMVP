@@ -91,16 +91,21 @@ function bareDigitToRawCode(tag: string, paperId: string): string | null {
   return null;
 }
 
+function prefixedFromBareTitle(title: string, paperId: string): string | null {
+  const titleKey = `${paperId}:${title.trim().toLowerCase()}`;
+  return titleToPrefixed.get(titleKey) ?? null;
+}
+
 function displayLabelToPrefixed(tag: string, paperId: string): string | null {
   const sep = tag.indexOf("-");
   if (sep < 0) return null;
   const subjPart = tag.slice(0, sep);
-  const titlePart = tag.slice(sep + 3);
+  const titlePart = tag.slice(sep + 1).trim();
+  if (!titlePart) return null;
   const pid =
     SUBJECT_TO_PAPER_ID[subjPart.trim().toLowerCase()] ?? (paperId || null);
   if (!pid) return null;
-  const titleKey = `${pid}:${titlePart.trim().toLowerCase()}`;
-  return titleToPrefixed.get(titleKey) ?? null;
+  return prefixedFromBareTitle(titlePart, pid);
 }
 
 function coerceClassifierTopicCode(schemaId: string, code: string): string {
@@ -150,6 +155,9 @@ export function canonicalizeEsatTag(
   }
 
   if (paperId) {
+    const fromBareTitle = prefixedFromBareTitle(t, paperId);
+    if (fromBareTitle) return fromBareTitle;
+
     const fromTitle = displayLabelToPrefixed(t, paperId);
     if (fromTitle) return fromTitle;
 

@@ -4,6 +4,10 @@ import { requireRouteUser } from "@/lib/supabase/auth";
 import { userHasFullAccess } from "@/lib/subscription/serverAccess";
 import { QUESTION_BANK_PUBLISH_STATUS } from "@/lib/questionBank/qualityGate";
 import {
+  normalizeOptionalStringMap,
+  normalizeQuestionOptions,
+} from "@/lib/questionBank/normalizeOptions";
+import {
   FREE_TIER_LIMIT_PER_SUBJECT,
   FREE_TIER_PREVIEW_SUBJECTS,
   FREE_TIER_QUESTION_IDS,
@@ -23,12 +27,8 @@ function parseQuestionRow(q: Record<string, unknown>): ParsedQuestion {
   return {
     ...q,
     id: q.id as string,
-    options:
-      typeof q.options === "string" ? JSON.parse(q.options as string) : q.options,
-    distractor_map:
-      q.distractor_map && typeof q.distractor_map === "string"
-        ? JSON.parse(q.distractor_map as string)
-        : q.distractor_map,
+    options: normalizeQuestionOptions(q.options),
+    distractor_map: normalizeOptionalStringMap(q.distractor_map),
   };
 }
 

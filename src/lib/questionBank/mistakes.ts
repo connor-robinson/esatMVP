@@ -6,6 +6,10 @@
 
 import type { QuestionBankQuestion } from "@/types/questionBank";
 import { applyPublishedQuestionBankFilter } from "@/lib/questionBank/libraryFilterServer";
+import {
+  normalizeOptionalStringMap,
+  normalizeQuestionOptions,
+} from "@/lib/questionBank/normalizeOptions";
 
 export const QB_MISTAKES_SESSION_SOURCE = "mistakes" as const;
 export const QB_MISTAKES_SUMMARY_KIND = "mistakes" as const;
@@ -364,14 +368,8 @@ export function selectQbMistakeItems(
 function normalizeQuestionRow(q: Record<string, unknown>): QuestionBankQuestion {
   return {
     ...q,
-    options:
-      typeof q.options === "string"
-        ? JSON.parse(q.options as string)
-        : (q.options as QuestionBankQuestion["options"]),
-    distractor_map:
-      q.distractor_map && typeof q.distractor_map === "string"
-        ? JSON.parse(q.distractor_map as string)
-        : (q.distractor_map as QuestionBankQuestion["distractor_map"]),
+    options: normalizeQuestionOptions(q.options),
+    distractor_map: normalizeOptionalStringMap(q.distractor_map),
   } as QuestionBankQuestion;
 }
 

@@ -1355,9 +1355,17 @@ export default function QuestionBankPage() {
           );
           router.replace('/questions');
         } else {
+          window.alert(
+            config.topics.length > 0
+              ? 'No questions are available for that topic yet. Clear the topic filter and try again.'
+              : 'No questions match these settings yet.',
+          );
           router.replace('/questions');
         }
       } catch (err) {
+        window.alert(
+          'Could not load questions. Check your connection and try again.',
+        );
         router.replace('/questions');
       } finally {
         setSessionStarting(false);

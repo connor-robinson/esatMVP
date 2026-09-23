@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { requireRouteUser } from '@/lib/supabase/auth';
 import type { AiGeneratedQuestionRow } from '@/lib/supabase/types';
+import {
+  normalizeOptionalStringMap,
+  normalizeQuestionOptions,
+} from '@/lib/questionBank/normalizeOptions';
 
 /**
  * PATCH /api/question-bank/questions/[id]
@@ -147,10 +151,8 @@ export async function PATCH(
     // Parse JSONB fields
     const question: AiGeneratedQuestionRow = {
       ...updatedQuestion,
-      options: typeof updatedQuestion.options === 'string' ? JSON.parse(updatedQuestion.options) : updatedQuestion.options,
-      distractor_map: updatedQuestion.distractor_map && typeof updatedQuestion.distractor_map === 'string' 
-        ? JSON.parse(updatedQuestion.distractor_map) 
-        : updatedQuestion.distractor_map,
+      options: normalizeQuestionOptions(updatedQuestion.options),
+      distractor_map: normalizeOptionalStringMap(updatedQuestion.distractor_map),
     };
 
     return NextResponse.json({ question });

@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireRouteUser } from '@/lib/supabase/auth';
 import { labelForQuestionBankTag } from '@/lib/questionBank/esatCurriculumTopicLabels';
 import { synthesizeAttemptsFromReviewSnapshot } from '@/lib/questionBank/synthesizeAttemptsFromReviewSnapshot';
+import {
+  normalizeOptionalStringMap,
+  normalizeQuestionOptions,
+} from '@/lib/questionBank/normalizeOptions';
 
 export const dynamic = 'force-dynamic';
 
@@ -125,7 +129,22 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 
     return NextResponse.json({
       session: qbSession,
-      attempts: resolvedAttempts,
+      attempts: resolvedAttempts.map((attempt) => {
+        const question = attempt.ai_generated_questions;
+        if (!question || typeof question !== "object") return attempt;
+        const row = question as {
+          options?: unknown;
+          distractor_map?: unknown;
+        };
+        return {
+          ...attempt,
+          ai_generated_questions: {
+            ...question,
+            options: normalizeQuestionOptions(row.options),
+            distractor_map: normalizeOptionalStringMap(row.distractor_map),
+          },
+        };
+      }),
       wrongQuestions,
     });
   } catch (err) {

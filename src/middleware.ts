@@ -16,6 +16,14 @@ function applyResponseCookies(from: NextResponse, to: NextResponse) {
   return to;
 }
 
+function hasSupabaseAuthCookie(request: NextRequest): boolean {
+  return request.cookies.getAll().some(
+    (cookie) =>
+      cookie.name.includes("-auth-token") &&
+      !cookie.name.endsWith("-code-verifier"),
+  );
+}
+
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const recovering = request.cookies.get(PASSWORD_RECOVERY_COOKIE)?.value === '1';
@@ -39,6 +47,12 @@ export async function middleware(request: NextRequest) {
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     if (!supabaseUrl || !supabaseAnonKey) {
+      return response;
+    }
+
+    // Anonymous page views do not need an auth round-trip. A missing cookie
+    // means there is no session to refresh and no onboarding lock to apply.
+    if (!hasSupabaseAuthCookie(request)) {
       return response;
     }
 
@@ -66,13 +80,19 @@ export async function middleware(request: NextRequest) {
       return response;
     }
 
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('username, onboarding_completed')
       .eq('id', user.id)
       .maybeSingle() as {
         data: { username: string | null; onboarding_completed: boolean | null } | null;
+        error: { message: string } | null;
       };
+
+    // A failed profile read must not dump a signed-in user into onboarding.
+    if (profileError) {
+      return response;
+    }
 
     const onOnboarding = path.startsWith('/onboarding');
     const onAccess = path.startsWith('/access');
