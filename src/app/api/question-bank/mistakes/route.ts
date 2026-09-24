@@ -14,6 +14,7 @@ import {
   QB_MISTAKES_SUBJECT_FILTERS,
 } from "@/lib/questionBank/mistakes";
 import { applyPublishedQuestionBankFilter } from "@/lib/questionBank/libraryFilterServer";
+import { getQuestionIdsWithOpenReports } from "@/lib/questionBank/excludeReported";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -57,12 +58,15 @@ async function loadPool(supabase: any, userId: string) {
     { subjects: string; test_type?: string | null; primary_tag?: string | null }
   >();
 
-  if (wrongIds.length > 0) {
+  const reportedIds = await getQuestionIdsWithOpenReports();
+
+  const visibleWrongIds = wrongIds.filter((id) => !reportedIds.has(id));
+  if (visibleWrongIds.length > 0) {
     const { data: rows } = await applyPublishedQuestionBankFilter(
       supabase
         .from("ai_generated_questions")
         .select("id, subjects, test_type, primary_tag"),
-    ).in("id", wrongIds);
+    ).in("id", visibleWrongIds);
 
     for (const row of (rows || []) as Array<{
       id: string;

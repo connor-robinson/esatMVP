@@ -3,6 +3,10 @@ import { createServerClient } from '@/lib/supabase/server';
 import type { QuestionBankQuestion } from '@/types/questionBank';
 import { applyPublishedQuestionBankFilter } from '@/lib/questionBank/libraryFilterServer';
 import {
+  getQuestionIdsWithOpenReports,
+  omitReportedQuestions,
+} from '@/lib/questionBank/excludeReported';
+import {
   normalizeOptionalStringMap,
   normalizeQuestionOptions,
 } from '@/lib/questionBank/normalizeOptions';
@@ -65,7 +69,11 @@ export async function GET() {
       return NextResponse.json({ error: 'Failed to load questions' }, { status: 500 });
     }
 
-    const rawQuestions = (rows || []) as Record<string, unknown>[];
+    const reportedIds = await getQuestionIdsWithOpenReports();
+    const rawQuestions = omitReportedQuestions(
+      (rows || []) as Array<Record<string, unknown> & { id: string }>,
+      reportedIds,
+    );
     const questions = rawQuestions.map((q) => {
       try {
         return normalizeQuestionRow(q);

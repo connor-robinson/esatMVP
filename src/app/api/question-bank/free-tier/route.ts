@@ -8,6 +8,10 @@ import {
   normalizeQuestionOptions,
 } from "@/lib/questionBank/normalizeOptions";
 import {
+  getQuestionIdsWithOpenReports,
+  omitReportedQuestions,
+} from "@/lib/questionBank/excludeReported";
+import {
   FREE_TIER_LIMIT_PER_SUBJECT,
   FREE_TIER_PREVIEW_SUBJECTS,
   FREE_TIER_QUESTION_IDS,
@@ -109,9 +113,12 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      questionRows = (rows ?? []) as Array<
-        Record<string, unknown> & { id: string; subjects?: string }
-      >;
+      questionRows = omitReportedQuestions(
+        (rows ?? []) as Array<
+          Record<string, unknown> & { id: string; subjects?: string }
+        >,
+        await getQuestionIdsWithOpenReports(),
+      );
     } else {
       const { data: rows, error: queryError } = await supabase
         .from("ai_generated_questions")
@@ -126,9 +133,12 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      questionRows = (rows ?? []) as Array<
-        Record<string, unknown> & { id: string; subjects?: string }
-      >;
+      questionRows = omitReportedQuestions(
+        (rows ?? []) as Array<
+          Record<string, unknown> & { id: string; subjects?: string }
+        >,
+        await getQuestionIdsWithOpenReports(),
+      );
     }
 
     const byId = new Map<string, ParsedQuestion>(

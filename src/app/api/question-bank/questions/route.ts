@@ -14,7 +14,10 @@ import {
   normalizeQuestionOptions,
 } from '@/lib/questionBank/normalizeOptions';
 import { shouldExcludeReservedMockQuestions } from '@/lib/mockBuilder/practiceExclusionCache';
-import { getQuestionIdsWithOpenReports } from '@/lib/questionBank/excludeReported';
+import {
+  getQuestionIdsWithOpenReports,
+  omitReportedQuestions,
+} from '@/lib/questionBank/excludeReported';
 
 export const dynamic = 'force-dynamic';
 
@@ -279,7 +282,7 @@ export async function GET(request: NextRequest) {
     const excludeReserved = await shouldExcludeReservedMockQuestions(supabase);
     
     // Get questions with open reports to exclude them from the bank
-    const reportedQuestionIds = await getQuestionIdsWithOpenReports(supabase);
+    const reportedQuestionIds = await getQuestionIdsWithOpenReports();
     
     let query = applyPublishedQuestionBankFilter(
       supabase.from('ai_generated_questions').select('*'),
@@ -289,7 +292,7 @@ export async function GET(request: NextRequest) {
     // Exclude questions with open reports
     if (reportedQuestionIds.size > 0) {
       const reportedIds = Array.from(reportedQuestionIds);
-      query = query.not('id', 'in', `(${reportedIds.map(id => `"${id}"`).join(',')})`);
+      query = query.not('id', 'in', `(${reportedIds.join(',')})`);
       debug(
         '[Question Bank API] Stage 1: Excluding questions with open reports:',
         reportedIds.length,
@@ -654,7 +657,10 @@ export async function GET(request: NextRequest) {
     // ============================================================================
     // STAGE 11: Apply attempt-based filters (client-side)
     // ============================================================================
-    let filteredQuestions = allQuestions || [];
+    let filteredQuestions: any[] = omitReportedQuestions(
+      (allQuestions || []) as Array<{ id: string }>,
+      reportedQuestionIds,
+    );
     const beforeAttemptFilterCount = filteredQuestions.length;
 
     debug('[Question Bank API] Stage 11: Applying attempt-based filters', {
