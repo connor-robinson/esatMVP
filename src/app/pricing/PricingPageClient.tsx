@@ -153,6 +153,9 @@ function LocalhostVariantPreview({
   );
 }
 
+const MONTHLY_TRIAL_NOTE =
+  "4 days free. Cancel in that time and you are not charged. Then billed every month until you cancel.";
+
 const PAID_RECURRING = new Set(["weekly", "monthly"]);
 
 type FriendCodeStatus =
@@ -391,7 +394,7 @@ export default function PricingPageClient() {
           ? "Switches on your next bill"
           : hasFriendCode
             ? "Friend discount applied at checkout"
-            : "4-day free trial. Cancel anytime",
+            : MONTHLY_TRIAL_NOTE,
       features: FEATURES.paid,
       highlighted: !showExpressDeal,
       featured: !showExpressDeal,
@@ -752,6 +755,14 @@ export default function PricingPageClient() {
             void handleCheckout(id);
           }}
         />
+
+        <p className="mx-auto -mt-4 max-w-2xl text-center text-sm leading-relaxed text-text-muted">
+          {hasFriendCode
+            ? "A friend code charges straight away. The 4-day free trial does not apply with that discount."
+            : showExpressDeal
+              ? "The 4-day free trial is on Monthly only. Cancel before those 4 days end and you are not charged. After that, Monthly bills every month until you cancel. ESAT Rush is charged straight away, with no free trial."
+              : "The 4-day free trial is on Monthly only. Cancel before those 4 days end and you are not charged. After that, Monthly bills every month until you cancel."}
+        </p>
 
         <div className="mt-14 text-center">
           {!session?.user ? (

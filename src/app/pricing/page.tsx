@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import {
   formatGbpPrice,
   getSeasonPassPrice,
-  MONTHLY_LIST_PRICE_GBP,
   MONTHLY_PRICE_GBP,
   SEASON_PASS_ACCESS_UNTIL_LABEL,
 } from "@/lib/stripe/best-value";
@@ -50,7 +49,7 @@ export default function PricingPage() {
     {
       name: "Monthly",
       price: `${monthlyLabel}/month`,
-      note: `Was ${formatGbpPrice(MONTHLY_LIST_PRICE_GBP)}. 4-day free trial. Cancel anytime`,
+      note: "4 days free. Cancel in that time and you are not charged. Then billed every month until you cancel.",
       features: PAID_FEATURES,
       cta: "Start free trial",
     },
