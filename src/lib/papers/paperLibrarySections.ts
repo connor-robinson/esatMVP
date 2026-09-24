@@ -5,6 +5,10 @@ import {
 } from "@/lib/papers/adminEsatMocks";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import { normalizeEngaaPaperSections } from "@/lib/papers/engaaQuestionFilter";
+import {
+  engaaSection1MathsQuestions,
+  engaaSection1PhysicsQuestions,
+} from "@/lib/papers/engaaRoadmapParts";
 import { mapPartToSection, mapTmuaPaperNameToSection } from "@/lib/papers/sectionMapping";
 import { generateSectionId } from "./partIdUtils";
 import type { ExamName, Paper, PaperSection, PaperType, Question } from "@/types/papers";
@@ -503,14 +507,35 @@ export function questionMatchesPartId(
     | "paperId"
     | "examName"
     | "examYear"
-  >,
+  > & { questionNumber?: number },
   partId: string,
   paper: Pick<Paper, "examType" | "paperName" | "examName" | "examYear">,
   catalog: Paper[] = [],
 ): boolean {
+  const sectionId = getQuestionSectionId(question, paper, catalog).toLowerCase();
+  const wanted = partId.trim().toLowerCase();
+  if (sectionId === wanted) return true;
+
+  // Roadmap part IDs append a part key, e.g. ENGAA Section 1 maths:
+  // ENGAA-2023-1-MathematicsandPhysics-1maths
+  const prefix = `${sectionId}-`;
+  if (!wanted.startsWith(prefix)) return false;
+
+  const suffix = wanted.slice(prefix.length);
+  const year = question.examYear ?? paper.examYear;
+  const exam = String(question.examName ?? paper.examName ?? "").toUpperCase();
+  if (exam !== "ENGAA" || typeof year !== "number") return true;
+
+  const trackNumbers =
+    suffix === "1maths"
+      ? engaaSection1MathsQuestions(year)
+      : suffix === "1physics"
+        ? engaaSection1PhysicsQuestions(year)
+        : null;
+  if (!trackNumbers) return true;
   return (
-    getQuestionSectionId(question, paper, catalog).toLowerCase() ===
-    partId.toLowerCase()
+    typeof question.questionNumber === "number" &&
+    trackNumbers.includes(question.questionNumber)
   );
 }
 

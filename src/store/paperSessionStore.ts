@@ -851,43 +851,10 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               let allSectionsQuestions: Question[][] = [];
               
               if (processedQuestions.length > 0) {
-                // Sort by selected sections if provided, otherwise keep original order
-                if (usesPartIdFilter && state.selectedPartIds.length > 0) {
-                  processedQuestions.sort((a, b) => {
-                    const indexA = state.selectedPartIds.findIndex((partId) =>
-                      questionMatchesPartId(
-                        a,
-                        partId,
-                        anchorPaper,
-                        questionCatalog,
-                      ),
-                    );
-                    const indexB = state.selectedPartIds.findIndex((partId) =>
-                      questionMatchesPartId(
-                        b,
-                        partId,
-                        anchorPaper,
-                        questionCatalog,
-                      ),
-                    );
-                    const fallback = state.selectedPartIds.length + 1;
-                    const ia = indexA < 0 ? fallback : indexA;
-                    const ib = indexB < 0 ? fallback : indexB;
-                    if (ia === ib) return a.questionNumber - b.questionNumber;
-                    return ia - ib;
-                  });
-
-                  allSectionsQuestions = state.selectedPartIds.map((partId) =>
-                    processedQuestions.filter((q) =>
-                      questionMatchesPartId(
-                        q,
-                        partId,
-                        anchorPaper,
-                        questionCatalog,
-                      ),
-                    ),
-                  );
-                } else if (state.selectedSections.length > 0) {
+                // Prefer section order. Roadmap ENGAA splits one section into
+                // maths/physics part IDs; grouping by those IDs reorders
+                // questions and misaligns saved answers on review.
+                if (state.selectedSections.length > 0) {
                   processedQuestions.sort((a, b) => {
                     const sectionA = sectionByQuestionId.get(a.id) ?? mapPartToSection({ partLetter: (a as any).partLetter, partName: a.partName }, state.paperName as any);
                     const sectionB = sectionByQuestionId.get(b.id) ?? mapPartToSection({ partLetter: (b as any).partLetter, partName: b.partName }, state.paperName as any);
