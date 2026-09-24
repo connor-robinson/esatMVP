@@ -115,7 +115,7 @@ const navSections: NavSectionConfig[] = [
     ],
   },
   {
-    label: 'Past Papers',
+    label: 'Mock & Past Papers',
     href: PAST_PAPERS_HOME_PATH,
     section: 'papers',
     badge: 'NEW',
