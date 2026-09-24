@@ -23,7 +23,7 @@ import { QuestionBankSessionBar } from '@/components/questionBank/QuestionBankSe
 import { QuestionBankEsatSessionShell } from '@/components/questionBank/QuestionBankEsatSessionShell';
 import { QuestionBankHomeScreen } from '@/components/questionBank/QuestionBankHomeScreen';
 import { PearsonExamPlayer } from '@/components/pearson/PearsonExamPlayer';
-import type { PearsonModuleResult } from '@/lib/pearson/types';
+import type { PearsonAnswerMap, PearsonModuleResult } from '@/lib/pearson/types';
 import {
   questionBankQuestionsToPearson,
 } from '@/lib/questionBank/toPearsonQuestion';
@@ -178,11 +178,13 @@ export default function QuestionBankPage() {
   const [sessionTestType, setSessionTestType] = useState<string | null>(null);
   const [sessionCompleting, setSessionCompleting] = useState(false);
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
+  const [showPearsonLeave, setShowPearsonLeave] = useState(false);
   const [showTimeUpModal, setShowTimeUpModal] = useState(false);
   const [sessionEndedByTimer, setSessionEndedByTimer] = useState(false);
   const showTimeUpModalRef = useRef(false);
   const questionStartedAtRef = useRef<number>(Date.now());
   const sessionAttemptLogRef = useRef<QuestionBankSessionAttempt[]>([]);
+  const pearsonAnswersRef = useRef<PearsonAnswerMap>({});
   const sessionRegisteredRef = useRef(false);
   /** Set synchronously when consuming the free-tier launch flag (before React re-renders). */
   const freeTierLaunchInProgressRef = useRef(false);
@@ -443,6 +445,7 @@ export default function QuestionBankPage() {
   const completeSession = useCallback(
     async (options?: {
       timedOut?: boolean;
+      aborted?: boolean;
       attemptsOverride?: QuestionBankSessionAttempt[];
     }) => {
       if (sessionCompleting) return;
@@ -498,33 +501,36 @@ export default function QuestionBankPage() {
             setSessionAttemptLog(next);
           }
         }
-        // Unanswered exam items count as incorrect (exam conditions).
-        const answeredIds = new Set(
-          sessionAttemptLogRef.current.map((a) => a.questionId),
-        );
-        const missing: QuestionBankSessionAttempt[] = [];
-        sessionQuestions.forEach((q, index) => {
-          if (answeredIds.has(q.id)) return;
-          missing.push(
-            buildSessionAttemptEntry(
-              q,
-              index + 1,
-              '',
-              false,
-              0,
-              sessionUiDifficulties,
-              {
-                wasRevealed: false,
-                usedHint: false,
-                wrongAnswersBefore: [],
-              },
-            ),
+        // Finishing under exam conditions marks anything still blank as incorrect.
+        // Stopping early does not: only questions already answered are scored.
+        if (!options?.aborted) {
+          const answeredIds = new Set(
+            sessionAttemptLogRef.current.map((a) => a.questionId),
           );
-        });
-        if (missing.length > 0) {
-          const next = [...sessionAttemptLogRef.current, ...missing];
-          sessionAttemptLogRef.current = next;
-          setSessionAttemptLog(next);
+          const missing: QuestionBankSessionAttempt[] = [];
+          sessionQuestions.forEach((q, index) => {
+            if (answeredIds.has(q.id)) return;
+            missing.push(
+              buildSessionAttemptEntry(
+                q,
+                index + 1,
+                '',
+                false,
+                0,
+                sessionUiDifficulties,
+                {
+                  wasRevealed: false,
+                  usedHint: false,
+                  wrongAnswersBefore: [],
+                },
+              ),
+            );
+          });
+          if (missing.length > 0) {
+            const next = [...sessionAttemptLogRef.current, ...missing];
+            sessionAttemptLogRef.current = next;
+            setSessionAttemptLog(next);
+          }
         }
       } else {
         ensureCurrentQuestionLogged();
@@ -762,8 +768,34 @@ export default function QuestionBankPage() {
   }, []);
 
   const handleSaveAndLeave = useCallback(() => {
-    void completeSession();
+    void completeSession({ aborted: true });
   }, [completeSession]);
+
+  const handleStopPearsonSession = useCallback(() => {
+    const answers = pearsonAnswersRef.current;
+    const attempts: QuestionBankSessionAttempt[] = [];
+    sessionQuestions.forEach((q, index) => {
+      const letter = answers[index + 1];
+      if (!letter) return;
+      attempts.push(
+        buildSessionAttemptEntry(
+          q,
+          index + 1,
+          letter,
+          letter === q.correct_option,
+          0,
+          sessionUiDifficulties,
+          {
+            wasRevealed: false,
+            usedHint: false,
+            wrongAnswersBefore: [],
+          },
+        ),
+      );
+    });
+    setShowPearsonLeave(false);
+    void completeSession({ aborted: true, attemptsOverride: attempts });
+  }, [completeSession, sessionQuestions, sessionUiDifficulties]);
 
   const handleDiscardSession = useCallback(async () => {
     setShowLeaveConfirm(false);
@@ -1911,21 +1943,84 @@ export default function QuestionBankPage() {
     };
 
     return (
-      <PearsonExamPlayer
-        mode="strict-simulation"
-        examTitle="Question bank"
-        questions={pearsonQuestions}
-        timeLimitSeconds={Math.max(60, Math.round(timeLimitMinutes * 60))}
-        introMode="resume-questions"
-        suppressCompleteScreen
-        chromeVariant="purple"
-        moduleTransition={{ enabled: false }}
-        sessionId={qbSessionId}
-        restBreaksEnabled={restBreaksEnabled}
-        onRestBreakChange={setRestBreakActive}
-        onModuleComplete={handlePearsonExamComplete}
-        isLastModule
-      />
+      <>
+        <PearsonExamPlayer
+          mode="strict-simulation"
+          examTitle="Question bank"
+          questions={pearsonQuestions}
+          timeLimitSeconds={Math.max(60, Math.round(timeLimitMinutes * 60))}
+          introMode="resume-questions"
+          suppressCompleteScreen
+          chromeVariant="purple"
+          moduleTransition={{ enabled: false }}
+          sessionId={qbSessionId}
+          restBreaksEnabled={restBreaksEnabled}
+          onRestBreakChange={setRestBreakActive}
+          onAnswerChange={(answers) => {
+            pearsonAnswersRef.current = answers;
+          }}
+          onRequestEndExam={() => setShowPearsonLeave(true)}
+          endExamLabel="Leave"
+          renderHeaderAfterTitle={() => (
+            <button
+              type="button"
+              className="pearson-header-leave"
+              onClick={() => setShowPearsonLeave(true)}
+            >
+              Leave
+            </button>
+          )}
+          onModuleComplete={handlePearsonExamComplete}
+          isLastModule
+        />
+        {showPearsonLeave ? (
+          <div
+            className="fixed inset-0 z-[80] flex items-center justify-center bg-background/75 p-4"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="qb-pearson-leave-title"
+          >
+            <div className="w-full max-w-md rounded-organic-xl bg-surface-elevated p-6 shadow-modal-card">
+              <h2
+                id="qb-pearson-leave-title"
+                className="font-heading text-xl font-bold text-text"
+              >
+                Leave this set?
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed text-text-muted">
+                You can stop now. You do not have to finish the rest of this
+                set. Questions you have not reached are not marked wrong.
+              </p>
+              <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPearsonLeave(false);
+                    void handleDiscardSession();
+                  }}
+                  className="rounded-organic-lg px-4 py-3 text-sm font-semibold text-text-muted hover:bg-surface-mid hover:text-text"
+                >
+                  Discard
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowPearsonLeave(false)}
+                  className="rounded-organic-lg px-4 py-3 text-sm font-semibold text-text-muted hover:bg-surface-mid hover:text-text"
+                >
+                  Keep going
+                </button>
+                <button
+                  type="button"
+                  onClick={handleStopPearsonSession}
+                  className="rounded-organic-lg bg-secondary px-4 py-3 text-sm font-bold text-background shadow-glow hover:brightness-110"
+                >
+                  Stop here
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </>
     );
   }
 

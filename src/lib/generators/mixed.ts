@@ -5,6 +5,7 @@
 import { GeneratedQuestion } from "@/types/core";
 import type { TopicVariantSelection } from "@/types/core";
 import { levelForDrill } from "@/lib/drill-selection";
+import { pickFreshQuestion } from "./freshQuestion";
 import { GENERATORS } from "./index";
 
 function cryptoRandomId(): string {
@@ -74,10 +75,23 @@ export function pickRandomDrill(selections: TopicVariantSelection[]): TopicVaria
   return selections[Math.floor(Math.random() * selections.length)];
 }
 
+function generateFreshQuestion(
+  topicId: string,
+  level: number,
+  variantId: string | undefined,
+  soFar: readonly GeneratedQuestion[],
+): GeneratedQuestion {
+  return pickFreshQuestion(
+    () => generateQuestionForTopic(topicId, level, undefined, variantId),
+    soFar,
+  );
+}
+
 /**
  * Generate a mixed session pool:
  * - Each selected drill gets an equal share of questions (50/50 for two, etc.)
  * - Order is shuffled so drills appear interleaved at random
+ * - The same prompt is not repeated until the drill's distinct questions run out
  */
 export function generateMixedQuestions(
   selections: TopicVariantSelection[],
@@ -86,26 +100,36 @@ export function generateMixedQuestions(
 ): GeneratedQuestion[] {
   if (selections.length === 0 || totalCount <= 0) return [];
 
+  const questions: GeneratedQuestion[] = [];
+
   if (selections.length === 1) {
     const { topicId, variantId } = selections[0];
     const level = levelForDrill(variantToLevelMap, topicId, variantId);
-    return Array.from({ length: totalCount }, () =>
-      generateQuestionForTopic(topicId, level, undefined, variantId),
-    );
+    for (let i = 0; i < totalCount; i += 1) {
+      questions.push(generateFreshQuestion(topicId, level, variantId, questions));
+    }
+    return questions;
   }
 
   const drillCount = selections.length;
   const base = Math.floor(totalCount / drillCount);
   let remainder = totalCount % drillCount;
 
-  const questions: GeneratedQuestion[] = [];
-
   for (const selection of selections) {
     const count = base + (remainder > 0 ? (remainder--, 1) : 0);
-    const level = levelForDrill(variantToLevelMap, selection.topicId, selection.variantId);
-    for (let i = 0; i < count; i++) {
+    const level = levelForDrill(
+      variantToLevelMap,
+      selection.topicId,
+      selection.variantId,
+    );
+    for (let i = 0; i < count; i += 1) {
       questions.push(
-        generateQuestionForTopic(selection.topicId, level, undefined, selection.variantId),
+        generateFreshQuestion(
+          selection.topicId,
+          level,
+          selection.variantId,
+          questions,
+        ),
       );
     }
   }

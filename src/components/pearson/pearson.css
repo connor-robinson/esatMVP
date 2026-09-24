@@ -261,6 +261,35 @@ html.pearson-exam-active body {
   color-scheme: light;
 }
 
+.pearson-header-leave {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background: rgba(255, 255, 255, 0.16);
+  color: inherit;
+  padding: 4px 12px;
+  margin: 0;
+  font: inherit;
+  font-size: var(--pearson-font-size-ui);
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.15;
+  white-space: nowrap;
+  border-radius: 2px;
+}
+
+.pearson-header-leave:hover {
+  color: var(--pearson-hover-yellow);
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.pearson-header-leave:focus-visible {
+  outline: none;
+}
+
 /* Official ESAT specimen bitmap icons (user screenshot crops in public/pearson/icons). */
 .pearson-raster-icon {
   display: block;

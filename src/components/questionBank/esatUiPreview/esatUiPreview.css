@@ -254,6 +254,33 @@ html.esat-ui-preview-active body::-webkit-scrollbar {
   text-overflow: ellipsis;
 }
 
+.eup-header-leave {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background: transparent;
+  color: var(--eup-chrome-text);
+  padding: 6px 10px;
+  font-family: var(--eup-font);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.1;
+}
+
+.eup-header-leave:hover {
+  color: #ffffff;
+  background: color-mix(in srgb, var(--eup-pink) 28%, transparent);
+}
+
+.eup-header-leave:focus-visible {
+  outline: none;
+}
+
 .eup-theme-toggle {
   display: inline-flex;
   align-items: center;

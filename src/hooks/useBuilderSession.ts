@@ -16,6 +16,7 @@ import type {
 } from "@/types/core";
 import type { SessionPresetInsert } from "@/lib/supabase/types";
 import { generateMixedQuestions, generateQuestionForTopic, pickRandomDrill } from "@/lib/generators";
+import { pickFreshQuestion } from "@/lib/generators/freshQuestion";
 import { buildVariantLevelMap, levelForDrill } from "@/lib/drill-selection";
 import { generateId } from "@/lib/utils";
 import { getTopic } from "@/config/topics";
@@ -378,11 +379,15 @@ export function useBuilderSession() {
         pick.topicId,
         pick.variantId,
       );
-      const question = generateQuestionForTopic(
-        pick.topicId,
-        level,
-        undefined,
-        pick.variantId,
+      const question = pickFreshQuestion(
+        () =>
+          generateQuestionForTopic(
+            pick.topicId,
+            level,
+            undefined,
+            pick.variantId,
+          ),
+        session.questions,
       );
       return { ...session, questions: [...session.questions, question] };
     },

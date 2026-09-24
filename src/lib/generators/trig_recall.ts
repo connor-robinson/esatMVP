@@ -1,7 +1,7 @@
 /**
  * Trig ratios recall generator
  * Levels:
- * 1 - Basic angles (0°, 30°, 45°, 60°, 90°)
+ * 1 - Standard angles (0°, 30°, 45°, 60°, 90°, plus 120°, 135°, 150°, 180°, 270°, 360°)
  * 2 - Extended angles (120°, 135°, 150°, 180°, etc.)
  * 3 - Radian equivalents
  */
@@ -49,7 +49,7 @@ export function generateTrigRecall(
 }
 
 function generateBasicAngles(): GeneratedQuestion {
-  const angle = pick([0, 30, 45, 60, 90]);
+  const angle = pick([0, 30, 45, 60, 90, 120, 135, 150, 180, 270, 360]);
   const f = pick(["sin", "cos", "tan"]);
 
   const table: Record<string, Record<number, string>> = {
@@ -59,6 +59,12 @@ function generateBasicAngles(): GeneratedQuestion {
       45: "sqrt(2)/2",
       60: "sqrt(3)/2",
       90: "1",
+      120: "sqrt(3)/2",
+      135: "sqrt(2)/2",
+      150: "1/2",
+      180: "0",
+      270: "-1",
+      360: "0",
     },
     cos: {
       0: "1",
@@ -66,6 +72,12 @@ function generateBasicAngles(): GeneratedQuestion {
       45: "sqrt(2)/2",
       60: "1/2",
       90: "0",
+      120: "-1/2",
+      135: "-sqrt(2)/2",
+      150: "-sqrt(3)/2",
+      180: "-1",
+      270: "0",
+      360: "1",
     },
     tan: {
       0: "0",
@@ -73,6 +85,12 @@ function generateBasicAngles(): GeneratedQuestion {
       45: "1",
       60: "sqrt(3)",
       90: "undef",
+      120: "-sqrt(3)",
+      135: "-1",
+      150: "-sqrt(3)/3",
+      180: "0",
+      270: "undef",
+      360: "0",
     },
   };
 

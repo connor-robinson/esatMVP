@@ -82,6 +82,10 @@ export interface PearsonExamPlayerProps {
   }) => ReactNode;
   /** ESAT CAMP mock welcome title; swaps UAT branding on the NDA screen. */
   campWelcomeTitle?: string | null;
+  /** Question bank sets this so End Exam opens Leave instead of submitting blanks as wrong. */
+  onRequestEndExam?: () => void;
+  /** Footer label when the host replaces End Exam. */
+  endExamLabel?: string;
   /** Guest: show "Log in to save your progress" left of the timer. */
   showLoginToSave?: boolean;
   onLoginToSave?: () => void;
@@ -116,6 +120,8 @@ export function PearsonExamPlayer({
   campWelcomeTitle = null,
   showLoginToSave = false,
   onLoginToSave,
+  onRequestEndExam,
+  endExamLabel,
 }: PearsonExamPlayerProps) {
   const c = usePearsonExamController({
     mode,
@@ -136,6 +142,7 @@ export function PearsonExamPlayer({
     isLastModule,
     restBreaksEnabled,
     onRestBreakChange,
+    onRequestEndExam,
   });
 
   const hotkeyApi = useMemo(
@@ -345,7 +352,9 @@ export function PearsonExamPlayer({
               variant="prequestion"
               onEndExam={c.requestEndExam}
               onNext={c.goNext}
-              endLabel={c.isLastModule ? "End Exam" : "End Section"}
+              endLabel={
+                endExamLabel ?? (c.isLastModule ? "End Exam" : "End Section")
+              }
             />
           ) : null}
 
@@ -378,7 +387,10 @@ export function PearsonExamPlayer({
                 nextDisabled={c.moduleLocked}
                 previousDisabled={c.moduleLocked}
                 navigatorDisabled={c.moduleLocked}
-                endLabel={c.isLastModule ? "End Exam" : "End Section"}
+                endLabel={
+                  endExamLabel ??
+                  (c.isLastModule ? "End Exam" : "End Section")
+                }
                 nextLabel={
                   c.isLastQuestion && !c.isLastModule
                     ? "Continue to Next Section"

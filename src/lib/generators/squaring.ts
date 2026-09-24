@@ -28,7 +28,7 @@ function asSquaring(question: GeneratedQuestion): GeneratedQuestion {
 }
 
 function generateEndingIn5(): GeneratedQuestion {
-  const numbers = [15, 25, 35, 45, 55, 65, 75, 85, 95];
+  const numbers = Array.from({ length: 19 }, (_, i) => 15 + i * 10);
   const n = pick(numbers);
   const result = n * n;
 

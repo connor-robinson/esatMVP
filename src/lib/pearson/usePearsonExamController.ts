@@ -78,6 +78,11 @@ export interface UsePearsonExamControllerOptions {
   restBreaksEnabled?: boolean;
   /** Notify host when a rest break starts/ends (freeze store elapsed clocks). */
   onRestBreakChange?: (active: boolean) => void;
+  /**
+   * Question bank: replace the specimen End Exam confirmation with the host's
+   * own leave flow. Past papers leave this unset.
+   */
+  onRequestEndExam?: () => void;
 }
 
 export function usePearsonExamController(
@@ -102,6 +107,7 @@ export function usePearsonExamController(
     isLastModule = true,
     restBreaksEnabled = false,
     onRestBreakChange,
+    onRequestEndExam,
   } = options;
 
   const durationMs = timeLimitSeconds * 1000;
@@ -490,8 +496,15 @@ export function usePearsonExamController(
     setNavigatorOpen(false);
   }, []);
 
+  const onRequestEndExamRef = useRef(onRequestEndExam);
+  onRequestEndExamRef.current = onRequestEndExam;
+
   const requestEndExam = useCallback(() => {
     if (completed) return;
+    if (onRequestEndExamRef.current) {
+      onRequestEndExamRef.current();
+      return;
+    }
     setNavigatorOpen(false);
     setEndExamReturnScreen(
       screen === "instructions"

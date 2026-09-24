@@ -356,6 +356,16 @@ export function QuestionBankEsatSessionShell({
           )}
         </div>
         <div className="eup-header-right">
+          {!reviewMode ? (
+            <button
+              type="button"
+              className="eup-header-leave"
+              onClick={onOpenLeaveConfirm}
+            >
+              <LogOut size={16} strokeWidth={2} aria-hidden />
+              Leave
+            </button>
+          ) : null}
           {!reviewMode && restBreaksEnabled && remainingTimeMs != null ? (
             <button
               type="button"
@@ -874,7 +884,8 @@ export function QuestionBankEsatSessionShell({
               </div>
               <div className="eup-explain-body">
                 <p style={{ marginTop: 0 }}>
-                  Save your progress and leave, or discard this session.
+                  You can stop now. You do not have to finish the rest of this
+                  set. Questions you have not reached are not marked wrong.
                 </p>
                 <div
                   style={{
@@ -889,7 +900,7 @@ export function QuestionBankEsatSessionShell({
                     className="eup-done-btn eup-done-btn--primary"
                     onClick={onSaveAndLeave}
                   >
-                    Save and leave
+                    Stop here
                   </button>
                   <button
                     type="button"
@@ -924,7 +935,7 @@ export function QuestionBankEsatSessionShell({
           onClick={onOpenLeaveConfirm}
         >
           <LogOut size={19} strokeWidth={2} aria-hidden />
-          <span>{reviewMode ? "Back to summary" : "End session"}</span>
+          <span>{reviewMode ? "Back to summary" : "Leave"}</span>
         </button>
         {footerExtra ? (
           <>

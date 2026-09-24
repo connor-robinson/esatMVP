@@ -624,7 +624,7 @@ export const TOPICS: Record<string, Topic> = {
       {
         id: "perfect-squares",
         name: "Perfect Squares",
-        description: "Calculate squares of numbers 2–35",
+        description: "Calculate squares and square roots for 2-50",
         difficulty: 2,
         config: { level: 3 },
       },
@@ -638,7 +638,7 @@ export const TOPICS: Record<string, Topic> = {
       {
         id: "perfect-cubes",
         name: "Perfect Cubes",
-        description: "Calculate cubes of numbers 2–15",
+        description: "Calculate cubes and cube roots for 2-20",
         difficulty: 4,
         config: { level: 4 },
       },
