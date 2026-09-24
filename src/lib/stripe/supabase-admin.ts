@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
 import { getStripe } from "./config";
+import { subscriptionCancelsAtPeriodEnd } from "./cancellation";
 import { toDateTime } from "./helpers";
 import { SEASON_PASS_ACCESS_UNTIL } from "@/lib/stripe/seasonPass";
 import {
@@ -307,6 +308,9 @@ export const manageSubscriptionStatusChange = async (
   }
   await upsertPriceRecord(priceObj);
 
+  const cancelAt = sub.cancel_at ? toDateTime(sub.cancel_at).toISOString() : null;
+  const endedAt = sub.ended_at ? toDateTime(sub.ended_at).toISOString() : null;
+
   const data: SubscriptionRecord = {
     id: sub.id,
     user_id: userId,
@@ -314,12 +318,17 @@ export const manageSubscriptionStatusChange = async (
     metadata: sub.metadata as Record<string, unknown> | null,
     price_id: priceId,
     quantity: firstItem.quantity ?? 1,
-    cancel_at_period_end: sub.cancel_at_period_end,
+    cancel_at_period_end: subscriptionCancelsAtPeriodEnd({
+      status: sub.status,
+      cancelAtPeriodEnd: sub.cancel_at_period_end,
+      cancelAt,
+      endedAt,
+    }),
     created: toDateTime(sub.created).toISOString(),
     current_period_start: toDateTime(firstItem.current_period_start).toISOString(),
     current_period_end: toDateTime(firstItem.current_period_end).toISOString(),
-    ended_at: sub.ended_at ? toDateTime(sub.ended_at).toISOString() : null,
-    cancel_at: sub.cancel_at ? toDateTime(sub.cancel_at).toISOString() : null,
+    ended_at: endedAt,
+    cancel_at: cancelAt,
     canceled_at: sub.canceled_at ? toDateTime(sub.canceled_at).toISOString() : null,
     trial_start: sub.trial_start ? toDateTime(sub.trial_start).toISOString() : null,
     trial_end: sub.trial_end ? toDateTime(sub.trial_end).toISOString() : null,

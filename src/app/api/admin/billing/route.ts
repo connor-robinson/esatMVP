@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { subscriptionCancelsAtPeriodEnd } from "@/lib/stripe/cancellation";
 import { requireTesterAdmin } from "@/lib/tester/admin";
 
 export const dynamic = "force-dynamic";
@@ -10,6 +11,7 @@ type SubRow = {
   trial_start: string | null;
   trial_end: string | null;
   canceled_at: string | null;
+  cancel_at: string | null;
   cancel_at_period_end: boolean | null;
   created: string | null;
   ended_at: string | null;
@@ -67,7 +69,7 @@ export async function GET(request: NextRequest) {
   const { data: subs, error } = await admin.service
     .from("subscriptions")
     .select(
-      "id, user_id, status, trial_start, trial_end, canceled_at, cancel_at_period_end, created, ended_at, current_period_end",
+      "id, user_id, status, trial_start, trial_end, canceled_at, cancel_at, cancel_at_period_end, created, ended_at, current_period_end",
     )
     .order("created", { ascending: false });
 
@@ -131,7 +133,12 @@ export async function GET(request: NextRequest) {
         canceledAt: r.canceled_at,
         hadTrial: Boolean(r.trial_start),
         trialEnd: r.trial_end,
-        cancelAtPeriodEnd: Boolean(r.cancel_at_period_end),
+        cancelAtPeriodEnd: subscriptionCancelsAtPeriodEnd({
+          status: r.status,
+          cancelAtPeriodEnd: r.cancel_at_period_end,
+          cancelAt: r.cancel_at,
+          endedAt: r.ended_at,
+        }),
         endedAt: r.ended_at,
       };
     });
@@ -140,10 +147,13 @@ export async function GET(request: NextRequest) {
     trialsEver: rows.filter((r) => r.trial_start).length,
     currentlyTrialing: rows.filter((r) => r.status === "trialing").length,
     cancelsEver: rows.filter((r) => r.canceled_at).length,
-    scheduledCancel: rows.filter(
-      (r) =>
-        r.cancel_at_period_end &&
-        (r.status === "active" || r.status === "trialing"),
+    scheduledCancel: rows.filter((r) =>
+      subscriptionCancelsAtPeriodEnd({
+        status: r.status,
+        cancelAtPeriodEnd: r.cancel_at_period_end,
+        cancelAt: r.cancel_at,
+        endedAt: r.ended_at,
+      }),
     ).length,
     activePaid: rows.filter((r) => r.status === "active").length,
     trialsInWindow: history.reduce((sum, d) => sum + d.trials, 0),

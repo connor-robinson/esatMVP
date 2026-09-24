@@ -4,6 +4,7 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { subscriptionCancelsAtPeriodEnd } from "@/lib/stripe/cancellation";
 import { syncTesterProgramme } from "@/lib/tester/access";
 import { createPartnerServiceClient } from "./service";
 import type { AccessSource, UserAccess } from "./types";
@@ -118,7 +119,7 @@ export async function getUserAccess(
     const { data: subs } = await service
       .from("subscriptions")
       .select(
-        "id, status, current_period_end, price_id, metadata, cancel_at_period_end",
+        "id, status, current_period_end, price_id, metadata, cancel_at_period_end, cancel_at, ended_at",
       )
       .eq("user_id", userId)
       .in("status", ["active", "trialing"])
@@ -162,7 +163,12 @@ export async function getUserAccess(
           expiresAt: activeSub.current_period_end,
           subscriptionStatus: activeSub.status,
           currentPeriodEnd: activeSub.current_period_end,
-          cancelAtPeriodEnd: activeSub.cancel_at_period_end === true,
+          cancelAtPeriodEnd: subscriptionCancelsAtPeriodEnd({
+            status: activeSub.status,
+            cancelAtPeriodEnd: activeSub.cancel_at_period_end === true,
+            cancelAt: activeSub.cancel_at,
+            endedAt: activeSub.ended_at,
+          }),
           pendingPlan,
         };
       }
