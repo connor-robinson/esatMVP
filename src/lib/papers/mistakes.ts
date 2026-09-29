@@ -11,6 +11,11 @@ import {
   getEsatCampMockModuleByPaperId,
   isEsatCampMockPaperId,
 } from "@/lib/papers/esatCampMocks";
+import {
+  isAdminEsatMockPaperId,
+  parseAdminEsatMockPaperId,
+  ADMIN_MOCK_SUBJECT_TO_PART_NAME,
+} from "@/lib/papers/adminEsatMocks";
 
 export const MISTAKES_PAPER_VARIANT = "Mistakes review";
 export const MISTAKES_SESSION_PREFIX = "[Mistakes]";
@@ -39,7 +44,7 @@ export type MistakesExamFilter =
   | "PAT"
   | "MAT";
 
-export const MISTAKES_SUPPORTED_EXAMS = ["ENGAA", "NSAA", "TMUA"] as const;
+export const MISTAKES_SUPPORTED_EXAMS = ["ENGAA", "NSAA", "TMUA", "ESAT"] as const;
 
 export const MISTAKES_POOL_OPTIONS: Array<{
   id: MistakesPoolMode;
@@ -68,6 +73,7 @@ export const MISTAKES_EXAM_FILTERS: MistakesExamFilter[] = [
   "ENGAA",
   "NSAA",
   "TMUA",
+  "ESAT",
 ];
 
 export type MistakesSubjectFilter =
@@ -340,9 +346,14 @@ function inferMistakeSubject(parts: {
   partName?: string;
   subjectHint?: string;
 }): MistakesSubjectFilter | null {
+  const adminSubject =
+    parts.paperId != null ? parseAdminEsatMockPaperId(parts.paperId)?.subject : null;
   return (
     normalizeMistakeSubject(parts.subjectHint) ||
     normalizeMistakeSubject(parts.partName) ||
+    normalizeMistakeSubject(
+      adminSubject ? ADMIN_MOCK_SUBJECT_TO_PART_NAME[adminSubject] : null,
+    ) ||
     normalizeMistakeSubject(parts.paperVariant) ||
     normalizeMistakeSubject(parts.paperName) ||
     (parts.paperId != null
@@ -351,6 +362,36 @@ function inferMistakeSubject(parts: {
         )
       : null)
   );
+}
+
+/** Optional identity blob written into answers[].other for virtual ESAT mocks. */
+function parseAnswerIdentity(other: unknown): {
+  key?: string;
+  paperId?: number | null;
+  paperName?: string;
+  paperVariant?: string;
+  questionNumber?: number;
+  questionId?: number | null;
+  examName?: string;
+  subject?: string;
+} | null {
+  if (typeof other !== "string") return null;
+  const trimmed = other.trim();
+  if (!trimmed.startsWith("{")) return null;
+  try {
+    return JSON.parse(trimmed) as {
+      key?: string;
+      paperId?: number | null;
+      paperName?: string;
+      paperVariant?: string;
+      questionNumber?: number;
+      questionId?: number | null;
+      examName?: string;
+      subject?: string;
+    };
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -411,36 +452,33 @@ export function aggregateMistakePool(
           if (parsed.paperVariant) paperVariant = parsed.paperVariant;
           questionNumber = parsed.questionNumber;
         }
-        // Optional identity blob in answers[i].other
-        try {
-          const other = answers[i]?.other;
-          if (other && other.trim().startsWith("{")) {
-            const meta = JSON.parse(other) as {
-              key?: string;
-              paperId?: number | null;
-              paperName?: string;
-              paperVariant?: string;
-              questionNumber?: number;
-              questionId?: number | null;
-              examName?: string;
-              subject?: string;
-            };
-            if (meta.key) key = meta.key;
-            if (meta.paperId != null) paperId = meta.paperId;
-            if (meta.paperName) paperName = meta.paperName;
-            if (meta.paperVariant) paperVariant = meta.paperVariant;
-            if (meta.questionNumber != null) {
-              questionNumber = meta.questionNumber;
-            }
-            if (meta.questionId != null) questionId = meta.questionId;
-            if (meta.examName) examName = meta.examName;
-            if (meta.subject) subjectHint = meta.subject;
+        const meta = parseAnswerIdentity(answers[i]?.other);
+        if (meta) {
+          if (meta.key) key = meta.key;
+          if (meta.paperId != null) paperId = meta.paperId;
+          if (meta.paperName) paperName = meta.paperName;
+          if (meta.paperVariant) paperVariant = meta.paperVariant;
+          if (meta.questionNumber != null) {
+            questionNumber = meta.questionNumber;
           }
-        } catch {
-          /* ignore */
+          if (meta.questionId != null) questionId = meta.questionId;
+          if (meta.examName) examName = meta.examName;
+          if (meta.subject) subjectHint = meta.subject;
         }
       } else {
         questionNumber = questionNumberAt(row, i);
+        const meta = parseAnswerIdentity(answers[i]?.other);
+        if (meta) {
+          if (meta.paperId != null) paperId = meta.paperId;
+          if (meta.paperName) paperName = meta.paperName;
+          if (meta.paperVariant) paperVariant = meta.paperVariant;
+          if (meta.questionNumber != null) {
+            questionNumber = meta.questionNumber;
+          }
+          if (meta.questionId != null) questionId = meta.questionId;
+          if (meta.examName) examName = meta.examName;
+          if (meta.subject) subjectHint = meta.subject;
+        }
         if (questionNumber == null) continue;
         key = mistakePoolKey({
           paperId,
@@ -511,7 +549,7 @@ export function aggregateMistakePool(
     }
   }
 
-  // Keep only ENGAA / NSAA / TMUA questions wrong at least once
+  // Keep only ENGAA / NSAA / TMUA / ESAT questions wrong at least once
   const items = [...map.values()].filter(
     (item) => item.timesWrong > 0 && isMistakesSupportedExam(item.examName),
   );
@@ -717,6 +755,11 @@ export async function hydrateMistakeQuestions(
           questionMap.set(`id:${paperId}:${q.questionNumber}`, q);
         }
       }
+      continue;
+    }
+
+    // Admin ESAT mocks (920000+) are hydrated in mistakes.server.ts.
+    if (isAdminEsatMockPaperId(paperId)) {
       continue;
     }
 

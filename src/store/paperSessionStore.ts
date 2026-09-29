@@ -1539,6 +1539,37 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           }
         }
 
+        const answersForPersist = state.answers.map((answer, index) => {
+          const question = state.questions[index];
+          if (!question) return answer;
+          // Keep user-entered free text in `other` unless it is empty / already JSON.
+          const existing = (answer.other || "").trim();
+          if (existing && !existing.startsWith("{")) return answer;
+
+          let existingMeta: Record<string, unknown> = {};
+          if (existing.startsWith("{")) {
+            try {
+              existingMeta = JSON.parse(existing) as Record<string, unknown>;
+            } catch {
+              return answer;
+            }
+          }
+
+          return {
+            ...answer,
+            other: JSON.stringify({
+              ...existingMeta,
+              paperId: question.paperId,
+              paperName: question.paperName || state.paperName,
+              paperVariant: state.paperVariant,
+              questionNumber: question.questionNumber,
+              questionId: question.id,
+              examName: question.examName || state.paperName,
+              subject: question.partName || undefined,
+            }),
+          };
+        });
+
         const payload = {
           id: state.sessionId, // Unique session ID (UUID)
           paperId: state.paperId,
@@ -1555,7 +1586,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           endedAt: state.endedAt,
           deadlineAt: state.deadline,
           perQuestionSec: state.perQuestionSec,
-          answers: state.answers,
+          answers: answersForPersist,
           correctFlags: correctFlagsForPersist,
           guessedFlags: state.guessedFlags,
           reviewFlags: state.reviewFlags,

@@ -4,7 +4,6 @@ import { userHasFullAccess } from "@/lib/subscription/serverAccess";
 import type { PaperSessionRow } from "@/lib/supabase/types";
 import {
   aggregateMistakePool,
-  hydrateMistakeQuestions,
   normalizeMistakesPoolMode,
   selectMistakeItems,
   summarizeMistakePool,
@@ -12,11 +11,18 @@ import {
   type MistakesSubjectFilter,
   MISTAKES_SUBJECT_FILTERS,
 } from "@/lib/papers/mistakes";
+import { hydrateMistakeQuestionsServer } from "@/lib/papers/mistakes.server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const VALID_EXAMS: MistakesExamFilter[] = ["ALL", "ENGAA", "NSAA", "TMUA"];
+const VALID_EXAMS: MistakesExamFilter[] = [
+  "ALL",
+  "ENGAA",
+  "NSAA",
+  "TMUA",
+  "ESAT",
+];
 const VALID_SUBJECTS = new Set<string>(MISTAKES_SUBJECT_FILTERS);
 
 async function loadPool(supabase: any, userId: string) {
@@ -129,7 +135,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const hydrated = await hydrateMistakeQuestions(supabase as any, selected);
+    const hydrated = await hydrateMistakeQuestionsServer(supabase as any, selected);
 
     if (hydrated.length === 0) {
       return NextResponse.json(

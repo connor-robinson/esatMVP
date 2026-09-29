@@ -152,12 +152,63 @@ describe("aggregateMistakePool", () => {
     expect(after[0].lastMistakesOutcome).toBe("correct");
   });
 
-  it("excludes exams outside ENGAA NSAA TMUA", () => {
+  it("includes ESAT wrong answers in the mistakes pool", () => {
+    const paperRow = {
+      id: "s1",
+      user_id: "u1",
+      paper_id: 920000,
+      paper_name: "ESAT",
+      paper_variant: "2026-Mock A-ESAT CAMP",
+      session_name: "ESAT CAMP Math 1 Mock A",
+      question_start: 1,
+      question_end: 1,
+      selected_sections: ["Mathematics"],
+      selected_part_ids: [],
+      question_order: [1],
+      time_limit_minutes: 40,
+      started_at: new Date(1_000).toISOString(),
+      ended_at: new Date(2_000).toISOString(),
+      deadline_at: null,
+      per_question_seconds: [30],
+      answers: [
+        {
+          choice: "A",
+          correctChoice: "B",
+          other: JSON.stringify({
+            paperId: 920000,
+            questionNumber: 1,
+            examName: "ESAT",
+            subject: "Mathematics",
+          }),
+          explanation: "",
+          addToDrill: false,
+        },
+      ],
+      correct_flags: [false],
+      guessed_flags: [false],
+      mistake_tags: ["None"],
+      notes: null,
+      score: { correct: 0, total: 1 },
+      predicted_score: null,
+      section_percentiles: null,
+      pinned_insights: null,
+      deleted_at: null,
+      created_at: new Date(1_000).toISOString(),
+      updated_at: new Date(2_000).toISOString(),
+    } as PaperSessionRow;
+
+    const pool = aggregateMistakePool([paperRow]);
+    expect(pool).toHaveLength(1);
+    expect(pool[0].examName).toBe("ESAT");
+    expect(pool[0].paperId).toBe(920000);
+  });
+
+  it("excludes exams outside ENGAA NSAA TMUA ESAT", () => {
     const paperRow = {
       id: "s1",
       user_id: "u1",
       paper_id: 42,
-      paper_name: "ESAT",
+      paper_name: "PAT",
       paper_variant: "2024",
       session_name: "Practice",
       question_start: 1,
