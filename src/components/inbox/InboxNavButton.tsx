@@ -29,6 +29,8 @@ const NAV_ICON_PX = 20;
 const NAV_ICON_STROKE = 2;
 const PREVIEW_LIMIT = 6;
 const COLLAPSED_BODY_CHARS = 72;
+/** Badge poll cadence. Kept long to avoid burning Supabase disk IO. */
+const INBOX_POLL_MS = 10 * 60_000;
 
 type Props = {
   className?: string;
@@ -255,8 +257,16 @@ export function InboxNavButton({ className }: Props) {
   useEffect(() => {
     void refresh();
     if (!session?.user) return;
-    const id = window.setInterval(() => void refresh(), 60_000);
+
+    const pollIfVisible = () => {
+      if (document.visibilityState !== "visible") return;
+      void refresh();
+    };
+    const id = window.setInterval(pollIfVisible, INBOX_POLL_MS);
     const onFocus = () => void refresh();
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") void refresh();
+    };
     const onInboxRead = (event: Event) => {
       const detail = (event as CustomEvent<InboxReadEventDetail>).detail;
       if (detail?.all) {
@@ -277,13 +287,15 @@ export function InboxNavButton({ className }: Props) {
       void refresh();
     };
     window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisibility);
     window.addEventListener(INBOX_READ_EVENT, onInboxRead);
     return () => {
       window.clearInterval(id);
       window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener(INBOX_READ_EVENT, onInboxRead);
     };
-  }, [session?.user, refresh, pathname, applyLocalReads]);
+  }, [session?.user, refresh, applyLocalReads]);
 
   useEffect(() => {
     setOpen(false);
